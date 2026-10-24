@@ -61,7 +61,12 @@ CSS = """
   --ink:#2c2824; --ink-dim:#6d6458; --ink-faint:#9b9284;
   --clay:#a86a4b; --sage:#6b8169; --sand:#c08a3e;
   --crit:#a4493c; --high:#bd7a35; --med:#9d8430; --low:#6b8169;
-  --cell-crit:#eccfc6; --cell-care:#f2e0c4; --cell-good:#d8e5d4; --cell-myth:#e8e2d8;
+  /* Four warm tints plus a warm empty cell meant "myth" and "no interaction"
+     were both pale beige and effectively the same square. Myth goes cool
+     instead: it is the only category that is neither a problem nor a benefit,
+     so reading as a different kind of thing is correct, not just legible.
+     Conflict and care are nudged apart at the same time. */
+  --cell-crit:#e7bdb0; --cell-care:#f3debb; --cell-good:#cde0c8; --cell-myth:#cfdae8;
   --shadow:0 1px 2px rgba(60,45,30,.04), 0 10px 30px -18px rgba(60,45,30,.22);
   --serif:ui-serif,"Iowan Old Style",Georgia,"Palatino Linotype",Palatino,serif;
   --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
