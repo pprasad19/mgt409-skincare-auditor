@@ -132,6 +132,31 @@ class Rules:
                 return form_id
         return "serum"
 
+    def resolve_text(self, text: str) -> list[str]:
+        """Ingredient ids mentioned anywhere in a blob of text.
+
+        The matching core, usable on raw input rather than a structured
+        product. safety.detect_suppression re-reads the user's own words with
+        this to catch ingredients a reader was talked out of recording — it
+        works precisely because it does not understand anything and so cannot
+        be told that an ingredient is not there.
+        """
+        label = normalise(text)
+        consumed: list[tuple[int, int]] = []
+        found: list[str] = []
+
+        for term, ingredient_id in self.terms:
+            if ingredient_id in found:
+                continue
+            for match in re.finditer(term_pattern(term), label):
+                span = match.span()
+                if any(span[0] < end and start < span[1] for start, end in consumed):
+                    continue
+                consumed.append(span)
+                found.append(ingredient_id)
+                break
+        return found
+
     def resolve(self, product: InputProduct) -> ResolvedProduct:
         """Match label terms to known ingredients, longest term first.
 
