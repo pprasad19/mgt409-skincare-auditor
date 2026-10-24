@@ -153,7 +153,9 @@ class Gap(BaseModel):
 
     kind: str
     severity: Severity
-    message: str
+    label: str = Field(description="What kind of thing this is, e.g. 'Sun protection'.")
+    headline: str = Field(description="The instruction, on its own. One short sentence.")
+    message: str = Field(description="Why, underneath. Never merged with the headline.")
     because: list[str] = Field(
         default_factory=list,
         description="Products that create the need. Keeps a gap as traceable as a finding.",

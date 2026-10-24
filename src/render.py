@@ -116,9 +116,16 @@ details.mech .body{font-size:13px;color:var(--ink-dim);padding:7px 0 0 14px;bord
 .gap{background:#17191f;border:1px solid var(--line);border-left:3px solid var(--accent);
   border-radius:9px;padding:14px 16px;margin-top:12px;font-size:14.5px;line-height:1.55}
 .gap.urgent{border-left-color:var(--high);background:#1a1712}
-.gap .lbl{display:inline-block;font-size:10.5px;text-transform:uppercase;
-  letter-spacing:.08em;color:var(--ink-faint);margin-bottom:6px}
-.gap .why{margin-top:9px;font-size:12px;color:var(--ink-faint)}
+/* display:block, not inline-block. As an inline-block the following text
+   node sat on the same line and it read "KEEP THIS ONE UP4 of your
+   products...", with the margin-bottom doing nothing. */
+.gap .lbl{display:block;font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.09em;color:var(--ink-faint);margin-bottom:8px}
+.gap .head{display:block;font-size:16px;font-weight:600;line-height:1.4;
+  margin-bottom:7px;color:var(--ink)}
+.gap .body{display:block;font-size:14px;line-height:1.55;color:var(--ink-dim)}
+.gap .why{display:block;margin-top:11px;padding-top:9px;border-top:1px solid var(--line);
+  font-size:12px;color:var(--ink-faint)}
 .escal .who{font-size:12px;color:var(--crit);font-weight:600;margin-bottom:4px}
 .bar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
 button{font:inherit;font-size:13px;font-weight:550;padding:7px 15px;border-radius:8px;
@@ -1079,11 +1086,13 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
     # can see.
     for gap in audit.gaps:
         urgent = gap.severity in ("critical", "high")
-        label = "Missing from your shelf" if urgent else "Keep this one up"
         parts.append(
             f'<div class="gap{" urgent" if urgent else ""}">'
-            f'<div class="lbl">{e(label)}</div>{e(gap.message)}'
-            f'<div class="why">Because of: {e(", ".join(gap.because))}</div></div>'
+            f'<span class="lbl">{e(gap.label)}</span>'
+            f'<span class="head">{e(gap.headline)}</span>'
+            f'<span class="body">{e(gap.message)}</span>'
+            f'<span class="why">Triggered by: {e(", ".join(gap.because))}</span>'
+            "</div>"
         )
 
     parts.append(_print_card(audit, specs))

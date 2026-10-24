@@ -464,11 +464,12 @@ class Rules:
                 Gap(
                     kind="no_sun_protection",
                     severity="high",
+                    label="Sun protection",
+                    headline="There is no sunscreen on this shelf, and you need one.",
                     message=(
-                        f"{len(photo)} of your products increase sun sensitivity and there "
-                        "is no sunscreen on this shelf. Daily SPF is what makes those "
-                        "products worth using — without it they work against the thing "
-                        "most of them were bought to fix."
+                        f"{len(photo)} of your products increase sun sensitivity. Without "
+                        "daily SPF they work against the thing most of them were bought "
+                        "to fix."
                     ),
                     because=photo,
                 )
@@ -478,10 +479,12 @@ class Rules:
                 Gap(
                     kind="spf_is_load_bearing",
                     severity="medium",
+                    label="Sun protection",
+                    headline="Wear your sunscreen every day, not just sunny ones.",
                     message=(
-                        f"{len(photo)} of your products increase sun sensitivity, so daily "
-                        "sunscreen is not optional with this routine — it is the step that "
-                        "makes the rest of them safe to use."
+                        f"{len(photo)} of your products increase sun sensitivity. Sunscreen "
+                        "is the step that makes the rest of them safe to use, so skipping "
+                        "it costs you more than it would with a gentler routine."
                     ),
                     because=photo,
                 )
