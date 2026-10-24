@@ -198,6 +198,27 @@ table.wk td.rest{background:var(--panel-2);color:var(--ink-faint)}
   .pcf{font-size:8.5pt;color:#555;margin-top:14pt;border-top:0.5pt solid #ccc;padding-top:7pt}
 }
 
+/* Interactive matrix: the grid browses the pair findings. */
+.mxlayout{display:grid;grid-template-columns:auto minmax(260px,1fr);gap:22px;align-items:start}
+@media(max-width:900px){.mxlayout{grid-template-columns:1fr}}
+table.mx td.hit{cursor:pointer}
+table.mx td.hit:hover{outline:2px solid var(--ink);outline-offset:1px}
+table.mx td.pin{outline:2px solid var(--accent);outline-offset:1px}
+.mxdetail{background:var(--panel-2);border:1px solid var(--line);border-radius:11px;
+  padding:16px 18px;min-height:200px}
+.mxempty{color:var(--ink-faint);font-size:13.5px;line-height:1.6}
+.mxd-top{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;margin-bottom:7px}
+.mxd-pair{font-size:12.5px;color:var(--ink-faint);margin-bottom:9px}
+.mxd-say{font-size:15px;line-height:1.55;margin:0 0 11px}
+.mxd-mech{font-size:12.5px;color:var(--ink-dim);line-height:1.55;
+  border-left:2px solid var(--line);padding-left:11px;margin-bottom:10px}
+.mxd-do{font-size:13.5px}
+.mxd-do b{color:var(--accent);font-weight:600}
+.onelist{display:grid;gap:7px;margin-top:10px}
+.onerow{display:flex;gap:10px;align-items:baseline;font-size:13.5px;
+  background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:10px 13px}
+.onerow .t{color:var(--ink-dim)}
+
 /* Guided mode: for following at the sink, not for reading. */
 .guide{position:fixed;inset:0;background:rgba(9,10,14,.93);z-index:50;
   display:grid;place-items:center;padding:24px}
@@ -543,6 +564,53 @@ SPEECH_JS = """
 """
 
 
+GRID_JS = """
+/* Matrix detail on hover, pinned on click.
+ *
+ * Hover alone does nothing on a phone, and it also means losing the text the
+ * moment you move the mouse to read something else. Clicking pins a square so
+ * hovering elsewhere stops overriding it.
+ */
+(function(){
+  var panel = document.getElementById('mxdetail');
+  var table = document.getElementById('mx');
+  if(!panel || !table) return;
+  var empty = panel.innerHTML, pinned = null;
+
+  function show(k){
+    var d = MX_DATA[k];
+    if(!d) return;
+    panel.innerHTML =
+      '<div class="mxd-top"><span class="chip">' + d.rule + '</span>'
+      + (d.verified ? '' : '<span class="chip unver">unverified rule</span>')
+      + '<span class="kind">' + d.kind + '</span>'
+      + '<span class="who">' + d.sev + '</span></div>'
+      + '<div class="mxd-pair">' + d.pair + '</div>'
+      + '<p class="mxd-say">' + d.say + '</p>'
+      + '<div class="mxd-mech">' + d.mech + '</div>'
+      + '<div class="mxd-do"><b>Do this:</b> ' + d.do + '</div>';
+  }
+
+  table.addEventListener('mouseover', function(ev){
+    var td = ev.target.closest('td.hit');
+    if(td && !pinned) show(td.dataset.k);
+  });
+  table.addEventListener('mouseleave', function(){
+    if(!pinned) panel.innerHTML = empty;
+  });
+  table.addEventListener('click', function(ev){
+    var td = ev.target.closest('td.hit');
+    if(!td) return;
+    if(pinned === td){
+      pinned = null; td.classList.remove('pin'); panel.innerHTML = empty; return;
+    }
+    if(pinned) pinned.classList.remove('pin');
+    pinned = td; td.classList.add('pin'); show(td.dataset.k);
+  });
+})();
+"""
+
+
 def e(text: object) -> str:
     return html.escape(str(text), quote=True)
 
@@ -605,7 +673,7 @@ def _step_row(step, spec, slot: str, total: int) -> str:
 CELL_CLASS = {"high": "high", "critical": "high", "medium": "med", "low": "good"}
 
 
-def _conflict_grid(audit: AuditResult) -> str:
+def _conflict_grid(audit: AuditResult, explain: dict[str, str]) -> tuple[str, str]:
     """Product-by-product matrix of what clashes with what.
 
     Reading nineteen cards tells you about pairs one at a time; the shape of
@@ -614,7 +682,7 @@ def _conflict_grid(audit: AuditResult) -> str:
     """
     paired = [f for f in audit.findings if len(f.products) == 2]
     if not paired:
-        return ""
+        return "", "{}"
 
     names: list[str] = []
     for f in paired:
@@ -622,17 +690,19 @@ def _conflict_grid(audit: AuditResult) -> str:
             if n not in names:
                 names.append(n)
     if len(names) < 2:
-        return ""
+        return "", "{}"
 
     worst: dict[tuple[str, str], str] = {}
+    best: dict[tuple[str, str], object] = {}
     rank = {"high": 3, "med": 2, "good": 1, "myth": 0}
     for f in paired:
         cls = "myth" if f.type == "myth" else (
             "good" if f.type == "synergy" else CELL_CLASS.get(f.severity, "med")
         )
         key = tuple(sorted(f.products))
-        if rank[cls] > rank.get(worst.get(key, "myth"), -1):
+        if key not in worst or rank[cls] > rank[worst[key]]:
             worst[key] = cls
+            best[key] = f
 
     # Column headers are product initials, not numbers.
     #
@@ -652,6 +722,7 @@ def _conflict_grid(audit: AuditResult) -> str:
             mark = f"{initials(n)}{bump}"
         marks[n] = mark
 
+    data: dict[str, dict] = {}
     head = "".join(f'<th class="c">{e(marks[n])}</th>' for n in names)
     rows = []
     for a in names:
@@ -659,9 +730,25 @@ def _conflict_grid(audit: AuditResult) -> str:
         for bname in names:
             if a == bname:
                 cells.append('<td class="self"></td>')
-            else:
-                cls = worst.get(tuple(sorted((a, bname))), "")
-                cells.append(f'<td class="{cls}">.</td>')
+                continue
+            pair = tuple(sorted((a, bname)))
+            cls = worst.get(pair, "")
+            if not cls:
+                cells.append("<td></td>")
+                continue
+            f = best[pair]
+            cell_id = f"{marks[pair[0]]}|{marks[pair[1]]}"
+            data[cell_id] = {
+                "rule": f.rule_id,
+                "kind": TYPE_LABEL.get(f.type, f.type),
+                "sev": SEVERITY_LABEL.get(f.severity, f.severity),
+                "pair": " + ".join(pair),
+                "say": explain.get(f.rule_id) or f.guidance,
+                "mech": f.mechanism,
+                "do": f.guidance,
+                "verified": f.verified,
+            }
+            cells.append(f'<td class="{cls} hit" data-k="{e(cell_id)}">.</td>')
         label = a if len(a) <= 28 else a[:26] + "…"
         rows.append(f'<tr><th><b>{e(marks[a])}</b>  {e(label)}</th>{"".join(cells)}</tr>')
 
@@ -674,15 +761,20 @@ def _conflict_grid(audit: AuditResult) -> str:
         '<span><i style="background:var(--panel-2)"></i>no interaction</span>'
         "</div>"
     )
-    return (
+    html_out = (
         '<div class="card">'
         '<p class="mxcap">Each row and column is one of your products. '
-        "A coloured square means those two interact — find a product down the "
-        "side, read across to another, and the square where they meet says what "
-        "happens when you use them together.</p>"
-        f'<div class="gridwrap"><table class="mx">'
+        "Hover or tap a coloured square to see what happens when you use those "
+        "two together.</p>"
+        '<div class="mxlayout"><div>'
+        f'<div class="gridwrap"><table class="mx" id="mx">'
         f'<tr><th></th>{head}</tr>{"".join(rows)}</table></div>{key}</div>'
+        '<div class="mxdetail" id="mxdetail"><div class="mxempty">'
+        "Hover a coloured square and the detail shows here. Click to keep it "
+        "open while you read."
+        "</div></div></div></div>"
     )
+    return html_out, json.dumps(data)
 
 
 DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -831,6 +923,7 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
     ver_cls = "ver ok" if verified_ok else "ver"
     ver_txt = f"{audit.rules_verified} of {audit.rules_total} rules verified"
 
+    grid_data = '{}'
     parts: list[str] = []
     parts.append(
         "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\">"
@@ -906,7 +999,7 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
         for note in audit.routine.notes:
             parts.append(f'<div class="note">{e(note)}</div>')
 
-    grid = _conflict_grid(audit)
+    grid, grid_data = _conflict_grid(audit, explain)
     if grid:
         parts.append("<h2>What clashes with what</h2>")
         parts.append(grid)
@@ -963,12 +1056,22 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
     parts.append("<h2>What to do</h2>")
     _section("first", "Fix these first",
              "costing you money or results", open_=True, oneline=False)
-    _section("adjust", "Use them this way",
-             "timing, order and milder clashes", open_=False, oneline=False)
-    _section("good", "Already working in your favour",
-             "no change needed", open_=False, oneline=True)
-    _section("myth", "You can stop worrying about these",
-             "common advice that does not hold up", open_=False, oneline=True)
+
+    # Everything else involving two products now lives in the matrix above,
+    # which carries the same findings without asking anyone to read nineteen
+    # cards. Rules about a single product have no square to sit in, so they
+    # stay here as one line each.
+    singles = [g for g in buckets["adjust"] if len(g[0].products) == 1]
+    if singles:
+        parts.append('<div class="onelist">')
+        for group in singles:
+            f = group[0]
+            parts.append(
+                f'<div class="onerow"><span class="chip">{e(f.rule_id)}</span>'
+                f'<span class="t"><b>{e(f.products[0])}</b> — '
+                f"{e(explain.get(f.rule_id) or f.guidance)}</span></div>"
+            )
+        parts.append("</div>")
 
     parts.append(_print_card(audit, specs))
 
@@ -998,7 +1101,8 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
     )
 
     parts.append(
-        f"<script>var DATA_STEPS={json.dumps(seq)};{JS}{SPEECH_JS}"
+        f"<script>var DATA_STEPS={json.dumps(seq)};var MX_DATA={grid_data};"
+        f"{JS}{SPEECH_JS}{GRID_JS}"
         "document.getElementById('print').addEventListener('click',function(){window.print()});"
         "</script></body></html>"
     )
