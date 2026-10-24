@@ -26,25 +26,47 @@ spending a sentence of three on a disclaimer buries the thing the reader needs.
 
 **explanations** — one per finding you were given, keyed by its `rule_id`:
 - `rule_id` — exactly as supplied
-- `plain_language` — one or two sentences a person who has never read an
-  ingredient list would understand
+- `plain_language` — **one sentence, twenty words at most**
 
 Translate the mechanism. "Benzoyl peroxide is an oxidiser and retinoids oxidise
 readily" becomes "your acne wash is breaking down the retinol before it can
 work". Keep the fact, lose the vocabulary.
 
-**steps** — one per routine step, with an application spec:
+The twenty-word limit is not a style preference. The page shows these as a list
+of cards, and a reader facing nineteen paragraphs reads none of them. The full
+mechanism and the recommended action are already displayed from the rule itself,
+underneath each explanation — you are writing the line that makes someone decide
+to read further, not the explanation itself. Do not restate the product names
+in full when "both retinols" or "your acne wash" will do.
+
+**steps** — one per routine step. These drive a guided mode someone follows at
+the sink, so describe the actual physical sequence, not an abstraction:
+
 - `product_name` — exactly as supplied
-- `motion` — press, circular, patting, smooth, or dab
+- `motion` — press, circular, patting, smooth, dab, or lather
 - `area` — where it goes
 - `amount` — how much, in ordinary terms
-- `seconds` — how long to spend
-- `wait_after_seconds` — pause before the next step; 0 unless there is a reason
+- `seconds` — time spent applying
+- `finish` — **rinse off**, **pat dry**, **let it absorb**, or **nothing**
+- `finish_seconds` — how long the finish takes
+- `wait_after_seconds` — pause before the *next* product
 
-These render as an animation, so they should describe something a person could
-actually follow. A serum is a few drops pressed in over about fifteen seconds. A
-sunscreen is two fingers' length smoothed over the whole face and neck. An acid
-toner needs a pause before the next step so it is not immediately diluted.
+Get `finish` right; it is the part that makes the sequence real.
+
+- A **cleanser** is lathered for 20–30 seconds and then **rinsed off**, which
+  takes 20–30 seconds to do properly, and then the face is patted dry. Telling
+  someone to massage a cleanser and go straight to a toner leaves them applying
+  toner over cleanser.
+- A **rinse-off exfoliant or mask** is the same: it comes off.
+- A **leave-on** product — toner, serum, treatment, moisturiser, sunscreen —
+  **lets it absorb**. Never rinse one.
+- **wait_after_seconds** is for chemistry, not rinsing. An acid wants 60 seconds
+  to settle before the next product dilutes it. A hyaluronic serum does not need
+  a wait at all.
+
+A serum is a few drops pressed in over about fifteen seconds. A sunscreen is two
+fingers' length smoothed over face and neck. Be specific enough that someone
+could follow it without knowing anything about skincare.
 
 ## Constraints
 

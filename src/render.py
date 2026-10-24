@@ -144,6 +144,35 @@ footer{margin-top:52px;padding-top:20px;border-top:1px solid var(--line);
 .oneline:last-child{border-bottom:0}
 .oneline .t{color:var(--ink-dim)}
 
+/* Conflict grid: which products clash, read at a glance instead of
+   reconstructed from nineteen cards. */
+.gridwrap{overflow-x:auto}
+table.mx{border-collapse:separate;border-spacing:3px;font-size:11px}
+table.mx th{font-weight:500;color:var(--ink-faint);font-size:11px;padding:0 4px;
+  text-align:right;white-space:nowrap}
+table.mx th.c{text-align:center;width:26px}
+table.mx td{width:26px;height:26px;border-radius:5px;background:var(--panel-2);
+  text-align:center;color:transparent}
+table.mx td.self{background:transparent}
+table.mx td.high{background:#5c2626}
+table.mx td.med{background:#5a4420}
+table.mx td.good{background:#1f4429}
+table.mx td.myth{background:#2a2f3a}
+.key{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:12px;color:var(--ink-dim)}
+.key span{display:flex;align-items:center;gap:6px}
+.key i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.legend{margin-top:14px;font-size:12px;color:var(--ink-dim);columns:2;column-gap:28px}
+.legend div{break-inside:avoid;padding:2px 0}
+.legend b{color:var(--ink);font-weight:600;margin-right:6px}
+
+/* Week grid: turns "alternate nights" into an actual calendar. */
+table.wk{border-collapse:separate;border-spacing:4px;font-size:12px;width:100%}
+table.wk th{font-size:11px;color:var(--ink-faint);font-weight:500;text-align:center}
+table.wk th.n{text-align:left;width:40%}
+table.wk td{height:30px;border-radius:6px;background:var(--panel-2);text-align:center}
+table.wk td.on{background:var(--accent);color:#14121c;font-weight:650}
+table.wk td.rest{background:var(--panel-2);color:var(--ink-faint)}
+
 /* Guided mode: for following at the sink, not for reading. */
 .guide{position:fixed;inset:0;background:rgba(9,10,14,.93);z-index:50;
   display:grid;place-items:center;padding:24px}
@@ -176,7 +205,7 @@ JS = """
  */
 (function(){
   var ALL = DATA_STEPS;
-  var seq = [], i = 0, timer = null, remain = 0, waiting = false;
+  var seq = [], i = 0, b = 0, timer = null, remain = 0;
 
   var box = document.getElementById('guide'),
       slotEl = document.getElementById('g-slot'),
@@ -195,38 +224,56 @@ JS = """
     }).join('');
   }
 
+  /* A step is not one timed block. Applying a cleanser and moving on leaves
+   * your face covered in cleanser, so each step runs as a short sequence of
+   * beats -- apply, then finish (rinse, pat dry, absorb), then any wait the
+   * chemistry needs before the next product. */
+  function beat(){ return seq[i].beats[b]; }
+
+  function paint(){
+    var s = seq[i], p = beat();
+    slotEl.textContent = (s.slot === 'am' ? 'Morning' : 'Evening')
+      + ' · step ' + s.order + ' of ' + s.of;
+    nameEl.textContent = s.name;
+    howEl.textContent = p.text;
+    subEl.textContent = p.kind === 'apply'
+      ? (s.freq === 'daily' ? '' : s.freq)
+      : p.kind;
+    ringEl.className = 'gring' + (p.kind === 'wait' ? ' waiting' : '');
+    remain = p.secs;
+    cntEl.textContent = remain;
+    prevB.disabled = i === 0 && b === 0;
+    nextB.textContent = (i === seq.length - 1 && b === seq[i].beats.length - 1)
+      ? 'Finish' : 'Next';
+    dots();
+  }
+
   function tick(){
     remain--;
     cntEl.textContent = remain > 0 ? remain : 0;
     if(remain > 0) return;
     clearInterval(timer);
-    var s = seq[i];
-    if(!waiting && s.wait > 0){
-      waiting = true; remain = s.wait;
-      ringEl.classList.add('waiting');
-      subEl.textContent = 'let it settle before the next step';
-      cntEl.textContent = remain;
-      timer = setInterval(tick, 1000);
-      return;
+    advance(1);
+  }
+
+  function advance(dir){
+    clearInterval(timer);
+    b += dir;
+    if(b >= seq[i].beats.length){
+      if(i === seq.length - 1){ subEl.textContent = 'done'; return; }
+      i++; b = 0;
+    } else if(b < 0){
+      if(i === 0){ b = 0; } else { i--; b = seq[i].beats.length - 1; }
     }
-    if(i < seq.length - 1){ go(i + 1); } else { subEl.textContent = 'done'; }
+    paint();
+    timer = setInterval(tick, 1000);
   }
 
   function go(n){
     clearInterval(timer);
     i = Math.max(0, Math.min(n, seq.length - 1));
-    waiting = false;
-    var s = seq[i];
-    ringEl.classList.remove('waiting');
-    slotEl.textContent = (s.slot === 'am' ? 'Morning' : 'Evening') + ' · step ' + s.order + ' of ' + s.of;
-    nameEl.textContent = s.name;
-    howEl.textContent = s.how;
-    subEl.textContent = s.freq === 'daily' ? '' : s.freq;
-    remain = s.seconds;
-    cntEl.textContent = remain;
-    prevB.disabled = i === 0;
-    nextB.textContent = i === seq.length - 1 ? 'Finish' : 'Next';
-    dots();
+    b = 0;
+    paint();
     timer = setInterval(tick, 1000);
   }
 
@@ -241,15 +288,16 @@ JS = """
   document.getElementById('go-am').addEventListener('click', function(){ open('am'); });
   document.getElementById('go-pm').addEventListener('click', function(){ open('pm'); });
   document.getElementById('g-close').addEventListener('click', close);
-  prevB.addEventListener('click', function(){ go(i - 1); });
+  prevB.addEventListener('click', function(){ advance(-1); });
   nextB.addEventListener('click', function(){
-    if(i === seq.length - 1){ close(); } else { go(i + 1); }
+    if(i === seq.length - 1 && b === seq[i].beats.length - 1){ close(); }
+    else { advance(1); }
   });
   document.addEventListener('keydown', function(ev){
     if(box.hidden) return;
     if(ev.key === 'Escape') close();
-    if(ev.key === 'ArrowRight') go(i + 1);
-    if(ev.key === 'ArrowLeft') go(i - 1);
+    if(ev.key === 'ArrowRight') advance(1);
+    if(ev.key === 'ArrowLeft') advance(-1);
   });
 })();
 """
@@ -298,11 +346,12 @@ def _step_row(step, spec, slot: str, total: int) -> str:
     because = "".join(f'<span class="chip">{e(b)}</span>' for b in step.because)
     how = ""
     if spec is not None:
-        wait = f", then wait {spec.wait_after_seconds}s" if spec.wait_after_seconds else ""
-        how = (
-            f'<div class="how">{e(spec.amount)}, {e(spec.motion)} on {e(spec.area)}'
-            f", {spec.seconds}s{e(wait)}</div>"
-        )
+        bits = [f"{spec.amount}, {spec.motion} on {spec.area}, {spec.seconds}s"]
+        if spec.finish != "nothing":
+            bits.append(spec.finish)
+        if spec.wait_after_seconds:
+            bits.append(f"wait {spec.wait_after_seconds}s")
+        how = f'<div class="how">{e(" → ".join(bits))}</div>'
     return (
         f'<div class="step" data-step="{e(key)}">'
         f'<div class="num">{step.order}</div><div>'
@@ -310,6 +359,102 @@ def _step_row(step, spec, slot: str, total: int) -> str:
         f'<div class="meta">{e(step.form)}</div>{how}'
         f'<div style="margin-top:6px">{because}</div>'
         f"</div></div>"
+    )
+
+
+CELL_CLASS = {"high": "high", "critical": "high", "medium": "med", "low": "good"}
+
+
+def _conflict_grid(audit: AuditResult) -> str:
+    """Product-by-product matrix of what clashes with what.
+
+    Reading nineteen cards tells you about pairs one at a time; the shape of
+    the problem — that one product is in four conflicts and the rest are fine —
+    only appears when you see them together.
+    """
+    paired = [f for f in audit.findings if len(f.products) == 2]
+    if not paired:
+        return ""
+
+    names: list[str] = []
+    for f in paired:
+        for n in f.products:
+            if n not in names:
+                names.append(n)
+    if len(names) < 2:
+        return ""
+
+    worst: dict[tuple[str, str], str] = {}
+    rank = {"high": 3, "med": 2, "good": 1, "myth": 0}
+    for f in paired:
+        cls = "myth" if f.type == "myth" else (
+            "good" if f.type == "synergy" else CELL_CLASS.get(f.severity, "med")
+        )
+        key = tuple(sorted(f.products))
+        if rank[cls] > rank.get(worst.get(key, "myth"), -1):
+            worst[key] = cls
+
+    idx = {n: i + 1 for i, n in enumerate(names)}
+    head = "".join(f'<th class="c">{idx[n]}</th>' for n in names)
+    rows = []
+    for a in names:
+        cells = []
+        for bname in names:
+            if a == bname:
+                cells.append('<td class="self"></td>')
+            else:
+                cls = worst.get(tuple(sorted((a, bname))), "")
+                cells.append(f'<td class="{cls}">.</td>')
+        label = a if len(a) <= 26 else a[:24] + "…"
+        rows.append(f"<tr><th>{idx[a]}. {e(label)}</th>{''.join(cells)}</tr>")
+
+    key = (
+        '<div class="key">'
+        '<span><i style="background:#5c2626"></i>conflict</span>'
+        '<span><i style="background:#5a4420"></i>use with care</span>'
+        '<span><i style="background:#1f4429"></i>works well together</span>'
+        '<span><i style="background:#2a2f3a"></i>myth, ignore it</span>'
+        "</div>"
+    )
+    return (
+        '<div class="card"><div class="gridwrap"><table class="mx">'
+        f'<tr><th></th>{head}</tr>{"".join(rows)}</table></div>{key}</div>'
+    )
+
+
+DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+
+def _week_grid(audit: AuditResult) -> str:
+    """Turn "alternate nights" into a calendar.
+
+    "Use on alternate nights" is advice people agree with and then do not
+    follow, because working out which night is which is left to them. With
+    three alternating products it is genuinely hard. Assigning them to a
+    rotation and drawing it makes the instruction executable.
+    """
+    alternating = [s for s in audit.routine.pm if s.frequency != "daily"]
+    if len(alternating) < 2:
+        return ""
+
+    n = len(alternating)
+    rows = []
+    for i, step in enumerate(alternating):
+        cells = []
+        for day in range(7):
+            on = day % n == i
+            cells.append(f'<td class="{"on" if on else "rest"}">{"✓" if on else ""}</td>')
+        label = step.product_name if len(step.product_name) <= 30 else step.product_name[:28] + "…"
+        rows.append(f'<tr><th class="n">{e(label)}</th>{"".join(cells)}</tr>')
+
+    head = "".join(f"<th>{d}</th>" for d in DAYS)
+    return (
+        '<div class="card"><table class="wk">'
+        f'<tr><th class="n"></th>{head}</tr>{"".join(rows)}</table>'
+        '<p style="font-size:12.5px;color:var(--ink-dim);margin:12px 0 0">'
+        f"These {n} products are strong enough that using them on the same night "
+        "irritates without adding benefit. One per night, rotating, keeps all of "
+        "them in your routine.</p></div>"
     )
 
 
@@ -323,21 +468,48 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
     # waits are used unchanged.
     seq = []
     for slot, steps in (("am", audit.routine.am), ("pm", audit.routine.pm)):
-        for s in steps:
-            spec = specs.get(s.product_name)
-            how = (
-                f"{spec.amount}, {spec.motion} on {spec.area}"
-                if spec else "apply as usual"
-            )
+        for s_ in steps:
+            spec = specs.get(s_.product_name)
+            beats = []
+            if spec:
+                beats.append({
+                    "kind": "apply",
+                    "text": f"{spec.amount}, {spec.motion} on {spec.area}",
+                    "secs": spec.seconds,
+                })
+                if spec.finish == "rinse off":
+                    beats.append({
+                        "kind": "rinse off",
+                        "text": "rinse thoroughly with lukewarm water, then pat dry",
+                        "secs": spec.finish_seconds or 25,
+                    })
+                elif spec.finish == "pat dry":
+                    beats.append({
+                        "kind": "pat dry",
+                        "text": "pat dry with a clean towel",
+                        "secs": spec.finish_seconds or 10,
+                    })
+                elif spec.finish == "let it absorb" and not spec.wait_after_seconds:
+                    beats.append({
+                        "kind": "let it absorb",
+                        "text": "let it sink in before the next product",
+                        "secs": spec.finish_seconds or 20,
+                    })
+                if spec.wait_after_seconds:
+                    # Absorbing and waiting are the same physical pause described
+                    # twice. The agent sets both for an acid, and running them in
+                    # series put two minutes of standing still on a toner. One
+                    # beat, the longer of the two.
+                    beats.append({
+                        "kind": "wait",
+                        "text": "let it absorb and settle before the next product",
+                        "secs": max(spec.wait_after_seconds, spec.finish_seconds),
+                    })
+            else:
+                beats.append({"kind": "apply", "text": "apply as usual", "secs": 15})
             seq.append({
-                "slot": slot,
-                "order": s.order,
-                "of": len(steps),
-                "name": s.product_name,
-                "how": how,
-                "freq": s.frequency,
-                "seconds": spec.seconds if spec else 15,
-                "wait": spec.wait_after_seconds if spec else 0,
+                "slot": slot, "order": s_.order, "of": len(steps),
+                "name": s_.product_name, "freq": s_.frequency, "beats": beats,
             })
 
     verified_ok = audit.rules_verified == audit.rules_total
@@ -399,10 +571,20 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
         parts.append("</div>")
     parts.append("</div>")
 
+    week = _week_grid(audit)
+    if week:
+        parts.append("<h2>Which nights</h2>")
+        parts.append(week)
+
     if audit.routine.notes:
         parts.append("<h2>Worth knowing</h2>")
         for note in audit.routine.notes:
             parts.append(f'<div class="note">{e(note)}</div>')
+
+    grid = _conflict_grid(audit)
+    if grid:
+        parts.append("<h2>What clashes with what</h2>")
+        parts.append(grid)
 
     # Findings organised by what to do about them, not by severity.
     #

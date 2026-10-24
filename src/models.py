@@ -192,12 +192,34 @@ class Explanation(BaseModel):
 
 
 class StepApplication(BaseModel):
+    """How to apply one product, as a sequence a person can follow.
+
+    `finish` exists because the first version modelled a step as "apply for N
+    seconds, move on", which is wrong for anything that rinses. It told the
+    user to massage a cleanser for twenty seconds and then go straight to the
+    toner, face still covered in cleanser. A step is apply, then finish, then
+    optionally wait.
+    """
+
     product_name: str
-    motion: Literal["press", "circular", "patting", "smooth", "dab"] = "smooth"
+    motion: Literal["press", "circular", "patting", "smooth", "dab", "lather"] = "smooth"
     area: str = "whole face"
     amount: str = "pea-sized"
-    seconds: int = Field(default=15, ge=1, le=120)
-    wait_after_seconds: int = Field(default=0, ge=0, le=600)
+    seconds: int = Field(default=15, ge=1, le=120, description="Time spent applying.")
+    finish: Literal["rinse off", "pat dry", "let it absorb", "nothing"] = Field(
+        default="let it absorb",
+        description="What happens when the applying is done. Rinse-off products must say "
+                    "'rinse off'; leave-on products absorb.",
+    )
+    finish_seconds: int = Field(
+        default=0, ge=0, le=180,
+        description="How long the finish takes — rinsing thoroughly is not instant.",
+    )
+    wait_after_seconds: int = Field(
+        default=0, ge=0, le=600,
+        description="Pause before the NEXT product, after this one is finished. For letting "
+                    "an acid settle, not for rinsing.",
+    )
 
 
 class AuditNarrative(BaseModel):
