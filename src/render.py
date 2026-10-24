@@ -176,6 +176,28 @@ table.wk td{height:30px;border-radius:6px;background:var(--panel-2);text-align:c
 table.wk td.on{background:var(--accent);color:#14121c;font-weight:650}
 table.wk td.rest{background:var(--panel-2);color:var(--ink-faint)}
 
+/* Print card: hidden on screen, the only thing that prints. */
+.printcard{display:none}
+@media print{
+  @page{margin:12mm}
+  body{background:#fff;color:#111;padding:0;font-size:10.5pt}
+  .wrap>*{display:none !important}
+  .wrap>.printcard{display:block !important}
+  .guide{display:none !important}
+  .printcard h1{font-size:20pt;margin:0 0 14pt;letter-spacing:-.01em}
+  .printcard h3{font-size:11pt;text-transform:uppercase;letter-spacing:.08em;
+    margin:0 0 7pt;padding-bottom:4pt;border-bottom:1pt solid #999}
+  .pccols{display:grid;grid-template-columns:1fr 1fr;gap:22pt;margin-bottom:16pt}
+  .printcard ol{margin:0;padding-left:16pt}
+  .printcard li{margin-bottom:8pt;break-inside:avoid;line-height:1.35}
+  .printcard em{color:#444;font-size:9pt}
+  .pcd{font-size:9pt;color:#444;margin-top:1pt}
+  table.pcw{border-collapse:collapse;width:100%;font-size:9pt;margin-top:4pt}
+  table.pcw th,table.pcw td{border:0.5pt solid #bbb;padding:3pt 4pt;text-align:center}
+  table.pcw th:first-child{text-align:left;width:46%;font-weight:600}
+  .pcf{font-size:8.5pt;color:#555;margin-top:14pt;border-top:0.5pt solid #ccc;padding-top:7pt}
+}
+
 /* Guided mode: for following at the sink, not for reading. */
 .guide{position:fixed;inset:0;background:rgba(9,10,14,.93);z-index:50;
   display:grid;place-items:center;padding:24px}
@@ -302,6 +324,98 @@ JS = """
     if(ev.key === 'ArrowRight') advance(1);
     if(ev.key === 'ArrowLeft') advance(-1);
   });
+})();
+"""
+
+
+SPEECH_JS = """
+/* Spoken walkthrough.
+ *
+ * The visual stepper assumed you would watch a countdown. You will not — your
+ * hands are wet and your eyes are shut. This is the version that works in the
+ * actual situation: press once, put the phone face down, and never touch it
+ * again.
+ *
+ * speechSynthesis uses voices from the operating system, not from this page,
+ * and the ones that ship with Windows and macOS report localService: true, so
+ * nothing here needs a network. If a machine genuinely has no voices the
+ * buttons disable themselves rather than failing silently.
+ */
+(function(){
+  var ALL = DATA_STEPS;
+  var queue = [], qi = 0, timer = null, running = false;
+  var btnAm = document.getElementById('say-am'),
+      btnPm = document.getElementById('say-pm'),
+      stopB = document.getElementById('say-stop'),
+      statusEl = document.getElementById('say-status');
+
+  if(!('speechSynthesis' in window)){
+    [btnAm, btnPm].forEach(function(b){ b.disabled = true; });
+    statusEl.textContent = 'this browser cannot read aloud';
+    return;
+  }
+
+  function build(slot){
+    var steps = ALL.filter(function(s){ return s.slot === slot; });
+    var out = [{say: (slot === 'am' ? 'Morning' : 'Evening') + ' routine. '
+                     + steps.length + ' steps.', hold: 1}];
+    steps.forEach(function(s, n){
+      s.beats.forEach(function(bt){
+        var text;
+        if(bt.kind === 'apply'){
+          text = 'Step ' + (n + 1) + '. ' + s.name + '. ' + bt.text + '.';
+          if(s.freq !== 'daily'){ text += ' Only on ' + s.freq + '.'; }
+          text += ' ' + bt.secs + ' seconds.';
+        } else if(bt.kind === 'wait'){
+          text = 'Now ' + bt.text + '. ' + bt.secs + ' seconds.';
+        } else {
+          text = 'Now ' + bt.text + '.';
+        }
+        out.push({say: text, hold: bt.secs});
+      });
+    });
+    out.push({say: 'That is the whole routine. You are done.', hold: 0});
+    return out;
+  }
+
+  function run(){
+    if(!running) return;
+    if(qi >= queue.length){ finish('done'); return; }
+    var item = queue[qi++];
+    statusEl.textContent = item.say;
+    var u = new SpeechSynthesisUtterance(item.say);
+    u.rate = 0.95;
+    /* The hold runs AFTER the sentence finishes, not from when it started —
+     * otherwise a long instruction eats the time you were given to follow it. */
+    u.onend = u.onerror = function(){
+      if(!running) return;
+      timer = setTimeout(run, item.hold * 1000);
+    };
+    speechSynthesis.speak(u);
+  }
+
+  function start(slot){
+    stop();
+    running = true; queue = build(slot); qi = 0;
+    btnAm.disabled = btnPm.disabled = true;
+    stopB.disabled = false;
+    run();
+  }
+
+  function finish(msg){
+    running = false;
+    clearTimeout(timer);
+    speechSynthesis.cancel();
+    btnAm.disabled = btnPm.disabled = false;
+    stopB.disabled = true;
+    statusEl.textContent = msg || '';
+  }
+  function stop(){ finish(''); }
+
+  btnAm.addEventListener('click', function(){ start('am'); });
+  btnPm.addEventListener('click', function(){ start('pm'); });
+  stopB.addEventListener('click', stop);
+  window.addEventListener('beforeunload', function(){ speechSynthesis.cancel(); });
 })();
 """
 
@@ -484,6 +598,58 @@ def _week_grid(audit: AuditResult) -> str:
     )
 
 
+def _print_card(audit: AuditResult, specs: dict) -> str:
+    """A one-page card for the bathroom mirror.
+
+    The most honest answer to "I don't want a screen near my skincare" is not a
+    better screen. This is a separate block rather than a print stylesheet over
+    the live page: the page is a dark-themed analysis and the card is a light,
+    dense reference, and trying to make one print as the other produces
+    something that is bad at both.
+    """
+    def column(label: str, steps: list) -> str:
+        rows = []
+        for s in steps:
+            spec = specs.get(s.product_name)
+            detail = ""
+            if spec:
+                bits = [f"{spec.amount}, {spec.motion}"]
+                if spec.finish != "nothing":
+                    bits.append(spec.finish)
+                if spec.wait_after_seconds:
+                    bits.append(f"wait {spec.wait_after_seconds}s")
+                detail = f'<div class="pcd">{e(" → ".join(bits))}</div>'
+            freq = "" if s.frequency == "daily" else f' <em>({e(s.frequency)})</em>'
+            rows.append(f"<li><b>{e(s.product_name)}</b>{freq}{detail}</li>")
+        return f"<div><h3>{label}</h3><ol>{''.join(rows)}</ol></div>"
+
+    alternating = [s for s in audit.routine.pm if s.frequency != "daily"]
+    week = ""
+    if len(alternating) >= 2:
+        n = len(alternating)
+        rows = []
+        for i, step in enumerate(alternating):
+            cells = "".join(
+                f'<td>{"●" if day % n == i else ""}</td>' for day in range(7)
+            )
+            rows.append(f"<tr><th>{e(step.product_name)}</th>{cells}</tr>")
+        head = "".join(f"<th>{d[0]}</th>" for d in DAYS)
+        week = (
+            "<h3>Which nights</h3>"
+            f'<table class="pcw"><tr><th></th>{head}</tr>{"".join(rows)}</table>'
+        )
+
+    return (
+        '<section class="printcard">'
+        "<h1>Skincare routine</h1>"
+        f'<div class="pccols">{column("Morning", audit.routine.am)}'
+        f'{column("Evening", audit.routine.pm)}</div>{week}'
+        '<p class="pcf">Rinse-off steps are marked. Waits are for letting a '
+        "product settle before the next one goes on.</p>"
+        "</section>"
+    )
+
+
 def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
     specs = {s.product_name: s for s in (narrative.steps if narrative else [])}
     explain = {x.rule_id: x.plain_language for x in (narrative.explanations if narrative else [])}
@@ -581,10 +747,18 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
     parts.append("<h2>Your routine</h2>")
     parts.append(
         '<div class="bar">'
-        '<button id="go-am">Guide me through the morning</button>'
-        '<button id="go-pm" class="ghost">Guide me through the evening</button>'
-        '<span style="font-size:12px;color:var(--ink-faint)">'
-        "runs in real time at the sink · enforces the waits</span>"
+        '<button id="say-am">Read me the morning</button>'
+        '<button id="say-pm">Read me the evening</button>'
+        '<button id="say-stop" class="ghost" disabled>Stop</button>'
+        '<button id="print" class="ghost">Print a card for the mirror</button>'
+        "</div>"
+        '<p style="font-size:12.5px;color:var(--ink-faint);margin:-4px 0 14px">'
+        "Press play and put the phone down — it talks you through each step and "
+        "the waits, hands-free. Or print the card and tape it inside a cabinet door."
+        '</p><div class="bar">'
+        '<button id="go-am" class="ghost">Step through the morning on screen</button>'
+        '<button id="go-pm" class="ghost">Step through the evening on screen</button>'
+        '<span id="say-status" style="font-size:12px;color:var(--ink-faint);flex:1"></span>'
         "</div>"
     )
     parts.append('<div class="cols">')
@@ -671,6 +845,8 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
     _section("myth", "You can stop worrying about these",
              "common advice that does not hold up", open_=False, oneline=True)
 
+    parts.append(_print_card(audit, specs))
+
     parts.append(
         '<div class="guide" id="guide" hidden><div class="gbox">'
         '<div class="gslot" id="g-slot"></div>'
@@ -696,5 +872,9 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
         "</footer></div>"
     )
 
-    parts.append(f"<script>var DATA_STEPS={json.dumps(seq)};{JS}</script></body></html>")
+    parts.append(
+        f"<script>var DATA_STEPS={json.dumps(seq)};{JS}{SPEECH_JS}"
+        "document.getElementById('print').addEventListener('click',function(){window.print()});"
+        "</script></body></html>"
+    )
     return "".join(parts)
