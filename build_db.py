@@ -212,7 +212,8 @@ def main() -> None:
         terms = {(normalise(row["name"]), "name")}
         terms |= {(normalise(t), "inci") for t in row.get("inci") or []}
         terms |= {(normalise(t), "alias") for t in row.get("aliases") or []}
-        terms |= {(normalise(t), "intl") for t in intl.get(row["id"], [])}
+        for lang, words in (intl.get(row["id"]) or {}).items():
+            terms |= {(normalise(t), f"intl:{lang}") for t in words}
         for term, kind in terms:
             con.execute(
                 "INSERT OR IGNORE INTO ingredient_terms VALUES (?,?,?)",
@@ -264,9 +265,27 @@ def main() -> None:
     print(f"Built {DB_PATH.relative_to(ROOT)}")
     for k, v in counts.items():
         print(f"  {v:>4}  {k}")
+
+    # Per-language coverage, printed rather than asserted. A language that
+    # looks supported but covers half the actives will silently under-report
+    # findings on products in that language, and nothing else in the pipeline
+    # would reveal it.
+    languages = sorted({lang for entry in intl.values() for lang in entry})
+    if languages:
+        total = len(ingredients)
+        print("\n  alias coverage by language")
+        for lang in languages:
+            have = sum(1 for row in ingredients if lang in (intl.get(row["id"]) or {}))
+            gaps = [row["id"] for row in ingredients if lang not in (intl.get(row["id"]) or {})]
+            bar = "#" * round(have / total * 20)
+            print(f"    {lang}  {have:>2}/{total}  {bar:<20}")
+            if gaps and len(gaps) <= 8:
+                print(f"         missing: {', '.join(gaps)}")
+
     if unverified:
         print(f"\n  {unverified} rows still marked review: pending.")
         print("  These are not evidence until a human checks them.")
+        print("  Translations in ingredient_aliases.yaml are unverified too.")
 
 
 if __name__ == "__main__":

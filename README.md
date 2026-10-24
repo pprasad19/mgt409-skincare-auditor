@@ -64,10 +64,20 @@ Three things make the rest work:
 - The Shelf Reader records both the printed term and its INCI equivalent, so a
   translated match stays auditable against what was actually on the label.
 
+Alias coverage is **32/32 actives in Korean, French, Japanese and Chinese**.
+`build_db.py` prints the per-language breakdown on every build, so a gap shows
+up rather than being assumed.
+
 Try it:
 
 ```bash
 python audit_cli.py --shelf data/sample_shelf_intl.json
+```
+
+And the regression check — 37 assertions, no API key needed:
+
+```bash
+python test_i18n.py
 ```
 
 **The translations are the lowest-confidence data in the project** and have not

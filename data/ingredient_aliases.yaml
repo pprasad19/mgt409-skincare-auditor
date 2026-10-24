@@ -2,187 +2,224 @@
 #
 # WHY THIS FILE EXISTS
 # INCI nomenclature is international, so most non-English labels already carry
-# terms the main table matches — a Korean or French product listing "Niacinamide"
-# needs nothing from this file. It covers the cases where a label uses local
-# names instead: common on Japanese and Chinese packaging, and on the marketing
-# face of Korean products.
+# terms the main table matches — a Korean or French product listing
+# "Niacinamide" needs nothing from here. This covers labels that use local
+# names instead: standard on Japanese and Chinese packaging, and on the Korean
+# ingredient lists that transliterate INCI into Hangul.
 #
-# RISK, AND WHY IT IS DIFFERENT FROM THE RULES
-# A missing alias means a product resolves to fewer actives — the system says
+# French is sparse on purpose. EU regulation requires INCI on the ingredient
+# list, so a French product's actives are already in a form the table matches.
+# What French needs is form keywords (crème, eau micellaire, lait démaquillant),
+# which live in rules.py, not here.
+#
+# RISK, AND WHY IT DIFFERS FROM THE RULES TABLE
+# A missing alias means a product resolves to fewer actives: the system says
 # less than it could, which is safe. A WRONG alias means a product resolves to
-# an active it does not contain, and the user is then warned about a conflict
-# that does not exist, or worse, reassured about one that does. False positives
-# here are more damaging than false negatives.
+# an active it does not contain, so the user is warned about a conflict that
+# does not exist — or reassured about one that does. False positives here are
+# more damaging than false negatives, which is why short ambiguous terms are
+# left out even where they are technically correct.
 #
-# These translations have NOT been checked by a speaker of each language. They
-# are the lowest-confidence data in the project. Before relying on any language
-# below, have someone who reads it check that column; until then, treat findings
-# that depend on a translated match as provisional.
-#
-# Only the actives where a local-language name is actually common are listed.
-# Solvents and emulsifiers are omitted — the table has no opinion on them.
+# STATUS: unverified. Not checked by a speaker of any of these languages.
+# `python build_db.py` prints per-language coverage so gaps are visible rather
+# than assumed. Before relying on a language, have someone read that column.
 
 aliases:
 
-  niacinamide:
-    - 나이아신아마이드
-    - 나이아신아미드
-    - ナイアシンアミド
-    - 烟酰胺
-    - 菸鹼醯胺
-    - niacinamida
-    - niacinamid
-
-  retinol:
-    - 레티놀
-    - レチノール
-    - 视黄醇
-    - 視黃醇
-    - rétinol
-
-  retinaldehyde:
-    - 레티날
-    - レチナール
-    - 视黄醛
+  # ---- Retinoids ----------------------------------------------------------
+  tretinoin:
+    ko: [트레티노인, 트레티노산]
+    ja: [トレチノイン, レチノイン酸]
+    zh: [维A酸, 維A酸, 维甲酸]
+    fr: [trétinoïne]
 
   adapalene:
-    - 아다팔렌
-    - アダパレン
-    - 阿达帕林
+    ko: [아다팔렌]
+    ja: [アダパレン]
+    zh: [阿达帕林, 阿達帕林]
+    fr: [adapalène]
 
-  tretinoin:
-    - 트레티노인
-    - トレチノイン
-    - 维A酸
-    - trétinoïne
+  retinol:
+    ko: [레티놀]
+    ja: [レチノール]
+    zh: [视黄醇, 視黃醇]
+    fr: [rétinol]
 
-  l_ascorbic_acid:
-    - 아스코르브산
-    - 아스코빅애씨드
-    - アスコルビン酸
-    - 抗坏血酸
-    - 抗壞血酸
-    - acide ascorbique
-    - ácido ascórbico
+  retinaldehyde:
+    ko: [레티날, 레티날데하이드]
+    ja: [レチナール]
+    zh: [视黄醛, 視黃醛]
+    fr: [rétinaldéhyde]
 
-  salicylic_acid:
-    - 살리실산
-    - 살리실릭애씨드
-    - サリチル酸
-    - 水杨酸
-    - 水楊酸
-    - acide salicylique
-    - ácido salicílico
+  retinyl_palmitate:
+    ko: [레티닐팔미테이트]
+    ja: [パルミチン酸レチノール]
+    zh: [棕榈酸视黄酯, 棕櫚酸視黃酯]
+    fr: [palmitate de rétinyle]
 
+  # ---- Exfoliating acids --------------------------------------------------
   glycolic_acid:
-    - 글리콜산
-    - 글라이콜릭애씨드
-    - グリコール酸
-    - 乙醇酸
-    - 甘醇酸
-    - acide glycolique
-    - ácido glicólico
+    ko: [글리콜산, 글라이콜릭애씨드]
+    ja: [グリコール酸]
+    zh: [乙醇酸, 甘醇酸]
+    fr: [acide glycolique]
 
   lactic_acid:
-    - 락틱애씨드
-    - 젖산
-    - 乳酸
-    - acide lactique
-    - ácido láctico
+    ko: [락틱애씨드, 젖산]
+    ja: [乳酸]
+    zh: [乳酸]
+    fr: [acide lactique]
 
-  azelaic_acid:
-    - 아젤라산
-    - アゼライン酸
-    - 壬二酸
-    - acide azélaïque
+  mandelic_acid:
+    ko: [만델릭애씨드, 만델산]
+    ja: [マンデル酸]
+    zh: [扁桃酸, 苦杏仁酸]
+    fr: [acide mandélique]
+
+  salicylic_acid:
+    ko: [살리실산, 살리실릭애씨드]
+    ja: [サリチル酸]
+    zh: [水杨酸, 水楊酸]
+    fr: [acide salicylique]
+
+  gluconolactone:
+    ko: [글루코노락톤]
+    ja: [グルコノラクトン]
+    zh: [葡糖酸内酯]
+    fr: [gluconolactone]
+
+  # ---- Vitamin C ----------------------------------------------------------
+  l_ascorbic_acid:
+    ko: [아스코르브산, 아스코빅애씨드, 비타민씨]
+    ja: [アスコルビン酸]
+    zh: [抗坏血酸, 抗壞血酸]
+    fr: [acide ascorbique]
+
+  sodium_ascorbyl_phosphate:
+    ko: [소듐아스코빌포스페이트]
+    ja: [アスコルビルリン酸Na]
+    zh: [抗坏血酸磷酸酯钠]
+    fr: [ascorbyl phosphate de sodium]
+
+  thd_ascorbate:
+    ko: [테트라헥실데실아스코베이트]
+    ja: [テトラヘキシルデカン酸アスコルビル]
+    zh: [四己基癸醇抗坏血酸酯]
+    fr: [ascorbate de tétrahexyldécyle]
+
+  # ---- Other actives ------------------------------------------------------
+  niacinamide:
+    ko: [나이아신아마이드, 나이아신아미드]
+    ja: [ナイアシンアミド]
+    zh: [烟酰胺, 菸鹼醯胺]
+    fr: [niacinamide]
 
   benzoyl_peroxide:
-    - 벤조일퍼옥사이드
-    - 과산화벤조일
-    - 過酸化ベンゾイル
-    - 过氧化苯甲酰
-    - peroxyde de benzoyle
-    - peróxido de benzoilo
+    ko: [벤조일퍼옥사이드, 과산화벤조일]
+    ja: [過酸化ベンゾイル]
+    zh: [过氧化苯甲酰, 過氧化苯甲醯]
+    fr: [peroxyde de benzoyle]
+
+  azelaic_acid:
+    ko: [아젤라산, 아젤라익애씨드]
+    ja: [アゼライン酸]
+    zh: [壬二酸]
+    fr: [acide azélaïque]
 
   hydroquinone:
-    - 하이드로퀴논
-    - ハイドロキノン
-    - 氢醌
-    - 氫醌
-    - hydroquinone
+    ko: [하이드로퀴논]
+    ja: [ハイドロキノン]
+    zh: [氢醌, 氫醌]
+    fr: [hydroquinone]
 
   tranexamic_acid:
-    - 트라넥삼산
-    - トラネキサム酸
-    - 氨甲环酸
-    - 傳明酸
-    - acide tranexamique
+    ko: [트라넥삼산, 트라넥사믹애씨드]
+    ja: [トラネキサム酸]
+    zh: [氨甲环酸, 傳明酸]
+    fr: [acide tranexamique]
 
   alpha_arbutin:
-    - 알파 알부틴
-    - アルブチン
-    - 熊果苷
-
-  hyaluronic_acid:
-    - 히알루론산
-    - ヒアルロン酸
-    - 透明质酸
-    - 玻尿酸
-    - acide hyaluronique
-    - ácido hialurónico
-
-  glycerin:
-    - 글리세린
-    - グリセリン
-    - 甘油
-    - glycérine
-    - glicerina
-
-  ceramides:
-    - 세라마이드
-    - セラミド
-    - 神经酰胺
-    - 神經醯胺
-    - céramides
-
-  panthenol:
-    - 판테놀
-    - パンテノール
-    - 泛醇
-
-  centella:
-    - 센텔라아시아티카
-    - 병풀
-    - ツボクサ
-    - 积雪草
-    - 積雪草
-
-  squalane:
-    - 스쿠알란
-    - スクワラン
-    - 角鲨烷
-    - 角鯊烷
-
-  urea:
-    - 요소
-    - 尿素
-    - urée
-
-  zinc_oxide:
-    - 산화아연
-    - 酸化亜鉛
-    - 氧化锌
-    - 氧化鋅
-    - oxyde de zinc
-    - óxido de zinc
-
-  copper_peptides:
-    - 구리펩타이드
-    - 銅ペプチド
-    - 铜肽
+    ko: [알파알부틴, 알부틴]
+    ja: [アルブチン]
+    zh: [熊果苷]
+    fr: [arbutine]
 
   sulfur:
-    - 유황
-    - 硫黄
-    - 硫磺
-    - soufre
+    ko: [유황]
+    ja: [硫黄]
+    zh: [硫磺]
+    fr: [soufre]
+
+  copper_peptides:
+    ko: [구리펩타이드, 카퍼트라이펩타이드]
+    ja: [銅ペプチド]
+    zh: [铜肽, 銅胜肽]
+    fr: [tripeptide de cuivre, cuivre tripeptide]
+
+  peptides:
+    ko: [펩타이드, 팔미토일트라이펩타이드]
+    ja: [ペプチド]
+    zh: [胜肽, 勝肽]
+    fr: [peptides]
+
+  urea:
+    ko: [요소]
+    ja: [尿素]
+    zh: [尿素]
+    fr: [urée]
+
+  # ---- Barrier and support ------------------------------------------------
+  hyaluronic_acid:
+    ko: [히알루론산, 소듐하이알루로네이트]
+    ja: [ヒアルロン酸]
+    zh: [透明质酸, 玻尿酸]
+    fr: [acide hyaluronique]
+
+  glycerin:
+    ko: [글리세린]
+    ja: [グリセリン]
+    zh: [甘油]
+    fr: [glycérine]
+
+  ceramides:
+    ko: [세라마이드]
+    ja: [セラミド]
+    zh: [神经酰胺, 神經醯胺]
+    fr: [céramides]
+
+  panthenol:
+    ko: [판테놀]
+    ja: [パンテノール]
+    zh: [泛醇]
+    fr: [panthénol]
+
+  centella:
+    ko: [센텔라아시아티카, 병풀]
+    ja: [ツボクサ, センテラアシアチカ]
+    zh: [积雪草, 積雪草]
+    fr: [centella asiatica]
+
+  squalane:
+    ko: [스쿠알란]
+    ja: [スクワラン]
+    zh: [角鲨烷, 角鯊烷]
+    fr: [squalane]
+
+  petrolatum:
+    ko: [바셀린, 페트롤라툼]
+    ja: [ワセリン]
+    zh: [凡士林]
+    fr: [vaseline]
+
+  # ---- UV filters ---------------------------------------------------------
+  zinc_oxide:
+    ko: [산화아연]
+    ja: [酸化亜鉛]
+    zh: [氧化锌, 氧化鋅]
+    fr: [oxyde de zinc]
+
+  organic_uv_filters:
+    ko: [아보벤존, 옥토크릴렌, 유기자차]
+    ja: [アボベンゾン, オクトクリレン, メトキシケイヒ酸エチルヘキシル]
+    zh: [阿伏苯宗, 奥克立林]
+    fr: [octocrylène, avobenzone, filtres UV]
