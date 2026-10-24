@@ -85,7 +85,10 @@ h2{font:600 12.5px/1 var(--sans);text-transform:uppercase;letter-spacing:.14em;
    color:var(--ink-faint);margin:56px 0 18px}
 h2:first-of-type{margin-top:0}
 .sub{color:var(--ink-dim);margin:0 0 34px;font-size:16px}
-.lede{color:var(--ink-dim);font-size:15.5px;margin:-8px 0 16px;max-width:60ch}
+/* No max-width here. 60ch is right for a paragraph and wrong for a single
+   descriptor: it wrapped "to do about it." onto a line of its own. This one
+   sits on one line at desktop width and wraps naturally when narrow. */
+.lede{color:var(--ink-dim);font-size:15.5px;margin:-8px 0 16px}
 
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;
   padding:26px 30px;box-shadow:var(--shadow)}
@@ -995,8 +998,7 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
         # A one-line descriptor underneath answers "what am I reading" before
         # the reader has to infer it from the content.
         parts.append(
-            '<p class="lede">The main summary of your shelf — what matters most, '
-            "and the first thing to do about it.</p>"
+            '<p class="lede">The main summary of your shelf — what matters most, and what to do first.</p>'
         )
         parts.append(f'<div class="card summary">{e(narrative.summary)}</div>')
 
