@@ -110,6 +110,15 @@ details.mech .body{font-size:13px;color:var(--ink-dim);padding:7px 0 0 14px;bord
   border-radius:9px;padding:12px 14px;margin-bottom:9px;font-size:14px;color:#e8d9b8}
 .escal{background:#1d1416;border:1px solid #3d2328;border-left:3px solid var(--crit);
   border-radius:9px;padding:14px 16px;margin-bottom:10px}
+/* A gap is not an escalation. Missing sunscreen and "see a clinician" were
+   sharing the same red panel, which flattened the difference between a
+   shopping decision and a medical one. */
+.gap{background:#17191f;border:1px solid var(--line);border-left:3px solid var(--accent);
+  border-radius:9px;padding:14px 16px;margin-top:12px;font-size:14.5px;line-height:1.55}
+.gap.urgent{border-left-color:var(--high);background:#1a1712}
+.gap .lbl{display:inline-block;font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--ink-faint);margin-bottom:6px}
+.gap .why{margin-top:9px;font-size:12px;color:var(--ink-faint)}
 .escal .who{font-size:12px;color:var(--crit);font-weight:600;margin-bottom:4px}
 .bar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
 button{font:inherit;font-size:13px;font-weight:550;padding:7px 15px;border-radius:8px;
@@ -1069,11 +1078,12 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
     # What belongs here is what the shelf is missing, which no pairwise rule
     # can see.
     for gap in audit.gaps:
-        cls = "escal" if gap.severity in ("critical", "high") else "note"
+        urgent = gap.severity in ("critical", "high")
+        label = "Missing from your shelf" if urgent else "Keep this one up"
         parts.append(
-            f'<div class="{cls}" style="margin-top:10px">{e(gap.message)}'
-            '<div style="margin-top:8px;font-size:12px;opacity:.75">'
-            f'Because of: {e(", ".join(gap.because))}</div></div>'
+            f'<div class="gap{" urgent" if urgent else ""}">'
+            f'<div class="lbl">{e(label)}</div>{e(gap.message)}'
+            f'<div class="why">Because of: {e(", ".join(gap.because))}</div></div>'
         )
 
     parts.append(_print_card(audit, specs))

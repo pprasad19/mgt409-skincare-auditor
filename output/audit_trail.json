@@ -264,5 +264,24 @@
       "cache_write_tokens": 5531,
       "output_tokens": 1567
     }
+  },
+  {
+    "run_id": "9237b59c",
+    "seq": 1,
+    "timestamp": "2026-10-24T23:23:17.051984+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 23,
+      "steps": 14,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 5657,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 5531,
+      "output_tokens": 1567
+    }
   }
 ]

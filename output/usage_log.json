@@ -423,5 +423,30 @@
       "output": 0.0007835,
       "total": 0.00148748
     }
+  },
+  {
+    "run_id": "cd5cf180",
+    "run_label": "audit-9237b59c",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-24T23:23:17.051691+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 5,531 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 5657,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 5531,
+      "output_tokens": 1567,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00069138,
+      "output": 0.0007835,
+      "total": 0.00148748
+    }
   }
 ]
