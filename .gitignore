@@ -24,6 +24,7 @@ dist/
 .DS_Store
 Thumbs.db
 
-# Generated result pages
-output/*.html
-output/*.json
+# output/ is NOT ignored. usage_log.json, audit_trail.json and
+# trap_calls.json are the evidence the report rests on, and the course
+# expects them in the repo. Ignoring them would quietly drop the proof
+# for three graded sections.
