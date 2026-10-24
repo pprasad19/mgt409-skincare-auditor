@@ -33,6 +33,7 @@ def main() -> None:
                     help="Run the Routine Auditor to narrate the result. Costs tokens.")
     ap.add_argument("--no-cache", action="store_true",
                     help="Disable prompt caching, for the cost comparison.")
+    ap.add_argument("--html", help="Write a self-contained result page.")
     args = ap.parse_args()
 
     raw = json.loads(Path(args.shelf).read_text(encoding="utf-8"))
@@ -84,8 +85,17 @@ def main() -> None:
             print(f"  {p.product.name}")
             print(f"      unknown terms: {', '.join(p.unmatched_terms[:6]) or '(none listed)'}")
 
+    narrative = None
     if args.explain:
-        narrate(result, cache_enabled=not args.no_cache)
+        narrative = narrate(result, cache_enabled=not args.no_cache)
+
+    if args.html:
+        from render import render
+
+        Path(args.html).write_text(render(result, narrative), encoding="utf-8")
+        print(f"\nwrote {args.html}")
+        if narrative is None:
+            print("  (no --explain, so the page has no plain-language text or application specs)")
 
     if args.json_out:
         Path(args.json_out).write_text(result.model_dump_json(indent=2), encoding="utf-8")
@@ -132,6 +142,7 @@ def narrate(result, *, cache_enabled: bool) -> None:
     print(f"\ntrap tools called this run: {new_traps}")
     print(log.summary())
     print("  projections:", projections(log.total_cost))
+    return narrative
 
 
 if __name__ == "__main__":

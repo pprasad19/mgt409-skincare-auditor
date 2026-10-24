@@ -36,5 +36,43 @@
       "cache_write_tokens": 4803,
       "output_tokens": 1652
     }
+  },
+  {
+    "run_id": "c2dc5733",
+    "seq": 1,
+    "timestamp": "2026-10-24T22:09:27.005813+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 19,
+      "steps": 14,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 5026,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 4900,
+      "output_tokens": 1619
+    }
+  },
+  {
+    "run_id": "cb127ca2",
+    "seq": 1,
+    "timestamp": "2026-10-24T22:11:04.781569+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 19,
+      "steps": 14,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 5026,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 4900,
+      "output_tokens": 1619
+    }
   }
 ]
