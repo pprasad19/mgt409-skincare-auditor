@@ -74,5 +74,43 @@
       "cache_write_tokens": 4900,
       "output_tokens": 1619
     }
+  },
+  {
+    "run_id": "33fcb7f3",
+    "seq": 1,
+    "timestamp": "2026-10-24T22:25:04.953241+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 19,
+      "steps": 14,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 5149,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 5023,
+      "output_tokens": 1596
+    }
+  },
+  {
+    "run_id": "1760f950",
+    "seq": 1,
+    "timestamp": "2026-10-24T22:26:08.783869+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 19,
+      "steps": 14,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 5149,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 5023,
+      "output_tokens": 1596
+    }
   }
 ]

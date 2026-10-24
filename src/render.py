@@ -122,38 +122,135 @@ footer{margin-top:52px;padding-top:20px;border-top:1px solid var(--line);
 .ver{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;
   background:#2b2415;color:#e3b341;border:1px solid #453a22}
 .ver.ok{background:#16281a;color:var(--good);border-color:#24402a}
+
+/* Action groups: findings organised by what to do, not by severity label. */
+.grp{margin-bottom:12px}
+.grp>summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:9px;
+  padding:13px 16px;background:var(--panel);border:1px solid var(--line);border-radius:11px}
+.grp>summary::-webkit-details-marker{display:none}
+.grp>summary::before{content:"▸";color:var(--ink-faint);font-size:12px}
+.grp[open]>summary::before{content:"▾"}
+.grp[open]>summary{border-radius:11px 11px 0 0;border-bottom-color:transparent}
+.grp .gt{font-weight:600;font-size:15px}
+.grp .gn{font-size:12px;color:var(--ink-faint)}
+.grp .gw{margin-left:auto;font-size:12px;color:var(--ink-faint)}
+.grp .inner{border:1px solid var(--line);border-top:0;border-radius:0 0 11px 11px;
+  background:var(--panel);padding:4px 18px 14px}
+.grp.first>summary{border-color:#3d2a1a;background:#1a1510}
+.grp.first .inner{border-color:#3d2a1a;background:#1a1510}
+.grp.first .gt{color:var(--high)}
+.oneline{display:flex;gap:9px;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--line);
+  font-size:13.5px}
+.oneline:last-child{border-bottom:0}
+.oneline .t{color:var(--ink-dim)}
+
+/* Guided mode: for following at the sink, not for reading. */
+.guide{position:fixed;inset:0;background:rgba(9,10,14,.93);z-index:50;
+  display:grid;place-items:center;padding:24px}
+.guide[hidden]{display:none}
+.gbox{width:min(520px,100%);text-align:center}
+.gslot{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.gname{font-size:30px;font-weight:650;letter-spacing:-.02em;margin:10px 0 4px;line-height:1.2}
+.ghow{font-size:17px;color:var(--ink-dim);line-height:1.5}
+.gring{margin:26px auto 8px;width:124px;height:124px;border-radius:50%;display:grid;place-items:center;
+  border:3px solid var(--line);position:relative}
+.gring.waiting{border-color:var(--high)}
+.gcount{font-size:38px;font-weight:650;font-variant-numeric:tabular-nums}
+.gsub{font-size:12px;color:var(--ink-faint);min-height:18px}
+.gbtns{display:flex;gap:9px;justify-content:center;margin-top:24px}
+.gdots{display:flex;gap:5px;justify-content:center;margin-top:20px}
+.gdots i{width:6px;height:6px;border-radius:50%;background:var(--line)}
+.gdots i.done{background:var(--ink-faint)}
+.gdots i.now{background:var(--accent);transform:scale(1.5)}
 """
 
 JS = """
+/* Guided mode.
+ *
+ * The first version replayed the routine as a highlight moving down a list you
+ * could already read in full, which was slower than reading it and told you
+ * nothing new. This is for standing at the sink with wet hands: one step at a
+ * time, large enough to read from arm's length, counting down the seconds the
+ * agent specified, and enforcing the waits between steps -- which is the part
+ * people skip and the part that actually matters for an acid.
+ */
 (function(){
-  var seq = DATA_STEPS, t = null, i = -1;
-  var btn = document.getElementById('play'),
-      stop = document.getElementById('stop'),
-      bar = document.getElementById('bar'),
-      lab = document.getElementById('lab');
-  function clear(){
-    document.querySelectorAll('.step.on').forEach(function(e){e.classList.remove('on')});
+  var ALL = DATA_STEPS;
+  var seq = [], i = 0, timer = null, remain = 0, waiting = false;
+
+  var box = document.getElementById('guide'),
+      slotEl = document.getElementById('g-slot'),
+      nameEl = document.getElementById('g-name'),
+      howEl  = document.getElementById('g-how'),
+      cntEl  = document.getElementById('g-count'),
+      subEl  = document.getElementById('g-sub'),
+      ringEl = document.getElementById('g-ring'),
+      dotsEl = document.getElementById('g-dots'),
+      prevB  = document.getElementById('g-prev'),
+      nextB  = document.getElementById('g-next');
+
+  function dots(){
+    dotsEl.innerHTML = seq.map(function(_, n){
+      return '<i class="' + (n === i ? 'now' : (n < i ? 'done' : '')) + '"></i>';
+    }).join('');
   }
-  function finish(){
-    clearTimeout(t); clear(); i = -1;
-    bar.style.width = '0%'; lab.textContent = '';
-    btn.disabled = false; stop.disabled = true;
-  }
-  function next(){
-    clear();
-    i++;
-    if(i >= seq.length){ finish(); return; }
+
+  function tick(){
+    remain--;
+    cntEl.textContent = remain > 0 ? remain : 0;
+    if(remain > 0) return;
+    clearInterval(timer);
     var s = seq[i];
-    var el = document.querySelector('[data-step="'+s.key+'"]');
-    if(el){ el.classList.add('on'); el.scrollIntoView({block:'nearest',behavior:'smooth'}); }
-    bar.style.width = Math.round((i+1)/seq.length*100) + '%';
-    lab.textContent = (s.slot==='am'?'Morning':'Evening') + ' · step ' + s.order + ' of ' + s.of;
-    t = setTimeout(next, s.ms);
+    if(!waiting && s.wait > 0){
+      waiting = true; remain = s.wait;
+      ringEl.classList.add('waiting');
+      subEl.textContent = 'let it settle before the next step';
+      cntEl.textContent = remain;
+      timer = setInterval(tick, 1000);
+      return;
+    }
+    if(i < seq.length - 1){ go(i + 1); } else { subEl.textContent = 'done'; }
   }
-  btn.addEventListener('click', function(){
-    btn.disabled = true; stop.disabled = false; i = -1; next();
+
+  function go(n){
+    clearInterval(timer);
+    i = Math.max(0, Math.min(n, seq.length - 1));
+    waiting = false;
+    var s = seq[i];
+    ringEl.classList.remove('waiting');
+    slotEl.textContent = (s.slot === 'am' ? 'Morning' : 'Evening') + ' · step ' + s.order + ' of ' + s.of;
+    nameEl.textContent = s.name;
+    howEl.textContent = s.how;
+    subEl.textContent = s.freq === 'daily' ? '' : s.freq;
+    remain = s.seconds;
+    cntEl.textContent = remain;
+    prevB.disabled = i === 0;
+    nextB.textContent = i === seq.length - 1 ? 'Finish' : 'Next';
+    dots();
+    timer = setInterval(tick, 1000);
+  }
+
+  function open(slot){
+    seq = ALL.filter(function(s){ return s.slot === slot; });
+    if(!seq.length) return;
+    box.hidden = false;
+    go(0);
+  }
+  function close(){ clearInterval(timer); box.hidden = true; }
+
+  document.getElementById('go-am').addEventListener('click', function(){ open('am'); });
+  document.getElementById('go-pm').addEventListener('click', function(){ open('pm'); });
+  document.getElementById('g-close').addEventListener('click', close);
+  prevB.addEventListener('click', function(){ go(i - 1); });
+  nextB.addEventListener('click', function(){
+    if(i === seq.length - 1){ close(); } else { go(i + 1); }
   });
-  stop.addEventListener('click', finish);
+  document.addEventListener('keydown', function(ev){
+    if(box.hidden) return;
+    if(ev.key === 'Escape') close();
+    if(ev.key === 'ArrowRight') go(i + 1);
+    if(ev.key === 'ArrowLeft') go(i - 1);
+  });
 })();
 """
 
@@ -221,17 +318,27 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
     explain = {x.rule_id: x.plain_language for x in (narrative.explanations if narrative else [])}
     w = audit.waste
 
-    # Player timing comes from the agent's specs, with a floor so a long
-    # routine stays watchable.
+    # Guided mode runs in real seconds, not a sped-up preview: the point is to
+    # follow it while actually applying things, so the agent's own durations and
+    # waits are used unchanged.
     seq = []
     for slot, steps in (("am", audit.routine.am), ("pm", audit.routine.pm)):
         for s in steps:
             spec = specs.get(s.product_name)
-            secs = (spec.seconds + spec.wait_after_seconds) if spec else 12
-            seq.append(
-                {"key": f"{slot}-{s.order}", "slot": slot, "order": s.order,
-                 "of": len(steps), "ms": max(900, min(secs * 110, 4200))}
+            how = (
+                f"{spec.amount}, {spec.motion} on {spec.area}"
+                if spec else "apply as usual"
             )
+            seq.append({
+                "slot": slot,
+                "order": s.order,
+                "of": len(steps),
+                "name": s.product_name,
+                "how": how,
+                "freq": s.frequency,
+                "seconds": spec.seconds if spec else 15,
+                "wait": spec.wait_after_seconds if spec else 0,
+            })
 
     verified_ok = audit.rules_verified == audit.rules_total
     ver_cls = "ver ok" if verified_ok else "ver"
@@ -276,10 +383,10 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
     parts.append("<h2>Your routine</h2>")
     parts.append(
         '<div class="bar">'
-        '<button id="play">Play the routine</button>'
-        '<button id="stop" class="ghost" disabled>Stop</button>'
-        '<div class="prog"><i id="bar"></i></div>'
-        '<span id="lab" style="font-size:12px;color:var(--ink-faint);min-width:150px"></span>'
+        '<button id="go-am">Guide me through the morning</button>'
+        '<button id="go-pm" class="ghost">Guide me through the evening</button>'
+        '<span style="font-size:12px;color:var(--ink-faint)">'
+        "runs in real time at the sink · enforces the waits</span>"
         "</div>"
     )
     parts.append('<div class="cols">')
@@ -297,26 +404,79 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
         for note in audit.routine.notes:
             parts.append(f'<div class="note">{e(note)}</div>')
 
+    # Findings organised by what to do about them, not by severity.
+    #
+    # Nineteen cards sorted into Important / Worth knowing / Minor is a list the
+    # reader has to triage themselves. Sorting by action puts the handful that
+    # need a decision at the top, open, and folds the rest away — the synergies
+    # and myths are reassurance, and reassurance does not need to be expanded.
     by_rule: dict[str, list] = {}
     for f in audit.findings:
         by_rule.setdefault(f.rule_id, []).append(f)
 
-    by_sev: dict[str, list[list]] = {}
+    buckets: dict[str, list[list]] = {"first": [], "adjust": [], "good": [], "myth": []}
     for group in by_rule.values():
-        by_sev.setdefault(group[0].severity, []).append(group)
+        f = group[0]
+        if f.type == "myth":
+            buckets["myth"].append(group)
+        elif f.type == "synergy":
+            buckets["good"].append(group)
+        elif f.type in ("ordering", "timing"):
+            # Important, but they are "do it this way", not "something is wrong".
+            # Keeping high-severity timing rules out of the top section is what
+            # takes it from six cards to three — and a top section with six
+            # entries is not a priority list, it is just the list again.
+            buckets["adjust"].append(group)
+        elif f.type == "redundancy" or f.severity in ("critical", "high"):
+            buckets["first"].append(group)
+        else:
+            buckets["adjust"].append(group)
 
-    parts.append(f"<h2>Findings · {len(by_rule)} rules fired</h2><div class=\"card\">")
-    for sev in ("critical", "high", "medium", "low"):
-        groups = by_sev.get(sev)
+    def _section(key: str, title: str, note: str, *, open_: bool, oneline: bool) -> None:
+        groups = buckets[key]
         if not groups:
-            continue
+            return
+        cls = "grp first" if key == "first" else "grp"
         parts.append(
-            f'<div style="font-size:12px;color:var(--ink-faint);margin:14px 0 6px;'
-            f'text-transform:uppercase;letter-spacing:.08em">{e(SEVERITY_LABEL[sev])}</div>'
+            f'<details class="{cls}"{" open" if open_ else ""}><summary>'
+            f'<span class="gt">{e(title)}</span>'
+            f'<span class="gn">{len(groups)}</span>'
+            f'<span class="gw">{e(note)}</span></summary><div class="inner">'
         )
         for group in groups:
-            parts.append(_finding_card(group, explain.get(group[0].rule_id)))
-    parts.append("</div>")
+            if oneline:
+                parts.append(
+                    f'<div class="oneline"><span class="chip">{e(group[0].rule_id)}</span>'
+                    f'<span class="t">{e(explain.get(group[0].rule_id) or group[0].guidance)}</span></div>'
+                )
+            else:
+                parts.append(_finding_card(group, explain.get(group[0].rule_id)))
+        parts.append("</div></details>")
+
+    parts.append("<h2>What to do</h2>")
+    _section("first", "Fix these first",
+             "costing you money or results", open_=True, oneline=False)
+    _section("adjust", "Use them this way",
+             "timing, order and milder clashes", open_=False, oneline=False)
+    _section("good", "Already working in your favour",
+             "no change needed", open_=False, oneline=True)
+    _section("myth", "You can stop worrying about these",
+             "common advice that does not hold up", open_=False, oneline=True)
+
+    parts.append(
+        '<div class="guide" id="guide" hidden><div class="gbox">'
+        '<div class="gslot" id="g-slot"></div>'
+        '<div class="gname" id="g-name"></div>'
+        '<div class="ghow" id="g-how"></div>'
+        '<div class="gring" id="g-ring"><span class="gcount" id="g-count">0</span></div>'
+        '<div class="gsub" id="g-sub"></div>'
+        '<div class="gdots" id="g-dots"></div>'
+        '<div class="gbtns">'
+        '<button class="ghost" id="g-prev">Back</button>'
+        '<button id="g-next">Next</button>'
+        '<button class="ghost" id="g-close">Close</button>'
+        "</div></div></div>"
+    )
 
     parts.append(
         "<footer>"

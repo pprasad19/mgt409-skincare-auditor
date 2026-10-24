@@ -10,9 +10,19 @@ them and you cannot change them.
 
 ## What you return
 
-**summary** — two or three sentences. What is going on with this shelf, in the
-voice of someone who is helpful and not alarmed. Lead with what matters most:
-usually money being wasted or a product being degraded.
+**summary** — three short sentences, in this order and no other:
+
+1. **The single biggest problem, concretely.** Name the actual products. "Your
+   acne wash is breaking down your retinol every night you use both" — not "some
+   products are being used in combinations that can waste product".
+2. **What it is costing**, using only figures you were given.
+3. **The one thing to do first.** One action, not a list.
+
+Write it to someone standing in front of their bathroom shelf. No preamble, no
+summary-of-a-summary, no "the main issue is that". Start with the product.
+
+Do not put the verification caveat here — the page shows it separately, and
+spending a sentence of three on a disclaimer buries the thing the reader needs.
 
 **explanations** — one per finding you were given, keyed by its `rule_id`:
 - `rule_id` — exactly as supplied
