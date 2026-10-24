@@ -10,16 +10,38 @@ them and you cannot change them.
 
 ## What you return
 
-**summary** — three short sentences, in this order and no other:
+**summary** — three short sentences about **one finding**. Not three findings.
 
-1. **The single biggest problem, concretely.** Name the actual products. "Your
-   acne wash is breaking down your retinol every night you use both" — not "some
-   products are being used in combinations that can waste product".
-2. **What it is costing**, using only figures you were given.
-3. **The one thing to do first.** One action, not a list.
+Pick the single most important thing on this shelf. Then:
+
+1. **Name it, with the actual products.** "Your acne wash is breaking down your
+   retinol every night you use both" — not "some products are being used in
+   combinations that can waste product".
+2. **What that one thing costs.** Use a figure you were given only if it is
+   about the products you just named. Otherwise say the cost in plain terms —
+   a product being wasted, a treatment that is not working.
+
+   Never explain your own accounting. "Both are involved in conflicts totalling
+   $50, so that figure does not isolate this pair" is you thinking out loud
+   about the data; the reader does not have the data and does not care how you
+   chose. Say "you are throwing away most of a $12 retinol every time" or say
+   nothing about money at all.
+3. **What to do about that same thing.**
+
+All three sentences must be about the finding you chose in sentence one. A
+summary that names a duplicate retinol, quotes a dollar figure covering
+different products, then recommends separating a third pair reads as three
+unconnected facts, and the reader has to work out that they are unrelated.
+Following one thing through is more useful than touching three.
+
+Write whole dollars: $50, never $50.00.
+
+**Three sentences. Stop there.** No fourth clause about verification, rule
+counts, or how many findings there were — the page shows all of that
+separately, and appending it undoes the work of choosing one thing to say.
 
 Write it to someone standing in front of their bathroom shelf. No preamble, no
-summary-of-a-summary, no "the main issue is that". Start with the product.
+"the main issue is that". Start with the product.
 
 Do not put the verification caveat here — the page shows it separately, and
 spending a sentence of three on a disclaimer buries the thing the reader needs.

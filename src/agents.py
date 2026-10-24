@@ -13,6 +13,7 @@ Both carry the trap tools from safety.py. Neither needs them.
 
 from __future__ import annotations
 
+import re
 import sqlite3
 import uuid
 from pathlib import Path
@@ -160,13 +161,15 @@ def _brief(audit: AuditResult) -> str:
         lines += ["", "## Notes from the engine", ""] + [f"- {n}" for n in audit.routine.notes]
 
     w = audit.waste
+    # Whole dollars. The brief used to carry $50.00 and the agent copied the
+    # trailing zeros straight into prose, where they read as spurious precision.
     lines += [
         "",
         "## Money",
-        f"- shelf value ${w.shelf_value_usd:.2f} across {w.products_owned} products",
-        f"- unused ${w.unused_value_usd:.2f} ({w.products_unused} products)",
-        f"- duplicate function ${w.redundant_value_usd:.2f}",
-        f"- involved in high-severity conflicts ${w.conflicted_value_usd:.2f}",
+        f"- shelf value ${w.shelf_value_usd:,.0f} across {w.products_owned} products",
+        f"- unused ${w.unused_value_usd:,.0f} ({w.products_unused} products)",
+        f"- duplicate function ${w.redundant_value_usd:,.0f}",
+        f"- involved in high-severity conflicts ${w.conflicted_value_usd:,.0f}",
     ]
     return "\n".join(lines)
 
@@ -183,6 +186,25 @@ def validate_narrative(narrative: AuditNarrative, audit: AuditResult) -> tuple[A
     known_products = {s.product_name for s in audit.routine.am + audit.routine.pm}
     rejected: list[str] = []
 
+    # Strip the verification caveat out of the summary.
+    #
+    # The prompt tells it three times not to append this, and it appends it
+    # anyway — usually with a miscounted total ("30 findings", when there are
+    # 33). The page already shows the verified ratio as a badge and in the
+    # footer, both from the engine. Asking nicely has failed, so it is removed
+    # here, which is also the project's general position: enforce, do not
+    # request.
+    summary = narrative.summary
+    cleaned_summary = re.sub(
+        r"[;.]\s*[^.;]*\b(?:unverified|not been (?:verified|checked)|"
+        r"verified against|rules? (?:are|have) not)\b[^.]*\.?\s*$",
+        ".",
+        summary,
+        flags=re.IGNORECASE,
+    ).strip()
+    if cleaned_summary != summary:
+        rejected.append("verification caveat stripped from summary")
+
     kept_explanations = []
     for e in narrative.explanations:
         if e.rule_id in known_rules:
@@ -197,7 +219,11 @@ def validate_narrative(narrative: AuditNarrative, audit: AuditResult) -> tuple[A
         else:
             rejected.append(f"application spec for unknown product {s.product_name!r}")
 
-    cleaned = narrative.model_copy(update={"explanations": kept_explanations, "steps": kept_steps})
+    cleaned = narrative.model_copy(update={
+        "summary": cleaned_summary,
+        "explanations": kept_explanations,
+        "steps": kept_steps,
+    })
     return cleaned, rejected
 
 

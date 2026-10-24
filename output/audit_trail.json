@@ -302,5 +302,85 @@
       "cache_write_tokens": 5531,
       "output_tokens": 1567
     }
+  },
+  {
+    "run_id": "b88ba9d8",
+    "seq": 1,
+    "timestamp": "2026-10-24T23:27:34.328409+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 19,
+      "steps": 14,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 5772,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 5646,
+      "output_tokens": 1276
+    }
+  },
+  {
+    "run_id": "9623ba10",
+    "seq": 1,
+    "timestamp": "2026-10-24T23:28:21.764000+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 19,
+      "steps": 14,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 5898,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 5772,
+      "output_tokens": 1395
+    }
+  },
+  {
+    "run_id": "14a39171",
+    "seq": 1,
+    "timestamp": "2026-10-24T23:29:14.158843+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 19,
+      "steps": 14,
+      "rejected": [
+        "verification caveat stripped from summary"
+      ]
+    },
+    "usage": {
+      "input_tokens": 5898,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 5772,
+      "output_tokens": 1395
+    }
+  },
+  {
+    "run_id": "eadd0e13",
+    "seq": 1,
+    "timestamp": "2026-10-24T23:31:25.339581+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 19,
+      "steps": 14,
+      "rejected": [
+        "verification caveat stripped from summary"
+      ]
+    },
+    "usage": {
+      "input_tokens": 5898,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 5772,
+      "output_tokens": 1395
+    }
   }
 ]
