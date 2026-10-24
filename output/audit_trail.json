@@ -445,5 +445,26 @@
       "cache_write_tokens": 5772,
       "output_tokens": 1395
     }
+  },
+  {
+    "run_id": "883bcaa0",
+    "seq": 1,
+    "timestamp": "2026-10-24T23:39:31.801711+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 19,
+      "steps": 14,
+      "rejected": [
+        "verification caveat stripped from summary"
+      ]
+    },
+    "usage": {
+      "input_tokens": 5898,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 5772,
+      "output_tokens": 1395
+    }
   }
 ]

@@ -85,6 +85,7 @@ h2{font:600 12.5px/1 var(--sans);text-transform:uppercase;letter-spacing:.14em;
    color:var(--ink-faint);margin:56px 0 18px}
 h2:first-of-type{margin-top:0}
 .sub{color:var(--ink-dim);margin:0 0 34px;font-size:16px}
+.lede{color:var(--ink-dim);font-size:15.5px;margin:-8px 0 16px;max-width:60ch}
 
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;
   padding:26px 30px;box-shadow:var(--shadow)}
@@ -990,6 +991,13 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
         # knowing whether it was a warning, a sales pitch or a description of
         # the tool. Every other block on the page is labelled; this one was not.
         parts.append("<h2>Start here</h2>")
+        # The label alone said where to begin but not what the paragraph was.
+        # A one-line descriptor underneath answers "what am I reading" before
+        # the reader has to infer it from the content.
+        parts.append(
+            '<p class="lede">The main summary of your shelf — what matters most, '
+            "and the first thing to do about it.</p>"
+        )
         parts.append(f'<div class="card summary">{e(narrative.summary)}</div>')
 
     parts.append("<h2>Money</h2><div class=\"stats\">")
