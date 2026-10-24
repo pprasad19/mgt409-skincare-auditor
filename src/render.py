@@ -78,6 +78,7 @@ body{
 h1{font:400 44px/1.12 var(--serif);letter-spacing:-.015em;margin:68px 0 10px}
 h2{font:600 12.5px/1 var(--sans);text-transform:uppercase;letter-spacing:.14em;
    color:var(--ink-faint);margin:56px 0 18px}
+h2:first-of-type{margin-top:0}
 .sub{color:var(--ink-dim);margin:0 0 34px;font-size:16px}
 
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;
@@ -682,11 +683,10 @@ def _step_row(step, spec, slot: str, total: int) -> str:
     because = "".join(f'<span class="chip">{e(b)}</span>' for b in step.because)
     how = ""
     if spec is not None:
-        bits = [f"{spec.amount}, {spec.motion} on {spec.area}, {spec.seconds}s"]
-        if spec.finish != "nothing":
-            bits.append(spec.finish)
-        if spec.wait_after_seconds:
-            bits.append(f"wait {spec.wait_after_seconds}s")
+        bits = [
+            f"{b['text'] if b['kind'] == 'apply' else b['kind']} · {b['secs']}s"
+            for b in beats_for(spec)
+        ]
         how = f'<div class="how">{e(" → ".join(bits))}</div>'
     return (
         f'<div class="step" data-step="{e(key)}">'
@@ -841,6 +841,55 @@ def _week_grid(audit: AuditResult) -> str:
     )
 
 
+def beats_for(spec) -> list[dict]:
+    """The physical sequence for one step: apply, then finish, then any wait.
+
+    Single source of truth. The step list, the guided player, the spoken
+    walkthrough and the printed card all render from this. They were each
+    assembling it separately and promptly drifted: the audio announced
+    "let it absorb, 30 seconds" while the written step said only "let it
+    absorb", because the duration existed in one path and not the others.
+    """
+    if spec is None:
+        return [{"kind": "apply", "text": "apply as usual", "secs": 15}]
+
+    out = [{
+        "kind": "apply",
+        "text": f"{spec.amount}, {spec.motion} on {spec.area}",
+        "secs": spec.seconds,
+    }]
+
+    if spec.finish == "rinse off":
+        out.append({
+            "kind": "rinse off",
+            "text": "rinse thoroughly with lukewarm water, then pat dry",
+            "secs": spec.finish_seconds or 25,
+        })
+    elif spec.finish == "pat dry":
+        out.append({
+            "kind": "pat dry",
+            "text": "pat dry with a clean towel",
+            "secs": spec.finish_seconds or 10,
+        })
+    elif spec.finish == "let it absorb" and not spec.wait_after_seconds:
+        out.append({
+            "kind": "let it absorb",
+            "text": "let it sink in before the next product",
+            "secs": spec.finish_seconds or 20,
+        })
+
+    if spec.wait_after_seconds:
+        # Absorbing and waiting are one pause described twice. Run in series
+        # they put two minutes of standing still on a toner.
+        out.append({
+            "kind": "let it absorb",
+            "text": "let it absorb and settle before the next product",
+            "secs": max(spec.wait_after_seconds, spec.finish_seconds),
+        })
+
+    return out
+
+
 def _print_card(audit: AuditResult, specs: dict) -> str:
     """A one-page card for the bathroom mirror.
 
@@ -856,11 +905,11 @@ def _print_card(audit: AuditResult, specs: dict) -> str:
             spec = specs.get(s.product_name)
             detail = ""
             if spec:
-                bits = [f"{spec.amount}, {spec.motion}"]
-                if spec.finish != "nothing":
-                    bits.append(spec.finish)
-                if spec.wait_after_seconds:
-                    bits.append(f"wait {spec.wait_after_seconds}s")
+                bits = [
+                    f"{spec.amount}, {spec.motion} {b['secs']}s" if b["kind"] == "apply"
+                    else f"{b['kind']} {b['secs']}s"
+                    for b in beats_for(spec)
+                ]
                 detail = f'<div class="pcd">{e(" → ".join(bits))}</div>'
             freq = "" if s.frequency == "daily" else f' <em>({e(s.frequency)})</em>'
             rows.append(f"<li><b>{e(s.product_name)}</b>{freq}{detail}</li>")
@@ -904,47 +953,10 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
     seq = []
     for slot, steps in (("am", audit.routine.am), ("pm", audit.routine.pm)):
         for s_ in steps:
-            spec = specs.get(s_.product_name)
-            beats = []
-            if spec:
-                beats.append({
-                    "kind": "apply",
-                    "text": f"{spec.amount}, {spec.motion} on {spec.area}",
-                    "secs": spec.seconds,
-                })
-                if spec.finish == "rinse off":
-                    beats.append({
-                        "kind": "rinse off",
-                        "text": "rinse thoroughly with lukewarm water, then pat dry",
-                        "secs": spec.finish_seconds or 25,
-                    })
-                elif spec.finish == "pat dry":
-                    beats.append({
-                        "kind": "pat dry",
-                        "text": "pat dry with a clean towel",
-                        "secs": spec.finish_seconds or 10,
-                    })
-                elif spec.finish == "let it absorb" and not spec.wait_after_seconds:
-                    beats.append({
-                        "kind": "let it absorb",
-                        "text": "let it sink in before the next product",
-                        "secs": spec.finish_seconds or 20,
-                    })
-                if spec.wait_after_seconds:
-                    # Absorbing and waiting are the same physical pause described
-                    # twice. The agent sets both for an acid, and running them in
-                    # series put two minutes of standing still on a toner. One
-                    # beat, the longer of the two.
-                    beats.append({
-                        "kind": "wait",
-                        "text": "let it absorb and settle before the next product",
-                        "secs": max(spec.wait_after_seconds, spec.finish_seconds),
-                    })
-            else:
-                beats.append({"kind": "apply", "text": "apply as usual", "secs": 15})
             seq.append({
                 "slot": slot, "order": s_.order, "of": len(steps),
-                "name": s_.product_name, "freq": s_.frequency, "beats": beats,
+                "name": s_.product_name, "freq": s_.frequency,
+                "beats": beats_for(specs.get(s_.product_name)),
             })
 
     verified_ok = audit.rules_verified == audit.rules_total
@@ -968,6 +980,11 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
     )
 
     if narrative and narrative.summary:
+        # The summary sat directly under the title with nothing saying what it
+        # was, so a first-time reader met a paragraph about retinols before
+        # knowing whether it was a warning, a sales pitch or a description of
+        # the tool. Every other block on the page is labelled; this one was not.
+        parts.append("<h2>Start here</h2>")
         parts.append(f'<div class="card summary">{e(narrative.summary)}</div>')
 
     parts.append("<h2>Money</h2><div class=\"stats\">")
