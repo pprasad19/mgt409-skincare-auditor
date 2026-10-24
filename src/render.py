@@ -21,6 +21,7 @@ call, and it cannot fail during a demo.
 from __future__ import annotations
 
 import html
+import re
 import json
 from datetime import datetime
 
@@ -150,7 +151,9 @@ footer{margin-top:52px;padding-top:20px;border-top:1px solid var(--line);
 table.mx{border-collapse:separate;border-spacing:3px;font-size:11px}
 table.mx th{font-weight:500;color:var(--ink-faint);font-size:11px;padding:0 4px;
   text-align:right;white-space:nowrap}
-table.mx th.c{text-align:center;width:26px}
+table.mx th.c{text-align:center;width:30px;font-variant:small-caps;letter-spacing:.04em}
+table.mx th b{color:var(--accent);font-weight:650;font-variant:small-caps}
+.mxcap{font-size:13px;color:var(--ink-dim);margin:0 0 16px;line-height:1.55;max-width:62ch}
 table.mx td{width:26px;height:26px;border-radius:5px;background:var(--panel-2);
   text-align:center;color:transparent}
 table.mx td.self{background:transparent}
@@ -394,8 +397,25 @@ def _conflict_grid(audit: AuditResult) -> str:
         if rank[cls] > rank.get(worst.get(key, "myth"), -1):
             worst[key] = cls
 
-    idx = {n: i + 1 for i, n in enumerate(names)}
-    head = "".join(f'<th class="c">{idx[n]}</th>' for n in names)
+    # Column headers are product initials, not numbers.
+    #
+    # Numbering them 1..N and putting the digits above a coloured grid reads as
+    # a 1-to-10 rating scale — a reader asked what the scale meant, which is the
+    # right question to ask of what the page appeared to show. Initials cannot
+    # be mistaken for a magnitude.
+    def initials(name: str) -> str:
+        words = [w for w in re.split(r"[\s/+]+", name) if w and w[0].isalnum()]
+        return ("".join(w[0] for w in words[:2]) or name[:2]).upper()
+
+    marks: dict[str, str] = {}
+    for n in names:
+        mark, bump = initials(n), 1
+        while mark in marks.values():
+            bump += 1
+            mark = f"{initials(n)}{bump}"
+        marks[n] = mark
+
+    head = "".join(f'<th class="c">{e(marks[n])}</th>' for n in names)
     rows = []
     for a in names:
         cells = []
@@ -405,8 +425,8 @@ def _conflict_grid(audit: AuditResult) -> str:
             else:
                 cls = worst.get(tuple(sorted((a, bname))), "")
                 cells.append(f'<td class="{cls}">.</td>')
-        label = a if len(a) <= 26 else a[:24] + "…"
-        rows.append(f"<tr><th>{idx[a]}. {e(label)}</th>{''.join(cells)}</tr>")
+        label = a if len(a) <= 28 else a[:26] + "…"
+        rows.append(f'<tr><th><b>{e(marks[a])}</b>  {e(label)}</th>{"".join(cells)}</tr>')
 
     key = (
         '<div class="key">'
@@ -414,10 +434,16 @@ def _conflict_grid(audit: AuditResult) -> str:
         '<span><i style="background:#5a4420"></i>use with care</span>'
         '<span><i style="background:#1f4429"></i>works well together</span>'
         '<span><i style="background:#2a2f3a"></i>myth, ignore it</span>'
+        '<span><i style="background:var(--panel-2)"></i>no interaction</span>'
         "</div>"
     )
     return (
-        '<div class="card"><div class="gridwrap"><table class="mx">'
+        '<div class="card">'
+        '<p class="mxcap">Each row and column is one of your products. '
+        "A coloured square means those two interact — find a product down the "
+        "side, read across to another, and the square where they meet says what "
+        "happens when you use them together.</p>"
+        f'<div class="gridwrap"><table class="mx">'
         f'<tr><th></th>{head}</tr>{"".join(rows)}</table></div>{key}</div>'
     )
 
