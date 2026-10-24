@@ -1057,21 +1057,24 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
     _section("first", "Fix these first",
              "costing you money or results", open_=True, oneline=False)
 
-    # Everything else involving two products now lives in the matrix above,
-    # which carries the same findings without asking anyone to read nineteen
-    # cards. Rules about a single product have no square to sit in, so they
-    # stay here as one line each.
-    singles = [g for g in buckets["adjust"] if len(g[0].products) == 1]
-    if singles:
-        parts.append('<div class="onelist">')
-        for group in singles:
-            f = group[0]
-            parts.append(
-                f'<div class="onerow"><span class="chip">{e(f.rule_id)}</span>'
-                f'<span class="t"><b>{e(f.products[0])}</b> — '
-                f"{e(explain.get(f.rule_id) or f.guidance)}</span></div>"
-            )
-        parts.append("</div>")
+    # Gaps, not restatements.
+    #
+    # This slot used to list the single-product timing rules — sunscreen last,
+    # retinoids at night, acids at night. They are not tasks: the engine has
+    # already applied all three, the routine is ordered accordingly, and every
+    # step carries the rule id that placed it. Printing them under "What to do"
+    # asked the reader to act on work that was already finished, and buried the
+    # one real instruction (wear sunscreen) by repeating it twice.
+    #
+    # What belongs here is what the shelf is missing, which no pairwise rule
+    # can see.
+    for gap in audit.gaps:
+        cls = "escal" if gap.severity in ("critical", "high") else "note"
+        parts.append(
+            f'<div class="{cls}" style="margin-top:10px">{e(gap.message)}'
+            '<div style="margin-top:8px;font-size:12px;opacity:.75">'
+            f'Because of: {e(", ".join(gap.because))}</div></div>'
+        )
 
     parts.append(_print_card(audit, specs))
 

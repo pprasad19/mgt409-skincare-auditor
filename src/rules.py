@@ -19,6 +19,7 @@ from models import (
     AuditResult,
     Escalation,
     Finding,
+    Gap,
     InputProduct,
     ResolvedProduct,
     Routine,
@@ -442,6 +443,52 @@ class Rules:
 
     # -- top level ---------------------------------------------------------
 
+    def gaps(self, products: list[ResolvedProduct]) -> list[Gap]:
+        """What this shelf needs and does not have.
+
+        Pairwise rules can only compare things the user owns, so they are blind
+        to an absence. The sun-protection case is the one that matters: several
+        of the strongest actives increase UV sensitivity, and using them without
+        sunscreen does more harm than not using them at all.
+        """
+        out: list[Gap] = []
+
+        photo = [
+            p.product.name
+            for p in products
+            if any(self.ingredients[a]["photosensitising"] for a in p.actives)
+        ]
+        has_spf = any(p.form == "spf" for p in products)
+        if photo and not has_spf:
+            out.append(
+                Gap(
+                    kind="no_sun_protection",
+                    severity="high",
+                    message=(
+                        f"{len(photo)} of your products increase sun sensitivity and there "
+                        "is no sunscreen on this shelf. Daily SPF is what makes those "
+                        "products worth using — without it they work against the thing "
+                        "most of them were bought to fix."
+                    ),
+                    because=photo,
+                )
+            )
+        elif photo:
+            out.append(
+                Gap(
+                    kind="spf_is_load_bearing",
+                    severity="medium",
+                    message=(
+                        f"{len(photo)} of your products increase sun sensitivity, so daily "
+                        "sunscreen is not optional with this routine — it is the step that "
+                        "makes the rest of them safe to use."
+                    ),
+                    because=photo,
+                )
+            )
+
+        return out
+
     def audit(self, raw: list[InputProduct], conditions: list[str] | None = None) -> AuditResult:
         products = [self.resolve(p) for p in raw]
         findings = self.find(products)
@@ -451,6 +498,7 @@ class Rules:
             escalations=self.escalate(products, conditions or []),
             routine=self.build_routine(products, findings),
             waste=self.waste(products, findings),
+            gaps=self.gaps(products),
             rules_verified=self.rules_verified,
             rules_total=self.rules_total,
         )

@@ -142,12 +142,31 @@ class WasteSummary(BaseModel):
     )
 
 
+class Gap(BaseModel):
+    """Something the shelf is missing, rather than something on it being wrong.
+
+    Every other finding compares products the user owns. A gap is the opposite
+    question — what does this combination of products require that is not here?
+    Owning five photosensitising actives and no sunscreen is the clearest case,
+    and nothing in a pairwise model can see it.
+    """
+
+    kind: str
+    severity: Severity
+    message: str
+    because: list[str] = Field(
+        default_factory=list,
+        description="Products that create the need. Keeps a gap as traceable as a finding.",
+    )
+
+
 class AuditResult(BaseModel):
     products: list[ResolvedProduct]
     findings: list[Finding]
     escalations: list[Escalation]
     routine: Routine
     waste: WasteSummary
+    gaps: list[Gap] = Field(default_factory=list)
     rules_verified: int = 0
     rules_total: int = 0
 
