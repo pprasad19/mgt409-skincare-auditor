@@ -1,0 +1,188 @@
+# Non-English ingredient names, mapped to ingredient ids in ingredients.yaml.
+#
+# WHY THIS FILE EXISTS
+# INCI nomenclature is international, so most non-English labels already carry
+# terms the main table matches — a Korean or French product listing "Niacinamide"
+# needs nothing from this file. It covers the cases where a label uses local
+# names instead: common on Japanese and Chinese packaging, and on the marketing
+# face of Korean products.
+#
+# RISK, AND WHY IT IS DIFFERENT FROM THE RULES
+# A missing alias means a product resolves to fewer actives — the system says
+# less than it could, which is safe. A WRONG alias means a product resolves to
+# an active it does not contain, and the user is then warned about a conflict
+# that does not exist, or worse, reassured about one that does. False positives
+# here are more damaging than false negatives.
+#
+# These translations have NOT been checked by a speaker of each language. They
+# are the lowest-confidence data in the project. Before relying on any language
+# below, have someone who reads it check that column; until then, treat findings
+# that depend on a translated match as provisional.
+#
+# Only the actives where a local-language name is actually common are listed.
+# Solvents and emulsifiers are omitted — the table has no opinion on them.
+
+aliases:
+
+  niacinamide:
+    - 나이아신아마이드
+    - 나이아신아미드
+    - ナイアシンアミド
+    - 烟酰胺
+    - 菸鹼醯胺
+    - niacinamida
+    - niacinamid
+
+  retinol:
+    - 레티놀
+    - レチノール
+    - 视黄醇
+    - 視黃醇
+    - rétinol
+
+  retinaldehyde:
+    - 레티날
+    - レチナール
+    - 视黄醛
+
+  adapalene:
+    - 아다팔렌
+    - アダパレン
+    - 阿达帕林
+
+  tretinoin:
+    - 트레티노인
+    - トレチノイン
+    - 维A酸
+    - trétinoïne
+
+  l_ascorbic_acid:
+    - 아스코르브산
+    - 아스코빅애씨드
+    - アスコルビン酸
+    - 抗坏血酸
+    - 抗壞血酸
+    - acide ascorbique
+    - ácido ascórbico
+
+  salicylic_acid:
+    - 살리실산
+    - 살리실릭애씨드
+    - サリチル酸
+    - 水杨酸
+    - 水楊酸
+    - acide salicylique
+    - ácido salicílico
+
+  glycolic_acid:
+    - 글리콜산
+    - 글라이콜릭애씨드
+    - グリコール酸
+    - 乙醇酸
+    - 甘醇酸
+    - acide glycolique
+    - ácido glicólico
+
+  lactic_acid:
+    - 락틱애씨드
+    - 젖산
+    - 乳酸
+    - acide lactique
+    - ácido láctico
+
+  azelaic_acid:
+    - 아젤라산
+    - アゼライン酸
+    - 壬二酸
+    - acide azélaïque
+
+  benzoyl_peroxide:
+    - 벤조일퍼옥사이드
+    - 과산화벤조일
+    - 過酸化ベンゾイル
+    - 过氧化苯甲酰
+    - peroxyde de benzoyle
+    - peróxido de benzoilo
+
+  hydroquinone:
+    - 하이드로퀴논
+    - ハイドロキノン
+    - 氢醌
+    - 氫醌
+    - hydroquinone
+
+  tranexamic_acid:
+    - 트라넥삼산
+    - トラネキサム酸
+    - 氨甲环酸
+    - 傳明酸
+    - acide tranexamique
+
+  alpha_arbutin:
+    - 알파 알부틴
+    - アルブチン
+    - 熊果苷
+
+  hyaluronic_acid:
+    - 히알루론산
+    - ヒアルロン酸
+    - 透明质酸
+    - 玻尿酸
+    - acide hyaluronique
+    - ácido hialurónico
+
+  glycerin:
+    - 글리세린
+    - グリセリン
+    - 甘油
+    - glycérine
+    - glicerina
+
+  ceramides:
+    - 세라마이드
+    - セラミド
+    - 神经酰胺
+    - 神經醯胺
+    - céramides
+
+  panthenol:
+    - 판테놀
+    - パンテノール
+    - 泛醇
+
+  centella:
+    - 센텔라아시아티카
+    - 병풀
+    - ツボクサ
+    - 积雪草
+    - 積雪草
+
+  squalane:
+    - 스쿠알란
+    - スクワラン
+    - 角鲨烷
+    - 角鯊烷
+
+  urea:
+    - 요소
+    - 尿素
+    - urée
+
+  zinc_oxide:
+    - 산화아연
+    - 酸化亜鉛
+    - 氧化锌
+    - 氧化鋅
+    - oxyde de zinc
+    - óxido de zinc
+
+  copper_peptides:
+    - 구리펩타이드
+    - 銅ペプチド
+    - 铜肽
+
+  sulfur:
+    - 유황
+    - 硫黄
+    - 硫磺
+    - soufre

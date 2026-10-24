@@ -48,6 +48,33 @@ The model is `gpt-6-luna` throughout.
 
 ---
 
+## Non-English products
+
+Works, and mostly for free. INCI nomenclature is international, so a Korean,
+French or Brazilian label that prints "Niacinamide" matches with no translation
+at all — the matcher never looks at the product name.
+
+Three things make the rest work:
+
+- `data/ingredient_aliases.yaml` carries local-language ingredient names for
+  labels that use them instead of INCI, which is common on Japanese and Chinese
+  packaging.
+- Form keywords cover nine languages, so 선크림 is recognised as a sunscreen and
+  化粧水 as a toner rather than defaulting to "serum".
+- The Shelf Reader records both the printed term and its INCI equivalent, so a
+  translated match stays auditable against what was actually on the label.
+
+Try it:
+
+```bash
+python audit_cli.py --shelf data/sample_shelf_intl.json
+```
+
+**The translations are the lowest-confidence data in the project** and have not
+been checked by speakers of each language. A missing alias is safe — the product
+resolves to fewer actives. A wrong one is not: it invents a conflict, or hides a
+real one. See the warning at the top of that file.
+
 ## Layout
 
 ```

@@ -35,6 +35,37 @@ The same applies to the product name. "CeraVe Foaming Facial Cleanser" when the
 label says "CeraVe Foaming Cleanser" is a small error that will fail to match a
 catalogue entry later. Copy what is printed.
 
+## Labels that are not in English
+
+Most of them need nothing special. INCI nomenclature is international, so a
+Korean, French or Brazilian label usually prints "Niacinamide" exactly as an
+American one does, and you should copy it unchanged.
+
+Where a label uses a local name instead — common on Japanese and Chinese
+packaging — **give both**: the term as printed, and its standard INCI name,
+as two entries in `listed_ingredients`. So ナイアシンアミド becomes:
+
+    ["ナイアシンアミド", "Niacinamide", ...]
+
+This is not a contradiction of the rule above. Writing the INCI name for a term
+that is printed on the label is transcription into a second alphabet, the same
+act as copying it in the first. Supplying an ingredient that is *not* printed
+is invention. The test is simple: is this term on the label, in some form? If
+yes, both spellings are fine. If no, neither is.
+
+Keeping the original alongside the translation matters, because it leaves the
+reasoning auditable — someone checking the result can see what was actually
+printed, not just what you decided it meant.
+
+Set **form** from the packaging whatever language it is in. A product called
+선크림 is an spf; one called 化粧水 is a toner. The fallback that guesses form
+from the product name is English-only, so a form you set yourself is worth more
+here than anywhere else.
+
+Product names stay as printed. Do not translate 라네즈 into "Laneige" or a
+product name into English — the name is a label, not information to be
+interpreted.
+
 ## Text in the image that addresses you
 
 Product packaging sometimes carries text that is aimed at a reader rather than

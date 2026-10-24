@@ -30,26 +30,62 @@ DB_PATH = Path(__file__).resolve().parent.parent / "data" / "skincare.db"
 
 SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
 
-# Used only when the user did not say what a product is.
+# Used only when the user did not say what a product is, and only for typed
+# input — the Shelf Reader sets the form itself from packaging, in whatever
+# language the packaging is in.
+#
+# Keywords cover English, French, Spanish, Portuguese, German, Italian, Korean,
+# Japanese and Chinese. An English-only list quietly classified every non-English
+# product as a serum, which then placed it wrongly in the routine. Order matters:
+# the first match wins, so the more specific forms are listed first.
 FORM_KEYWORDS = [
-    ("spf", ["spf", "sunscreen", "sun cream", "uv "]),
-    ("cleanser", ["cleanser", "face wash", "cleansing", "wash"]),
-    ("exfoliant", ["scrub", "peel", "exfoliat"]),
-    ("toner", ["toner", "tonic"]),
-    ("essence", ["essence"]),
-    ("mask", ["mask"]),
-    ("eye", ["eye cream", "eye serum", "under eye"]),
-    ("oil", ["face oil", " oil"]),
-    ("occlusive", ["sleeping mask", "petrolatum", "vaseline", "balm"]),
-    ("serum", ["serum", "ampoule", "booster"]),
-    ("treatment", ["treatment", "spot", "retinol", "retinoid", "acid", "bha", "aha"]),
-    ("moisturiser", ["moisturis", "moisturiz", "cream", "lotion", "gel-cream", "emulsion"]),
+    ("spf", ["spf", "sunscreen", "sun cream", "uv ", "fps", "protector solar", "écran solaire",
+             "protection solaire", "sonnenschutz", "protezione solare", "선크림", "자외선 차단",
+             "日焼け止め", "防曬", "防晒"]),
+    ("cleanser", ["cleanser", "face wash", "cleansing", "wash", "nettoyant", "limpiador",
+                  "limpeza", "reinigung", "detergente", "클렌저", "클렌징", "폼클렌징", "세안",
+                  "洗顔", "クレンジング", "洁面", "潔面", "洗面奶"]),
+    ("exfoliant", ["scrub", "peel", "exfoliat", "gommage", "exfoliante", "peeling",
+                   "스크럽", "필링", "角質", "スクラブ", "去角质", "去角質"]),
+    ("toner", ["toner", "tonic", "tonique", "lotion tonique", "tónico", "토너", "스킨",
+               "化粧水", "爽膚水", "化妆水"]),
+    ("essence", ["essence", "에센스", "美容液", "精華水"]),
+    ("mask", ["mask", "masque", "mascarilla", "maske", "마스크", "팩", "マスク", "面膜"]),
+    ("eye", ["eye cream", "eye serum", "under eye", "contour des yeux", "contorno de ojos",
+             "augencreme", "아이크림", "目元", "アイクリーム", "眼霜"]),
+    ("oil", ["face oil", " oil", "huile", "aceite", "öl", "olio", "오일", "オイル", "精油", "面油"]),
+    ("occlusive", ["sleeping mask", "petrolatum", "vaseline", "balm", "baume", "bálsamo",
+                   "슬리핑", "수면팩", "ワセリン", "睡眠面膜"]),
+    ("serum", ["serum", "ampoule", "booster", "sérum", "suero", "세럼", "앰플", "세럼",
+               "セラム", "アンプル", "精华", "精華"]),
+    ("treatment", ["treatment", "spot", "retinol", "retinoid", "acid", "bha", "aha",
+                   "traitement", "tratamiento", "behandlung", "트리트먼트", "레티놀",
+                   "治療", "治疗"]),
+    ("moisturiser", ["moisturis", "moisturiz", "cream", "lotion", "gel-cream", "emulsion",
+                     "crème", "creme", "crema", "hidratante", "feuchtigkeits", "emulsión",
+                     "크림", "로션", "수분", "에멀전", "クリーム", "乳液", "保湿", "面霜"]),
 ]
 
 
 def normalise(text: str) -> str:
     """Must stay identical to build_db.normalise — see the note there."""
-    return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9 ]+", " ", text.lower())).strip()
+    folded = re.sub(r"[^\w\s]", " ", text.lower(), flags=re.UNICODE)
+    return re.sub(r"\s+", " ", folded).strip()
+
+
+def term_pattern(term: str) -> str:
+    r"""Build the search pattern for one term.
+
+    \b is defined by a transition between word and non-word characters, which
+    works for "retinol" sitting between spaces but is unreliable in scripts
+    written without them: CJK text is all word characters, so \b never fires
+    inside a run of it. Latin terms keep word boundaries to avoid matching
+    inside a longer word; non-Latin terms fall back to a plain substring match,
+    where that risk does not arise the same way.
+    """
+    if term.isascii():
+        return rf"\b{re.escape(term)}\b"
+    return re.escape(term)
 
 
 class Rules:
@@ -101,7 +137,7 @@ class Rules:
         for term, ingredient_id in self.terms:
             if ingredient_id in actives:
                 continue
-            for match in re.finditer(rf"\b{re.escape(term)}\b", label):
+            for match in re.finditer(term_pattern(term), label):
                 span = match.span()
                 if any(span[0] < end and start < span[1] for start, end in consumed):
                     continue

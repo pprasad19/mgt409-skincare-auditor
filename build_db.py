@@ -23,14 +23,20 @@ import yaml
 
 
 def normalise(text: str) -> str:
-    """Fold punctuation to spaces.
+    """Fold punctuation to spaces, in any script.
 
     Applied to search terms here and to label text at match time. Both sides
     must go through the same function: otherwise an INCI name like
     "Copper Tripeptide-1" is stored with a hyphen, the label is normalised to a
     space, and the ingredient silently never matches.
+
+    The character class is Unicode-aware on purpose. An earlier [^a-z0-9 ]
+    version deleted every non-ASCII character, which meant a Korean or Japanese
+    label reduced to punctuation before anything could match it — the system
+    did not fail on non-English input, it silently found nothing.
     """
-    return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9 ]+", " ", text.lower())).strip()
+    folded = re.sub(r"[^\w\s]", " ", text.lower(), flags=re.UNICODE)
+    return re.sub(r"\s+", " ", folded).strip()
 
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data"
@@ -132,6 +138,7 @@ def check_selector(selector: str, ids: set[str], classes: set[str], where: str, 
 
 def main() -> None:
     ingredients = load("ingredients.yaml")["ingredients"]
+    intl = (load("ingredient_aliases.yaml") or {}).get("aliases") or {}
     rules_doc = load("interactions.yaml")
     interactions = rules_doc["interactions"]
     contraindications = rules_doc.get("contraindications", [])
@@ -140,6 +147,10 @@ def main() -> None:
     ids = {row["id"] for row in ingredients}
     classes = {row["class"] for row in ingredients}
     errors: list[str] = []
+
+    for ingredient_id in intl:
+        if ingredient_id not in ids:
+            errors.append(f"ingredient_aliases.yaml: unknown ingredient {ingredient_id!r}")
 
     if len(ids) != len(ingredients):
         errors.append("duplicate ingredient id")
@@ -201,6 +212,7 @@ def main() -> None:
         terms = {(normalise(row["name"]), "name")}
         terms |= {(normalise(t), "inci") for t in row.get("inci") or []}
         terms |= {(normalise(t), "alias") for t in row.get("aliases") or []}
+        terms |= {(normalise(t), "intl") for t in intl.get(row["id"], [])}
         for term, kind in terms:
             con.execute(
                 "INSERT OR IGNORE INTO ingredient_terms VALUES (?,?,?)",

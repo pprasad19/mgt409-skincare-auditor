@@ -1,0 +1,49 @@
+{
+  "_note": "Mixed-language test shelf: Korean, Japanese, Chinese and French. Exercises three paths at once — labels printing INCI unchanged (the French one), labels printing local ingredient names (the Japanese and Chinese ones), and form inference from non-English product names. Product names are left as printed, which is what the Shelf Reader is told to do.",
+  "conditions": [],
+  "products": [
+    {
+      "name": "다이브인 저분자 히알루론산 세럼",
+      "brand": "토리든",
+      "price_usd": 18.0,
+      "listed_ingredients": ["정제수", "히알루론산", "글리세린", "판테놀"]
+    },
+    {
+      "name": "C25セラム ネオ",
+      "brand": "オバジ",
+      "price_usd": 92.0,
+      "listed_ingredients": ["アスコルビン酸", "トコフェロール", "スクワラン"]
+    },
+    {
+      "name": "パーフェクトUV スキンケアミルク 日焼け止め",
+      "brand": "アネッサ",
+      "price_usd": 28.0,
+      "listed_ingredients": ["酸化亜鉛", "水", "グリセリン"]
+    },
+    {
+      "name": "Effaclar Duo+ crème correctrice",
+      "brand": "La Roche-Posay",
+      "price_usd": 22.0,
+      "listed_ingredients": ["Aqua", "Niacinamide", "Acide salicylique", "Glycérine"]
+    },
+    {
+      "name": "약산성 약콩 클렌저",
+      "brand": "라운드랩",
+      "price_usd": 14.0,
+      "listed_ingredients": ["정제수", "글리세린", "판테놀"]
+    },
+    {
+      "name": "舒敏保湿特护面霜",
+      "brand": "薇诺娜",
+      "price_usd": 35.0,
+      "unused": true,
+      "listed_ingredients": ["水", "积雪草", "甘油", "神经酰胺"]
+    },
+    {
+      "name": "레티놀 2500 크림",
+      "brand": "닥터지",
+      "price_usd": 26.0,
+      "listed_ingredients": ["레티놀", "스쿠알란", "나이아신아마이드"]
+    }
+  ]
+}
