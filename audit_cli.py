@@ -29,6 +29,10 @@ def main() -> None:
     ap.add_argument("--condition", action="append", default=[],
                     help="Contraindication to apply, e.g. pregnancy. Repeatable.")
     ap.add_argument("--json", dest="json_out", help="Write the full result as JSON.")
+    ap.add_argument("--explain", action="store_true",
+                    help="Run the Routine Auditor to narrate the result. Costs tokens.")
+    ap.add_argument("--no-cache", action="store_true",
+                    help="Disable prompt caching, for the cost comparison.")
     args = ap.parse_args()
 
     raw = json.loads(Path(args.shelf).read_text(encoding="utf-8"))
@@ -80,9 +84,54 @@ def main() -> None:
             print(f"  {p.product.name}")
             print(f"      unknown terms: {', '.join(p.unmatched_terms[:6]) or '(none listed)'}")
 
+    if args.explain:
+        narrate(result, cache_enabled=not args.no_cache)
+
     if args.json_out:
         Path(args.json_out).write_text(result.model_dump_json(indent=2), encoding="utf-8")
         print(f"\nwrote {args.json_out}")
+
+
+def narrate(result, *, cache_enabled: bool) -> None:
+    """Second half: hand the decided result to the agent for explanation."""
+    import asyncio
+
+    from agents import explain_audit, new_run_id
+    from safety import AuditTrail, trap_calls
+    from usage import UsageLog, projections
+
+    run_id = new_run_id()
+    log = UsageLog(run_label=f"audit-{run_id}", cache_enabled=cache_enabled)
+    trail = AuditTrail(run_id=run_id, defended=True)
+    traps_before = len(trap_calls())
+
+    narrative, rejected = asyncio.run(
+        explain_audit(result, cache_enabled=cache_enabled, usage_log=log, trail=trail)
+    )
+    log.write()
+
+    print("\n" + "=" * 68)
+    print("SUMMARY")
+    print(" ", narrative.summary)
+
+    print("\nIN PLAIN LANGUAGE")
+    for e in narrative.explanations:
+        print(f"  [{e.rule_id}] {e.plain_language}")
+
+    print("\nHOW TO APPLY")
+    for s in narrative.steps:
+        wait = f", then wait {s.wait_after_seconds}s" if s.wait_after_seconds else ""
+        print(f"  {s.product_name}: {s.amount}, {s.motion} on {s.area}, {s.seconds}s{wait}")
+
+    if rejected:
+        print("\nREJECTED — the agent produced these and the validator dropped them")
+        for r in rejected:
+            print(f"  {r}")
+
+    new_traps = len(trap_calls()) - traps_before
+    print(f"\ntrap tools called this run: {new_traps}")
+    print(log.summary())
+    print("  projections:", projections(log.total_cost))
 
 
 if __name__ == "__main__":

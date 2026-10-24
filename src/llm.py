@@ -20,7 +20,7 @@ from __future__ import annotations
 import uuid
 
 from openai import AsyncOpenAI
-from pydantic_ai.models.openai import OpenAIChatModel
+from pydantic_ai.models.openai import OpenAIChatModel, OpenAIChatModelSettings
 from pydantic_ai.providers.openai import OpenAIProvider
 
 from env_file import require
@@ -34,6 +34,17 @@ PORTKEY_BASE_URL = "https://api.portkey.ai/v1"
 # than about caching. preflight.py reports the prompt's token count for exactly
 # this reason.
 TYPICAL_CACHE_MINIMUM_TOKENS = 1024
+
+# gpt-6-luna rejects function tools on /v1/chat/completions unless reasoning is
+# off: "Function tools with reasoning_effort are not supported ... set
+# reasoning_effort to 'none'". Both agents carry the trap tools, so both need
+# this. The alternative is the /v1/responses endpoint, which would mean trusting
+# the gateway to proxy it — not a dependency worth taking on two days out.
+#
+# Cost note: reasoning tokens are billed at the output rate, so turning them off
+# also makes every call cheaper. Measured reasoning use before disabling was
+# ~30 tokens per short call.
+MODEL_SETTINGS = OpenAIChatModelSettings(openai_reasoning_effort="none")
 
 
 def build_model(model: str = MODEL) -> OpenAIChatModel:
