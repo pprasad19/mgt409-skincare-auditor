@@ -329,24 +329,29 @@ JS = """
 
 
 SPEECH_JS = """
-/* Spoken walkthrough.
+/* Spoken walkthrough, with the gaps made legible.
  *
- * The visual stepper assumed you would watch a countdown. You will not — your
- * hands are wet and your eyes are shut. This is the version that works in the
- * actual situation: press once, put the phone face down, and never touch it
- * again.
+ * Two problems with the first version. It said "25 seconds" and then went
+ * silent, so you could not tell whether it was counting or had crashed. And
+ * the silence itself was unpleasant: a minute of nothing while you stand at a
+ * sink feels a great deal longer than a minute.
  *
- * speechSynthesis uses voices from the operating system, not from this page,
- * and the ones that ship with Windows and macOS report localService: true, so
- * nothing here needs a network. If a machine genuinely has no voices the
- * buttons disable themselves rather than failing silently.
+ * So every pause is announced before it starts, long ones get a spoken warning
+ * near the end, and a quiet generated tone fills the gap with a soft tick every
+ * ten seconds. The ticks are the useful part -- they tell you time is passing
+ * without opening your eyes.
+ *
+ * The sound is synthesised with Web Audio rather than embedded. A minute of
+ * audio as base64 would add megabytes to a page that must open by double-click,
+ * and a CDN link is not allowed. Oscillators cost nothing.
  */
 (function(){
   var ALL = DATA_STEPS;
-  var queue = [], qi = 0, timer = null, running = false;
+  var queue = [], qi = 0, timer = null, warnTimer = null, running = false;
   var btnAm = document.getElementById('say-am'),
       btnPm = document.getElementById('say-pm'),
       stopB = document.getElementById('say-stop'),
+      muteB = document.getElementById('say-mute'),
       statusEl = document.getElementById('say-status');
 
   if(!('speechSynthesis' in window)){
@@ -355,21 +360,122 @@ SPEECH_JS = """
     return;
   }
 
+  /* ---- generated music ------------------------------------------------
+   *
+   * An arpeggio over a four-chord loop, synthesised note by note. Started as a
+   * low drone, which was calm but read as dead air -- you could not tell it
+   * from the page having crashed. A pulse does the same job as the old ten-
+   * second tick (you know time is passing without looking) and is pleasanter
+   * to stand in.
+   *
+   * Notes are scheduled 0.4s ahead on a repeating timer rather than all at
+   * once: a ten-minute wait would otherwise mean thousands of live
+   * oscillators.
+   */
+  var actx = null, muted = false, sched = null, nextNote = 0, step = 0, endAt = 0;
+
+  var BPM = 104, EIGHTH = 30 / BPM;
+  /* I - V - vi - IV, the most cheerful progression in common use. */
+  var CHORDS = [
+    [261.63, 329.63, 392.00],
+    [196.00, 246.94, 392.00],
+    [220.00, 261.63, 329.63],
+    [174.61, 220.00, 261.63]
+  ];
+  var BASS = [130.81, 98.00, 110.00, 87.31];
+  var PATTERN = [0, 1, 2, 1];
+
+  function ctx(){
+    if(!actx){
+      var C = window.AudioContext || window.webkitAudioContext;
+      if(!C) return null;
+      actx = new C();
+    }
+    if(actx.state === 'suspended'){ actx.resume(); }
+    return actx;
+  }
+
+  function note(freq, when, dur, type, level){
+    var a = actx;
+    var o = a.createOscillator(), g = a.createGain();
+    o.type = type;
+    o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, when);
+    g.gain.exponentialRampToValueAtTime(level, when + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+    o.connect(g); g.connect(a.destination);
+    o.start(when);
+    o.stop(when + dur + 0.03);
+  }
+
+  function pump(){
+    var a = actx;
+    if(!a) return;
+    while(nextNote < a.currentTime + 0.4){
+      if(nextNote >= endAt){ stopSound(); return; }
+      var bar = Math.floor(step / 8) % 4;
+      var chord = CHORDS[bar];
+      var pitch = chord[PATTERN[step % 4]] * (step % 8 >= 4 ? 2 : 1);
+      note(pitch, nextNote, EIGHTH * 0.85, 'triangle', 0.045);
+      if(step % 8 === 0){
+        note(BASS[bar], nextNote, EIGHTH * 3.2, 'sine', 0.07);
+      }
+      if(step % 4 === 2){
+        note(chord[2] * 2, nextNote, EIGHTH * 0.5, 'triangle', 0.02);
+      }
+      nextNote += EIGHTH;
+      step++;
+    }
+  }
+
+  function soundFor(seconds){
+    stopSound();
+    if(seconds < 4 || muted) return;
+    var a = ctx();
+    if(!a) return;
+    nextNote = a.currentTime + 0.08;
+    endAt = a.currentTime + seconds - 0.3;
+    step = 0;
+    pump();
+    sched = setInterval(pump, 150);
+  }
+
+  function stopSound(){
+    clearInterval(sched);
+    sched = null;
+  }
+
+  /* ---- script --------------------------------------------------------- */
+  /* The beat text is written for a page, where it follows a product name in
+   * lower case. Spoken, it follows a full stop, and a voice reads "Step one.
+   * one pump" with a stumble. */
+  function cap(t){ return t ? t.charAt(0).toUpperCase() + t.slice(1) : t; }
+
+  function howLong(secs){
+    if(secs >= 60 && secs % 60 === 0){
+      var m = secs / 60;
+      return m === 1 ? 'a minute' : m + ' minutes';
+    }
+    return secs + ' seconds';
+  }
+
   function build(slot){
     var steps = ALL.filter(function(s){ return s.slot === slot; });
-    var out = [{say: (slot === 'am' ? 'Morning' : 'Evening') + ' routine. '
-                     + steps.length + ' steps.', hold: 1}];
+    var out = [{say: (slot === 'am' ? 'Morning' : 'Evening') + ' routine, '
+                     + steps.length + ' steps. I will tell you how long to spend on '
+                     + 'each one, so you can put this down.', hold: 1}];
     steps.forEach(function(s, n){
       s.beats.forEach(function(bt){
         var text;
         if(bt.kind === 'apply'){
-          text = 'Step ' + (n + 1) + '. ' + s.name + '. ' + bt.text + '.';
+          text = 'Step ' + (n + 1) + '. ' + s.name + '. ' + cap(bt.text) + '.';
           if(s.freq !== 'daily'){ text += ' Only on ' + s.freq + '.'; }
-          text += ' ' + bt.secs + ' seconds.';
+          text += " I'll give you " + howLong(bt.secs) + '.';
         } else if(bt.kind === 'wait'){
-          text = 'Now ' + bt.text + '. ' + bt.secs + ' seconds.';
+          text = 'Now leave it to settle for ' + howLong(bt.secs)
+               + ". I'll tell you when that is up.";
         } else {
-          text = 'Now ' + bt.text + '.';
+          text = cap(bt.text) + '. ' + howLong(bt.secs) + '.';
         }
         out.push({say: text, hold: bt.secs});
       });
@@ -378,24 +484,35 @@ SPEECH_JS = """
     return out;
   }
 
+  function say(text, done){
+    var u = new SpeechSynthesisUtterance(text);
+    u.rate = 0.95;
+    u.onend = u.onerror = done;
+    speechSynthesis.speak(u);
+  }
+
   function run(){
     if(!running) return;
     if(qi >= queue.length){ finish('done'); return; }
     var item = queue[qi++];
     statusEl.textContent = item.say;
-    var u = new SpeechSynthesisUtterance(item.say);
-    u.rate = 0.95;
-    /* The hold runs AFTER the sentence finishes, not from when it started —
-     * otherwise a long instruction eats the time you were given to follow it. */
-    u.onend = u.onerror = function(){
+    /* The hold starts when the sentence ends, not when it begins, or a long
+     * instruction eats the time it just promised you. */
+    say(item.say, function(){
       if(!running) return;
-      timer = setTimeout(run, item.hold * 1000);
-    };
-    speechSynthesis.speak(u);
+      soundFor(item.hold);
+      if(item.hold >= 30){
+        warnTimer = setTimeout(function(){
+          if(running) say('Ten seconds left.', function(){});
+        }, (item.hold - 10) * 1000);
+      }
+      timer = setTimeout(function(){ stopSound(); run(); }, item.hold * 1000);
+    });
   }
 
   function start(slot){
     stop();
+    ctx();
     running = true; queue = build(slot); qi = 0;
     btnAm.disabled = btnPm.disabled = true;
     stopB.disabled = false;
@@ -404,7 +521,8 @@ SPEECH_JS = """
 
   function finish(msg){
     running = false;
-    clearTimeout(timer);
+    clearTimeout(timer); clearTimeout(warnTimer);
+    stopSound();
     speechSynthesis.cancel();
     btnAm.disabled = btnPm.disabled = false;
     stopB.disabled = true;
@@ -415,6 +533,11 @@ SPEECH_JS = """
   btnAm.addEventListener('click', function(){ start('am'); });
   btnPm.addEventListener('click', function(){ start('pm'); });
   stopB.addEventListener('click', stop);
+  muteB.addEventListener('click', function(){
+    muted = !muted;
+    if(muted) stopSound();
+    muteB.textContent = muted ? 'Sound off' : 'Sound on';
+  });
   window.addEventListener('beforeunload', function(){ speechSynthesis.cancel(); });
 })();
 """
@@ -750,11 +873,13 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
         '<button id="say-am">Read me the morning</button>'
         '<button id="say-pm">Read me the evening</button>'
         '<button id="say-stop" class="ghost" disabled>Stop</button>'
+        '<button id="say-mute" class="ghost">Sound on</button>'
         '<button id="print" class="ghost">Print a card for the mirror</button>'
         "</div>"
         '<p style="font-size:12.5px;color:var(--ink-faint);margin:-4px 0 14px">'
-        "Press play and put the phone down — it talks you through each step and "
-        "the waits, hands-free. Or print the card and tape it inside a cabinet door."
+        "Press play and put the phone down. It says how long to spend on each step, "
+        "plays something to stand to during the waits, and warns "
+        "you before each one ends. Or print the card and tape it inside a cabinet door."
         '</p><div class="bar">'
         '<button id="go-am" class="ghost">Step through the morning on screen</button>'
         '<button id="go-pm" class="ghost">Step through the evening on screen</button>'
