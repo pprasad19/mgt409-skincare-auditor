@@ -1,0 +1,155 @@
+"""Structured types for the auditor.
+
+Field choices are documented here rather than in the harness doc alone, because
+the reason a field exists is usually the reason the system can be trusted. The
+recurring theme: anything the user is told must carry enough provenance to be
+checked — which rule produced it, and from which product.
+"""
+
+from __future__ import annotations
+
+from typing import Literal
+
+from pydantic import BaseModel, Field
+
+Severity = Literal["critical", "high", "medium", "low"]
+FindingType = Literal["conflict", "caution", "synergy", "myth", "redundancy", "ordering", "timing"]
+Resolution = Literal["separate_am_pm", "alternate_nights", "buffer", "reorder", "drop_one", "none"]
+TimeOfDay = Literal["am", "pm", "both"]
+
+
+class InputProduct(BaseModel):
+    """One product as the user gave it to us, before any resolution."""
+
+    name: str
+    brand: str | None = None
+    form: str | None = Field(
+        default=None,
+        description="Product form id, e.g. serum. Inferred from the name when absent.",
+    )
+    listed_ingredients: list[str] = Field(
+        default_factory=list,
+        description="Raw INCI strings as printed on the label. The parser reads these; "
+                    "nothing is assumed from the product name alone.",
+    )
+    price_usd: float | None = Field(
+        default=None,
+        description="What the user paid. Drives the waste and redundancy figures, "
+                    "which are the only numbers in the output denominated in money.",
+    )
+    unused: bool = Field(
+        default=False,
+        description="User says they own it but do not use it. A product that is both "
+                    "unused and redundant is the clearest waste signal we have.",
+    )
+
+
+class ResolvedProduct(BaseModel):
+    """An input product after its ingredients have been matched to the table."""
+
+    product: InputProduct
+    form: str
+    actives: list[str] = Field(
+        default_factory=list,
+        description="Ingredient ids matched from the label.",
+    )
+    classes: list[str] = Field(default_factory=list)
+    unmatched_terms: list[str] = Field(
+        default_factory=list,
+        description="Label terms we could not resolve. Surfaced rather than dropped — "
+                    "an unknown active is a reason to lower confidence, not to stay silent.",
+    )
+    confidence: float = Field(
+        default=1.0,
+        description="Share of label terms resolved. Low confidence is shown to the user.",
+    )
+
+
+class Finding(BaseModel):
+    """One rule firing against this specific shelf."""
+
+    rule_id: str = Field(description="Traces back to interactions.yaml. Every claim is checkable.")
+    type: FindingType
+    severity: Severity
+    products: list[str] = Field(description="Product names this finding is about.")
+    ingredients: list[str] = Field(default_factory=list)
+    mechanism: str
+    guidance: str
+    resolution: Resolution
+    verified: bool = Field(
+        default=False,
+        description="Whether the underlying rule has been human-verified. Shown in the "
+                    "output so an unverified claim is never presented as settled.",
+    )
+
+
+class Escalation(BaseModel):
+    """A contraindication gate. Never advice — always a handoff."""
+
+    rule_id: str
+    condition: str
+    severity: Severity
+    message: str
+    products: list[str]
+
+
+class RoutineStep(BaseModel):
+    product_name: str
+    form: str
+    order: int
+    frequency: str = Field(default="daily", description="daily, or alternate nights when a rule says so.")
+    because: list[str] = Field(
+        default_factory=list,
+        description="Rule ids that placed this step here. Makes the ordering auditable "
+                    "rather than something the user has to take on faith.",
+    )
+    application: "ApplicationSpec | None" = None
+
+
+class ApplicationSpec(BaseModel):
+    """How to apply a step. Authored by the agent, rendered deterministically."""
+
+    motion: Literal["press", "circular", "patting", "smooth", "dab"] = "smooth"
+    area: str = "whole face"
+    amount: str = "pea-sized"
+    seconds: int = Field(default=15, ge=1, le=120)
+    wait_after_seconds: int = Field(
+        default=0,
+        description="Pause before the next step, e.g. letting an acid settle.",
+    )
+
+
+class Routine(BaseModel):
+    am: list[RoutineStep] = Field(default_factory=list)
+    pm: list[RoutineStep] = Field(default_factory=list)
+    notes: list[str] = Field(default_factory=list)
+
+
+class WasteSummary(BaseModel):
+    """The money figures. Separated out because Impact rests entirely on these."""
+
+    shelf_value_usd: float = 0.0
+    products_owned: int = 0
+    products_unused: int = 0
+    unused_value_usd: float = 0.0
+    redundant_value_usd: float = Field(
+        default=0.0,
+        description="Value of duplicate-function products beyond the first in each class.",
+    )
+    conflicted_value_usd: float = Field(
+        default=0.0,
+        description="Value of products being degraded by something used alongside them.",
+    )
+
+
+class AuditResult(BaseModel):
+    products: list[ResolvedProduct]
+    findings: list[Finding]
+    escalations: list[Escalation]
+    routine: Routine
+    waste: WasteSummary
+    rules_verified: int = 0
+    rules_total: int = 0
+
+
+RoutineStep.model_rebuild()

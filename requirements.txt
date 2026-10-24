@@ -1,0 +1,10 @@
+pydantic-ai
+pydantic
+openai
+python-dotenv
+PyYAML
+fastapi
+uvicorn[standard]
+python-multipart
+pillow
+tiktoken

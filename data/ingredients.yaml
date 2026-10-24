@@ -1,0 +1,495 @@
+# Active ingredients the auditor knows about.
+#
+# PROVENANCE — read before trusting any row.
+#
+# This file was drafted from general dermatological knowledge and has NOT yet
+# been checked against primary sources. Every entry carries `review: pending`.
+# A row is only evidence once a human has checked it and changed that to
+# `review: verified` with a real citation in `source`.
+#
+# This matters more than it looks. The project's central claim is that advice
+# comes from an auditable table rather than from model recall. A table that was
+# itself written by a model, and presented as verified, would make that claim
+# false. Verify before publishing; say plainly in the report how many rows were
+# checked and against what.
+#
+# FIELDS
+#   id            stable key, referenced by interactions.yaml
+#   class         grouping that most interaction rules operate on
+#   ph_range      [min, max] where the ingredient is stable and effective
+#   photosensitising  increases UV sensitivity -> implies PM use and daily SPF
+#   time          am | pm | any — preferred time of day
+#   pregnancy     ok | caution | avoid — input to the escalation gate, never advice
+#   prescription  true if normally obtained through a clinician
+#   potency       1-5, drives "too many strong actives at once" warnings
+
+ingredients:
+
+  # ---- Retinoids ----------------------------------------------------------
+  - id: tretinoin
+    name: Tretinoin
+    inci: [Tretinoin, Retinoic Acid]
+    aliases: [retin-a, retinoic acid]
+    class: retinoid
+    ph_range: [5.5, 6.5]
+    photosensitising: true
+    time: pm
+    pregnancy: avoid
+    prescription: true
+    potency: 5
+    note: Prescription retinoid. Presence should route the user to their clinician rather than to generated advice.
+    source: null
+    review: pending
+
+  - id: adapalene
+    name: Adapalene
+    inci: [Adapalene]
+    aliases: [differin]
+    class: retinoid
+    ph_range: [5.5, 6.5]
+    photosensitising: true
+    time: pm
+    pregnancy: avoid
+    prescription: false
+    potency: 4
+    note: Unusually photostable and oxidation-resistant for a retinoid, which makes it the documented exception to the benzoyl peroxide conflict.
+    source: null
+    review: pending
+
+  - id: retinol
+    name: Retinol
+    inci: [Retinol]
+    aliases: [vitamin a]
+    class: retinoid
+    ph_range: [5.0, 6.0]
+    photosensitising: true
+    time: pm
+    pregnancy: avoid
+    prescription: false
+    potency: 3
+    source: null
+    review: pending
+
+  - id: retinaldehyde
+    name: Retinaldehyde
+    inci: [Retinal, Retinaldehyde]
+    aliases: [retinal]
+    class: retinoid
+    ph_range: [5.0, 6.0]
+    photosensitising: true
+    time: pm
+    pregnancy: avoid
+    prescription: false
+    potency: 4
+    source: null
+    review: pending
+
+  - id: retinyl_palmitate
+    name: Retinyl palmitate
+    inci: [Retinyl Palmitate]
+    aliases: []
+    class: retinoid
+    ph_range: [5.0, 6.5]
+    photosensitising: true
+    time: pm
+    pregnancy: avoid
+    prescription: false
+    potency: 1
+    note: Weakest common retinoid ester. Often present in moisturisers without being marketed as a retinoid, which is a frequent source of accidental stacking.
+    source: null
+    review: pending
+
+  # ---- Exfoliating acids --------------------------------------------------
+  - id: glycolic_acid
+    name: Glycolic acid
+    inci: [Glycolic Acid]
+    aliases: [aha]
+    class: aha
+    ph_range: [3.0, 4.0]
+    photosensitising: true
+    time: pm
+    pregnancy: caution
+    prescription: false
+    potency: 4
+    note: Smallest AHA molecule, so the most penetrating and the most irritating of the group.
+    source: null
+    review: pending
+
+  - id: lactic_acid
+    name: Lactic acid
+    inci: [Lactic Acid]
+    aliases: []
+    class: aha
+    ph_range: [3.0, 4.0]
+    photosensitising: true
+    time: pm
+    pregnancy: caution
+    prescription: false
+    potency: 3
+    source: null
+    review: pending
+
+  - id: mandelic_acid
+    name: Mandelic acid
+    inci: [Mandelic Acid]
+    aliases: []
+    class: aha
+    ph_range: [3.0, 4.0]
+    photosensitising: true
+    time: pm
+    pregnancy: caution
+    prescription: false
+    potency: 2
+    note: Large molecule, slow penetration. The usual recommendation for sensitive skin that cannot tolerate glycolic.
+    source: null
+    review: pending
+
+  - id: salicylic_acid
+    name: Salicylic acid
+    inci: [Salicylic Acid]
+    aliases: [bha]
+    class: bha
+    ph_range: [3.0, 4.0]
+    photosensitising: true
+    time: pm
+    pregnancy: caution
+    prescription: false
+    potency: 3
+    note: Oil-soluble, so it works inside the pore rather than on the surface. Pregnancy guidance differs sharply between low-percentage leave-on products and peels.
+    source: null
+    review: pending
+
+  - id: gluconolactone
+    name: Gluconolactone
+    inci: [Gluconolactone]
+    aliases: [pha]
+    class: pha
+    ph_range: [3.0, 4.5]
+    photosensitising: false
+    time: any
+    pregnancy: ok
+    prescription: false
+    potency: 1
+    source: null
+    review: pending
+
+  # ---- Vitamin C forms ----------------------------------------------------
+  - id: l_ascorbic_acid
+    name: L-ascorbic acid
+    inci: [Ascorbic Acid, L-Ascorbic Acid]
+    aliases: [vitamin c, laa]
+    class: vitamin_c
+    ph_range: [2.5, 3.5]
+    photosensitising: false
+    time: am
+    pregnancy: ok
+    prescription: false
+    potency: 4
+    note: Needs a low pH to penetrate, which is the root of most of its interaction conflicts. Oxidises readily.
+    source: null
+    review: pending
+
+  - id: sodium_ascorbyl_phosphate
+    name: Sodium ascorbyl phosphate
+    inci: [Sodium Ascorbyl Phosphate]
+    aliases: [sap]
+    class: vitamin_c
+    ph_range: [6.0, 7.0]
+    photosensitising: false
+    time: any
+    pregnancy: ok
+    prescription: false
+    potency: 2
+    note: Stable derivative at skin-neutral pH. Avoids the low-pH conflicts that L-ascorbic acid creates.
+    source: null
+    review: pending
+
+  - id: thd_ascorbate
+    name: Tetrahexyldecyl ascorbate
+    inci: [Tetrahexyldecyl Ascorbate]
+    aliases: [thd]
+    class: vitamin_c
+    ph_range: [5.0, 7.0]
+    photosensitising: false
+    time: any
+    pregnancy: ok
+    prescription: false
+    potency: 3
+    source: null
+    review: pending
+
+  # ---- Other actives ------------------------------------------------------
+  - id: niacinamide
+    name: Niacinamide
+    inci: [Niacinamide]
+    aliases: [vitamin b3]
+    class: niacinamide
+    ph_range: [5.0, 7.0]
+    photosensitising: false
+    time: any
+    pregnancy: ok
+    prescription: false
+    potency: 2
+    note: Unusually compatible. Most of its reputation for conflicts comes from a widely repeated misreading of a 1960s stability study.
+    source: null
+    review: pending
+
+  - id: benzoyl_peroxide
+    name: Benzoyl peroxide
+    inci: [Benzoyl Peroxide]
+    aliases: [bp, bpo]
+    class: benzoyl_peroxide
+    ph_range: [4.0, 5.5]
+    photosensitising: false
+    time: any
+    pregnancy: caution
+    prescription: false
+    potency: 4
+    note: An oxidiser. That single property explains every conflict it appears in.
+    source: null
+    review: pending
+
+  - id: azelaic_acid
+    name: Azelaic acid
+    inci: [Azelaic Acid]
+    aliases: []
+    class: azelaic
+    ph_range: [4.0, 5.5]
+    photosensitising: false
+    time: any
+    pregnancy: ok
+    prescription: false
+    potency: 3
+    note: One of the few actives generally considered acceptable in pregnancy, which makes it the usual substitution when retinoids have to come out.
+    source: null
+    review: pending
+
+  - id: hydroquinone
+    name: Hydroquinone
+    inci: [Hydroquinone]
+    aliases: [hq]
+    class: hydroquinone
+    ph_range: [4.0, 6.0]
+    photosensitising: true
+    time: pm
+    pregnancy: avoid
+    prescription: true
+    potency: 5
+    note: Regulated differently across markets; treat presence as a clinician-supervised product.
+    source: null
+    review: pending
+
+  - id: tranexamic_acid
+    name: Tranexamic acid
+    inci: [Tranexamic Acid]
+    aliases: [txa]
+    class: tranexamic
+    ph_range: [5.0, 7.0]
+    photosensitising: false
+    time: any
+    pregnancy: caution
+    prescription: false
+    potency: 2
+    source: null
+    review: pending
+
+  - id: alpha_arbutin
+    name: Alpha arbutin
+    inci: [Alpha-Arbutin, Arbutin]
+    aliases: [arbutin]
+    class: arbutin
+    ph_range: [5.0, 7.0]
+    photosensitising: false
+    time: any
+    pregnancy: caution
+    prescription: false
+    potency: 2
+    source: null
+    review: pending
+
+  - id: sulfur
+    name: Sulfur
+    inci: [Sulfur, Colloidal Sulfur]
+    aliases: []
+    class: sulfur
+    ph_range: [4.0, 6.0]
+    photosensitising: false
+    time: pm
+    pregnancy: ok
+    prescription: false
+    potency: 3
+    source: null
+    review: pending
+
+  - id: copper_peptides
+    name: Copper peptides
+    inci: [Copper Tripeptide-1, GHK-Cu]
+    aliases: [ghk-cu]
+    class: copper_peptide
+    ph_range: [5.0, 7.0]
+    photosensitising: false
+    time: pm
+    pregnancy: caution
+    prescription: false
+    potency: 2
+    note: The copper ion is redox-active, which is why it conflicts with strong antioxidants and with low pH.
+    source: null
+    review: pending
+
+  - id: peptides
+    name: Signal peptides
+    inci: [Palmitoyl Tripeptide-1, Palmitoyl Tetrapeptide-7, Acetyl Hexapeptide-8]
+    aliases: [matrixyl, argireline]
+    class: peptide
+    ph_range: [5.0, 7.0]
+    photosensitising: false
+    time: any
+    pregnancy: ok
+    prescription: false
+    potency: 1
+    source: null
+    review: pending
+
+  - id: urea
+    name: Urea
+    inci: [Urea]
+    aliases: []
+    class: humectant
+    ph_range: [4.0, 7.0]
+    photosensitising: false
+    time: any
+    pregnancy: ok
+    prescription: false
+    potency: 2
+    note: Humectant at low percentages, keratolytic at high ones, and increases penetration of whatever follows it.
+    source: null
+    review: pending
+
+  # ---- Supporting / barrier -----------------------------------------------
+  - id: hyaluronic_acid
+    name: Hyaluronic acid
+    inci: [Sodium Hyaluronate, Hyaluronic Acid]
+    aliases: [ha]
+    class: humectant
+    ph_range: [4.0, 7.0]
+    photosensitising: false
+    time: any
+    pregnancy: ok
+    prescription: false
+    potency: 1
+    source: null
+    review: pending
+
+  - id: glycerin
+    name: Glycerin
+    inci: [Glycerin]
+    aliases: []
+    class: humectant
+    ph_range: [4.0, 8.0]
+    photosensitising: false
+    time: any
+    pregnancy: ok
+    prescription: false
+    potency: 1
+    source: null
+    review: pending
+
+  - id: ceramides
+    name: Ceramides
+    inci: [Ceramide NP, Ceramide AP, Ceramide EOP]
+    aliases: []
+    class: ceramide
+    ph_range: [4.5, 7.0]
+    photosensitising: false
+    time: any
+    pregnancy: ok
+    prescription: false
+    potency: 1
+    source: null
+    review: pending
+
+  - id: panthenol
+    name: Panthenol
+    inci: [Panthenol, Provitamin B5]
+    aliases: [b5]
+    class: soothing
+    ph_range: [4.0, 7.0]
+    photosensitising: false
+    time: any
+    pregnancy: ok
+    prescription: false
+    potency: 1
+    source: null
+    review: pending
+
+  - id: centella
+    name: Centella asiatica
+    inci: [Centella Asiatica Extract, Madecassoside]
+    aliases: [cica]
+    class: soothing
+    ph_range: [4.0, 7.0]
+    photosensitising: false
+    time: any
+    pregnancy: ok
+    prescription: false
+    potency: 1
+    source: null
+    review: pending
+
+  - id: squalane
+    name: Squalane
+    inci: [Squalane]
+    aliases: []
+    class: emollient
+    ph_range: [4.0, 8.0]
+    photosensitising: false
+    time: any
+    pregnancy: ok
+    prescription: false
+    potency: 1
+    source: null
+    review: pending
+
+  - id: petrolatum
+    name: Petrolatum
+    inci: [Petrolatum, Mineral Oil]
+    aliases: [vaseline, slugging]
+    class: occlusive
+    ph_range: [4.0, 8.0]
+    photosensitising: false
+    time: pm
+    pregnancy: ok
+    prescription: false
+    potency: 1
+    note: Seals everything beneath it, including actives whose penetration then increases.
+    source: null
+    review: pending
+
+  # ---- UV filters ---------------------------------------------------------
+  - id: zinc_oxide
+    name: Zinc oxide
+    inci: [Zinc Oxide]
+    aliases: [mineral spf]
+    class: uv_filter
+    ph_range: [5.0, 8.0]
+    photosensitising: false
+    time: am
+    pregnancy: ok
+    prescription: false
+    potency: 1
+    source: null
+    review: pending
+
+  - id: organic_uv_filters
+    name: Organic UV filters
+    inci: [Avobenzone, Octocrylene, Homosalate, Tinosorb S, Uvinul A Plus]
+    aliases: [chemical spf, sunscreen]
+    class: uv_filter
+    ph_range: [5.0, 8.0]
+    photosensitising: false
+    time: am
+    pregnancy: ok
+    prescription: false
+    potency: 1
+    source: null
+    review: pending

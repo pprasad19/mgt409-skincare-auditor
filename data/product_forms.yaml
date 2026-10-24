@@ -1,0 +1,74 @@
+# Canonical application order. Lower rank goes on the skin first.
+#
+# Two principles decide these numbers:
+#   - water before oil, thin before thick, so each layer can still penetrate
+#   - anything whose job is to seal (SPF in the morning, occlusives at night)
+#     has to be last or it seals the others out
+#
+# `times` limits a form to part of the day. Everything else may appear in both.
+
+forms:
+  - id: cleanser
+    name: Cleanser
+    rank: 10
+    times: [am, pm]
+
+  - id: exfoliant
+    name: Exfoliant (rinse-off or wipe-off)
+    rank: 15
+    times: [pm]
+    note: Leave-on acids are treatments, not this form. This is the rinse-off kind.
+
+  - id: toner
+    name: Toner
+    rank: 20
+    times: [am, pm]
+
+  - id: essence
+    name: Essence
+    rank: 30
+    times: [am, pm]
+
+  - id: serum
+    name: Serum
+    rank: 40
+    times: [am, pm]
+
+  - id: treatment
+    name: Treatment (leave-on active)
+    rank: 45
+    times: [am, pm]
+    note: Where retinoids, leave-on acids and benzoyl peroxide land.
+
+  - id: eye
+    name: Eye cream
+    rank: 50
+    times: [am, pm]
+
+  - id: moisturiser
+    name: Moisturiser
+    rank: 60
+    times: [am, pm]
+
+  - id: oil
+    name: Face oil
+    rank: 70
+    times: [pm]
+    note: After moisturiser, because oil passes through cream but cream does not pass through oil.
+
+  - id: spf
+    name: Sunscreen
+    rank: 80
+    times: [am]
+    note: Always the final morning step.
+
+  - id: occlusive
+    name: Occlusive / sleeping mask
+    rank: 90
+    times: [pm]
+
+  - id: mask
+    name: Treatment mask
+    rank: 35
+    times: [am, pm]
+    note: Used occasionally rather than daily; slots after cleansing.

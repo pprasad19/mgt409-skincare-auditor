@@ -1,0 +1,86 @@
+{
+  "_note": "A plausible over-bought shelf, used for development and as the small test dataset the course requires. Ingredient lists are shortened to the actives plus a few inactives, which is what label parsing will realistically recover from a photo.",
+  "conditions": [],
+  "products": [
+    {
+      "name": "Foaming Facial Cleanser",
+      "brand": "CeraVe",
+      "form": "cleanser",
+      "price_usd": 16.0,
+      "listed_ingredients": ["Water", "Cocamidopropyl Hydroxysultaine", "Niacinamide", "Ceramide NP", "Hyaluronic Acid", "Glycerin"]
+    },
+    {
+      "name": "Acne Foaming Wash 4%",
+      "brand": "PanOxyl",
+      "form": "cleanser",
+      "price_usd": 10.0,
+      "listed_ingredients": ["Benzoyl Peroxide", "Water", "Glycerin", "Sodium Cocoyl Isethionate"]
+    },
+    {
+      "name": "Glycolic Acid 7% Toning Solution",
+      "brand": "The Ordinary",
+      "form": "toner",
+      "price_usd": 13.0,
+      "listed_ingredients": ["Water", "Glycolic Acid", "Panthenol", "Centella Asiatica Extract"]
+    },
+    {
+      "name": "C E Ferulic",
+      "brand": "SkinCeuticals",
+      "form": "serum",
+      "price_usd": 182.0,
+      "listed_ingredients": ["Water", "L-Ascorbic Acid", "Ethoxydiglycol", "Ferulic Acid", "Tocopherol"]
+    },
+    {
+      "name": "Niacinamide 10% + Zinc 1%",
+      "brand": "The Ordinary",
+      "form": "serum",
+      "price_usd": 8.0,
+      "listed_ingredients": ["Water", "Niacinamide", "Pentylene Glycol", "Zinc PCA"]
+    },
+    {
+      "name": "2% BHA Liquid Exfoliant",
+      "brand": "Paula's Choice",
+      "form": "treatment",
+      "price_usd": 35.0,
+      "listed_ingredients": ["Water", "Methylpropanediol", "Salicylic Acid", "Panthenol", "Green Tea Extract"]
+    },
+    {
+      "name": "Retinol 0.5% in Squalane",
+      "brand": "The Ordinary",
+      "form": "treatment",
+      "price_usd": 12.0,
+      "listed_ingredients": ["Squalane", "Retinol", "Tocopherol"]
+    },
+    {
+      "name": "Retinol 1% in Squalane",
+      "brand": "The Ordinary",
+      "form": "treatment",
+      "price_usd": 15.0,
+      "unused": true,
+      "listed_ingredients": ["Squalane", "Retinol", "Tocopherol"]
+    },
+    {
+      "name": "Buffet + Copper Peptides 1%",
+      "brand": "The Ordinary",
+      "form": "serum",
+      "price_usd": 30.0,
+      "unused": true,
+      "listed_ingredients": ["Water", "Copper Tripeptide-1", "Palmitoyl Tripeptide-1", "Glycerin"]
+    },
+    {
+      "name": "PM Facial Moisturising Lotion",
+      "brand": "CeraVe",
+      "form": "moisturiser",
+      "price_usd": 18.0,
+      "unused": true,
+      "listed_ingredients": ["Water", "Glycerin", "Niacinamide", "Ceramide NP", "Hyaluronic Acid"]
+    },
+    {
+      "name": "Anthelios UVMune 400 SPF50+",
+      "brand": "La Roche-Posay",
+      "form": "spf",
+      "price_usd": 25.0,
+      "listed_ingredients": ["Water", "Avobenzone", "Octocrylene", "Glycerin"]
+    }
+  ]
+}

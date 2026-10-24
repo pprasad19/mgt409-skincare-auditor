@@ -1,0 +1,261 @@
+"""Build data/skincare.db from the YAML source files.
+
+The YAML is the source of truth and lives in git, so the rules the auditor
+applies are reviewable in a diff. The database is a derived artifact and is
+gitignored — rebuild it with:
+
+    python build_db.py
+
+Every selector in interactions.yaml is checked against ingredients.yaml before
+anything is written. A typo in a rule would otherwise mean the rule silently
+never fires, which is the worst possible failure for a table whose whole purpose
+is to be trustworthy.
+"""
+
+from __future__ import annotations
+
+import re
+import sqlite3
+import sys
+from pathlib import Path
+
+import yaml
+
+
+def normalise(text: str) -> str:
+    """Fold punctuation to spaces.
+
+    Applied to search terms here and to label text at match time. Both sides
+    must go through the same function: otherwise an INCI name like
+    "Copper Tripeptide-1" is stored with a hyphen, the label is normalised to a
+    space, and the ingredient silently never matches.
+    """
+    return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9 ]+", " ", text.lower())).strip()
+
+ROOT = Path(__file__).resolve().parent
+DATA = ROOT / "data"
+DB_PATH = DATA / "skincare.db"
+
+SCHEMA = """
+DROP TABLE IF EXISTS ingredients;
+DROP TABLE IF EXISTS ingredient_terms;
+DROP TABLE IF EXISTS interactions;
+DROP TABLE IF EXISTS contraindications;
+DROP TABLE IF EXISTS product_forms;
+
+CREATE TABLE ingredients (
+    id               TEXT PRIMARY KEY,
+    name             TEXT NOT NULL,
+    class            TEXT NOT NULL,
+    ph_min           REAL,
+    ph_max           REAL,
+    photosensitising INTEGER NOT NULL,
+    time             TEXT NOT NULL,
+    pregnancy        TEXT NOT NULL,
+    prescription     INTEGER NOT NULL,
+    potency          INTEGER NOT NULL,
+    note             TEXT,
+    source           TEXT,
+    review           TEXT NOT NULL
+);
+
+-- One row per searchable term, so label parsing can match INCI names,
+-- common names and colloquial aliases through a single index.
+CREATE TABLE ingredient_terms (
+    term          TEXT NOT NULL,
+    ingredient_id TEXT NOT NULL REFERENCES ingredients(id),
+    kind          TEXT NOT NULL,
+    PRIMARY KEY (term, ingredient_id)
+);
+CREATE INDEX idx_terms ON ingredient_terms(term);
+
+CREATE TABLE interactions (
+    rule_id            TEXT PRIMARY KEY,
+    a                  TEXT NOT NULL,
+    b                  TEXT NOT NULL,
+    type               TEXT NOT NULL,
+    severity           TEXT NOT NULL,
+    mechanism          TEXT NOT NULL,
+    guidance           TEXT NOT NULL,
+    resolution         TEXT NOT NULL,
+    except_ingredients TEXT,
+    forms              TEXT,
+    source             TEXT,
+    review             TEXT NOT NULL
+);
+
+CREATE TABLE contraindications (
+    rule_id   TEXT PRIMARY KEY,
+    condition TEXT NOT NULL,
+    matches   TEXT NOT NULL,
+    severity  TEXT NOT NULL,
+    message   TEXT NOT NULL,
+    action    TEXT NOT NULL,
+    source    TEXT,
+    review    TEXT NOT NULL
+);
+
+CREATE TABLE product_forms (
+    id    TEXT PRIMARY KEY,
+    name  TEXT NOT NULL,
+    rank  INTEGER NOT NULL,
+    times TEXT NOT NULL,
+    note  TEXT
+);
+"""
+
+VALID_TYPES = {"conflict", "caution", "synergy", "myth", "redundancy", "ordering", "timing"}
+VALID_SEVERITY = {"critical", "high", "medium", "low"}
+VALID_PREGNANCY = {"ok", "caution", "avoid"}
+
+
+def load(name: str) -> dict:
+    path = DATA / name
+    if not path.is_file():
+        sys.exit(f"Missing {path}")
+    return yaml.safe_load(path.read_text(encoding="utf-8"))
+
+
+def check_selector(selector: str, ids: set[str], classes: set[str], where: str, errors: list[str]) -> None:
+    """A selector is '*', 'class:<name>', 'ing:<id>' or 'prescription:true'."""
+    if selector == "*" or selector.startswith("prescription:"):
+        return
+    if selector.startswith("class:"):
+        if selector.removeprefix("class:") not in classes:
+            errors.append(f"{where}: unknown class in {selector!r}")
+    elif selector.startswith("ing:"):
+        if selector.removeprefix("ing:") not in ids:
+            errors.append(f"{where}: unknown ingredient in {selector!r}")
+    else:
+        errors.append(f"{where}: malformed selector {selector!r}")
+
+
+def main() -> None:
+    ingredients = load("ingredients.yaml")["ingredients"]
+    rules_doc = load("interactions.yaml")
+    interactions = rules_doc["interactions"]
+    contraindications = rules_doc.get("contraindications", [])
+    forms = load("product_forms.yaml")["forms"]
+
+    ids = {row["id"] for row in ingredients}
+    classes = {row["class"] for row in ingredients}
+    errors: list[str] = []
+
+    if len(ids) != len(ingredients):
+        errors.append("duplicate ingredient id")
+
+    for row in ingredients:
+        if row["pregnancy"] not in VALID_PREGNANCY:
+            errors.append(f"{row['id']}: bad pregnancy value {row['pregnancy']!r}")
+        if not 1 <= row["potency"] <= 5:
+            errors.append(f"{row['id']}: potency out of range")
+
+    seen_rules: set[str] = set()
+    for rule in interactions:
+        rid = rule["rule_id"]
+        where = f"interaction {rid}"
+        if rid in seen_rules:
+            errors.append(f"{where}: duplicate rule_id")
+        seen_rules.add(rid)
+        if rule["type"] not in VALID_TYPES:
+            errors.append(f"{where}: bad type {rule['type']!r}")
+        if rule["severity"] not in VALID_SEVERITY:
+            errors.append(f"{where}: bad severity {rule['severity']!r}")
+        check_selector(rule["a"], ids, classes, where, errors)
+        check_selector(rule["b"], ids, classes, where, errors)
+        for exc in rule.get("except_ingredients") or []:
+            if exc not in ids:
+                errors.append(f"{where}: unknown ingredient in except_ingredients: {exc!r}")
+
+    for rule in contraindications:
+        where = f"contraindication {rule['rule_id']}"
+        if rule["rule_id"] in seen_rules:
+            errors.append(f"{where}: duplicate rule_id")
+        seen_rules.add(rule["rule_id"])
+        check_selector(rule["matches"], ids, classes, where, errors)
+
+    if errors:
+        print("Validation failed:", file=sys.stderr)
+        for e in errors:
+            print(f"  - {e}", file=sys.stderr)
+        sys.exit(1)
+
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    if DB_PATH.exists():
+        DB_PATH.unlink()
+
+    con = sqlite3.connect(DB_PATH)
+    con.executescript(SCHEMA)
+
+    for row in ingredients:
+        ph = row.get("ph_range") or [None, None]
+        con.execute(
+            "INSERT INTO ingredients VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            (
+                row["id"], row["name"], row["class"], ph[0], ph[1],
+                int(row["photosensitising"]), row["time"], row["pregnancy"],
+                int(row["prescription"]), row["potency"],
+                row.get("note"), row.get("source"), row["review"],
+            ),
+        )
+        terms = {(normalise(row["name"]), "name")}
+        terms |= {(normalise(t), "inci") for t in row.get("inci") or []}
+        terms |= {(normalise(t), "alias") for t in row.get("aliases") or []}
+        for term, kind in terms:
+            con.execute(
+                "INSERT OR IGNORE INTO ingredient_terms VALUES (?,?,?)",
+                (term, row["id"], kind),
+            )
+
+    for rule in interactions:
+        con.execute(
+            "INSERT INTO interactions VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+            (
+                rule["rule_id"], rule["a"], rule["b"], rule["type"], rule["severity"],
+                " ".join(rule["mechanism"].split()), rule["guidance"], rule["resolution"],
+                ",".join(rule.get("except_ingredients") or []) or None,
+                ",".join(rule.get("forms") or []) or None,
+                rule.get("source"), rule["review"],
+            ),
+        )
+
+    for rule in contraindications:
+        con.execute(
+            "INSERT INTO contraindications VALUES (?,?,?,?,?,?,?,?)",
+            (
+                rule["rule_id"], rule["condition"], rule["matches"], rule["severity"],
+                " ".join(rule["message"].split()), rule["action"],
+                rule.get("source"), rule["review"],
+            ),
+        )
+
+    for form in forms:
+        con.execute(
+            "INSERT INTO product_forms VALUES (?,?,?,?,?)",
+            (form["id"], form["name"], form["rank"], ",".join(form["times"]), form.get("note")),
+        )
+
+    con.commit()
+
+    counts = {
+        "ingredients": len(ingredients),
+        "search terms": con.execute("SELECT COUNT(*) FROM ingredient_terms").fetchone()[0],
+        "interactions": len(interactions),
+        "contraindications": len(contraindications),
+        "product forms": len(forms),
+    }
+    unverified = sum(1 for r in ingredients if r["review"] != "verified")
+    unverified += sum(1 for r in interactions + contraindications if r["review"] != "verified")
+
+    con.close()
+
+    print(f"Built {DB_PATH.relative_to(ROOT)}")
+    for k, v in counts.items():
+        print(f"  {v:>4}  {k}")
+    if unverified:
+        print(f"\n  {unverified} rows still marked review: pending.")
+        print("  These are not evidence until a human checks them.")
+
+
+if __name__ == "__main__":
+    main()

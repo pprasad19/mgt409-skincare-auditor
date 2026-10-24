@@ -1,0 +1,446 @@
+# Interaction rules. Every claim the auditor makes cites one of these rule_ids.
+#
+# PROVENANCE — same warning as ingredients.yaml. Drafted from general knowledge,
+# `review: pending` until a human checks it and adds a real citation. The
+# project's claim is that advice is auditable, which is only true if the table
+# is audited.
+#
+# SELECTORS
+#   class:<name>  matches any ingredient of that class
+#   ing:<id>      matches one specific ingredient
+#   A rule where a == b fires when two DIFFERENT products both match it.
+#
+# TYPE
+#   conflict     should not be used together as the user currently does
+#   caution      workable, but needs care or a lower frequency
+#   synergy      better together than apart — worth telling people
+#   myth         widely believed, not supported. Stated so users stop avoiding it.
+#   redundancy   duplicate function, money being spent twice
+#
+# RESOLUTION
+#   separate_am_pm | alternate_nights | buffer | reorder | drop_one | none
+
+interactions:
+
+  # ---- Retinoid conflicts -------------------------------------------------
+  - rule_id: SKA-001
+    a: class:retinoid
+    b: class:aha
+    type: conflict
+    severity: high
+    mechanism: >-
+      Both increase cell turnover and both disrupt the barrier. Used in the same
+      session the irritation is additive, and the resulting inflammation can drive
+      the pigmentation many users bought the acid to treat.
+    guidance: Use on alternate nights rather than together.
+    resolution: alternate_nights
+    source: null
+    review: pending
+
+  - rule_id: SKA-002
+    a: class:retinoid
+    b: class:bha
+    type: conflict
+    severity: medium
+    mechanism: >-
+      Same additive irritation as with AHAs, usually milder because salicylic acid
+      works inside the pore rather than across the whole surface.
+    guidance: Alternate nights, or move the BHA to the morning if tolerated.
+    resolution: alternate_nights
+    source: null
+    review: pending
+
+  - rule_id: SKA-003
+    a: class:retinoid
+    b: ing:benzoyl_peroxide
+    type: conflict
+    severity: high
+    mechanism: >-
+      Benzoyl peroxide is an oxidiser and most retinoids oxidise readily. Applied
+      together, a measurable fraction of the retinoid is degraded before it acts,
+      so the more expensive product is the one being wasted.
+    guidance: Separate them — benzoyl peroxide in the morning, retinoid at night.
+    resolution: separate_am_pm
+    except_ingredients: [adapalene]
+    source: null
+    review: pending
+
+  - rule_id: SKA-004
+    a: ing:adapalene
+    b: ing:benzoyl_peroxide
+    type: synergy
+    severity: low
+    mechanism: >-
+      Adapalene is photostable and oxidation-resistant, unlike other retinoids, and
+      the two are co-formulated in prescription products. This is the documented
+      exception to SKA-003.
+    guidance: Safe to use together. Combination products exist for exactly this reason.
+    resolution: none
+    source: null
+    review: pending
+
+  - rule_id: SKA-005
+    a: class:retinoid
+    b: ing:l_ascorbic_acid
+    type: caution
+    severity: medium
+    mechanism: >-
+      L-ascorbic acid needs a pH near 3 and retinoids work closer to 5.5. Layered
+      directly, neither sits in its effective range, and the combined acid load
+      irritates.
+    guidance: Vitamin C in the morning, retinoid at night. They are not incompatible, just badly matched in one session.
+    resolution: separate_am_pm
+    source: null
+    review: pending
+
+  - rule_id: SKA-006
+    a: class:retinoid
+    b: class:retinoid
+    type: redundancy
+    severity: medium
+    mechanism: >-
+      Two retinoids do not compound the benefit but do compound the irritation.
+      This frequently happens by accident, because retinyl palmitate appears in
+      moisturisers that are not marketed as retinoid products.
+    guidance: Keep the stronger one. Check moisturiser labels for a second retinoid you did not know about.
+    resolution: drop_one
+    source: null
+    review: pending
+
+  - rule_id: SKA-007
+    a: class:retinoid
+    b: ing:urea
+    type: caution
+    severity: low
+    mechanism: Urea increases penetration of what follows it, which raises both the effect and the irritation of a retinoid.
+    guidance: Workable, but introduce slowly and watch for stinging.
+    resolution: none
+    source: null
+    review: pending
+
+  # ---- Acid conflicts -----------------------------------------------------
+  - rule_id: SKA-010
+    a: class:aha
+    b: class:bha
+    type: caution
+    severity: medium
+    mechanism: >-
+      Combined exfoliation easily exceeds what the barrier can repair between
+      uses. Tolerable for some skin, but it is the most common cause of the
+      over-exfoliation state users mistake for sensitivity.
+    guidance: Use on different days unless your skin has clearly tolerated both together.
+    resolution: alternate_nights
+    source: null
+    review: pending
+
+  - rule_id: SKA-011
+    a: class:aha
+    b: class:aha
+    type: redundancy
+    severity: medium
+    mechanism: Two AHA products do the same job. The second one is spend without additional benefit, and raises irritation.
+    guidance: Keep one. Mandelic if your skin is reactive, glycolic if it is not.
+    resolution: drop_one
+    source: null
+    review: pending
+
+  - rule_id: SKA-012
+    a: class:aha
+    b: ing:benzoyl_peroxide
+    type: caution
+    severity: medium
+    mechanism: Acid-driven barrier disruption plus an oxidiser is a reliable route to irritation.
+    guidance: Separate by time of day.
+    resolution: separate_am_pm
+    source: null
+    review: pending
+
+  # ---- Vitamin C ----------------------------------------------------------
+  - rule_id: SKA-020
+    a: ing:l_ascorbic_acid
+    b: ing:niacinamide
+    type: myth
+    severity: low
+    mechanism: >-
+      The claim traces to a 1960s stability study run at high heat on pure
+      compounds, conditions that do not occur on skin or in finished products.
+      Modern formulations combine them deliberately.
+    guidance: No need to separate these. If you have been spacing them apart, you can stop.
+    resolution: none
+    source: null
+    review: pending
+
+  - rule_id: SKA-021
+    a: ing:l_ascorbic_acid
+    b: class:copper_peptide
+    type: conflict
+    severity: medium
+    mechanism: >-
+      A strong reducing agent next to a redox-active copper ion. Each degrades the
+      other, so both products underperform.
+    guidance: Separate by time of day — vitamin C in the morning, peptides at night.
+    resolution: separate_am_pm
+    source: null
+    review: pending
+
+  - rule_id: SKA-022
+    a: ing:l_ascorbic_acid
+    b: class:uv_filter
+    type: synergy
+    severity: low
+    mechanism: >-
+      Topical vitamin C neutralises free radicals that form in skin despite
+      sunscreen. The two protect against different parts of the same damage.
+    guidance: Vitamin C in the morning under sunscreen is the ideal pairing.
+    resolution: none
+    source: null
+    review: pending
+
+  - rule_id: SKA-023
+    a: class:vitamin_c
+    b: class:vitamin_c
+    type: redundancy
+    severity: low
+    mechanism: Multiple vitamin C products deliver the same antioxidant action at additional cost.
+    guidance: Keep one. A stable derivative if the L-ascorbic acid stings or oxidises before you finish it.
+    resolution: drop_one
+    source: null
+    review: pending
+
+  # ---- Copper peptides ----------------------------------------------------
+  - rule_id: SKA-030
+    a: class:copper_peptide
+    b: class:aha
+    type: conflict
+    severity: medium
+    mechanism: Low pH destabilises the peptide-copper complex, so the peptide product stops doing what it was bought for.
+    guidance: Separate by time of day or alternate nights.
+    resolution: separate_am_pm
+    source: null
+    review: pending
+
+  - rule_id: SKA-031
+    a: class:copper_peptide
+    b: class:retinoid
+    type: caution
+    severity: low
+    mechanism: Commonly separated on stability grounds, though the evidence is thinner than for the vitamin C interaction.
+    guidance: Alternate nights if you want to be careful. Low confidence rule.
+    resolution: alternate_nights
+    source: null
+    review: pending
+
+  # ---- Benzoyl peroxide ---------------------------------------------------
+  - rule_id: SKA-040
+    a: ing:benzoyl_peroxide
+    b: ing:hydroquinone
+    type: conflict
+    severity: medium
+    mechanism: Together these can produce temporary staining or uneven darkening of the skin — the opposite of the intended effect.
+    guidance: Do not layer. Use at different times of day.
+    resolution: separate_am_pm
+    source: null
+    review: pending
+
+  - rule_id: SKA-041
+    a: ing:benzoyl_peroxide
+    b: class:vitamin_c
+    type: caution
+    severity: medium
+    mechanism: An oxidiser applied with an antioxidant. Each works against the other.
+    guidance: Separate by time of day.
+    resolution: separate_am_pm
+    source: null
+    review: pending
+
+  # ---- Niacinamide synergies ----------------------------------------------
+  - rule_id: SKA-050
+    a: ing:niacinamide
+    b: class:retinoid
+    type: synergy
+    severity: low
+    mechanism: >-
+      Niacinamide supports barrier lipid production, which measurably reduces the
+      irritation that causes most people to abandon a retinoid in the first weeks.
+    guidance: Good pairing. Applying niacinamide first can make a retinoid easier to tolerate.
+    resolution: none
+    source: null
+    review: pending
+
+  - rule_id: SKA-051
+    a: ing:niacinamide
+    b: ing:tranexamic_acid
+    type: synergy
+    severity: low
+    mechanism: The two interrupt pigment transfer by different mechanisms, so the effect on uneven tone is additive.
+    guidance: Effective combination for pigmentation.
+    resolution: none
+    source: null
+    review: pending
+
+  - rule_id: SKA-052
+    a: ing:alpha_arbutin
+    b: class:vitamin_c
+    type: synergy
+    severity: low
+    mechanism: Both act on pigment production at different points in the pathway.
+    guidance: Reasonable to use together.
+    resolution: none
+    source: null
+    review: pending
+
+  # ---- Barrier support ----------------------------------------------------
+  - rule_id: SKA-060
+    a: class:ceramide
+    b: class:retinoid
+    type: synergy
+    severity: low
+    # Only meaningful for a product that stays on the skin. Ceramides in a
+    # cleanser are rinsed off before they can rebuild anything.
+    forms: [moisturiser, serum, treatment, oil, occlusive, essence]
+    mechanism: Retinoids transiently impair the barrier; ceramides supply the lipids needed to rebuild it.
+    guidance: Apply the ceramide moisturiser after the retinoid.
+    resolution: none
+    source: null
+    review: pending
+
+  - rule_id: SKA-061
+    a: class:soothing
+    b: class:aha
+    type: synergy
+    severity: low
+    forms: [moisturiser, serum, treatment, essence, toner]
+    mechanism: Reduces the inflammatory response to exfoliation without blocking the exfoliation itself.
+    guidance: Useful alongside an acid routine.
+    resolution: none
+    source: null
+    review: pending
+
+  # ---- Over-exfoliation / total load --------------------------------------
+  - rule_id: SKA-070
+    a: class:azelaic
+    b: class:retinoid
+    type: caution
+    severity: low
+    mechanism: Both can irritate, though azelaic acid is among the better-tolerated actives.
+    guidance: Usually fine. Introduce one at a time.
+    resolution: none
+    source: null
+    review: pending
+
+  - rule_id: SKA-071
+    a: ing:sulfur
+    b: class:retinoid
+    type: caution
+    severity: medium
+    mechanism: Both are drying. Together they frequently push skin past the point where it can repair overnight.
+    guidance: Alternate nights.
+    resolution: alternate_nights
+    source: null
+    review: pending
+
+  # ---- Ordering and timing ------------------------------------------------
+  - rule_id: SKA-080
+    a: class:uv_filter
+    b: "*"
+    type: ordering
+    severity: high
+    mechanism: >-
+      Sunscreen forms a continuous film. Anything applied over it disrupts that
+      film, and the stated protection no longer holds.
+    guidance: Sunscreen is always the last morning step.
+    resolution: reorder
+    source: null
+    review: pending
+
+  - rule_id: SKA-081
+    a: class:occlusive
+    b: "*"
+    type: ordering
+    severity: medium
+    mechanism: An occlusive seals the skin. Applied too early it blocks everything that follows from reaching it.
+    guidance: Occlusives go last at night.
+    resolution: reorder
+    source: null
+    review: pending
+
+  - rule_id: SKA-082
+    a: class:aha
+    b: "*"
+    type: timing
+    severity: high
+    mechanism: >-
+      Exfoliating acids increase UV sensitivity for some days after use. Used in
+      the morning without reliable sunscreen they raise the risk of exactly the
+      pigmentation and photoageing they are meant to address.
+    guidance: Use at night, and wear sunscreen daily.
+    resolution: separate_am_pm
+    source: null
+    review: pending
+
+  - rule_id: SKA-083
+    a: class:retinoid
+    b: "*"
+    type: timing
+    severity: high
+    mechanism: Retinoids degrade in UV light and increase photosensitivity.
+    guidance: Night use only, with daily sunscreen.
+    resolution: separate_am_pm
+    source: null
+    review: pending
+
+# Contraindications route to a human. They are gates, never advice.
+contraindications:
+
+  - rule_id: SKC-001
+    condition: pregnancy
+    matches: class:retinoid
+    severity: critical
+    message: >-
+      Topical retinoids are conventionally avoided during pregnancy. This product
+      should be reviewed with your clinician before use.
+    action: escalate
+    source: null
+    review: pending
+
+  - rule_id: SKC-002
+    condition: pregnancy
+    matches: ing:hydroquinone
+    severity: critical
+    message: Hydroquinone use in pregnancy should be decided with a clinician.
+    action: escalate
+    source: null
+    review: pending
+
+  - rule_id: SKC-003
+    condition: pregnancy
+    matches: class:bha
+    severity: high
+    message: >-
+      Guidance for salicylic acid in pregnancy differs between low-percentage
+      leave-on products and peels. Worth confirming with your clinician.
+    action: escalate
+    source: null
+    review: pending
+
+  - rule_id: SKC-010
+    condition: prescription_product
+    matches: prescription:true
+    severity: critical
+    message: >-
+      This product was prescribed for you. Any change to how it is used belongs
+      with the clinician who prescribed it, not with this tool.
+    action: escalate
+    source: null
+    review: pending
+
+  - rule_id: SKC-011
+    condition: declined_to_say
+    matches: class:retinoid
+    severity: high
+    message: >-
+      Routing to the cautious path because contraindication information was not
+      provided. This is the intended behaviour, not a failure.
+    action: escalate
+    source: null
+    review: pending
