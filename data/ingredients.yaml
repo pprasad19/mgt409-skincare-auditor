@@ -242,12 +242,12 @@ ingredients:
     ph_range: [4.0, 5.5]
     photosensitising: false
     time: any
-    pregnancy: caution
+    pregnancy: ok
     prescription: false
     potency: 4
     note: An oxidiser. That single property explains every conflict it appears in.
-    source: null
-    review: pending
+    source: "PMC9823189: benzoyl peroxide is a reasonable first-line option for mild-to-moderate acne in pregnancy; roughly 5% is absorbed and dietary exposure to its metabolite benzoic acid exceeds topical exposure. No published studies in pregnant patients and placental transfer is unknown, but the balance of guidance treats it as low risk rather than a caution. Relaxed from caution on 25 Oct 2026."
+    review: verified
 
   - id: azelaic_acid
     name: Azelaic acid

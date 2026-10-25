@@ -1,9 +1,27 @@
 # Interaction rules. Every claim the auditor makes cites one of these rule_ids.
 #
-# PROVENANCE — same warning as ingredients.yaml. Drafted from general knowledge,
-# `review: pending` until a human checks it and adds a real citation. The
-# project's claim is that advice is auditable, which is only true if the table
-# is audited.
+# RULE IDS
+#   SKA-nnn   skincare audit rule. An interaction between two products the
+#             user owns. Produces a finding, never a gate.
+#   SKC-nnn   skincare contraindication. A gate: it routes the audit to a
+#             clinician instead of answering. Numbered separately because
+#             the two do different things and a reader of the output page
+#             should be able to tell which kind of claim they are looking at
+#             from the id alone.
+#
+# PROVENANCE — same warning as ingredients.yaml. Drafted from general
+# knowledge, then reviewed row by row on 25 Oct 2026. The project's claim is
+# that advice is auditable, which is only true if the table is audited.
+#
+#   review: verified   checked against a published source, named in `source`
+#   review: reasoned   reviewed, no published source found for this specific
+#                      pairing, kept on the mechanism recorded in `source`
+#   review: pending    nobody has looked
+#
+# Most interaction rules are claims about two ingredients together, and the
+# literature tests single ingredients far more often than pairs. `reasoned`
+# exists so that distinction survives into the output: only `verified` sets
+# the flag the result page uses to present a claim as settled.
 #
 # SELECTORS
 #   class:<name>  matches any ingredient of that class
@@ -14,7 +32,11 @@
 #   conflict     should not be used together as the user currently does
 #   caution      workable, but needs care or a lower frequency
 #   synergy      better together than apart — worth telling people
-#   myth         widely believed, not supported. Stated so users stop avoiding it.
+#   myth         widely believed, not supported. Stated so users stop avoiding
+#                it. NOTE: the table currently holds no myth rules. SKA-020
+#                was the only one and was removed on 25 Oct 2026 when its
+#                supporting study could not be found. The type is kept
+#                because the shape is right, not because it is in use.
 #   redundancy   duplicate function, money being spent twice
 #
 # RESOLUTION
@@ -399,6 +421,17 @@ contraindications:
       leave-on products and peels. Worth confirming with your clinician.
     action: escalate
     source: "PMC9823189 and PMC12591629, as for the salicylic_acid ingredient row. The leave-on versus peel distinction is about dose and area, and holds. Reviewed 25 Oct 2026."
+    review: verified
+
+  - rule_id: SKC-004
+    condition: pregnancy
+    matches: class:aha
+    severity: high
+    message: >-
+      Guidance for alpha hydroxy acids in pregnancy depends on strength and how
+      much skin they cover. Worth confirming with your clinician.
+    action: escalate
+    source: "PMC3114665 / PMC8884185: no human pregnancy studies for topical AHAs; animal studies show adverse reproductive effects at doses far above cosmetic use; one review suggests limiting to 10% or below in pregnancy. Added 25 Oct 2026 because salicylic acid escalated through SKC-003 while glycolic, lactic and mandelic acid escalated through nothing, despite a thinner evidence base than the BHA they sat beside."
     review: verified
 
   - rule_id: SKC-010

@@ -142,6 +142,21 @@ VALID_TYPES = {"conflict", "caution", "synergy", "myth", "redundancy", "ordering
 VALID_SEVERITY = {"critical", "high", "medium", "low"}
 VALID_PREGNANCY = {"ok", "caution", "avoid"}
 
+# Three states, not two.
+#
+#   verified  a human checked this against a published source, and the
+#             source is named in the row
+#   reasoned  a human reviewed it, found no published source for this
+#             specific claim, and kept it on recorded mechanism
+#   pending   nobody has looked
+#
+# `reasoned` exists because most of the interaction rules are claims about
+# two ingredients together, and almost nothing in the literature tests
+# pairs. Marking those `verified` would be false; leaving them `pending`
+# implies nobody examined them. Only `verified` sets the flag the result
+# page uses to present a claim as settled.
+VALID_REVIEW = {"verified", "reasoned", "pending"}
+
 
 def load(name: str) -> dict:
     path = DATA / name
@@ -188,6 +203,10 @@ def main() -> None:
     for row in ingredients:
         if row["pregnancy"] not in VALID_PREGNANCY:
             errors.append(f"{row['id']}: bad pregnancy value {row['pregnancy']!r}")
+        if row.get("review") not in VALID_REVIEW:
+            errors.append(f"{row['id']}: bad review value {row.get('review')!r}")
+        if row.get("review") in ("verified", "reasoned") and not row.get("source"):
+            errors.append(f"{row['id']}: {row['review']} with no source recorded")
         if not 1 <= row["potency"] <= 5:
             errors.append(f"{row['id']}: potency out of range")
 
