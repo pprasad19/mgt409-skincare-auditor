@@ -147,6 +147,131 @@ def regions_for(area: str) -> list[str]:
     return out or list(WHOLE_FACE)
 
 
+# What the product comes out of. A dropper and a tub are recognisable at a
+# glance and a dot is not, so this is the single biggest thing separating
+# one step from the next.
+CONTAINERS: dict[str, str] = {
+    "cleanser": "pump",
+    "exfoliant": "bottle",
+    "toner": "bottle",
+    "essence": "bottle",
+    "serum": "dropper",
+    "treatment": "dropper",
+    "eye": "smalltube",
+    "moisturiser": "tub",
+    "oil": "dropper",
+    "spf": "tube",
+    "occlusive": "tub",
+    "mask": "widetub",
+}
+
+# How much, drawn at honest relative scale. "Two fingers' length" is hard to
+# say in words and obvious in a picture, which is most of the argument for
+# animating this at all. Longest phrase first.
+DOSES: list[tuple[str, str]] = [
+    ("two finger", "twofinger"),
+    ("two-finger", "twofinger"),
+    ("fingers' length", "twofinger"),
+    ("fingers length", "twofinger"),
+    ("cotton", "pad"),
+    ("rice", "rice"),
+    ("grain", "rice"),
+    ("pea", "pea"),
+    ("dime", "coin"),
+    ("nickel", "coin"),
+    ("quarter", "coin"),
+    ("coin", "coin"),
+    ("thick", "thick"),
+    ("generous", "thick"),
+    ("layer", "thick"),
+    ("spoon", "thick"),
+    ("palm", "palm"),
+    ("handful", "palm"),
+    ("drop", "drops"),
+    ("pump", "pea"),
+    ("squeeze", "pea"),
+]
+
+# Spoken counts, so "three drops" draws three.
+WORD_NUMBERS = {
+    "a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
+    "six": 6, "a few": 3, "several": 4, "couple": 2,
+}
+
+# The order fingers move over a region, top of the face down and midline
+# out, which is how the product is actually spread.
+STROKE_ORDER = ["forehead", "temples", "nose", "cheeks", "undereye", "eyes",
+                "lips", "chin", "jaw", "neck"]
+
+# A routine step is not a tour of the face. Fourteen dots was noise; this is
+# the number of places a hand actually stops.
+MAX_STOPS = 7
+
+
+def container_for(form_id: str) -> str:
+    """The vessel to draw. Falls back to a plain bottle, never to nothing."""
+    return CONTAINERS.get((form_id or "").lower(), "bottle")
+
+
+def dose_for(amount: str) -> dict:
+    """What the dose looks like, and how many of it.
+
+    Deterministic, like `regions_for`: the same phrase always draws the same
+    picture, and an amount nobody anticipated falls back to something
+    sensible rather than to an empty hand.
+    """
+    text = " ".join((amount or "").lower().split())
+
+    kind = "pea"
+    for phrase, k in DOSES:
+        if phrase in text:
+            kind = k
+            break
+
+    n = 1
+    if kind == "drops":
+        n = 3
+        for word, value in WORD_NUMBERS.items():
+            if f"{word} drop" in text:
+                n = value
+                break
+        else:
+            digits = "".join(c if c.isdigit() else " " for c in text).split()
+            if digits:
+                n = max(1, min(int(digits[0]), 8))
+        n = max(1, min(n, 8))
+
+    return {"kind": kind, "n": n}
+
+
+def path_for(area: str) -> list[dict]:
+    """The route the fingers take, as a handful of touch points.
+
+    Deliberately far fewer than `points_for` returns. Fourteen dots is
+    visual noise; four or five places a hand actually stops is a technique
+    someone can copy.
+    """
+    groups = regions_for(area)
+    groups.sort(key=lambda g: STROKE_ORDER.index(g) if g in STROKE_ORDER else 99)
+
+    # Every named region gets a stop before any region gets a second one.
+    # Striding over a flat list instead dropped whole regions: "forehead,
+    # cheeks and chin" came back as forehead and cheeks, with the chin --
+    # which the instruction names -- missing from the picture.
+    rounds: list[list[dict]] = []
+    for group in groups:
+        anchors = ANCHORS[group]
+        picked = ([anchors[0], anchors[-1]] if len(anchors) > 1 else list(anchors))
+        rounds.append([{"x": x, "y": y, "g": group} for x, y in picked])
+
+    stops: list[dict] = []
+    for i in range(max((len(r) for r in rounds), default=0)):
+        for r in rounds:
+            if i < len(r) and len(stops) < MAX_STOPS:
+                stops.append(r[i])
+    return stops
+
+
 def points_for(area: str) -> list[dict]:
     """The dots to draw, as plain coordinates the driver can animate."""
     pts: list[dict] = []
@@ -176,41 +301,68 @@ def _real_time(secs: int) -> str:
 
 
 def scenes_for(step, spec, beats: list[dict]) -> list[dict]:
-    """One step becomes a list of scenes, one per beat.
+    """One step becomes a list of scenes: get it out, put it on, finish.
 
     `beats` is passed in rather than recomputed so this cannot disagree with
-    the written list, the printed card or the audio, which all render from the
-    same call.
+    the written list, the printed card or the audio, which all render from
+    the same call. The dispense scene is the one thing here that the written
+    steps do not have, and it is the one carrying the information a sentence
+    is worst at: how much.
     """
     area = getattr(spec, "area", "") or "whole face"
     motion = getattr(spec, "motion", "smooth") or "smooth"
     amount = getattr(spec, "amount", "") or "as usual"
-    pts = points_for(area)
+    form_id = (getattr(step, "form_id", "") or "").lower()
 
-    out: list[dict] = []
+    stops = path_for(area)
+    container = container_for(form_id)
+    dose = dose_for(amount)
+    is_mask = form_id in ("mask", "occlusive")
+
+    props = {"container": container, "dose": dose, "form_id": form_id}
+
+    out: list[dict] = [{
+        **props,
+        "anim": "dispense",
+        "caption": amount,
+        "where": "",
+        "real": "",
+        "screen": 1.1,
+        "points": [],
+        "rest": [],
+    }]
+
     for beat in beats:
         kind = beat["kind"]
         if kind == "apply":
-            anim, caption = MOTIONS.get(motion, "sweep"), f"{amount}, {motion}"
+            anim = "maskon" if is_mask else MOTIONS.get(motion, "sweep")
+            caption = f"{amount}, {motion}"
         elif kind == "rinse off":
-            anim, caption = "rinse", "rinse and pat dry"
+            anim = "maskoff" if is_mask else "rinse"
+            caption = "rinse and pat dry"
         elif kind == "pat dry":
             anim, caption = "towel", "pat dry"
         else:
             anim, caption = "absorb", "let it absorb"
 
+        applying = kind == "apply"
         out.append({
+            **props,
             "anim": anim,
             "caption": caption,
-            "where": area if kind == "apply" else "",
+            "where": area if applying else "",
             "real": _real_time(beat["secs"]),
-            "screen": screen_seconds(beat["secs"]),
-            "points": pts if kind == "apply" else [],
+            # Waiting is the one thing a preview must not reproduce
+            # faithfully. The real duration is printed beside it; giving a
+            # two-minute absorb four seconds of screen time just makes the
+            # viewer wait too, nine times over in a seven-product routine.
+            "screen": 1.4 if anim == "absorb" else screen_seconds(beat["secs"]),
+            "points": stops if applying else [],
             # Where the product is sitting while it absorbs or is rinsed
             # off. Without this every finish scene was an empty face, so
             # eight of the eighteen scenes in a six-product routine were the
             # same picture with different captions -- and absorbing a
             # retinol on the chin looked like absorbing a toner everywhere.
-            "rest": [] if kind == "apply" else pts,
+            "rest": [] if applying else stops,
         })
     return out

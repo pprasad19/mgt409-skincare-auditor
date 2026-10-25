@@ -131,6 +131,12 @@ class Escalation(BaseModel):
 class RoutineStep(BaseModel):
     product_name: str
     form: str
+    form_id: str = Field(
+        default="",
+        description="The form's id rather than its label. The animation picks a "
+                    "container and a technique from this, and it cannot key off "
+                    "a display name like 'Treatment (leave-on active)'.",
+    )
     order: int
     frequency: str = Field(default="daily", description="daily, or alternate nights when a rule says so.")
     because: list[str] = Field(

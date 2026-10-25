@@ -7248,5 +7248,155 @@
       "output": 0.0002985,
       "total": 0.0003947
     }
+  },
+  {
+    "run_id": "5aca0e18",
+    "run_label": "web-6b1ab8dc",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-25T04:28:03.752475+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,560 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3118,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 0,
+      "output_tokens": 1038,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 5.58e-05,
+      "cached_input": 2.56e-05,
+      "cache_write": 0.0,
+      "output": 0.000519,
+      "total": 0.0006004
+    }
+  },
+  {
+    "run_id": "5aca0e18",
+    "run_label": "web-6b1ab8dc",
+    "step": "skin_observer",
+    "timestamp": "2026-10-25T04:28:04.327309+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": false,
+    "cache_mode_note": "cache requested but neither read nor written (prompt below the floor?)",
+    "tokens": {
+      "input_tokens": 1325,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 98,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001325,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 4.9e-05,
+      "total": 0.0001815
+    }
+  },
+  {
+    "run_id": "5aca0e18",
+    "run_label": "web-6b1ab8dc",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-25T04:28:04.752856+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,560 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3150,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 464,
+      "output_tokens": 597,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.56e-05,
+      "cache_write": 5.8e-05,
+      "output": 0.0002985,
+      "total": 0.0003947
+    }
+  },
+  {
+    "run_id": "6a18ebb1",
+    "run_label": "web-cc2f0cd8",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-25T04:29:31.022945+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,560 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3118,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 0,
+      "output_tokens": 1038,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 5.58e-05,
+      "cached_input": 2.56e-05,
+      "cache_write": 0.0,
+      "output": 0.000519,
+      "total": 0.0006004
+    }
+  },
+  {
+    "run_id": "6a18ebb1",
+    "run_label": "web-cc2f0cd8",
+    "step": "skin_observer",
+    "timestamp": "2026-10-25T04:29:31.538944+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": false,
+    "cache_mode_note": "cache requested but neither read nor written (prompt below the floor?)",
+    "tokens": {
+      "input_tokens": 1325,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 98,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001325,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 4.9e-05,
+      "total": 0.0001815
+    }
+  },
+  {
+    "run_id": "6a18ebb1",
+    "run_label": "web-cc2f0cd8",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-25T04:29:31.908865+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,560 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3150,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 464,
+      "output_tokens": 597,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.56e-05,
+      "cache_write": 5.8e-05,
+      "output": 0.0002985,
+      "total": 0.0003947
+    }
   }
 ]

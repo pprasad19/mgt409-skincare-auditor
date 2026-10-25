@@ -503,6 +503,7 @@ class Rules:
                     RoutineStep(
                         product_name=name,
                         form=self.forms[product.form]["name"],
+                        form_id=product.form,
                         order=order,
                         frequency="alternate nights" if (slot == "pm" and name in alternating) else "daily",
                         because=sorted(set(because[name])),

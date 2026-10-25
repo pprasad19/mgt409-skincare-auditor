@@ -381,6 +381,24 @@ table.prices .typ{font-size:11.5px;color:var(--ink-faint);display:block}
    away. Without it a finish scene was an empty face, so every absorb looked
    the same whatever had been put on. */
 .pd.rest{opacity:0;animation:none}
+
+/* Dispensing. The face steps back and the dose is shown at the size it
+   actually is, because "two fingers' length" is the one instruction a
+   sentence is genuinely bad at. */
+.stage[data-anim="dispense"] .face-line,
+.stage[data-anim="dispense"] .face-skin{opacity:.1}
+.dosedot{fill:var(--clay);opacity:0;animation:dosein .9s ease-out forwards var(--d)}
+.dosebar{fill:var(--clay);opacity:0;animation:dosein .9s ease-out forwards var(--d)}
+@keyframes dosein{0%{opacity:0;transform:translateY(-8px)}100%{opacity:.9;transform:none}}
+.dosehand{fill:#e9d6c7;stroke:#c7b09e;stroke-width:1.5}
+
+/* A mask is a layer, not a set of touch points. */
+.stage[data-anim="maskon"] .pd{animation:layeron 2.2s ease-out infinite var(--d);
+  r:17px;opacity:.5}
+@keyframes layeron{0%{opacity:0;r:4px}60%{opacity:.5;r:17px}100%{opacity:.5;r:17px}}
+.stage[data-anim="maskoff"] .pd.rest{animation:layeroff 2s ease-in infinite var(--d);
+  r:17px}
+@keyframes layeroff{0%{opacity:.5}100%{opacity:0}}
 .stage[data-anim="absorb"] .pd.rest{animation:settle 2.4s ease-in-out infinite var(--d)}
 .stage[data-anim="rinse"]  .pd.rest{animation:washoff 1.2s ease-out infinite var(--d)}
 .stage[data-anim="towel"]  .pd.rest{opacity:.18}
@@ -1185,9 +1203,52 @@ FILM_JS = """
 
   var i = 0, playing = false, timer = null, raf = null;
 
+  /* Drawing-units radius per dose, so the player and the GIF show the same
+   * sizes. A rice grain and a dime are nearly four times apart and that
+   * ratio is the information. */
+  var DOSE_R = {rice:3, pea:6.5, coin:11, thick:15, palm:14, pad:16, drops:4};
+
+  function drawDose(scene){
+    var d = scene.dose || {kind:'pea', n:1};
+    if(d.kind === 'twofinger'){
+      [88, 112].forEach(function(x, i){
+        var g = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        g.setAttribute('x', x - 9); g.setAttribute('y', 86);
+        g.setAttribute('width', 18); g.setAttribute('height', 62);
+        g.setAttribute('rx', 9); g.setAttribute('class','dosehand');
+        dots.appendChild(g);
+        var b = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        b.setAttribute('x', x - 4); b.setAttribute('y', 92);
+        b.setAttribute('width', 8); b.setAttribute('height', 50);
+        b.setAttribute('rx', 4); b.setAttribute('class','dosebar');
+        b.style.setProperty('--d', (i * 0.12) + 's');
+        dots.appendChild(b);
+      });
+      return;
+    }
+    var hand = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    hand.setAttribute('x', 88); hand.setAttribute('y', 112);
+    hand.setAttribute('width', 24); hand.setAttribute('height', 64);
+    hand.setAttribute('rx', 12); hand.setAttribute('class','dosehand');
+    dots.appendChild(hand);
+
+    var n = d.kind === 'drops' ? Math.max(1, d.n|0) : 1;
+    var r = DOSE_R[d.kind] || 6.5;
+    for(var i = 0; i < n; i++){
+      var c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx', 100 - (n - 1) * 5 + i * 10);
+      c.setAttribute('cy', 108);
+      c.setAttribute('r', r);
+      c.setAttribute('class','dosedot');
+      c.style.setProperty('--d', (i * 0.14).toFixed(2) + 's');
+      dots.appendChild(c);
+    }
+  }
+
   function draw(scene){
     while(dots.firstChild) dots.removeChild(dots.firstChild);
     stage.setAttribute('data-anim', scene.anim);
+    if(scene.anim === 'dispense'){ drawDose(scene); return; }
     var active = scene.points.length ? scene.points : (scene.rest || []);
     var resting = scene.points.length === 0;
     active.forEach(function(p, n){
@@ -1207,6 +1268,7 @@ FILM_JS = """
     var s = FILM[i];
     draw(s);
     elStep.textContent  = s.slot + ' step ' + s.order + ' of ' + s.of + ' — ' + s.name;
+    elReal.style.display = s.real ? '' : 'none';
     elForm.textContent = s.form || '';
     elForm.style.display = s.form ? '' : 'none';
     elDo.textContent    = s.caption;

@@ -96,8 +96,15 @@ css = (Path(__file__).resolve().parent / "src" / "render.py").read_text(encoding
 RULE = re.compile(r"([^{}\n][^{}]*)\{([^}]*)\}")
 rules = [(sel.strip(), body) for sel, body in RULE.findall(css)]
 
-for anim in sorted(set(MOTIONS.values()) | {"rinse", "towel", "absorb"}):
-    needle = '[data-anim="%s"]' % anim
+ALL_ANIMS = sorted(set(MOTIONS.values()) |
+                   {"rinse", "towel", "absorb", "dispense", "maskon", "maskoff"})
+
+# Dispensing fades the face back and shows the dose instead, so its motion
+# lives on the dose elements rather than on a [data-anim] selector.
+DRIVEN_BY = {"dispense": ".dosedot"}
+
+for anim in ALL_ANIMS:
+    needle = DRIVEN_BY.get(anim, '[data-anim="%s"]' % anim)
     moving = [
         (sel, body) for sel, body in rules
         if needle in sel and "animation:" in body and "animation:none" not in body
@@ -109,18 +116,67 @@ for anim in sorted(set(MOTIONS.values()) | {"rinse", "towel", "absorb"}):
 # dropped. The JS sets --d and --out on .pd elements and nothing else.
 # `var(--out,6px)` is fine anywhere: it has a fallback.
 NO_FALLBACK = re.compile(r"var\(\s*(--[a-z-]+)\s*\)")
+# The elements the player's JS sets --d and --out on, and no others.
+GIVEN_VARS = (".pd", ".dosedot", ".dosebar")
 for sel, body in rules:
     for prop in NO_FALLBACK.findall(body):
         if prop in ("--d", "--out"):
             check_true(
                 "%s used only where it is set (%s)" % (prop, sel[:40]),
-                ".pd" in sel,
+                any(k in sel for k in GIVEN_VARS),
             )
 
 
+
+# Containers and doses. These are what actually tell one step from the next
+# now: the first version varied how abstract dots moved, which carries no
+# product-specific information at all, so every step looked alike.
+import filmstrip
+from storyboard import CONTAINERS, container_for, dose_for, path_for
+
+check("serum is a dropper", container_for("serum"), "dropper")
+check("mask is a wide tub", container_for("mask"), "widetub")
+check("spf is a tube", container_for("spf"), "tube")
+check_true("unknown form still draws something", container_for("zzz") == "bottle")
+check_true("empty form still draws something", container_for("") == "bottle")
+
+for form_id, kind in CONTAINERS.items():
+    check_true(f"{form_id} container is drawable", kind in filmstrip.CONTAINER_KINDS)
+
+check("pea", dose_for("pea-sized")["kind"], "pea")
+check("rice", dose_for("a rice-grain amount")["kind"], "rice")
+check("dime", dose_for("a dime-sized amount")["kind"], "coin")
+check("two fingers", dose_for("two fingers' length")["kind"], "twofinger")
+check("cotton pad", dose_for("a few drops on a cotton pad")["kind"], "pad")
+check("thick layer", dose_for("a thick even layer")["kind"], "thick")
+check("unknown amount", dose_for("some")["kind"], "pea")
+check("empty amount", dose_for("")["kind"], "pea")
+
+# "under-eye" must not be eaten by "eye", and "cotton pad" must beat "drops":
+# the pad is what the drops go on, and drawing three loose droplets for it
+# would show the wrong technique.
+check("pad beats drops", dose_for("a few drops on a cotton pad")["kind"], "pad")
+check("drop count", dose_for("three drops")["n"], 3)
+check("digit count", dose_for("2 drops")["n"], 2)
+check("default drops", dose_for("a few drops")["n"], 3)
+check_true("drops are bounded", 1 <= dose_for("40 drops")["n"] <= 8)
+
+# Stroke paths keep every named region. Capping by stride used to drop one:
+# "forehead, cheeks and chin" came back without the chin.
+for area, must in (
+    ("forehead, cheeks and chin", {"forehead", "cheeks", "chin"}),
+    ("whole face and neck", {"neck"}),
+    ("under-eye area", {"undereye"}),
+):
+    groups = {p["g"] for p in path_for(area)}
+    check_true(f"{area!r} keeps its regions", must <= groups)
+
+check_true("paths are short", all(len(path_for(a)) <= 7 for a in
+                                 ("whole face", "whole face and neck", "the T-zone")))
+check_true("paths are never empty", len(path_for("left elbow")) > 0)
+
 # The GIF. A download button that hands over a broken file is worse than no
 # button, and a failure here must cost the button and not the audit.
-import filmstrip
 from render import _routine_gif
 
 SCENES = [
@@ -128,7 +184,7 @@ SCENES = [
      "screen": 1.5, "points": points_for("whole face"),
      "slot": "Morning", "order": 1, "of": 1, "name": "A Product With Quite A Long Name",
      "form": "serum", "why": "SKA-001"}
-    for a in sorted(set(MOTIONS.values()) | {"rinse", "towel", "absorb"})
+    for a in ALL_ANIMS
 ]
 
 data = filmstrip.build(SCENES)
@@ -153,5 +209,5 @@ check_true("data uri", uri.startswith("data:image/gif;base64,"))
 
 print("ok  %d checks passed" % ok)
 print("    face regions, exclusions, fallbacks, time compression,")
-print("    and every scene animation actually animating,")
-print("    plus the GIF export")
+print("    every scene animation actually animating,")
+print("    containers, doses and stroke paths, and the GIF export")
