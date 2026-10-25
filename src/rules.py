@@ -16,6 +16,7 @@ from pathlib import Path
 
 from limits import Trim, cap_products
 from models import (
+    Unresolved,
     ApplicationSpec,
     AuditResult,
     Escalation,
@@ -115,6 +116,11 @@ class Rules:
         self.interactions = [dict(r) for r in con.execute("SELECT * FROM interactions")]
         self.contraindications = [dict(r) for r in con.execute("SELECT * FROM contraindications")]
         self.forms = {r["id"]: dict(r) for r in con.execute("SELECT * FROM product_forms")}
+        self.catalogue = {r["id"]: dict(r) for r in con.execute("SELECT * FROM catalogue")}
+        self.catalogue_terms = sorted(
+            ((r["term"], r["catalogue_id"]) for r in con.execute("SELECT * FROM catalogue_terms")),
+            key=lambda t: -len(t[0]),
+        )
         con.close()
 
         self.rules_total = len(self.interactions) + len(self.contraindications)
@@ -176,6 +182,21 @@ class Rules:
                 break
         return found
 
+    def match_catalogue(self, product: InputProduct) -> dict | None:
+        """Find a known product by name, longest phrase first.
+
+        Only consulted when no ingredients could be read. A label always wins:
+        what is printed on the bottle in front of someone beats what this file
+        believes about a product with a similar name.
+        """
+        haystack = normalise(f"{product.brand or ''} {product.name}")
+        if not haystack:
+            return None
+        for term, cat_id in self.catalogue_terms:
+            if term and term in haystack:
+                return self.catalogue[cat_id]
+        return None
+
     def resolve(self, product: InputProduct) -> ResolvedProduct:
         """Match label terms to known ingredients, longest term first.
 
@@ -202,6 +223,15 @@ class Rules:
         listed = {normalise(t) for t in product.listed_ingredients if t.strip()}
         unmatched = sorted(t for t in listed if t and not any(m and m in t for m in matched_text))
 
+        # Nothing readable on the label — fall back to the catalogue, and
+        # record that we did, so the page can tell the user to check the bottle.
+        from_catalogue = None
+        if not actives:
+            hit = self.match_catalogue(product)
+            if hit:
+                actives = [a for a in hit["actives"].split(",") if a]
+                from_catalogue = f"{hit['brand']} {hit['name']}"
+
         classes = sorted({self.ingredients[a]["class"] for a in actives})
 
         # Confidence is about actives, not about recognising every INCI line.
@@ -218,6 +248,7 @@ class Rules:
             classes=classes,
             unmatched_terms=unmatched,
             confidence=confidence,
+            matched_from_catalogue=from_catalogue,
         )
 
     # -- selectors ---------------------------------------------------------
@@ -547,8 +578,20 @@ class Rules:
         raw = cap_products(raw, trims if trims is not None else [])
         products = [self.resolve(p) for p in raw]
         findings = self.find(products)
+        # Products we read a name for and nothing else. The audit cannot say
+        # anything about them, and must say so rather than leave them out.
+        unresolved = [
+            Unresolved(
+                name=p.product.name,
+                reason="no ingredients were readable for this product",
+            )
+            for p in products
+            if not p.actives and not p.matched_from_catalogue
+        ]
+
         return AuditResult(
             products=products,
+            unresolved=unresolved,
             findings=findings,
             escalations=self.escalate(products, conditions or []),
             routine=self.build_routine(products, findings),

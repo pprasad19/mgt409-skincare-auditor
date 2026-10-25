@@ -63,6 +63,13 @@ class ResolvedProduct(BaseModel):
         default=1.0,
         description="Share of label terms resolved. Low confidence is shown to the user.",
     )
+    matched_from_catalogue: str | None = Field(
+        default=None,
+        description="Set when the actives came from data/products.yaml rather than a "
+                    "label, because nothing was readable. Shown to the user: a "
+                    "catalogue entry is a claim about a product, not a reading of "
+                    "the one in their hand.",
+    )
 
 
 class Finding(BaseModel):
@@ -142,6 +149,21 @@ class WasteSummary(BaseModel):
     )
 
 
+class Unresolved(BaseModel):
+    """A product we can see but cannot reason about.
+
+    A shelf photograph shows front labels; the audit runs on ingredient lists.
+    Those are different sides of the bottle. Without this the app rendered a
+    confident empty audit over eight products it had read the names of and
+    nothing else — the worst outcome available, because it looks exactly like
+    a clean bill of health.
+    """
+
+    name: str
+    reason: str
+    legibility: str = "name_only"
+
+
 class Gap(BaseModel):
     """Something the shelf is missing, rather than something on it being wrong.
 
@@ -169,6 +191,15 @@ class AuditResult(BaseModel):
     routine: Routine
     waste: WasteSummary
     gaps: list[Gap] = Field(default_factory=list)
+    unresolved: list[Unresolved] = Field(
+        default_factory=list,
+        description="Products with no usable ingredient data. Surfaced prominently: "
+                    "an audit that silently ignores half a shelf reads as a pass.",
+    )
+    unreadable: list[str] = Field(
+        default_factory=list,
+        description="Things the reader saw in a photograph but could not identify at all.",
+    )
     rules_verified: int = 0
     rules_total: int = 0
 

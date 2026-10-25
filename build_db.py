@@ -101,6 +101,24 @@ CREATE TABLE contraindications (
     review    TEXT NOT NULL
 );
 
+CREATE TABLE catalogue (
+    id      INTEGER PRIMARY KEY,
+    brand   TEXT NOT NULL,
+    name    TEXT NOT NULL,
+    form    TEXT,
+    actives TEXT NOT NULL,
+    review  TEXT NOT NULL
+);
+
+-- One row per phrase that should match a catalogue product, so lookup is a
+-- single indexed query rather than a scan with fuzzy matching.
+CREATE TABLE catalogue_terms (
+    term         TEXT NOT NULL,
+    catalogue_id INTEGER NOT NULL REFERENCES catalogue(id),
+    PRIMARY KEY (term, catalogue_id)
+);
+CREATE INDEX idx_cat_terms ON catalogue_terms(term);
+
 CREATE TABLE product_forms (
     id    TEXT PRIMARY KEY,
     name  TEXT NOT NULL,
@@ -143,6 +161,7 @@ def main() -> None:
     interactions = rules_doc["interactions"]
     contraindications = rules_doc.get("contraindications", [])
     forms = load("product_forms.yaml")["forms"]
+    catalogue = (load("products.yaml") or {}).get("products") or []
 
     ids = {row["id"] for row in ingredients}
     classes = {row["class"] for row in ingredients}
@@ -242,6 +261,25 @@ def main() -> None:
             ),
         )
 
+    for n, row in enumerate(catalogue):
+        bad = [a for a in row["actives"] if a not in ids]
+        if bad:
+            errors.append(f"products.yaml: {row['brand']} {row['name']}: unknown {bad}")
+            continue
+        con.execute(
+            "INSERT INTO catalogue VALUES (?,?,?,?,?,?)",
+            (n, row["brand"], row["name"], row.get("form"),
+             ",".join(row["actives"]), row.get("review", "pending")),
+        )
+        phrases = {f"{row['brand']} {row['name']}", row["name"]}
+        phrases |= {a for a in row.get("aliases", [])}
+        phrases |= {f"{row['brand']} {a}" for a in row.get("aliases", [])}
+        for phrase in phrases:
+            con.execute(
+                "INSERT OR IGNORE INTO catalogue_terms VALUES (?,?)",
+                (normalise(phrase), n),
+            )
+
     for form in forms:
         con.execute(
             "INSERT INTO product_forms VALUES (?,?,?,?,?)",
@@ -256,6 +294,8 @@ def main() -> None:
         "interactions": len(interactions),
         "contraindications": len(contraindications),
         "product forms": len(forms),
+        "catalogue products": len(catalogue),
+        "catalogue phrases": con.execute("SELECT COUNT(*) FROM catalogue_terms").fetchone()[0],
     }
     unverified = sum(1 for r in ingredients if r["review"] != "verified")
     unverified += sum(1 for r in interactions + contraindications if r["review"] != "verified")

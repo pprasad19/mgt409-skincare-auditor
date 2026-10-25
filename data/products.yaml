@@ -1,0 +1,361 @@
+# Known products, mapped to the actives they are known for.
+#
+# WHY THIS EXISTS
+# A shelf photograph shows the front of a bottle. The ingredient list is on the
+# back. Without a name-to-actives lookup the photo path only works if someone
+# photographs the reverse of all twenty products, which nobody does — the first
+# real shelf tested against this app produced eight product names, zero
+# ingredients, and an audit that found nothing and looked like a pass.
+#
+# This file was cut from the original plan on the argument that parsing labels
+# generalises better. It does generalise better. It also does not work on the
+# input people actually supply.
+#
+# WHAT IS AND IS NOT IN HERE
+# Only actives a product is openly formulated around and markets on the front
+# of the pack — the niacinamide in CeraVe's cleanser, the retinol in a product
+# called "Retinol 0.5%". Not a full INCI transcription, and not a guess at
+# trace ingredients.
+#
+# A label always wins. The catalogue is consulted only when no ingredients
+# could be read, and the result page says which products were matched this way
+# so a user can check the bottle.
+#
+# STATUS: unverified, like the rules. A wrong entry invents a conflict, or
+# hides one. Spot-check the brands you care about before relying on it.
+
+products:
+
+  # ---- CeraVe --------------------------------------------------------------
+  - brand: CeraVe
+    name: Hydrating Facial Cleanser
+    form: cleanser
+    actives: [ceramides, hyaluronic_acid, glycerin]
+  - brand: CeraVe
+    name: Foaming Facial Cleanser
+    form: cleanser
+    actives: [niacinamide, ceramides, hyaluronic_acid]
+  - brand: CeraVe
+    name: Acne Foaming Cream Cleanser
+    form: cleanser
+    actives: [benzoyl_peroxide, ceramides, hyaluronic_acid]
+  - brand: CeraVe
+    name: Renewing SA Cleanser
+    form: cleanser
+    actives: [salicylic_acid, ceramides, niacinamide]
+  - brand: CeraVe
+    name: Moisturising Lotion
+    aliases: [daily moisturizing lotion, moisturizing lotion]
+    form: moisturiser
+    actives: [ceramides, hyaluronic_acid, glycerin]
+  - brand: CeraVe
+    name: PM Facial Moisturising Lotion
+    aliases: [pm facial moisturizing lotion]
+    form: moisturiser
+    actives: [niacinamide, ceramides, hyaluronic_acid]
+  - brand: CeraVe
+    name: Resurfacing Retinol Serum
+    form: treatment
+    actives: [retinol, niacinamide, ceramides]
+  - brand: CeraVe
+    name: Vitamin C Serum
+    form: serum
+    actives: [l_ascorbic_acid, hyaluronic_acid, ceramides]
+  - brand: CeraVe
+    name: AM Facial Moisturising Lotion SPF 30
+    aliases: [am facial moisturizing lotion]
+    form: spf
+    actives: [organic_uv_filters, niacinamide, ceramides]
+
+  # ---- The Ordinary --------------------------------------------------------
+  - brand: The Ordinary
+    name: Niacinamide 10% + Zinc 1%
+    form: serum
+    actives: [niacinamide]
+  - brand: The Ordinary
+    name: Retinol 0.5% in Squalane
+    form: treatment
+    actives: [retinol, squalane]
+  - brand: The Ordinary
+    name: Retinol 1% in Squalane
+    form: treatment
+    actives: [retinol, squalane]
+  - brand: The Ordinary
+    name: Granactive Retinoid 2% Emulsion
+    form: treatment
+    actives: [retinol, squalane]
+  - brand: The Ordinary
+    name: Glycolic Acid 7% Toning Solution
+    form: toner
+    actives: [glycolic_acid, panthenol, centella]
+  - brand: The Ordinary
+    name: Salicylic Acid 2% Solution
+    form: treatment
+    actives: [salicylic_acid]
+  - brand: The Ordinary
+    name: AHA 30% + BHA 2% Peeling Solution
+    form: exfoliant
+    actives: [glycolic_acid, lactic_acid, salicylic_acid]
+  - brand: The Ordinary
+    name: Lactic Acid 10% + HA
+    form: treatment
+    actives: [lactic_acid, hyaluronic_acid]
+  - brand: The Ordinary
+    name: Mandelic Acid 10% + HA
+    form: treatment
+    actives: [mandelic_acid, hyaluronic_acid]
+  - brand: The Ordinary
+    name: Hyaluronic Acid 2% + B5
+    form: serum
+    actives: [hyaluronic_acid, panthenol]
+  - brand: The Ordinary
+    name: Vitamin C Suspension 23% + HA Spheres 2%
+    form: serum
+    actives: [l_ascorbic_acid, hyaluronic_acid]
+  - brand: The Ordinary
+    name: Ascorbyl Tetraisopalmitate Solution 20% in Vitamin F
+    form: serum
+    actives: [thd_ascorbate]
+  - brand: The Ordinary
+    name: Azelaic Acid Suspension 10%
+    form: treatment
+    actives: [azelaic_acid]
+  - brand: The Ordinary
+    name: Alpha Arbutin 2% + HA
+    form: serum
+    actives: [alpha_arbutin, hyaluronic_acid]
+  - brand: The Ordinary
+    name: Buffet + Copper Peptides 1%
+    form: serum
+    actives: [copper_peptides, peptides]
+  - brand: The Ordinary
+    name: Buffet
+    form: serum
+    actives: [peptides, hyaluronic_acid]
+  - brand: The Ordinary
+    name: Squalane Cleanser
+    form: cleanser
+    actives: [squalane]
+  - brand: The Ordinary
+    name: Natural Moisturizing Factors + HA
+    form: moisturiser
+    actives: [hyaluronic_acid, glycerin]
+
+  # ---- La Roche-Posay ------------------------------------------------------
+  - brand: La Roche-Posay
+    name: Effaclar Duo+
+    form: treatment
+    actives: [niacinamide, salicylic_acid]
+  - brand: La Roche-Posay
+    name: Effaclar Medicated Gel Cleanser
+    form: cleanser
+    actives: [salicylic_acid]
+  - brand: La Roche-Posay
+    name: Toleriane Hydrating Gentle Cleanser
+    form: cleanser
+    actives: [ceramides, glycerin]
+  - brand: La Roche-Posay
+    name: Anthelios UVMune 400
+    aliases: [anthelios, anthelios spf50, anthelios melt-in milk]
+    form: spf
+    actives: [organic_uv_filters]
+  - brand: La Roche-Posay
+    name: Retinol B3 Serum
+    form: treatment
+    actives: [retinol, niacinamide]
+  - brand: La Roche-Posay
+    name: Cicaplast Baume B5
+    form: occlusive
+    actives: [panthenol, glycerin]
+
+  # ---- Cetaphil ------------------------------------------------------------
+  - brand: Cetaphil
+    name: Daily Facial Cleanser
+    form: cleanser
+    actives: [glycerin]
+  - brand: Cetaphil
+    name: Gentle Skin Cleanser
+    form: cleanser
+    actives: [glycerin, panthenol]
+  - brand: Cetaphil
+    name: Daily Hydrating Lotion
+    form: moisturiser
+    actives: [hyaluronic_acid, glycerin]
+
+  # ---- Paula's Choice ------------------------------------------------------
+  - brand: Paula's Choice
+    name: 2% BHA Liquid Exfoliant
+    aliases: [skin perfecting 2% bha liquid]
+    form: treatment
+    actives: [salicylic_acid, panthenol]
+  - brand: Paula's Choice
+    name: 8% AHA Gel Exfoliant
+    form: treatment
+    actives: [glycolic_acid]
+  - brand: Paula's Choice
+    name: C15 Super Booster
+    form: serum
+    actives: [l_ascorbic_acid]
+  - brand: Paula's Choice
+    name: 10% Niacinamide Booster
+    form: serum
+    actives: [niacinamide]
+
+  # ---- SK-II ---------------------------------------------------------------
+  - brand: SK-II
+    name: Facial Treatment Essence
+    aliases: [pitera essence, pitera]
+    form: essence
+    actives: [glycerin]
+  - brand: SK-II
+    name: Facial Treatment Clear Lotion
+    form: toner
+    actives: [glycerin]
+
+  # ---- Olay ----------------------------------------------------------------
+  - brand: Olay
+    name: Regenerist Micro-Sculpting Cream
+    form: moisturiser
+    actives: [niacinamide, peptides, hyaluronic_acid]
+  - brand: Olay
+    name: Regenerist Retinol 24 Night Moisturiser
+    aliases: [retinol 24, regenerist retinol 24]
+    form: treatment
+    actives: [retinol, niacinamide]
+  - brand: Olay
+    name: Total Effects 7-in-1
+    aliases: [age lift, total effects age lift]
+    form: moisturiser
+    actives: [niacinamide, panthenol]
+
+  # ---- Neutrogena ----------------------------------------------------------
+  - brand: Neutrogena
+    name: Hydro Boost Water Gel
+    form: moisturiser
+    actives: [hyaluronic_acid, glycerin]
+  - brand: Neutrogena
+    name: Rapid Wrinkle Repair Retinol
+    form: treatment
+    actives: [retinol, hyaluronic_acid]
+  - brand: Neutrogena
+    name: Oil-Free Acne Wash
+    form: cleanser
+    actives: [salicylic_acid]
+
+  # ---- Vichy ---------------------------------------------------------------
+  - brand: Vichy
+    name: Mineral 89
+    form: serum
+    actives: [hyaluronic_acid]
+  - brand: Vichy
+    name: LiftActiv Vitamin C Serum
+    form: serum
+    actives: [l_ascorbic_acid]
+  - brand: Vichy
+    name: Normaderm Phytosolution
+    form: moisturiser
+    actives: [salicylic_acid, niacinamide]
+
+  # ---- Innisfree -----------------------------------------------------------
+  - brand: Innisfree
+    name: Green Tea Seed Serum
+    form: serum
+    actives: [hyaluronic_acid, glycerin]
+  - brand: Innisfree
+    name: Retinol Cica Repair Serum
+    form: treatment
+    actives: [retinol, centella]
+  - brand: Innisfree
+    name: Bija Trouble Facial Foam
+    form: cleanser
+    actives: [salicylic_acid]
+
+  # ---- Glytone / SkinCeuticals / other clinical ----------------------------
+  - brand: Glytone
+    name: Mild Gel Cleanser
+    form: cleanser
+    actives: [glycolic_acid]
+  - brand: Glytone
+    name: Rejuvenate Mild Cream
+    form: moisturiser
+    actives: [glycolic_acid]
+  - brand: SkinCeuticals
+    name: C E Ferulic
+    form: serum
+    actives: [l_ascorbic_acid]
+  - brand: SkinCeuticals
+    name: Blemish + Age Defense
+    form: treatment
+    actives: [salicylic_acid, glycolic_acid]
+  - brand: SkinCeuticals
+    name: Triple Lipid Restore
+    form: moisturiser
+    actives: [ceramides, squalane]
+
+  # ---- Korean brands commonly owned ----------------------------------------
+  - brand: COSRX
+    name: Advanced Snail 96 Mucin Power Essence
+    form: essence
+    actives: [glycerin]
+  - brand: COSRX
+    name: BHA Blackhead Power Liquid
+    form: treatment
+    actives: [salicylic_acid]
+  - brand: COSRX
+    name: The Retinol 0.1 Cream
+    form: treatment
+    actives: [retinol]
+  - brand: Beauty of Joseon
+    name: Relief Sun Rice + Probiotics
+    aliases: [relief sun]
+    form: spf
+    actives: [organic_uv_filters]
+  - brand: Beauty of Joseon
+    name: Glow Serum Propolis + Niacinamide
+    form: serum
+    actives: [niacinamide]
+  - brand: Anua
+    name: Heartleaf 77 Soothing Toner
+    form: toner
+    actives: [centella]
+  - brand: Round Lab
+    name: 1025 Dokdo Toner
+    form: toner
+    actives: [glycerin, panthenol]
+  - brand: Torriden
+    name: DIVE-IN Low Molecular Hyaluronic Acid Serum
+    aliases: [dive in serum]
+    form: serum
+    actives: [hyaluronic_acid, panthenol]
+  - brand: Dr.G
+    name: Red Blemish Clear Soothing Cream
+    form: moisturiser
+    actives: [centella, panthenol]
+
+  # ---- Common drugstore treatments -----------------------------------------
+  - brand: PanOxyl
+    name: Acne Foaming Wash
+    aliases: [acne creamy wash, panoxyl 4%, panoxyl 10%]
+    form: cleanser
+    actives: [benzoyl_peroxide]
+  - brand: Differin
+    name: Adapalene Gel 0.1%
+    aliases: [differin gel]
+    form: treatment
+    actives: [adapalene]
+  - brand: Vaseline
+    name: Original Petroleum Jelly
+    form: occlusive
+    actives: [petrolatum]
+  - brand: Eucerin
+    name: Advanced Repair Lotion
+    form: moisturiser
+    actives: [ceramides, urea]
+  - brand: The Inkey List
+    name: Retinol Serum
+    form: treatment
+    actives: [retinol, squalane]
+  - brand: The Inkey List
+    name: Niacinamide Serum
+    form: serum
+    actives: [niacinamide]

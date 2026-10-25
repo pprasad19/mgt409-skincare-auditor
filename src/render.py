@@ -1021,6 +1021,53 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
         f'<span class="{ver_cls}">{e(ver_txt)}</span></p>'
     )
 
+    # Before anything else. A reader who scrolls past this and sees "no
+    # conflicts" will believe their shelf is fine.
+    if audit.unresolved:
+        n = len(audit.unresolved)
+        total = len(audit.products)
+        names = ", ".join(u.name for u in audit.unresolved[:6])
+        more = f" and {n - 6} more" if n > 6 else ""
+        parts.append("<h2>Read this first</h2>")
+        parts.append(
+            f'<div class="gap urgent"><span class="lbl">Incomplete audit</span>'
+            f'<span class="head">{n} of your {total} products could not be checked.</span>'
+            f'<span class="body">This audit only covers the rest, so it is not a '
+            f'clean bill of health — it is a partial one. A photograph of the '
+            f'front of a bottle shows the product name; the ingredient list is '
+            f'on the back, and that is what the checks run on. Photograph the '
+            f'back labels of these, or type their ingredients in, and run it '
+            f'again.</span>'
+            f'<span class="why">Not checked: {e(names)}{e(more)}</span></div>'
+        )
+
+    # Catalogue matches are a claim about a product, not a reading of the one
+    # in the user's hand. Say so, with the names, so it can be checked.
+    from_cat = [p for p in audit.products if p.matched_from_catalogue]
+    if from_cat:
+        rows = "".join(
+            f"<li><b>{e(p.product.name)}</b> → {e(p.matched_from_catalogue)}</li>"
+            for p in from_cat
+        )
+        parts.append(
+            f'<div class="note" style="margin-top:12px">'
+            f"<strong>{len(from_cat)} product(s) were identified by name, not by "
+            f"reading a label.</strong> Their ingredients come from a reference "
+            f"list, so they are what these products <em>usually</em> contain — "
+            f"formulations change. Worth a glance at the bottle before acting on "
+            f'anything below that depends on them.<ul style="margin:10px 0 0">{rows}</ul></div>'
+        )
+
+    if audit.unreadable:
+        # Wording stays input-agnostic: this fires for typed lists too, where
+        # it previously claimed things were "visible in the photographs".
+        n = len(audit.unreadable)
+        parts.append(
+            f'<div class="note" style="margin-top:12px">'
+            f'{n} further item{"s" if n != 1 else ""} could not be identified at all '
+            f'and {"are" if n != 1 else "is"} not included in this audit.</div>'
+        )
+
     if narrative and narrative.summary:
         # The summary sat directly under the title with nothing saying what it
         # was, so a first-time reader met a paragraph about retinols before

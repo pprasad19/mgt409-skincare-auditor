@@ -123,6 +123,7 @@ async def audit(
             for p in reading.products
         ]
         result = RULES.audit(products, conditions, trims=trims)
+        result.unreadable = list(reading.unreadable)
         narrative, _ = await explain_audit(result, usage_log=log, trail=trail)
         log.write()
 
