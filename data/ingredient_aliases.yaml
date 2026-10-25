@@ -20,7 +20,26 @@
 # more damaging than false negatives, which is why short ambiguous terms are
 # left out even where they are technically correct.
 #
-# STATUS: unverified. Not checked by a speaker of any of these languages.
+# STATUS: machine-checked, not speaker-checked.
+#
+# On 25 Oct 2026 the table was audited mechanically: no alias is claimed by
+# two ingredients, no id is orphaned, and every case where one alias
+# contains another resolves to the more specific ingredient — the matcher
+# takes the longest term first and consumes the span, so Japanese
+# "retinol" inside "retinyl palmitate" does not produce both. test_i18n
+# now asserts all of that, including a collision check over every alias.
+#
+# One real gap was found and closed. China's regulatory ingredient
+# catalogue names hydroquinone 对苯二酚; the table carried only the common
+# chemical name 氢醌, so a compliant Chinese label would not have matched —
+# on an ingredient that escalates a pregnant user to a clinician. That
+# suggests a systematic risk worth a speaker's attention: these terms were
+# generated as the names a person would write, and a regulated label
+# carries the names the catalogue prescribes. The two are not always the
+# same word.
+#
+# None of this is translation checking. No speaker of Korean, Japanese,
+# Chinese or French has read these.
 # `python build_db.py` prints per-language coverage so gaps are visible rather
 # than assumed. Before relying on a language, have someone read that column.
 
@@ -129,7 +148,7 @@ aliases:
   hydroquinone:
     ko: [하이드로퀴논]
     ja: [ハイドロキノン]
-    zh: [氢醌, 氫醌]
+    zh: [对苯二酚, 對苯二酚, 氢醌, 氫醌]
     fr: [hydroquinone]
 
   tranexamic_acid:

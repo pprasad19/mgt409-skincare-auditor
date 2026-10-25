@@ -78,6 +78,42 @@ NEGATIVES = [
 ]
 
 
+
+# One alias inside another. The audit of the table found seven of these —
+# "retinol" inside "retinyl palmitate" in Japanese, "ascorbic acid" inside
+# two of its own derivatives in Chinese, "peptide" inside "copper peptide"
+# in three languages. The matcher survives them by taking the longest term
+# first and consuming the span, so the shorter one cannot also match. That
+# is a property of the matcher, not of the table, and nothing else checks
+# it: a change to the matching order would silently start reporting
+# retinol in every moisturiser containing retinyl palmitate.
+EXACT = [
+    ("ja", "パルミチン酸レチノール", {"retinyl_palmitate"}),
+    ("ja", "レチノール", {"retinol"}),
+    ("zh", "抗坏血酸磷酸酯钠", {"sodium_ascorbyl_phosphate"}),
+    ("zh", "四己基癸醇抗坏血酸酯", {"thd_ascorbate"}),
+    ("zh", "抗坏血酸", {"l_ascorbic_acid"}),
+    ("ko", "구리펩타이드", {"copper_peptides"}),
+    ("ko", "펩타이드", {"peptides"}),
+    ("zh", "銅胜肽", {"copper_peptides"}),
+    # China's regulatory ingredient catalogue names hydroquinone 对苯二酚.
+    # The table had only the common chemical name 氢醌, so a compliant
+    # Chinese label would not have matched — on an ingredient that
+    # escalates a pregnant user to a clinician.
+    ("zh", "对苯二酚", {"hydroquinone"}),
+    ("zh", "對苯二酚", {"hydroquinone"}),
+]
+
+def _aliases() -> dict:
+    import yaml
+
+    path = Path(__file__).resolve().parent / "data" / "ingredient_aliases.yaml"
+    return yaml.safe_load(path.read_text(encoding="utf-8"))["aliases"]
+
+
+ALIASES = _aliases()
+
+
 def main() -> int:
     rules = Rules()
     failures: list[str] = []
@@ -93,13 +129,32 @@ def main() -> int:
         if missing:
             failures.append(f"match {lang}  {terms} missed {sorted(missing)}")
 
+    for lang, term, want in EXACT:
+        got = set(rules.resolve_text(term))
+        if got != want:
+            failures.append(
+                f"exact {lang}  {term!r} -> {sorted(got)}, expected {sorted(want)}"
+            )
+
+    # No two ingredients may claim the same alias. A collision means the
+    # matcher picks one arbitrarily and the other is unreachable.
+    owner: dict[tuple[str, str], set[str]] = {}
+    for ident, langs in (ALIASES or {}).items():
+        for lang, terms in (langs or {}).items():
+            for t in terms if isinstance(terms, list) else [terms]:
+                owner.setdefault((lang, str(t).strip().lower()), set()).add(ident)
+    for (lang, term), ids in sorted(owner.items()):
+        if len(ids) > 1:
+            failures.append(f"collision {lang}  {term!r} claimed by {sorted(ids)}")
+
     for lang, terms, forbidden in NEGATIVES:
         got = set(rules.resolve(InputProduct(name="x", listed_ingredients=terms)).actives)
         wrong = forbidden & got
         if wrong:
             failures.append(f"false positive {lang}  {terms} matched {sorted(wrong)}")
 
-    checks = len(FORMS) + len(INGREDIENTS) + len(NEGATIVES)
+    checks = (len(FORMS) + len(INGREDIENTS) + len(NEGATIVES)
+              + len(EXACT) + len(owner))
     if failures:
         print(f"FAILED {len(failures)} of {checks} checks\n")
         for f in failures:
@@ -110,6 +165,8 @@ def main() -> int:
     print(f"    {len(FORMS)} form inferences across ko/fr/ja/zh")
     print(f"    {len(INGREDIENTS)} ingredient resolutions")
     print(f"    {len(NEGATIVES)} false-positive guards")
+    print(f"    {len(EXACT)} exact resolutions where one alias contains another")
+    print(f"    {len(owner)} aliases checked for collisions")
     return 0
 
 
