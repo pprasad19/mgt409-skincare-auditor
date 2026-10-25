@@ -1,0 +1,5 @@
+{
+  "note": "Everything in usage_log.json up to and including this many entries is development and debugging traffic, not real use. Entries after it are real runs by the three testers. Tokenomics should report the two separately: an average over the development entries describes me fixing bugs, not somebody auditing a shelf.",
+  "entries_before_testers": 306,
+  "marked_at": "2026-10-25T01:38:27"
+}
