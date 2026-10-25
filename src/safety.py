@@ -145,10 +145,21 @@ def detect_suppression(raw_text: str, reading, rules) -> list[str]:
         for term in list(product.listed_ingredients) + [product.name]
     )
 
-    missing: list[str] = []
-    for ingredient_id in rules.resolve_text(raw_text):
-        if ingredient_id not in rules.resolve_text(recorded):
-            missing.append(rules.ingredients[ingredient_id]["name"])
+    # Only ingredients that can change a finding.
+    #
+    # The reader legitimately tidies an ingredient list, and an omitted
+    # glycerin is not suppression — it is a humectant no rule has an opinion
+    # about. Flagging it produced an alarming warning about nothing, and a
+    # warning that cries wolf is worse than no warning: the one time it means
+    # something, it has already been trained away.
+    consequential = rules.ingredients_in_rules()
+    recorded_ids = set(rules.resolve_text(recorded))
+
+    missing = [
+        rules.ingredients[i]["name"]
+        for i in rules.resolve_text(raw_text)
+        if i in consequential and i not in recorded_ids
+    ]
     return sorted(set(missing))
 
 

@@ -133,6 +133,24 @@ class Rules:
                 return form_id
         return "serum"
 
+    def ingredients_in_rules(self) -> set[str]:
+        """Ingredient ids that any rule can fire on.
+
+        An ingredient no rule mentions cannot change an audit, so its absence
+        from a reading is not worth warning anyone about.
+        """
+        out: set[str] = set()
+        selectors = [r["a"] for r in self.interactions] + [r["b"] for r in self.interactions]
+        selectors += [r["matches"] for r in self.contraindications]
+
+        for selector in selectors:
+            if selector.startswith("ing:"):
+                out.add(selector.removeprefix("ing:"))
+            elif selector.startswith("class:"):
+                wanted = selector.removeprefix("class:")
+                out |= {i for i, row in self.ingredients.items() if row["class"] == wanted}
+        return out
+
     def resolve_text(self, text: str) -> list[str]:
         """Ingredient ids mentioned anywhere in a blob of text.
 

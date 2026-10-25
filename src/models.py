@@ -191,6 +191,13 @@ class ReadProduct(BaseModel):
     form: str | None = None
     listed_ingredients: list[str] = Field(default_factory=list)
     legibility: Literal["clear", "partial", "name_only"] = "clear"
+    label_text: str = Field(
+        default="",
+        description="Every word visible on the label, transcribed verbatim and in "
+                    "order, including small print. Not a summary. This is what lets "
+                    "a photograph be re-read by code: the structured fields are the "
+                    "reader's judgement, and this is the evidence behind them.",
+    )
 
 
 class ShelfReading(BaseModel):
