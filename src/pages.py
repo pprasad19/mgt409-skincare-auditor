@@ -49,7 +49,9 @@ The Ordinary Retinol 0.5% in Squalane, $12
   squalane, retinol, tocopherol
 
 Paula's Choice 2% BHA Liquid, $35 — don't really use it
-  water, methylpropanediol, salicylic acid, panthenol"""
+  water, methylpropanediol, salicylic acid, panthenol
+
+https://www.cerave.com/skincare/moisturizers/moisturizing-cream"""
 
 
 def shell(body: str, title: str) -> str:
@@ -86,13 +88,17 @@ def landing(concerns: list[tuple[str, str]] | None = None) -> str:
   </fieldset>
 
   <fieldset>
-    <legend>Or type them</legend>
+    <legend>Or type them, or paste links</legend>
     <p>One product per line. Add the ingredients underneath if you have them,
     what you paid, and say if there's one you never use — the ingredients are
     what the audit runs on, and the prices are what it uses to tell you what is
     going to waste.</p>
+    <p><strong>If you can find the product online, paste the link instead.</strong>
+    That is the most reliable thing you can give us: we read the ingredient list
+    off that page, so there is no guessing at which product you meant and no
+    squinting at a photograph. Mix links and typed names freely.</p>
     <div class="eg">{e(PLACEHOLDER)}</div>
-    <textarea name="typed" placeholder="Paste or type your products here"></textarea>
+    <textarea name="typed" placeholder="Paste or type your products here, or paste links to them"></textarea>
   </fieldset>
 
   <fieldset>

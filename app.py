@@ -29,7 +29,14 @@ from fastapi.responses import HTMLResponse  # noqa: E402
 from agents import explain_audit, new_run_id, observe_skin, read_shelf  # noqa: E402
 from annotate import annotate, boxes_for  # noqa: E402
 from limits import MAX_IMAGE_BYTES, Trim  # noqa: E402
-from lookup import MAX_LOOKUPS, find_ingredients  # noqa: E402
+from lookup import (  # noqa: E402
+    MAX_LOOKUPS,
+    MAX_URLS,
+    find_from_url,
+    find_ingredients,
+    strip_urls,
+    urls_in,
+)
 from models import InputProduct, display_name  # noqa: E402
 from pages import error_page, landing  # noqa: E402
 import render as render_mod  # noqa: E402
@@ -155,6 +162,28 @@ async def audit(
         trail = AuditTrail(run_id=run_id, defended=True)
         trims: list[Trim] = []
 
+        # Pasted product pages are pulled out before the shelf reader sees
+        # them. A URL is a better input than anything else this app takes —
+        # it names one specific product and carries the list that product's
+        # maker publishes — and handing it to a reader whose job is naming
+        # things from photographs would waste it as a product called "https".
+        pasted = urls_in(typed)[:MAX_URLS]
+        typed = strip_urls(typed)
+
+        from_urls: list[InputProduct] = []
+        url_records: dict[str, dict] = {}
+        for url in pasted:
+            record = await find_from_url(url, usage_log=log)
+            if not record:
+                continue
+            name = record.get("matched_name") or url
+            from_urls.append(
+                InputProduct(name=name, listed_ingredients=record["inci"],
+                             price_usd=record.get("typical_price_usd"),
+                             price_is_typical=bool(record.get("typical_price_usd")))
+            )
+            url_records[name] = record
+
         reading = None
         if paths or typed:
             reading = await read_shelf(
@@ -170,7 +199,8 @@ async def audit(
                 # A failed observation is a lost suggestion, not a lost audit.
                 traceback.print_exc()
 
-        if reading is not None and not reading.products and not previous and skin is None:
+        if (reading is not None and not reading.products and not previous
+                and not from_urls and skin is None):
             return HTMLResponse(
                 error_page(
                     "No products could be identified.",
@@ -193,6 +223,8 @@ async def audit(
         # and photographed the ingredient panel did it to replace a name
         # match, so the new read wins on a name collision.
         merged = {p.name.strip().lower(): p for p in previous}
+        for p in from_urls:
+            merged[p.name.strip().lower()] = p
         for p in fresh:
             merged[p.name.strip().lower()] = p
         products = list(merged.values())
@@ -214,7 +246,7 @@ async def audit(
         # A hand-written catalogue cannot cover the public's bathrooms. The
         # order matters: a label beats the catalogue, the catalogue beats the
         # web, and the web beats telling someone their product was ignored.
-        sourced: dict[str, dict] = {}
+        sourced: dict[str, dict] = dict(url_records)
         budget = MAX_LOOKUPS
         for product in products:
             if product.listed_ingredients or budget <= 0:

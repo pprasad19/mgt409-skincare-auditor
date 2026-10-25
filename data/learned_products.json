@@ -251,6 +251,42 @@
     "source_url": "https://dermava.com/glytone-acne-treatment-lotion-2oz",
     "typical_price_usd": 40.0
   },
+  "https://www.cerave.com/skincare/moisturizers/moisturizing-cream": {
+    "found": true,
+    "from_user_url": true,
+    "inci": [
+      "Water (Aqua)",
+      "Glycerin",
+      "Cetearyl Alcohol",
+      "Caprylic/Capric Triglyceride",
+      "Cetyl Alcohol",
+      "Ceteareth-20",
+      "Petrolatum",
+      "Potassium Phosphate",
+      "Ceramide NP",
+      "Ceramide AP",
+      "Ceramide EOP",
+      "Carbomer",
+      "Dimethicone",
+      "Behentrimonium Methosulfate",
+      "Sodium Lauroyl Lactylate",
+      "Sodium Hyaluronate",
+      "Cholesterol",
+      "Phenoxyethanol",
+      "Disodium EDTA",
+      "Dipotassium Phosphate",
+      "Tocopherol",
+      "Phytosphingosine",
+      "Xanthan Gum",
+      "Ethylhexylglycerin"
+    ],
+    "looked_up": "2026-10-25T13:19:39.171170+00:00",
+    "matched_name": "CeraVe Moisturizing Cream",
+    "note": "The page notes that ingredient lists can change; check the product packaging for the most up-to-date list.",
+    "price_source_url": "https://www.cerave.com/skincare/moisturizers/moisturizing-cream",
+    "source_url": "https://www.cerave.com/skincare/moisturizers/moisturizing-cream",
+    "typical_price_usd": 14.99
+  },
   "inkey list makeup melting cleansing balm": {
     "found": true,
     "inci": [

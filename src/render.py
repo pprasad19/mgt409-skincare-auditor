@@ -497,6 +497,7 @@ table.prices .typ{font-size:11.5px;color:var(--ink-faint);display:block}
 .again > p:first-child{margin-top:0}
 .again h4{font:600 11.5px/1 var(--sans);text-transform:uppercase;
   letter-spacing:.13em;color:var(--ink-faint);margin:26px 0 12px}
+.yours{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--sage);border:1px solid var(--sage);border-radius:999px;padding:1px 7px;margin-left:4px;white-space:nowrap}
 .checks{display:grid;gap:11px;margin-bottom:16px}
 .checks label{display:flex;gap:11px;align-items:flex-start;font-size:15px;
   cursor:pointer}
@@ -1846,18 +1847,40 @@ def render(
                 money = f" · ${price:,.0f}"
             else:
                 money = " · no published price found"
+            given = " <span class=\"yours\">your link</span>" if rec.get(
+                "from_user_url") else ""
             rows.append(
-                f"<li><b>{e(name)}</b> — "
+                f"<li><b>{e(name)}</b>{given} — "
                 f'<a href="{link}" style="color:var(--clay)">{shown}</a>'
                 f"{money}{tail}</li>"
             )
+
+        # Split the headline. A page the user chose identifies a specific
+        # product; a page the app found is a name match made on their
+        # behalf, and only the second one needs a warning about whether it
+        # is even the right product.
+        mine = sum(1 for r in sourced.values() if r.get("from_user_url"))
+        found = len(sourced) - mine
+        said = []
+        if mine:
+            said.append(
+                f"<strong>{mine} {_plural(mine, 'product')} "
+                f"{'was' if mine == 1 else 'were'} read from a page you "
+                f"gave us.</strong>"
+            )
+        if found:
+            said.append(
+                f"<strong>{found} {_plural(found, 'product')} "
+                f"{'was' if found == 1 else 'were'} looked up online by "
+                f"name.</strong> Worth checking the match is the product "
+                f"you actually own."
+            )
         parts.append(
             f'<div class="note" style="margin-top:12px">'
-            f"<strong>{len(sourced)} {_plural(len(sourced), 'product')} had "
-            f"{'its' if len(sourced) == 1 else 'their'} ingredients looked up "
-            f"online.</strong> Published formulations differ by region and change "
-            f"over time, so check the bottle before acting on anything that "
-            f'depends on them.<ul style="margin:10px 0 0">{"".join(rows)}</ul></div>'
+            f"{' '.join(said)} Published formulations differ by region and "
+            f"change over time, so check the bottle before acting on "
+            f'anything that depends on them.'
+            f'<ul style="margin:10px 0 0">{"".join(rows)}</ul></div>'
         )
 
     # Catalogue matches are a claim about a product, not a reading of the one
@@ -2267,7 +2290,8 @@ def render(
             f"name match.<br><br>{hint}</p>"
             '<input type="file" name="photos" accept="image/*" multiple>'
             '<textarea name="typed" placeholder="Or type any products that are '
-            'missing, with ingredients if you have them"></textarea>'
+            'missing — or paste a link to one, which is the most reliable '
+            'thing you can give us"></textarea>'
         )
         titles = []
         if rows:
