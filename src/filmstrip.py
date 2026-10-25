@@ -114,49 +114,140 @@ def _face(draw) -> None:
     draw.line([*_xy(126, 198), *_xy(125, 224)], fill=INK_FAINT, width=2)
 
 
-def _dot_state(anim: str, t: float, x: float) -> tuple[float, float, float, float]:
-    """Where one dot is, and how visible, at phase t of its animation.
+R = 5.5 * SCALE          # a dot
+TRAIL = (0.45, 0.28, 0.15)   # ghost opacities behind a moving dot
 
-    Mirrors the CSS keyframes in render.py. They are written twice because
-    one is a stylesheet and one is a drawing program; the positions they
-    animate from are shared, which is the part that matters.
+
+def _blob(draw, x: float, y: float, r: float, colour, alpha: float) -> None:
+    cx, cy = _xy(x, y)
+    rr = r * SCALE
+    draw.ellipse([cx - rr, cy - rr, cx + rr, cy + rr],
+                 fill=colour + (max(0, min(255, int(255 * alpha))),))
+
+
+def _ring(draw, x: float, y: float, r: float, colour, alpha: float, w: int = 2) -> None:
+    cx, cy = _xy(x, y)
+    rr = r * SCALE
+    draw.ellipse([cx - rr, cy - rr, cx + rr, cy + rr],
+                 outline=colour + (max(0, min(255, int(255 * alpha))),),
+                 width=w)
+
+
+def _motion(draw, anim: str, points: list[dict], t: float) -> None:
+    """Draw one frame of an application.
+
+    Each branch draws a different *shape*, not the same shape at a different
+    offset. That is the whole point: a 5px wobble on an 11px dot reads as a
+    still picture, and five motions that all read as still pictures are one
+    motion with five captions.
     """
     if anim == "orbit":
-        a = t * 2 * math.pi
-        return math.sin(a) * 5, -3 + -math.cos(a) * 3, 1.0, 0.9
+        # Circular: a visible path, and the dot going round it.
+        for n, p in enumerate(points):
+            a = ((t + n * 0.07) % 1.0) * 2 * math.pi
+            _ring(draw, p["x"], p["y"] - 4, 8, CLAY, 0.18, 2)
+            _blob(draw, p["x"] + math.sin(a) * 8, p["y"] - 4 - math.cos(a) * 8,
+                  4.6, CLAY, 0.92)
+        return
+
     if anim == "foam":
-        grow = math.sin(t * math.pi)
-        return grow * 3, -grow * 2, 1 + grow * 1.1, 0.9 - grow * 0.25
+        # Lather: blobs swell and merge, with small bubbles around them.
+        for n, p in enumerate(points):
+            ph = (t + n * 0.06) % 1.0
+            grow = math.sin(ph * math.pi)
+            _blob(draw, p["x"], p["y"], 5.5 + grow * 5.5, CLAY, 0.85 - grow * 0.3)
+            for k in (0, 1):
+                ang = (ph * 2 * math.pi) + k * 2.6 + n
+                _blob(draw, p["x"] + math.cos(ang) * 9, p["y"] + math.sin(ang) * 8,
+                      1.8 + grow * 1.4, CLAY, 0.45)
+        return
+
     if anim == "press":
-        squash = math.sin(t * math.pi)
-        return 0, 0, 1.5 - squash * 0.78, 0.35 + squash * 0.6
+        # Pressing in: a fingertip ring closing onto the dot and fading.
+        for n, p in enumerate(points):
+            ph = (t + n * 0.08) % 1.0
+            _blob(draw, p["x"], p["y"], 4.4, CLAY, 0.9)
+            _ring(draw, p["x"], p["y"], 14 - ph * 9, CLAY, max(0.0, 0.7 - ph * 0.7), 3)
+        return
+
     if anim == "tap":
-        return 0, -abs(math.sin(t * math.pi)) * 3.5, 1 - abs(math.sin(t * math.pi)) * .15, .95
+        # Patting: a clear bounce, with a contact shadow left behind so the
+        # height is readable in a still frame.
+        for n, p in enumerate(points):
+            ph = (t + n * 0.1) % 1.0
+            lift = abs(math.sin(ph * math.pi)) * 11
+            # The shadow is what makes the height readable in a still frame.
+            _blob(draw, p["x"], p["y"] + 3, 5.4 - lift * 0.18, CLAY, 0.3)
+            _blob(draw, p["x"], p["y"] - lift, 5.2 - lift * 0.14, CLAY, 0.95)
+        return
+
     if anim == "sweep":
-        out = 7 if x >= 100 else -7
-        return out * t, 0, 0.6 + t * 0.65, max(0.0, 0.95 - t * 0.7)
-    # dab
-    return 0, 0, min(1.0, 0.2 + t * 4), min(0.95, t * 4)
+        # Smoothing outward: a comet. The travel has to be several times the
+        # dot's own width or the trail sits inside the head of it and the
+        # whole thing reads as a stationary dot.
+        for n, p in enumerate(points):
+            ph = (t + n * 0.05) % 1.0
+            out = 20 if p["x"] >= 100 else -20
+            for k, a in enumerate(TRAIL):
+                back = max(0.0, ph - (k + 1) * 0.16)
+                _blob(draw, p["x"] + out * back, p["y"], 4.6 - k * 0.6, CLAY, a)
+            _blob(draw, p["x"] + out * ph, p["y"], 5.4, CLAY, 0.95)
+        return
+
+    # dab: discrete placements, lighting up one after another and staying.
+    lit = t * (len(points) + 2)
+    for n, p in enumerate(points):
+        if n > lit:
+            continue
+        land = min(1.0, lit - n)
+        _blob(draw, p["x"], p["y"], 2 + land * 4.2, CLAY, 0.35 + land * 0.6)
+        if land < 1:
+            _ring(draw, p["x"], p["y"], 6 + (1 - land) * 7, CLAY, (1 - land) * 0.5, 2)
 
 
-def _finish(layer, draw, anim: str, t: float) -> None:
+def _finish(draw, anim: str, rest: list[dict], t: float) -> None:
+    """A finish, with the product still where it was put.
+
+    `rest` matters more than it looks. Without it every absorb scene was the
+    same dashed ring, so eight of the eighteen frames in a six-product
+    routine were one picture with eight different captions. Showing the
+    product settling on the area it was actually applied to makes absorbing
+    a retinol on the chin look different from absorbing a toner everywhere,
+    which is the truth of it.
+    """
     if anim == "rinse":
-        for i, x in enumerate((76, 100, 124)):
-            p = (t + i * 0.15) % 1.0
-            top = 52 + p * 46
-            alpha = 0 if p < 0.12 or p > 0.88 else 190
-            draw.line([*_xy(x, top), *_xy(x, top + 34)],
-                      fill=WATER + (alpha,), width=3)
-    elif anim == "towel":
-        a = int(140 * math.sin(t * math.pi))
-        _rounded(draw, [*_xy(44, 92), *_xy(156, 156)], 14,
-                 fill=TOWEL + (max(a, 0),))
-    elif anim == "absorb":
-        a = int(150 * math.sin(t * math.pi))
-        # a dashed ring, drawn as arc segments
-        for start in range(0, 360, 24):
-            draw.arc([*_xy(45, 50), *_xy(155, 198)], start, start + 13,
-                     fill=SAND + (max(a, 0),), width=3)
+        for i, x in enumerate((70, 86, 100, 114, 130)):
+            ph = (t + i * 0.17) % 1.0
+            top = 48 + ph * 52
+            if 0.1 < ph < 0.9:
+                draw.line([*_xy(x, top), *_xy(x, top + 30)],
+                          fill=WATER + (190,), width=3)
+                _blob(draw, x, top + 34, 2.2, WATER, 0.5)
+        # what is being rinsed away
+        for p in rest:
+            _blob(draw, p["x"], p["y"], 4.5, CLAY, max(0.0, 0.35 - t * 0.35))
+        return
+
+    if anim == "towel":
+        drop = math.sin(t * math.pi)
+        a = 0.85 * drop
+        y0, y1 = 86 + (1 - drop) * 10, 150 + (1 - drop) * 10
+        _rounded(draw, [*_xy(42, y0), *_xy(158, y1)], 14,
+                 fill=TOWEL + (int(255 * a),))
+        draw.line([*_xy(42, (y0 + y1) / 2), *_xy(158, (y0 + y1) / 2)],
+                  fill=(182, 195, 180, int(255 * a)), width=2)
+        return
+
+    # absorb: the product sitting and sinking in, plus a slow ring.
+    pulse = 0.5 + 0.5 * math.sin(t * 2 * math.pi)
+    for n, p in enumerate(rest):
+        _blob(draw, p["x"], p["y"], 4.4 + pulse * 1.2, CLAY, 0.22 + pulse * 0.22)
+    sweep_to = int(360 * t)
+    for start in range(0, 360, 26):
+        if start > sweep_to:
+            continue
+        draw.arc([*_xy(45, 50), *_xy(155, 198)], start - 90, start - 90 + 14,
+                 fill=SAND + (150,), width=3)
 
 
 def _wrap(draw, text: str, font, width: int, limit: int = 2) -> list[str]:
@@ -193,15 +284,10 @@ def _frame(scene: dict, t: float, progress: float, fonts) -> Image.Image:
     layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     ld = ImageDraw.Draw(layer)
 
-    for n, p in enumerate(scene["points"]):
-        phase = (t + n * 0.06) % 1.0
-        dx, dy, scale, alpha = _dot_state(scene["anim"], phase, p["x"])
-        cx, cy = _xy(p["x"] + dx, p["y"] + dy)
-        r = 5.5 * SCALE * scale
-        ld.ellipse([cx - r, cy - r, cx + r, cy + r],
-                   fill=CLAY + (int(255 * alpha),))
-
-    _finish(layer, ld, scene["anim"], t)
+    if scene["points"]:
+        _motion(ld, scene["anim"], scene["points"], t)
+    else:
+        _finish(ld, scene["anim"], scene.get("rest", []), t)
     base = Image.alpha_composite(base.convert("RGBA"), layer).convert("RGB")
     draw = ImageDraw.Draw(base)
 
@@ -251,7 +337,7 @@ def _palette() -> Image.Image:
     # blends need to exist in the palette or they dither.
     for bg in (SUNK, CARD):
         for fg in (CLAY, WATER, SAND, TOWEL, INK_FAINT):
-            for a in (0.25, 0.5, 0.75):
+            for a in (0.15, 0.25, 0.35, 0.5, 0.65, 0.8, 0.92):
                 colours.append(tuple(int(f * a + b * (1 - a)) for f, b in zip(fg, bg)))
     colours = list(dict.fromkeys(colours))[:256]
 

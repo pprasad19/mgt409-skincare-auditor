@@ -206,5 +206,11 @@ def scenes_for(step, spec, beats: list[dict]) -> list[dict]:
             "real": _real_time(beat["secs"]),
             "screen": screen_seconds(beat["secs"]),
             "points": pts if kind == "apply" else [],
+            # Where the product is sitting while it absorbs or is rinsed
+            # off. Without this every finish scene was an empty face, so
+            # eight of the eighteen scenes in a six-product routine were the
+            # same picture with different captions -- and absorbing a
+            # retinol on the chin looked like absorbing a toner everywhere.
+            "rest": [] if kind == "apply" else pts,
         })
     return out

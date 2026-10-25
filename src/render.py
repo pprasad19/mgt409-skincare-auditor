@@ -374,9 +374,18 @@ table.prices .typ{font-size:11.5px;color:var(--ink-faint);display:block}
 .stage[data-anim="press"]  .pd{animation:pd-press 1.9s ease-in-out  infinite var(--d)}
 .stage[data-anim="tap"]    .pd{animation:pd-tap   .75s ease-in-out  infinite var(--d)}
 .stage[data-anim="sweep"]  .pd{animation:pd-sweep 1.7s ease-in-out  infinite var(--d)}
-.stage[data-anim="absorb"] .pd,
-.stage[data-anim="rinse"]  .pd,
-.stage[data-anim="towel"]  .pd{animation:none;opacity:0}
+.stage[data-anim="absorb"] .pd:not(.rest),
+.stage[data-anim="rinse"]  .pd:not(.rest),
+.stage[data-anim="towel"]  .pd:not(.rest){animation:none;opacity:0}
+/* What was just applied, still sitting there while it absorbs or is rinsed
+   away. Without it a finish scene was an empty face, so every absorb looked
+   the same whatever had been put on. */
+.pd.rest{opacity:0;animation:none}
+.stage[data-anim="absorb"] .pd.rest{animation:settle 2.4s ease-in-out infinite var(--d)}
+.stage[data-anim="rinse"]  .pd.rest{animation:washoff 1.2s ease-out infinite var(--d)}
+.stage[data-anim="towel"]  .pd.rest{opacity:.18}
+@keyframes settle{0%,100%{opacity:.2;transform:scale(.9)}50%{opacity:.45;transform:scale(1.1)}}
+@keyframes washoff{0%{opacity:.38}100%{opacity:0}}
 
 @keyframes pd-dab{0%{opacity:0;transform:scale(.2)}
   30%{opacity:.95;transform:scale(1)}100%{opacity:.5;transform:scale(1)}}
@@ -1179,10 +1188,12 @@ FILM_JS = """
   function draw(scene){
     while(dots.firstChild) dots.removeChild(dots.firstChild);
     stage.setAttribute('data-anim', scene.anim);
-    scene.points.forEach(function(p, n){
+    var active = scene.points.length ? scene.points : (scene.rest || []);
+    var resting = scene.points.length === 0;
+    active.forEach(function(p, n){
       var c = document.createElementNS('http://www.w3.org/2000/svg','circle');
       c.setAttribute('cx', p.x); c.setAttribute('cy', p.y); c.setAttribute('r', 5.5);
-      c.setAttribute('class','pd');
+      c.setAttribute('class', resting ? 'pd rest' : 'pd');
       /* Stagger, and push sweeps outward from the midline so the motion
        * reads as spreading rather than drifting sideways. */
       c.style.setProperty('--d', (n * 0.09).toFixed(2) + 's');
