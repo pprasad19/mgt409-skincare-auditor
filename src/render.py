@@ -1100,6 +1100,11 @@ def render(
         f"<h1>Your shelf, audited</h1>"
         f'<p class="sub">{w.products_owned} product'
         f'{"s" if w.products_owned != 1 else ""} · '
+        # The count the reader could not identify belongs in the headline, not
+        # in a note below it. A user who handed over thirteen products and
+        # read "12 products" has to go looking for the missing one; told "12
+        # products · 2 not identified" they already know where it went.
+        f'{f"{len(audit.unreadable)} not identified · " if audit.unreadable else ""}'
         f'{len(audit.findings)} finding'
         f'{"s" if len(audit.findings) != 1 else ""}</p>'
     )
@@ -1134,9 +1139,21 @@ def render(
             shown = e(rec.get("matched_name") or "source")
             note = rec.get("note") or ""
             tail = f" <em>{e(note)}</em>" if note else ""
+            price = rec.get("typical_price_usd")
+            psrc = rec.get("price_source_url") or ""
+            if price and psrc:
+                money = (
+                    f' · <a href="{e(psrc)}" style="color:var(--clay)">'
+                    f"${price:,.0f}</a>"
+                )
+            elif price:
+                money = f" · ${price:,.0f}"
+            else:
+                money = " · no published price found"
             rows.append(
                 f"<li><b>{e(name)}</b> — "
-                f'<a href="{link}" style="color:var(--clay)">{shown}</a>{tail}</li>'
+                f'<a href="{link}" style="color:var(--clay)">{shown}</a>'
+                f"{money}{tail}</li>"
             )
         parts.append(
             f'<div class="note" style="margin-top:12px">'

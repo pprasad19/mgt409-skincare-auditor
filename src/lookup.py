@@ -69,6 +69,17 @@ class ProductLookup(BaseModel):
         description="The product the source is describing, as the source names it. "
                     "Lets the user see whether the right thing was found.",
     )
+    typical_price_usd: float | None = Field(
+        default=None,
+        description="Typical US retail price for the standard size, if a retailer "
+                    "or the brand publishes one. None rather than an estimate: a "
+                    "made-up price ends up in a figure telling someone how much "
+                    "product they are wasting.",
+    )
+    price_source_url: str = Field(
+        default="",
+        description="Where the price came from. Required for the price to be used.",
+    )
     note: str = Field(
         default="",
         description="Anything that should qualify this — a regional variant, an "
@@ -95,7 +106,13 @@ If what you find is clearly a different size, region or variant of the same
 product, return it and say so in the note. If it is a different product that
 happens to have a similar name, that is a not-found.
 
-Never return an ingredient list without a source URL."""
+Also return the **typical US retail price** for the standard size, with the
+URL you took it from. The brand's own store or a large retailer is fine. If
+you cannot find a published price, leave it empty — a guessed price ends up
+in a figure telling someone how much product they are wasting, and a wrong
+number there is worse than a missing one.
+
+Never return an ingredient list, or a price, without a source URL."""
 
 
 def _cache() -> dict:
@@ -168,12 +185,16 @@ async def find_ingredients(product_name: str, usage_log=None) -> dict | None:
 
     # A list without a source is not evidence, whatever the model says.
     ok = bool(out.found and out.inci and out.source_url)
+    # A price without a source is not usable, by the same rule as the list.
+    priced = bool(out.typical_price_usd and out.price_source_url)
     record = {
         "found": ok,
         "inci": out.inci if ok else [],
         "source_url": out.source_url,
         "matched_name": out.matched_name,
         "note": out.note,
+        "typical_price_usd": out.typical_price_usd if priced else None,
+        "price_source_url": out.price_source_url if priced else "",
         "looked_up": datetime.now(timezone.utc).isoformat(),
     }
     remember(product_name, record)

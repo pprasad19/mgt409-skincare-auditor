@@ -243,7 +243,9 @@ class Rules:
         # Nothing readable on the label — fall back to the catalogue, and
         # record that we did, so the page can tell the user to check the bottle.
         from_catalogue = None
-        typical_price = False
+        # Carried in when the price arrived from the web lookup; set below
+        # when it comes from the catalogue. Either way it is not the user's.
+        typical_price = product.price_is_typical
         if not actives:
             hit = self.match_catalogue(product)
             if hit:

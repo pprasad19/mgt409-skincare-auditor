@@ -59,6 +59,11 @@ class InputProduct(BaseModel):
         description="User says they own it but do not use it. A product that is both "
                     "unused and redundant is the clearest waste signal we have.",
     )
+    price_is_typical: bool = Field(
+        default=False,
+        description="The price did not come from the user. Set when it was filled "
+                    "from the catalogue or looked up online, so the page can say so.",
+    )
 
 
 class ResolvedProduct(BaseModel):

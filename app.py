@@ -225,6 +225,10 @@ async def audit(
             budget -= 1
             if record:
                 product.listed_ingredients = record["inci"]
+                # What someone actually paid always wins; this fills a gap.
+                if product.price_usd is None and record.get("typical_price_usd"):
+                    product.price_usd = float(record["typical_price_usd"])
+                    product.price_is_typical = True
                 sourced[product.name] = record
 
         result = RULES.audit(products, gate_ids, trims=trims, concerns=concern_ids)

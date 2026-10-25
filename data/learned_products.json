@@ -1,31 +1,4 @@
 {
-  "avene cicalfate+ restorative protective cream": {
-    "found": true,
-    "inci": [
-      "Avene Thermal Spring Water",
-      "Caprylic/Capric Triglyceride",
-      "Mineral Oil",
-      "Glycerin",
-      "Hydrogenated Vegetable Oil",
-      "Zinc Oxide",
-      "Propylene Glycol",
-      "Polyglyceryl-2 Sesquiisostearate",
-      "PEG-22/Dodecyl Glycol Copolymer",
-      "Aluminum Stearate",
-      "Aquaphilus Dolomiae Ferment Filtrate",
-      "Arginine",
-      "Beeswax",
-      "Copper Sulfate",
-      "Magnesium Stearate",
-      "Microcrystalline Wax",
-      "Tromethamine",
-      "Zinc Sulfate"
-    ],
-    "looked_up": "2026-10-25T01:41:30.619590+00:00",
-    "matched_name": "Cicalfate+ Restorative Protective Cream",
-    "note": "The product page appears to contain typos in a few ingredient names; check the package label for exact wording.",
-    "source_url": "https://www.aveneusa.com/cicalfateplus-restorative-protective-cream"
-  },
   "glytone acne treatment lotion": {
     "found": true,
     "inci": [
@@ -58,9 +31,57 @@
       "Glucose",
       "Arctium Lappa (Burdock) Root Extract"
     ],
-    "looked_up": "2026-10-25T01:41:59.850481+00:00",
-    "matched_name": "Glytone Acne Treatment Lotion",
-    "note": "Source lists the current/new formula; it labels salicylic acid 1% as the active ingredient, followed by inactive ingredients. Older versions may have a different ingredient list.",
-    "source_url": "https://dermava.com/glytone-acne-treatment-lotion-2oz"
+    "looked_up": "2026-10-25T01:57:04.673314+00:00",
+    "matched_name": "Glytone Acne Treatment Lotion (2 oz)",
+    "note": "The complete list is from a retailer listing; Glytone\u2019s page does not show the full ingredient panel. Current formula. Brand page lists $40 regular price (shown discounted at $30 when checked).",
+    "price_source_url": "https://glytone.com/products/acne-treatment-lotion",
+    "source_url": "https://dermava.com/glytone-acne-treatment-lotion-2oz",
+    "typical_price_usd": 40.0
+  },
+  "tatcha the water cream": {
+    "found": true,
+    "inci": [
+      "Aqua/Water/Eau",
+      "Saccharomyces/Rice Ferment Filtrate",
+      "Dimethicone",
+      "Propanediol",
+      "Glycerin",
+      "Diglycerin",
+      "Diphenylsiloxy Phenyl Trimethicone",
+      "Camellia Sinensis Leaf Extract",
+      "Cladosiphon Okamuranus Extract",
+      "PEG-9 Polydimethylsiloxyethyl Dimethicone",
+      "Gold",
+      "Belamcanda Chinensis Root Extract",
+      "Rosa Multiflora Fruit Extract",
+      "Houttuynia Cordata Extract",
+      "Sophora Angustifolia Root Extract",
+      "Sodium Hyaluronate",
+      "Lecithin",
+      "Pistacia Lentiscus (Mastic) Gum",
+      "Sodium Chloride",
+      "Sodium Citrate",
+      "Mica",
+      "Tin Oxide",
+      "Dimethicone/PEG-10/15 Crosspolymer",
+      "Dimethicone/Phenyl Vinyl Dimethicone Crosspolymer",
+      "Tocopherol",
+      "Butylene Glycol",
+      "Ethylhexylglycerin",
+      "Dipropylene Glycol",
+      "Parfum/Fragrance",
+      "Alcohol",
+      "Phenoxyethanol",
+      "Limonene",
+      "Linalool",
+      "Citral",
+      "Titanium Dioxide (CI 77891)"
+    ],
+    "looked_up": "2026-10-25T01:57:16.985323+00:00",
+    "matched_name": "The Water Cream \u2014 Lightweight Pore-Refining Moisturizer",
+    "note": "The brand\u2019s current U.S. listing is for 75 ml; Sephora lists the standard 50 ml size at $74. If you have a 50 ml or other-market jar, its formula may differ; check its package.",
+    "price_source_url": "https://www.sephora.com/product/the-water-cream-P418218",
+    "source_url": "https://tatcha.com/products/the-water-cream-lightweight-moisturizer",
+    "typical_price_usd": 74.0
   }
 }
