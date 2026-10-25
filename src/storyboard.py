@@ -293,11 +293,23 @@ def screen_seconds(real: int) -> float:
 
 
 def _real_time(secs: int) -> str:
+    """The duration, in the same terms the written steps use.
+
+    The animation is the only surface that converts to minutes, so it is
+    the only one that can disagree with the others, and it did: the old
+    threshold switched to minutes at 90 seconds and rounded 1.5 up, so a
+    ninety-second wait was captioned "2 minutes" while the step list
+    beside it said 90s. A third longer, on the one number the user is
+    being asked to stand still for.
+
+    Seconds below two minutes, which is where every beat the agent
+    produces lives except a mask. Rounding is half-up rather than
+    banker's, so 150 seconds is three minutes and not two.
+    """
     secs = int(secs or 0)
-    if secs >= 90:
-        mins = secs / 60
-        return f"{mins:.0f} minutes" if mins >= 1.5 else "a minute"
-    return f"{secs} seconds"
+    if secs < 120:
+        return f"{secs} seconds"
+    return f"{(secs + 30) // 60} minutes"
 
 
 def scenes_for(step, spec, beats: list[dict]) -> list[dict]:

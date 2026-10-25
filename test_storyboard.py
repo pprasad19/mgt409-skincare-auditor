@@ -269,6 +269,36 @@ check("no scenes, no data uri", _routine_gif([]), "")
 uri = _routine_gif(SCENES)
 check_true("data uri", uri.startswith("data:image/gif;base64,"))
 
+
+# The animation must say the same duration as every other surface.
+#
+# Four surfaces render from beats_for — the written steps, the printed
+# card, the guided player and the animation — and only the animation
+# converts seconds to minutes, so only the animation can disagree. It
+# did: the old threshold switched at 90 seconds and rounded 1.5 up, so a
+# ninety-second wait was captioned "2 minutes" beside a step list saying
+# 90s. A third longer, on the number the user is standing still for.
+from storyboard import _real_time
+
+for secs, want in (
+    (20, "20 seconds"), (60, "60 seconds"), (89, "89 seconds"),
+    (90, "90 seconds"),      # the one that was wrong
+    (119, "119 seconds"),
+    (120, "2 minutes"),
+    (150, "3 minutes"),      # half-up, not banker's
+    (600, "10 minutes"),
+):
+    check("_real_time(%d)" % secs, _real_time(secs), want)
+
+# And the stronger property: for any beat under two minutes, the string
+# the animation shows contains the exact number the other surfaces print.
+for spec_secs in range(1, 120):
+    shown = _real_time(spec_secs)
+    check_true(
+        "%ds is shown exactly, not rounded" % spec_secs,
+        str(spec_secs) in shown,
+    )
+
 print("ok  %d checks passed" % ok)
 print("    face regions, exclusions, fallbacks, time compression,")
 print("    every scene animation actually animating,")
