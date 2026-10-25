@@ -258,6 +258,53 @@ def main() -> int:
         assert same.observations[0].seen == fine.observations[0].seen
         assert not same.needs_a_clinician, "innocent reading wrongly escalated"
 
+    def logging_survives_concurrency():
+        """The log must not lose records, and must never break an audit.
+
+        Sixty simultaneous appends used to leave two records and raise
+        fifty-seven PermissionErrors: every writer used the same
+        `.writing` filename and fought over the rename. That is not just
+        lost evidence — record_trap runs inside an agent tool call, which
+        pydantic-ai may run in a thread, and AuditTrail.record runs on
+        the audit path, so a collision could raise inside an agent or
+        abort an audit that had already succeeded.
+        """
+        import json as _json
+        import tempfile
+        import threading
+
+        import safety
+
+        original = safety.TRAP_CALLS
+        tmp = Path(tempfile.mkdtemp())
+        safety.TRAP_CALLS = tmp / "t.json"
+        try:
+            errors: list[Exception] = []
+
+            def write(i: int) -> None:
+                try:
+                    safety._append(safety.TRAP_CALLS, {"i": i})
+                except Exception as exc:  # noqa: BLE001
+                    errors.append(exc)
+
+            threads = [threading.Thread(target=write, args=(i,)) for i in range(40)]
+            for t in threads:
+                t.start()
+            for t in threads:
+                t.join()
+
+            assert not errors, f"{len(errors)} appends raised: {errors[0]!r}"
+            got = _json.loads(safety.TRAP_CALLS.read_text(encoding="utf-8"))
+            assert len(got) == 40, f"{40 - len(got)} records lost"
+            assert not list(tmp.glob("*.writing")), "temp files left behind"
+
+            # And a write that genuinely cannot succeed must not propagate.
+            blocked = tmp / "blocked.json"
+            blocked.mkdir()
+            safety._append(blocked, {"x": 1})   # must not raise
+        finally:
+            safety.TRAP_CALLS = original
+
     for name, fn in [
         ("verification caveat stripped", caveat_is_stripped),
         ("empty shelf", empty_shelf),
@@ -274,6 +321,7 @@ def main() -> int:
         ("caps handle junk", caps_are_safe_on_junk),
         ("sunscreen recognised from its label", sunscreen_is_recognised_from_its_label),
         ("no diagnosis reaches the page", no_diagnosis_reaches_the_page),
+        ("logging survives concurrency", logging_survives_concurrency),
     ]:
         check(name, fn)
 

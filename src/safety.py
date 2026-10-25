@@ -23,6 +23,10 @@ between runs: the comparison across runs is the evidence.
 from __future__ import annotations
 
 import json
+import os
+import threading
+import time
+import traceback
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -35,18 +39,64 @@ AUDIT_TRAIL = OUTPUT / "audit_trail.json"
 MAX_FIELD_CHARS = 4000
 
 
+_APPEND_LOCK = threading.Lock()
+
+
 def _append(path: Path, record: dict[str, Any]) -> None:
-    """Append one record, without ever destroying what is already there."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    existing: list[dict[str, Any]] = []
-    if path.is_file():
+    """Append one record, without ever destroying what is already there.
+
+    Three things went wrong under concurrency, found by firing sixty
+    appends at once: two records survived and fifty-seven raised
+    PermissionError. Every writer used the same `.writing` filename, so
+    they fought over it, and on Windows the rename fails outright while
+    another handle is open.
+
+    That is not only lost logging. record_trap runs inside an agent tool
+    call, which pydantic-ai may execute in a thread, and AuditTrail.record
+    runs on the audit path — so a collision could raise inside an agent or
+    abort an audit that had already succeeded.
+
+    So: one lock for the read-modify-write, a temp name unique to the
+    writer, a short retry on the rename for anything the lock does not
+    cover (another process, a virus scanner holding the file), and finally
+    a refusal to raise. Logging must never break the thing it is logging.
+    A dropped trail line costs a line of evidence; an exception here costs
+    the user their audit.
+    """
+    try:
+        with _APPEND_LOCK:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            existing: list[dict[str, Any]] = []
+            if path.is_file():
+                try:
+                    existing = json.loads(path.read_text(encoding="utf-8"))
+                except json.JSONDecodeError:
+                    path.rename(path.with_suffix(".corrupt.json"))
+
+            tmp = path.with_name(
+                f"{path.name}.{os.getpid()}.{threading.get_ident()}.writing"
+            )
+            tmp.write_text(
+                json.dumps(existing + [record], indent=2), encoding="utf-8"
+            )
+
+            for attempt in range(5):
+                try:
+                    tmp.replace(path)
+                    return
+                except OSError:
+                    if attempt == 4:
+                        raise
+                    time.sleep(0.02 * (attempt + 1))
+    except Exception:  # noqa: BLE001
+        # Deliberately silent to the caller and loud in the log. A trap
+        # call that cannot be written down is worth knowing about; it is
+        # not worth failing an audit over.
+        traceback.print_exc()
         try:
-            existing = json.loads(path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError:
-            path.rename(path.with_suffix(".corrupt.json"))
-    tmp = path.with_name(path.name + ".writing")
-    tmp.write_text(json.dumps(existing + [record], indent=2), encoding="utf-8")
-    tmp.replace(path)
+            tmp.unlink(missing_ok=True)
+        except Exception:  # noqa: BLE001
+            pass
 
 
 def _trim(value: Any) -> Any:
