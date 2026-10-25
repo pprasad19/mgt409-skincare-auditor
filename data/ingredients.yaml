@@ -23,6 +23,14 @@
 #   prescription  true if normally obtained through a clinician
 #   potency       1-5, drives "too many strong actives at once" warnings
 
+#
+# DELIBERATE EXCLUSIONS
+# Citric acid is an AHA and is in almost every product on the market, where
+# it is a pH adjuster at a fraction of a percent rather than an exfoliating
+# active. Matching it would fire AHA conflict rules on nearly every shelf.
+# It is left out on the same principle as the short ambiguous aliases: a
+# false positive here warns someone about a conflict that is not there.
+
 ingredients:
 
   # ---- Retinoids ----------------------------------------------------------
@@ -161,7 +169,7 @@ ingredients:
 
   - id: gluconolactone
     name: Gluconolactone
-    inci: [Gluconolactone]
+    inci: [Gluconolactone, Lactobionic Acid]
     aliases: [pha]
     class: pha
     ph_range: [3.0, 4.5]
@@ -338,7 +346,7 @@ ingredients:
 
   - id: peptides
     name: Signal peptides
-    inci: [Palmitoyl Tripeptide-1, Palmitoyl Tetrapeptide-7, Acetyl Hexapeptide-8]
+    inci: [Palmitoyl Tripeptide-1, Palmitoyl Tetrapeptide-7, Acetyl Hexapeptide-8, Palmitoyl Pentapeptide-4, Palmitoyl Tripeptide-8, Palmitoyl Tripeptide-5, Palmitoyl Dipeptide-7, Acetyl Hexapeptide-37, Acetyl Tetrapeptide-11, Tripeptide-1, Tripeptide-3, Hexapeptide-11, Oligopeptide-1]
     aliases: [matrixyl, argireline]
     class: peptide
     ph_range: [5.0, 7.0]
@@ -368,7 +376,7 @@ ingredients:
   # ---- Supporting / barrier -----------------------------------------------
   - id: hyaluronic_acid
     name: Hyaluronic acid
-    inci: [Sodium Hyaluronate, Hyaluronic Acid]
+    inci: [Sodium Hyaluronate, Hyaluronic Acid, Potassium Hyaluronate, Hydrolyzed Hyaluronic Acid, Sodium Acetylated Hyaluronate, Hydroxypropyltrimonium Hyaluronate]
     aliases: [ha]
     class: humectant
     ph_range: [4.0, 7.0]
@@ -392,6 +400,51 @@ ingredients:
     prescription: false
     potency: 1
     source: "As hyaluronic acid. The most common humectant in skincare and the reason detect_suppression ignores it: present in almost everything and matched by no rule. Reviewed 25 Oct 2026."
+    review: reasoned
+
+  - id: allantoin
+    name: Allantoin
+    inci: [Allantoin]
+    aliases: []
+    class: soothing
+    ph_range: [4.0, 7.0]
+    photosensitising: false
+    time: any
+    pregnancy: ok
+    prescription: false
+    potency: 1
+    note: Appears in three of the products in the lookup cache and matched nothing until 25 Oct 2026. SKA-061 fires on class:soothing, so its absence lost a real synergy finding.
+    source: "Added 25 Oct 2026 after a sweep of published ingredient lists found it unrecognised. A standard soothing agent; no gate consequence, no pregnancy or photosensitivity concern found."
+    review: reasoned
+
+  - id: bisabolol
+    name: Bisabolol
+    inci: [Bisabolol, Alpha-Bisabolol]
+    aliases: []
+    class: soothing
+    ph_range: [4.0, 7.0]
+    photosensitising: false
+    time: any
+    pregnancy: ok
+    prescription: false
+    potency: 1
+    note: As allantoin — a soothing agent the table did not know, found by sweeping real labels.
+    source: "Added 25 Oct 2026 for the same reason as allantoin. Standard soothing agent, no gate consequence."
+    review: reasoned
+
+  - id: ascorbyl_palmitate
+    name: Ascorbyl palmitate
+    inci: [Ascorbyl Palmitate]
+    aliases: []
+    class: vitamin_c
+    ph_range: [5.0, 7.0]
+    photosensitising: false
+    time: any
+    pregnancy: ok
+    prescription: false
+    potency: 2
+    note: An oil-soluble vitamin C derivative. Absent until 25 Oct 2026, so a product using it read as having no vitamin C and the redundancy and oxidiser rules did not fire.
+    source: "Added 25 Oct 2026 after a sweep of published ingredient lists found it unrecognised. Grouped with the other derivatives at near-neutral pH; the pH range is a formulation convention rather than a sourced figure."
     review: reasoned
 
   - id: ceramides
@@ -424,7 +477,7 @@ ingredients:
 
   - id: centella
     name: Centella asiatica
-    inci: [Centella Asiatica Extract, Madecassoside]
+    inci: [Centella Asiatica Extract, Centella Asiatica Leaf Extract, Madecassoside, Asiaticoside, Madecassic Acid, Asiatic Acid]
     aliases: [cica]
     class: soothing
     ph_range: [4.0, 7.0]
