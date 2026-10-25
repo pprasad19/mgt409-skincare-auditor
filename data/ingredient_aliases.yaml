@@ -242,3 +242,29 @@ aliases:
     ja: [アボベンゾン, オクトクリレン, メトキシケイヒ酸エチルヘキシル]
     zh: [阿伏苯宗, 奥克立林]
     fr: [octocrylène, avobenzone, filtres UV]
+
+  # Added 25 Oct 2026 with the ingredients themselves. Unverified, like
+  # every other entry in this file — see the header.
+  titanium_dioxide:
+    ko: [티타늄디옥사이드, 이산화티타늄]
+    ja: [酸化チタン, 二酸化チタン]
+    zh: [二氧化钛, 二氧化鈦]
+    fr: [dioxyde de titane]
+
+  allantoin:
+    ko: [알란토인]
+    ja: [アラントイン]
+    zh: [尿囊素]
+    fr: [allantoïne]
+
+  bisabolol:
+    ko: [비사보롤]
+    ja: [ビサボロール]
+    zh: [红没药醇, 紅沒藥醇]
+    fr: [bisabolol]
+
+  ascorbyl_palmitate:
+    ko: [아스코빌팔미테이트]
+    ja: [パルミチン酸アスコルビル]
+    zh: [抗坏血酸棕榈酸酯, 抗壞血酸棕櫚酸酯]
+    fr: [palmitate d'ascorbyle]

@@ -100,6 +100,11 @@ EXACT = [
     # The table had only the common chemical name 氢醌, so a compliant
     # Chinese label would not have matched — on an ingredient that
     # escalates a pregnant user to a clinician.
+    # Added 25 Oct with ascorbyl palmitate: the Chinese name contains the
+    # Chinese name for ascorbic acid, the same trap as the other two
+    # derivatives.
+    ("zh", "抗坏血酸棕榈酸酯", {"ascorbyl_palmitate"}),
+    ("ja", "パルミチン酸アスコルビル", {"ascorbyl_palmitate"}),
     ("zh", "对苯二酚", {"hydroquinone"}),
     ("zh", "對苯二酚", {"hydroquinone"}),
 ]
