@@ -7648,5 +7648,355 @@
       "output": 0.0002985,
       "total": 0.0003947
     }
+  },
+  {
+    "run_id": "51e2a548",
+    "run_label": "price-spot-check",
+    "step": "lookup:Vaseline Original Petroleum Je",
+    "timestamp": "2026-10-25T14:06:24.058613+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,041 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 1849,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1041,
+      "output_tokens": 209,
+      "requests": 2,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 8.08e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00013013,
+      "output": 0.0001045,
+      "total": 0.00031543
+    }
+  },
+  {
+    "run_id": "51e2a548",
+    "run_label": "price-spot-check",
+    "step": "lookup:The Ordinary Lactic Acid 10% +",
+    "timestamp": "2026-10-25T14:06:34.995849+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,165 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 1978,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1165,
+      "output_tokens": 332,
+      "requests": 2,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 8.13e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00014563,
+      "output": 0.000166,
+      "total": 0.00039293
+    }
+  },
+  {
+    "run_id": "51e2a548",
+    "run_label": "price-spot-check",
+    "step": "lookup:The Inkey List Niacinamide Ser",
+    "timestamp": "2026-10-25T14:06:48.602439+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,192 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 2003,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1192,
+      "output_tokens": 375,
+      "requests": 2,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 8.11e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.000149,
+      "output": 0.0001875,
+      "total": 0.0004176
+    }
+  },
+  {
+    "run_id": "51e2a548",
+    "run_label": "price-spot-check",
+    "step": "lookup:The Ordinary Azelaic Acid Susp",
+    "timestamp": "2026-10-25T14:06:58.404825+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,176 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 1989,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1176,
+      "output_tokens": 347,
+      "requests": 2,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 8.13e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.000147,
+      "output": 0.0001735,
+      "total": 0.0004018
+    }
+  },
+  {
+    "run_id": "51e2a548",
+    "run_label": "price-spot-check",
+    "step": "lookup:Cetaphil Gentle Skin Cleanser",
+    "timestamp": "2026-10-25T14:07:17.243464+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,150 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 1960,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1150,
+      "output_tokens": 290,
+      "requests": 2,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 8.1e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00014375,
+      "output": 0.000145,
+      "total": 0.00036975
+    }
+  },
+  {
+    "run_id": "51e2a548",
+    "run_label": "price-spot-check",
+    "step": "lookup:CeraVe Acne Foaming Cream Clea",
+    "timestamp": "2026-10-25T14:07:47.383643+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,383 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 2195,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1383,
+      "output_tokens": 422,
+      "requests": 2,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 8.12e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00017287,
+      "output": 0.000211,
+      "total": 0.00046508
+    }
+  },
+  {
+    "run_id": "51e2a548",
+    "run_label": "price-spot-check",
+    "step": "lookup:CeraVe PM Facial Moisturising ",
+    "timestamp": "2026-10-25T14:08:04.488057+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (0 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 1720,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 345,
+      "requests": 2,
+      "tool_calls": 1
+    },
+    "cost_usd": {
+      "uncached_input": 0.000172,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 0.0001725,
+      "total": 0.0003445
+    }
+  },
+  {
+    "run_id": "51e2a548",
+    "run_label": "price-spot-check",
+    "step": "lookup:CeraVe Moisturising Lotion",
+    "timestamp": "2026-10-25T14:08:25.130547+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,627 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 2437,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1627,
+      "output_tokens": 459,
+      "requests": 2,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 8.1e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00020337,
+      "output": 0.0002295,
+      "total": 0.00051388
+    }
+  },
+  {
+    "run_id": "51e2a548",
+    "run_label": "price-spot-check",
+    "step": "lookup:CeraVe Resurfacing Retinol Ser",
+    "timestamp": "2026-10-25T14:08:38.668347+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,352 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 2164,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1352,
+      "output_tokens": 405,
+      "requests": 2,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 8.12e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.000169,
+      "output": 0.0002025,
+      "total": 0.0004527
+    }
+  },
+  {
+    "run_id": "51e2a548",
+    "run_label": "price-spot-check",
+    "step": "lookup:Anua Heartleaf 77 Soothing Ton",
+    "timestamp": "2026-10-25T14:08:51.124169+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,652 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 2465,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1652,
+      "output_tokens": 420,
+      "requests": 2,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 8.13e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.0002065,
+      "output": 0.00021,
+      "total": 0.0004978
+    }
+  },
+  {
+    "run_id": "51e2a548",
+    "run_label": "price-spot-check",
+    "step": "lookup:La Roche-Posay Anthelios UVMun",
+    "timestamp": "2026-10-25T14:09:20.307140+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (2,029 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 2845,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2029,
+      "output_tokens": 515,
+      "requests": 2,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 8.16e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00025362,
+      "output": 0.0002575,
+      "total": 0.00059273
+    }
+  },
+  {
+    "run_id": "51e2a548",
+    "run_label": "price-spot-check",
+    "step": "lookup:Vichy Mineral 89",
+    "timestamp": "2026-10-25T14:09:54.506395+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,110 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 2909,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1110,
+      "output_tokens": 365,
+      "requests": 3,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001799,
+      "cached_input": 0.0,
+      "cache_write": 0.00013875,
+      "output": 0.0001825,
+      "total": 0.00050115
+    }
+  },
+  {
+    "run_id": "51e2a548",
+    "run_label": "price-spot-check",
+    "step": "lookup:Innisfree Retinol Cica Repair ",
+    "timestamp": "2026-10-25T14:10:25.165909+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": false,
+    "cache_mode_note": "cache disabled but 1,832 tokens were read from cache",
+    "tokens": {
+      "input_tokens": 4985,
+      "cache_read_tokens": 1832,
+      "cache_write_tokens": 2215,
+      "output_tokens": 550,
+      "requests": 3,
+      "tool_calls": 4
+    },
+    "cost_usd": {
+      "uncached_input": 9.38e-05,
+      "cached_input": 1.832e-05,
+      "cache_write": 0.00027687,
+      "output": 0.000275,
+      "total": 0.000664
+    }
+  },
+  {
+    "run_id": "51e2a548",
+    "run_label": "price-spot-check",
+    "step": "lookup:Glytone Rejuvenate Mild Cream",
+    "timestamp": "2026-10-25T14:10:38.004369+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,117 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 1927,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1117,
+      "output_tokens": 540,
+      "requests": 2,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 8.1e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00013962,
+      "output": 0.00027,
+      "total": 0.00049062
+    }
   }
 ]

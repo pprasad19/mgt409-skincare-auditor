@@ -1,0 +1,96 @@
+[
+  {
+    "name": "Vaseline Original Petroleum Jelly",
+    "mine": 5.0,
+    "found": 5.99,
+    "delta_pct": 19.800000000000004,
+    "source": "https://www.target.com/p/vaseline-original-petroleum-jelly-13oz/-/A-92401254"
+  },
+  {
+    "name": "The Ordinary Lactic Acid 10% + HA",
+    "mine": 9.0,
+    "found": 9.2,
+    "delta_pct": 2.2222222222222143,
+    "source": "https://theordinary.com/en-us/lactic-acid-10-ha-exfoliator-100426.html"
+  },
+  {
+    "name": "The Inkey List Niacinamide Serum",
+    "mine": 9.0,
+    "found": 13.0,
+    "delta_pct": 44.44444444444444,
+    "source": "https://www.sephora.com/product/niacinamide-P446942"
+  },
+  {
+    "name": "The Ordinary Azelaic Acid Suspension 10%",
+    "mine": 11.0,
+    "found": 12.2,
+    "delta_pct": 10.909090909090903,
+    "source": "https://theordinary.com/en-us/azelaic-acid-suspension-10-exfoliator-100407.html"
+  },
+  {
+    "name": "Cetaphil Gentle Skin Cleanser",
+    "mine": 13.0,
+    "found": 11.88,
+    "delta_pct": -8.61538461538461,
+    "source": "https://www.walmart.com/ip/Cetaphil-Face-Wash-Hydrating-Gentle-Skin-Cleanser-for-Dry-to-Normal-Sensitive-Skin-16-oz/549135199"
+  },
+  {
+    "name": "CeraVe Acne Foaming Cream Cleanser",
+    "mine": 15.0,
+    "found": 14.99,
+    "delta_pct": -0.06666666666666525,
+    "source": "https://www.target.com/p/cerave-acne-foaming-cream-face-cleanser-acne-treatment-face-wash-fragrance-free-5oz/-/A-76545878"
+  },
+  {
+    "name": "CeraVe PM Facial Moisturising Lotion",
+    "mine": 17.0,
+    "found": 19.99,
+    "delta_pct": 17.588235294117638,
+    "source": "https://www.cerave.com/skincare/moisturizers/pm-facial-moisturizing-lotion"
+  },
+  {
+    "name": "CeraVe Moisturising Lotion",
+    "mine": 18.0,
+    "found": null
+  },
+  {
+    "name": "CeraVe Resurfacing Retinol Serum",
+    "mine": 22.0,
+    "found": 16.49,
+    "delta_pct": -25.045454545454554,
+    "source": "https://www.target.com/p/cerave-resurfacing-retinol-face-serum-1-fl-oz/-/A-76545879"
+  },
+  {
+    "name": "Anua Heartleaf 77 Soothing Toner",
+    "mine": 24.0,
+    "found": 21.0,
+    "delta_pct": -12.5,
+    "source": "https://www.ulta.com/p/heartleaf-77-soothing-toner-pimprod2048929?sku=2634190"
+  },
+  {
+    "name": "La Roche-Posay Anthelios UVMune 400",
+    "mine": 27.0,
+    "found": null
+  },
+  {
+    "name": "Vichy Mineral 89",
+    "mine": 32.0,
+    "found": 29.99,
+    "delta_pct": -6.281250000000005,
+    "source": "https://www.ulta.com/p/mineral-89-hydrating-plumping-serum-pimprod2003474"
+  },
+  {
+    "name": "Innisfree Retinol Cica Repair Serum",
+    "mine": 40.0,
+    "found": 37.0,
+    "delta_pct": -7.5,
+    "source": "https://us.innisfree.com/products/retinol-cica-moisture-recovery-serum"
+  },
+  {
+    "name": "Glytone Rejuvenate Mild Cream",
+    "mine": 58.0,
+    "found": 55.0,
+    "delta_pct": -5.172413793103448,
+    "source": "https://www.dermstore.com/p/glytone-rejuvenating-cream-10-50g/12116449/"
+  }
+]
