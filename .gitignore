@@ -28,3 +28,7 @@ Thumbs.db
 # trap_calls.json are the evidence the report rests on, and the course
 # expects them in the repo. Ignoring them would quietly drop the proof
 # for three graded sections.
+
+# Local editor/launcher config. Machine-specific absolute paths, and of
+# no use to anyone cloning this.
+.claude/
