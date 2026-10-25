@@ -86,6 +86,13 @@ class ProductLookup(BaseModel):
         default="",
         description="Where the price came from. Required for the price to be used.",
     )
+    raw_list: str = Field(
+        default="",
+        description="The ingredient list copied from the page verbatim, as one "
+                    "string, exactly as printed — punctuation, order and all. "
+                    "Not tidied, not deduplicated, not corrected. This exists to "
+                    "be checked against the structured list above.",
+    )
     note: str = Field(
         default="",
         description="Anything that should qualify this — a regional variant, an "
@@ -117,6 +124,13 @@ URL you took it from. The brand's own store or a large retailer is fine. If
 you cannot find a published price, leave it empty — a guessed price ends up
 in a figure telling someone how much product they are wasting, and a wrong
 number there is worse than a missing one.
+
+Also copy the ingredient list into **raw_list** exactly as the page
+prints it, as one string, before you tidy it into the structured list.
+Punctuation, order and all. The two are compared afterwards, and a
+difference between them is the signal that something went wrong — so
+transcribe rather than summarise, and do not quietly drop an entry from
+one and not the other.
 
 Never return an ingredient list, or a price, without a source URL."""
 
@@ -300,6 +314,7 @@ async def find_from_url(url: str, usage_log=None) -> dict | None:
         "note": out.note,
         "typical_price_usd": out.typical_price_usd if priced else None,
         "price_source_url": url if priced else "",
+        "raw_list": out.raw_list,
         "from_user_url": True,
         "looked_up": datetime.now(timezone.utc).isoformat(),
     }

@@ -37,12 +37,12 @@ from lookup import (  # noqa: E402
     strip_urls,
     urls_in,
 )
-from models import InputProduct, display_name  # noqa: E402
+from models import ReadProduct, ShelfReading, InputProduct, display_name  # noqa: E402
 from pages import error_page, landing  # noqa: E402
 import render as render_mod  # noqa: E402
 from render import render  # noqa: E402
 from rules import Rules  # noqa: E402
-from safety import AuditTrail  # noqa: E402
+from safety import detect_suppression, AuditTrail  # noqa: E402
 from usage import UsageLog  # noqa: E402
 
 app = FastAPI(title="Skincare shelf audit")
@@ -172,11 +172,29 @@ async def audit(
 
         from_urls: list[InputProduct] = []
         url_records: dict[str, dict] = {}
+        url_suppressed: dict[str, list[str]] = {}
         for url in pasted:
             record = await find_from_url(url, usage_log=log)
             if not record:
                 continue
             name = record.get("matched_name") or url
+
+            # Same cross-check the shelf reader runs on a transcribed
+            # label: re-read the page's own words with the deterministic
+            # matcher and see whether the structured list dropped
+            # anything that can change a finding. A page is the one input
+            # whose author is not the user, so it is the last place to
+            # take a tidy list on trust.
+            if record.get("raw_list"):
+                lost = detect_suppression(
+                    record["raw_list"],
+                    ShelfReading(products=[ReadProduct(
+                        name=name, listed_ingredients=record["inci"])]),
+                    RULES,
+                )
+                if lost:
+                    url_suppressed[name] = lost
+
             from_urls.append(
                 InputProduct(name=name, listed_ingredients=record["inci"],
                              price_usd=record.get("typical_price_usd"),
@@ -271,6 +289,12 @@ async def audit(
         log.write()
 
         notes = [t.note for t in trims]
+        for pname, lost in url_suppressed.items():
+            notes.append(
+                f"The page for {pname} lists " + ", ".join(lost)
+                + ", which did not come through in the ingredient list we read "
+                  "from it. Worth checking that page yourself."
+            )
         if previous:
             notes.append(
                 f"{len(previous)} product(s) were carried over from your previous "

@@ -132,9 +132,16 @@ def detect_suppression(raw_text: str, reading, rules) -> list[str]:
     guessed would be inventing data to fix a problem caused by invented data.
     The user is told; nothing is silently rewritten.
 
-    Only works on the typed path. A photograph has no raw text to re-read on
-    our side, so the image route relies on the prompt and schema layers —
-    stated plainly here because it is a real hole, not an oversight.
+    Runs on three inputs, which is more than this docstring used to claim:
+    the typed list, the reader's own verbatim transcription of a
+    photographed label, and — since 25 Oct 2026 — the page a user links
+    to, which returns its ingredient list transcribed as well as
+    structured for exactly this comparison.
+
+    A photograph still has no raw text on our side if the reader declines
+    to transcribe one, and in that case the image route falls back to the
+    prompt and schema layers. That is a real hole and is stated rather
+    than papered over.
     """
     if not raw_text:
         return []

@@ -83,8 +83,15 @@ fields = set(ProductLookup.model_fields)
 check(
     "the reader returns only these",
     fields,
+    # raw_list is the page's ingredient list transcribed verbatim. It was
+    # added so the deterministic matcher can be run over the page's own
+    # words and compared against the structured list — the same
+    # cross-check the shelf reader does on a transcribed label, and the
+    # reason a page cannot quietly drop an active from one and not the
+    # other. It carries text, not control: nothing reads it except
+    # detect_suppression.
     {"found", "inci", "source_url", "matched_name",
-     "typical_price_usd", "price_source_url", "note"},
+     "typical_price_usd", "price_source_url", "note", "raw_list"},
 )
 for forbidden in ("findings", "severity", "verdict", "safe", "skip", "rule_id",
                   "clearance", "approved", "tools"):
@@ -117,6 +124,29 @@ check_true("the injected sentence is not an ingredient",
 check_true("retinol was still read", any(
     "retinol" in p.actives for p in audit.products))
 check_true("the clash still fires", len(audit.findings) > 0)
+
+# The cross-check itself: a page that prints an active the structured
+# list drops must be caught, and an honest page must not be flagged.
+from models import ReadProduct, ShelfReading  # noqa: E402
+from safety import detect_suppression  # noqa: E402
+
+PAGE = "Water, Glycerin, Retinol, Tocopherol"
+dropped = detect_suppression(
+    PAGE,
+    ShelfReading(products=[ReadProduct(
+        name="X", listed_ingredients=["Water", "Glycerin", "Tocopherol"])]),
+    RULES,
+)
+check("a dropped active is caught", dropped, ["Retinol"])
+
+honest = detect_suppression(
+    PAGE,
+    ShelfReading(products=[ReadProduct(
+        name="X", listed_ingredients=["Water", "Glycerin", "Retinol",
+                                      "Tocopherol"])]),
+    RULES,
+)
+check("an honest page is not flagged", honest, [])
 
 print(f"ok  {ok} checks passed")
 print("    url parsing, the leftover text, and what a hostile page cannot reach")
