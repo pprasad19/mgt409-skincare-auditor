@@ -1,0 +1,639 @@
+[
+  {
+    "name": "CeraVe Hydrating Facial Cleanser",
+    "claimed": [
+      "ceramides",
+      "glycerin",
+      "hyaluronic_acid"
+    ],
+    "mine": 14,
+    "found": [
+      "ceramides",
+      "glycerin",
+      "hyaluronic_acid"
+    ],
+    "missing": [],
+    "extra": [],
+    "extra_that_fires": [],
+    "source": "https://www.ewg.org/skindeep/products/1029831-CeraVe_Hydrating_Facial_Cleanser_for_Normal_to_Dry_Skin_Face_Wash/",
+    "web_price": 15.99,
+    "price_delta_pct": 14.214285714285715
+  },
+  {
+    "name": "CeraVe Foaming Facial Cleanser",
+    "claimed": [
+      "ceramides",
+      "hyaluronic_acid",
+      "niacinamide"
+    ],
+    "mine": 14,
+    "found": [
+      "ceramides",
+      "glycerin",
+      "hyaluronic_acid",
+      "niacinamide"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin"
+    ],
+    "extra_that_fires": [],
+    "source": "https://www.cerave.com/skincare/cleansers/foaming-facial-cleansers",
+    "web_price": 15.99,
+    "price_delta_pct": 14.214285714285715
+  },
+  {
+    "name": "CeraVe Acne Foaming Cream Cleanser",
+    "claimed": [
+      "benzoyl_peroxide",
+      "ceramides",
+      "hyaluronic_acid"
+    ],
+    "mine": 15,
+    "found": [
+      "benzoyl_peroxide",
+      "ceramides",
+      "glycerin",
+      "glycolic_acid",
+      "hyaluronic_acid",
+      "niacinamide"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin",
+      "glycolic_acid",
+      "niacinamide"
+    ],
+    "extra_that_fires": [
+      "glycolic_acid",
+      "niacinamide"
+    ],
+    "source": "https://www.cvs.com/shop/ingredients/cerave-acne-foaming-cream-cleanser-with-4-benzoyl-peroxide-5-oz-prodid-283264",
+    "web_price": 14.99,
+    "price_delta_pct": -0.06666666666666525
+  },
+  {
+    "name": "CeraVe Renewing SA Cleanser",
+    "claimed": [
+      "ceramides",
+      "niacinamide",
+      "salicylic_acid"
+    ],
+    "mine": 16,
+    "found": [
+      "ceramides",
+      "gluconolactone",
+      "glycerin",
+      "hyaluronic_acid",
+      "niacinamide",
+      "salicylic_acid"
+    ],
+    "missing": [],
+    "extra": [
+      "gluconolactone",
+      "glycerin",
+      "hyaluronic_acid"
+    ],
+    "extra_that_fires": [],
+    "source": "https://www.cerave.com/skincare/salicylic-acid-products",
+    "web_price": 12.37,
+    "price_delta_pct": -22.687500000000004
+  },
+  {
+    "name": "CeraVe Moisturising Lotion",
+    "claimed": [
+      "ceramides",
+      "glycerin",
+      "hyaluronic_acid"
+    ],
+    "mine": 18,
+    "found": [
+      "ceramides",
+      "glycerin",
+      "hyaluronic_acid",
+      "niacinamide",
+      "organic_uv_filters"
+    ],
+    "missing": [],
+    "extra": [
+      "niacinamide",
+      "organic_uv_filters"
+    ],
+    "extra_that_fires": [
+      "niacinamide",
+      "organic_uv_filters"
+    ],
+    "source": "https://www.cerave.co.uk/skincare/moisturisers/moisturising-lotion"
+  },
+  {
+    "name": "CeraVe PM Facial Moisturising Lotion",
+    "claimed": [
+      "ceramides",
+      "hyaluronic_acid",
+      "niacinamide"
+    ],
+    "mine": 17,
+    "found": [
+      "ceramides",
+      "glycerin",
+      "hyaluronic_acid",
+      "niacinamide"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin"
+    ],
+    "extra_that_fires": [],
+    "source": "https://www.cerave.com/search?q=PM+Facial+Moisturizing+Lotion",
+    "web_price": 19.99,
+    "price_delta_pct": 17.588235294117638
+  },
+  {
+    "name": "CeraVe Resurfacing Retinol Serum",
+    "claimed": [
+      "ceramides",
+      "niacinamide",
+      "retinol"
+    ],
+    "mine": 22,
+    "found": [
+      "ceramides",
+      "hyaluronic_acid",
+      "niacinamide",
+      "retinol"
+    ],
+    "missing": [],
+    "extra": [
+      "hyaluronic_acid"
+    ],
+    "extra_that_fires": [],
+    "source": "https://www.cerave.com/skincare/facial-serums/resurfacing-retinol-serum",
+    "web_price": 16.49,
+    "price_delta_pct": -25.045454545454554
+  },
+  {
+    "name": "CeraVe Vitamin C Serum",
+    "claimed": [
+      "ceramides",
+      "hyaluronic_acid",
+      "l_ascorbic_acid"
+    ],
+    "mine": 25,
+    "found": [
+      "ceramides",
+      "glycerin",
+      "hyaluronic_acid",
+      "l_ascorbic_acid",
+      "panthenol"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin",
+      "panthenol"
+    ],
+    "extra_that_fires": [
+      "panthenol"
+    ],
+    "source": "https://www.cerave.com/skincare/facial-serums/skin-renewing-vitamin-c-serum",
+    "web_price": 23.99,
+    "price_delta_pct": -4.040000000000006
+  },
+  {
+    "name": "CeraVe AM Facial Moisturising Lotion SPF 30",
+    "claimed": [
+      "ceramides",
+      "niacinamide",
+      "organic_uv_filters"
+    ],
+    "mine": 17,
+    "found": [
+      "ceramides",
+      "glycerin",
+      "hyaluronic_acid",
+      "niacinamide",
+      "organic_uv_filters"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin",
+      "hyaluronic_acid"
+    ],
+    "extra_that_fires": [],
+    "source": "https://www.cerave.co.uk/skincare/moisturisers/am-facial-moisturising-lotion-spf30",
+    "web_price": 23.84,
+    "price_delta_pct": 40.23529411764706
+  },
+  {
+    "name": "The Ordinary Niacinamide 10% + Zinc 1%",
+    "claimed": [
+      "niacinamide"
+    ],
+    "mine": 8,
+    "found": [
+      "niacinamide"
+    ],
+    "missing": [],
+    "extra": [],
+    "extra_that_fires": [],
+    "source": "https://theordinary.com/en-us/niacinamide-10-zinc-1-serum-100436.html",
+    "web_price": 6.0,
+    "price_delta_pct": -25.0
+  },
+  {
+    "name": "The Ordinary Retinol 0.5% in Squalane",
+    "claimed": [
+      "retinol",
+      "squalane"
+    ],
+    "mine": 9,
+    "found": [
+      "retinol",
+      "squalane"
+    ],
+    "missing": [],
+    "extra": [],
+    "extra_that_fires": [],
+    "source": "https://theordinary.com/en-us/retinol-05-in-squalane-serum-100440.html",
+    "web_price": 9.3,
+    "price_delta_pct": 3.333333333333341
+  },
+  {
+    "name": "The Ordinary Retinol 1% in Squalane",
+    "claimed": [
+      "retinol",
+      "squalane"
+    ],
+    "mine": 10,
+    "found": [
+      "retinol",
+      "squalane"
+    ],
+    "missing": [],
+    "extra": [],
+    "extra_that_fires": [],
+    "source": "https://theordinary.com/en-us/retinol-1-in-squalane-serum-100441.html",
+    "web_price": 9.9,
+    "price_delta_pct": -0.9999999999999963
+  },
+  {
+    "name": "The Ordinary Granactive Retinoid 2% Emulsion",
+    "claimed": [
+      "retinol",
+      "squalane"
+    ],
+    "mine": 12,
+    "found": [
+      "bisabolol",
+      "glycerin",
+      "retinol"
+    ],
+    "missing": [
+      "squalane"
+    ],
+    "extra": [
+      "bisabolol",
+      "glycerin"
+    ],
+    "extra_that_fires": [
+      "bisabolol"
+    ],
+    "source": "https://theordinary.com/en-us/granactive-retinoid-2-emulsion-serum-100419.html",
+    "web_price": 12.1,
+    "price_delta_pct": 0.8333333333333304
+  },
+  {
+    "name": "The Ordinary Glycolic Acid 7% Toning Solution",
+    "claimed": [
+      "centella",
+      "glycolic_acid",
+      "panthenol"
+    ],
+    "mine": 13,
+    "found": [
+      "glycerin",
+      "glycolic_acid",
+      "urea"
+    ],
+    "missing": [
+      "centella",
+      "panthenol"
+    ],
+    "extra": [
+      "glycerin",
+      "urea"
+    ],
+    "extra_that_fires": [
+      "urea"
+    ],
+    "source": "https://theordinary.com/en-us/glycolic-acid-7-exfoliating-toner-100418.html",
+    "web_price": 13.5,
+    "price_delta_pct": 3.8461538461538463
+  },
+  {
+    "name": "The Ordinary Salicylic Acid 2% Solution",
+    "claimed": [
+      "salicylic_acid"
+    ],
+    "mine": 8,
+    "found": [
+      "glycerin",
+      "salicylic_acid"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin"
+    ],
+    "extra_that_fires": [],
+    "source": "https://theordinary.com/en-us/salicylic-acid-2-solution-acne-control-100098.html",
+    "web_price": 6.7,
+    "price_delta_pct": -16.249999999999996
+  },
+  {
+    "name": "The Ordinary AHA 30% + BHA 2% Peeling Solution",
+    "claimed": [
+      "glycolic_acid",
+      "lactic_acid",
+      "salicylic_acid"
+    ],
+    "mine": 10,
+    "found": [
+      "glycerin",
+      "glycolic_acid",
+      "hyaluronic_acid",
+      "lactic_acid",
+      "panthenol",
+      "salicylic_acid"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin",
+      "hyaluronic_acid",
+      "panthenol"
+    ],
+    "extra_that_fires": [
+      "panthenol"
+    ],
+    "source": "https://theordinary.com/en-us/aha-30-bha-2-peeling-solution-exfoliator-100400.html",
+    "web_price": 9.5,
+    "price_delta_pct": -5.0
+  },
+  {
+    "name": "The Ordinary Lactic Acid 10% + HA",
+    "claimed": [
+      "hyaluronic_acid",
+      "lactic_acid"
+    ],
+    "mine": 9,
+    "found": [
+      "glycerin",
+      "hyaluronic_acid",
+      "lactic_acid"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin"
+    ],
+    "extra_that_fires": [],
+    "source": "https://theordinary.com/en-us/lactic-acid-10-ha-exfoliator-100426.html",
+    "web_price": 9.2,
+    "price_delta_pct": 2.2222222222222143
+  },
+  {
+    "name": "The Ordinary Mandelic Acid 10% + HA",
+    "claimed": [
+      "hyaluronic_acid",
+      "mandelic_acid"
+    ],
+    "mine": 9,
+    "found": [
+      "glycerin",
+      "hyaluronic_acid",
+      "mandelic_acid"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin"
+    ],
+    "extra_that_fires": [],
+    "source": "https://theordinary.com/en-us/mandelic-acid-10-ha-exfoliator-100429.html",
+    "web_price": 7.8,
+    "price_delta_pct": -13.333333333333336
+  },
+  {
+    "name": "The Ordinary Hyaluronic Acid 2% + B5",
+    "claimed": [
+      "hyaluronic_acid",
+      "panthenol"
+    ],
+    "mine": 9,
+    "found": [
+      "glycerin",
+      "hyaluronic_acid",
+      "panthenol"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin"
+    ],
+    "extra_that_fires": [],
+    "source": "https://theordinary.com/en-us/hyaluronic-acid-2-b5-serum-with-ceramides-100637.html",
+    "web_price": 9.9,
+    "price_delta_pct": 10.000000000000004
+  },
+  {
+    "name": "The Ordinary Vitamin C Suspension 23% + HA Spheres 2%",
+    "claimed": [
+      "hyaluronic_acid",
+      "l_ascorbic_acid"
+    ],
+    "mine": 7,
+    "found": [
+      "hyaluronic_acid",
+      "l_ascorbic_acid",
+      "squalane"
+    ],
+    "missing": [],
+    "extra": [
+      "squalane"
+    ],
+    "extra_that_fires": [],
+    "source": "https://theordinary.com/en-us/vitamin-c-suspension-23-ha-spheres-2-vitamin-c-100451.html",
+    "web_price": 8.1,
+    "price_delta_pct": 15.714285714285708
+  },
+  {
+    "name": "The Ordinary Ascorbyl Tetraisopalmitate Solution 20% in Vitamin F",
+    "claimed": [
+      "thd_ascorbate"
+    ],
+    "mine": 20,
+    "found": [
+      "squalane",
+      "thd_ascorbate"
+    ],
+    "missing": [],
+    "extra": [
+      "squalane"
+    ],
+    "extra_that_fires": [],
+    "source": "https://theordinary.com/en-us/ascorbyl-tetraisopalmitate-solution-20-in-vitamin-f-vitamin-c-100406.html",
+    "web_price": 20.5,
+    "price_delta_pct": 2.5
+  },
+  {
+    "name": "The Ordinary Azelaic Acid Suspension 10%",
+    "claimed": [
+      "azelaic_acid"
+    ],
+    "mine": 11,
+    "found": [
+      "azelaic_acid"
+    ],
+    "missing": [],
+    "extra": [],
+    "extra_that_fires": [],
+    "source": "https://theordinary.com/en-us/azelaic-acid-suspension-10-exfoliator-100407.html",
+    "web_price": 12.2,
+    "price_delta_pct": 10.909090909090903
+  },
+  {
+    "name": "The Ordinary Alpha Arbutin 2% + HA",
+    "claimed": [
+      "alpha_arbutin",
+      "hyaluronic_acid"
+    ],
+    "mine": 10,
+    "found": [
+      "alpha_arbutin",
+      "hyaluronic_acid"
+    ],
+    "missing": [],
+    "extra": [],
+    "extra_that_fires": [],
+    "source": "https://theordinary.com/en-us/alpha-arbutin-2-ha-serum-100401.html",
+    "web_price": 11.5,
+    "price_delta_pct": 15.0
+  },
+  {
+    "name": "The Ordinary Buffet + Copper Peptides 1%",
+    "claimed": [
+      "copper_peptides",
+      "peptides"
+    ],
+    "mine": 30,
+    "found": [
+      "allantoin",
+      "copper_peptides",
+      "glycerin",
+      "hyaluronic_acid",
+      "peptides",
+      "urea"
+    ],
+    "missing": [],
+    "extra": [
+      "allantoin",
+      "glycerin",
+      "hyaluronic_acid",
+      "urea"
+    ],
+    "extra_that_fires": [
+      "allantoin",
+      "urea"
+    ],
+    "source": "https://theordinary.com/en-us/multi-peptide-copper-peptides-1-serum-100625.html",
+    "web_price": 32.0,
+    "price_delta_pct": 6.666666666666667
+  },
+  {
+    "name": "The Ordinary Buffet",
+    "claimed": [
+      "hyaluronic_acid",
+      "peptides"
+    ],
+    "mine": 17,
+    "found": [
+      "allantoin",
+      "glycerin",
+      "hyaluronic_acid",
+      "peptides",
+      "urea"
+    ],
+    "missing": [],
+    "extra": [
+      "allantoin",
+      "glycerin",
+      "urea"
+    ],
+    "extra_that_fires": [
+      "allantoin",
+      "urea"
+    ],
+    "source": "https://theordinary.com/en-us/multi-peptide-ha-serum-100613.html",
+    "web_price": 19.9,
+    "price_delta_pct": 17.058823529411757
+  },
+  {
+    "name": "The Ordinary Squalane Cleanser",
+    "claimed": [
+      "squalane"
+    ],
+    "mine": 10,
+    "found": [
+      "glycerin",
+      "squalane"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin"
+    ],
+    "extra_that_fires": [],
+    "source": "https://theordinary.com/en-us/squalane-face-cleanser-100446.html",
+    "web_price": 10.5,
+    "price_delta_pct": 5.0
+  },
+  {
+    "name": "The Ordinary Natural Moisturizing Factors + HA",
+    "claimed": [
+      "glycerin",
+      "hyaluronic_acid"
+    ],
+    "mine": 9,
+    "found": [
+      "allantoin",
+      "glycerin",
+      "hyaluronic_acid",
+      "urea"
+    ],
+    "missing": [],
+    "extra": [
+      "allantoin",
+      "urea"
+    ],
+    "extra_that_fires": [
+      "allantoin",
+      "urea"
+    ],
+    "source": "https://theordinary.com/en-us/natural-moisturizing-factors-ha-moisturizer-100435.html",
+    "web_price": 12.5,
+    "price_delta_pct": 38.88888888888889
+  },
+  {
+    "name": "La Roche-Posay Effaclar Duo+",
+    "claimed": [
+      "niacinamide",
+      "salicylic_acid"
+    ],
+    "mine": 22,
+    "found": [
+      "glycerin",
+      "niacinamide",
+      "salicylic_acid"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin"
+    ],
+    "extra_that_fires": [],
+    "source": "https://inkeedecoder.com/products/la-roche-posay-effaclar-duo-2"
+  }
+]

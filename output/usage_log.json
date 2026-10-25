@@ -8398,5 +8398,255 @@
       "output": 5.65e-05,
       "total": 0.0001282
     }
+  },
+  {
+    "run_id": "20b1f22c",
+    "run_label": "redteam-skin",
+    "step": "skin_observer",
+    "timestamp": "2026-10-25T22:12:17.420756+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (0 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 1892,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 49,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001892,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 2.45e-05,
+      "total": 0.0002137
+    }
+  },
+  {
+    "run_id": "20b1f22c",
+    "run_label": "redteam-skin",
+    "step": "skin_observer",
+    "timestamp": "2026-10-25T22:12:18.986962+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (0 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 1892,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 47,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001892,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 2.35e-05,
+      "total": 0.0002127
+    }
+  },
+  {
+    "run_id": "20b1f22c",
+    "run_label": "redteam-skin",
+    "step": "skin_observer",
+    "timestamp": "2026-10-25T22:12:20.628847+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (0 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 1892,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 47,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001892,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 2.35e-05,
+      "total": 0.0002127
+    }
+  },
+  {
+    "run_id": "20b1f22c",
+    "run_label": "redteam-skin",
+    "step": "skin_observer",
+    "timestamp": "2026-10-25T22:12:21.940025+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (0 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 1892,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 51,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001892,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 2.55e-05,
+      "total": 0.0002147
+    }
+  },
+  {
+    "run_id": "20b1f22c",
+    "run_label": "redteam-skin",
+    "step": "skin_observer",
+    "timestamp": "2026-10-25T22:12:23.443513+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (0 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 1892,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 47,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001892,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 2.35e-05,
+      "total": 0.0002127
+    }
+  },
+  {
+    "run_id": "4ac64e2f",
+    "run_label": "redteam-skin",
+    "step": "skin_observer",
+    "timestamp": "2026-10-25T22:13:16.281337+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (0 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 2031,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 78,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 0.0002031,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 3.9e-05,
+      "total": 0.0002421
+    }
+  },
+  {
+    "run_id": "4ac64e2f",
+    "run_label": "redteam-skin",
+    "step": "skin_observer",
+    "timestamp": "2026-10-25T22:13:18.415487+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (0 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 2031,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 50,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 0.0002031,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 2.5e-05,
+      "total": 0.0002281
+    }
+  },
+  {
+    "run_id": "4ac64e2f",
+    "run_label": "redteam-skin",
+    "step": "skin_observer",
+    "timestamp": "2026-10-25T22:13:20.317536+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (0 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 2031,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 49,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 0.0002031,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 2.45e-05,
+      "total": 0.0002276
+    }
+  },
+  {
+    "run_id": "4ac64e2f",
+    "run_label": "redteam-skin",
+    "step": "skin_observer",
+    "timestamp": "2026-10-25T22:13:22.009071+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (0 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 2031,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 49,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 0.0002031,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 2.45e-05,
+      "total": 0.0002276
+    }
+  },
+  {
+    "run_id": "4ac64e2f",
+    "run_label": "redteam-skin",
+    "step": "skin_observer",
+    "timestamp": "2026-10-25T22:13:23.883478+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (0 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 2031,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 76,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 0.0002031,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 3.8e-05,
+      "total": 0.0002411
+    }
   }
 ]
