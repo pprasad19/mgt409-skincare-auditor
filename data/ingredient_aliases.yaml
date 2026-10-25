@@ -268,3 +268,39 @@ aliases:
     ja: [パルミチン酸アスコルビル]
     zh: [抗坏血酸棕榈酸酯, 抗壞血酸棕櫚酸酯]
     fr: [palmitate d'ascorbyle]
+
+  betaine_salicylate:
+    ko: [베타인살리실레이트]
+    ja: [ベタインサリチレート]
+    zh: [水杨酸甜菜碱, 水楊酸甜菜鹼]
+    fr: [salicylate de bétaïne]
+
+  hydroxypinacolone_retinoate:
+    ko: [하이드록시피나콜론레티노에이트, 그래나티브레티노이드]
+    ja: [ヒドロキシピナコロンレチノエート]
+    zh: [羟基频哪酮视黄酸酯, 羥基頻哪酮視黃酸酯]
+    fr: [rétinoate d'hydroxypinacolone]
+
+  retinyl_acetate:
+    ko: [레티닐아세테이트]
+    ja: [酢酸レチノール]
+    zh: [醋酸视黄酯, 醋酸視黃酯]
+    fr: [acétate de rétinyle]
+
+  ascorbyl_glucoside:
+    ko: [아스코빌글루코사이드]
+    ja: [アスコルビルグルコシド]
+    zh: [抗坏血酸葡糖苷, 抗壞血酸葡糖苷]
+    fr: [glucoside d'ascorbyle]
+
+  malic_acid:
+    ko: [말릭애씨드, 사과산]
+    ja: [リンゴ酸]
+    zh: [苹果酸, 蘋果酸]
+    fr: [acide malique]
+
+  tartaric_acid:
+    ko: [타타릭애씨드, 주석산]
+    ja: [酒石酸]
+    zh: [酒石酸]
+    fr: [acide tartrique]

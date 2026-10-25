@@ -635,5 +635,1109 @@
     ],
     "extra_that_fires": [],
     "source": "https://inkeedecoder.com/products/la-roche-posay-effaclar-duo-2"
+  },
+  {
+    "name": "La Roche-Posay Effaclar Medicated Gel Cleanser",
+    "claimed": [
+      "salicylic_acid"
+    ],
+    "mine": 16,
+    "found": [
+      "glycerin",
+      "salicylic_acid"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin"
+    ],
+    "extra_that_fires": [],
+    "source": "https://www.ulta.com/p/effaclar-medicated-gel-cleanser-acne-prone-skin-xlsImpprod11241001?sku=2609330",
+    "web_price": 18.99,
+    "price_delta_pct": 18.68749999999999
+  },
+  {
+    "name": "La Roche-Posay Toleriane Hydrating Gentle Cleanser",
+    "claimed": [
+      "ceramides",
+      "glycerin"
+    ],
+    "mine": 17,
+    "found": [
+      "ceramides",
+      "glycerin",
+      "niacinamide",
+      "panthenol"
+    ],
+    "missing": [],
+    "extra": [
+      "niacinamide",
+      "panthenol"
+    ],
+    "extra_that_fires": [
+      "niacinamide",
+      "panthenol"
+    ],
+    "source": "https://www.laroche-posay.us/our-products/face/face-wash/toleriane-hydrating-gentle-facial-cleanser-tolerianehydratinggentlefacialcleanser.html",
+    "web_price": 19.99,
+    "price_delta_pct": 17.588235294117638
+  },
+  {
+    "name": "La Roche-Posay Anthelios UVMune 400",
+    "claimed": [
+      "organic_uv_filters"
+    ],
+    "mine": 27,
+    "found": [
+      "glycerin",
+      "organic_uv_filters"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin"
+    ],
+    "extra_that_fires": [],
+    "source": "https://www.lookfantastic.com/p/la-roche-posay-anthelios-uvmune-400-invisible-fluid-non-perfumed-suncream-spf50-50ml/13494906/"
+  },
+  {
+    "name": "La Roche-Posay Retinol B3 Serum",
+    "claimed": [
+      "niacinamide",
+      "retinol"
+    ],
+    "mine": 48,
+    "found": [
+      "glycerin",
+      "hyaluronic_acid",
+      "niacinamide",
+      "retinol",
+      "retinyl_palmitate"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin",
+      "hyaluronic_acid",
+      "retinyl_palmitate"
+    ],
+    "extra_that_fires": [
+      "retinyl_palmitate"
+    ],
+    "source": "https://www.lovelyskin.com/o/la-roche-posay-retinol-b3-serum",
+    "web_price": 44.99,
+    "price_delta_pct": -6.2708333333333295
+  },
+  {
+    "name": "La Roche-Posay Cicaplast Baume B5",
+    "claimed": [
+      "glycerin",
+      "panthenol"
+    ],
+    "mine": 17,
+    "found": [
+      "centella",
+      "glycerin",
+      "panthenol",
+      "titanium_dioxide"
+    ],
+    "missing": [],
+    "extra": [
+      "centella",
+      "titanium_dioxide"
+    ],
+    "extra_that_fires": [
+      "centella",
+      "titanium_dioxide"
+    ],
+    "source": "https://www.laroche-posay.us/our-products/body/body-lotion/cicaplast-balm-b5-for-dry-skin-irritations-cicaplastbalmb5.html",
+    "web_price": 32.99,
+    "price_delta_pct": 94.05882352941177
+  },
+  {
+    "name": "Cetaphil Daily Facial Cleanser",
+    "claimed": [
+      "glycerin"
+    ],
+    "mine": 12,
+    "found": [
+      "glycerin",
+      "niacinamide",
+      "panthenol"
+    ],
+    "missing": [],
+    "extra": [
+      "niacinamide",
+      "panthenol"
+    ],
+    "extra_that_fires": [
+      "niacinamide",
+      "panthenol"
+    ],
+    "source": "https://www.cetaphil.com/us/products/product-categories/all-cleansers/cetaphil-daily-facial-cleanser/302993927341.html",
+    "web_price": 8.79,
+    "price_delta_pct": -26.750000000000007
+  },
+  {
+    "name": "Cetaphil Gentle Skin Cleanser",
+    "claimed": [
+      "glycerin",
+      "panthenol"
+    ],
+    "mine": 13,
+    "found": [
+      "glycerin",
+      "niacinamide",
+      "panthenol"
+    ],
+    "missing": [],
+    "extra": [
+      "niacinamide"
+    ],
+    "extra_that_fires": [
+      "niacinamide"
+    ],
+    "source": "https://www.heb.com/product-detail/cetaphil-gentle-skin-cleanser/5185088",
+    "web_price": 11.88,
+    "price_delta_pct": -8.61538461538461
+  },
+  {
+    "name": "Cetaphil Daily Hydrating Lotion",
+    "claimed": [
+      "glycerin",
+      "hyaluronic_acid"
+    ],
+    "mine": 15,
+    "found": [
+      "glycerin",
+      "hyaluronic_acid",
+      "urea"
+    ],
+    "missing": [],
+    "extra": [
+      "urea"
+    ],
+    "extra_that_fires": [
+      "urea"
+    ],
+    "source": "https://www.cetaphil.com/us/products/product-categories/all-moisturizers/daily-hydrating-lotion/302993889038.html",
+    "web_price": 14.49,
+    "price_delta_pct": -3.399999999999999
+  },
+  {
+    "name": "Paula's Choice 2% BHA Liquid Exfoliant",
+    "claimed": [
+      "panthenol",
+      "salicylic_acid"
+    ],
+    "mine": 35,
+    "found": [
+      "salicylic_acid"
+    ],
+    "missing": [
+      "panthenol"
+    ],
+    "extra": [],
+    "extra_that_fires": [],
+    "source": "https://www.sephora.com/product/paula-s-choice-skin-perfecting-2-bha-liquid-exfoliant-P469502",
+    "web_price": 37.0,
+    "price_delta_pct": 5.714285714285714
+  },
+  {
+    "name": "Paula's Choice 8% AHA Gel Exfoliant",
+    "claimed": [
+      "glycolic_acid"
+    ],
+    "mine": 31,
+    "found": [
+      "glycolic_acid",
+      "hyaluronic_acid",
+      "panthenol"
+    ],
+    "missing": [],
+    "extra": [
+      "hyaluronic_acid",
+      "panthenol"
+    ],
+    "extra_that_fires": [
+      "panthenol"
+    ],
+    "source": "https://www.paulaschoice.com/skin-perfecting-8pct-aha-gel-exfoliant/190.html",
+    "web_price": 37.0,
+    "price_delta_pct": 19.35483870967742
+  },
+  {
+    "name": "Paula's Choice C15 Super Booster",
+    "claimed": [
+      "l_ascorbic_acid"
+    ],
+    "mine": 52,
+    "found": [
+      "bisabolol",
+      "glycerin",
+      "l_ascorbic_acid"
+    ],
+    "missing": [],
+    "extra": [
+      "bisabolol",
+      "glycerin"
+    ],
+    "extra_that_fires": [
+      "bisabolol"
+    ],
+    "source": "https://inkeedecoder.com/products/paulas-choice-c15-super-booster-4",
+    "web_price": 59.0,
+    "price_delta_pct": 13.461538461538462
+  },
+  {
+    "name": "Paula's Choice 10% Niacinamide Booster",
+    "claimed": [
+      "niacinamide"
+    ],
+    "mine": 46,
+    "found": [
+      "allantoin",
+      "glycerin",
+      "hyaluronic_acid",
+      "niacinamide",
+      "panthenol"
+    ],
+    "missing": [],
+    "extra": [
+      "allantoin",
+      "glycerin",
+      "hyaluronic_acid",
+      "panthenol"
+    ],
+    "extra_that_fires": [
+      "allantoin",
+      "panthenol"
+    ],
+    "source": "https://www.paulaschoice-eu.com/niacinamide-booster/m7980.html",
+    "web_price": 53.0,
+    "price_delta_pct": 15.217391304347828
+  },
+  {
+    "name": "SK-II Facial Treatment Essence",
+    "claimed": [
+      "glycerin"
+    ],
+    "mine": 99,
+    "found": [],
+    "missing": [
+      "glycerin"
+    ],
+    "extra": [],
+    "extra_that_fires": [],
+    "source": "https://www.sephora.com/product/facial-treatment-essence-P375849",
+    "web_price": 245.0,
+    "price_delta_pct": 147.47474747474746
+  },
+  {
+    "name": "SK-II Facial Treatment Clear Lotion",
+    "claimed": [
+      "glycerin"
+    ],
+    "mine": 75,
+    "found": [
+      "glycerin",
+      "hyaluronic_acid",
+      "lactic_acid",
+      "salicylic_acid"
+    ],
+    "missing": [],
+    "extra": [
+      "hyaluronic_acid",
+      "lactic_acid",
+      "salicylic_acid"
+    ],
+    "extra_that_fires": [
+      "lactic_acid",
+      "salicylic_acid"
+    ],
+    "source": "https://www.sk-ii.com/products/facial-treatment-clear-lotion",
+    "web_price": 80.0,
+    "price_delta_pct": 6.666666666666667
+  },
+  {
+    "name": "Olay Regenerist Micro-Sculpting Cream",
+    "claimed": [
+      "hyaluronic_acid",
+      "niacinamide",
+      "peptides"
+    ],
+    "mine": 29,
+    "found": [
+      "glycerin",
+      "niacinamide",
+      "panthenol",
+      "peptides",
+      "titanium_dioxide"
+    ],
+    "missing": [
+      "hyaluronic_acid"
+    ],
+    "extra": [
+      "glycerin",
+      "panthenol",
+      "titanium_dioxide"
+    ],
+    "extra_that_fires": [
+      "panthenol",
+      "titanium_dioxide"
+    ],
+    "source": "https://www.olay.com/products/regenerist-micro-sculpting-cream-moisturizer",
+    "web_price": 36.65,
+    "price_delta_pct": 26.379310344827584
+  },
+  {
+    "name": "Olay Regenerist Retinol 24 Night Moisturiser",
+    "claimed": [
+      "niacinamide",
+      "retinol"
+    ],
+    "mine": 33,
+    "found": [
+      "glycerin",
+      "niacinamide",
+      "peptides",
+      "retinol",
+      "titanium_dioxide"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin",
+      "peptides",
+      "titanium_dioxide"
+    ],
+    "extra_that_fires": [
+      "titanium_dioxide"
+    ],
+    "source": "https://www.olay.com/products/olay-retinol24-night-moisturizer",
+    "web_price": 39.99,
+    "price_delta_pct": 21.181818181818187
+  },
+  {
+    "name": "Olay Total Effects 7-in-1",
+    "claimed": [
+      "niacinamide",
+      "panthenol"
+    ],
+    "mine": 28,
+    "found": [
+      "glycerin",
+      "niacinamide",
+      "panthenol",
+      "sodium_ascorbyl_phosphate",
+      "titanium_dioxide"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin",
+      "sodium_ascorbyl_phosphate",
+      "titanium_dioxide"
+    ],
+    "extra_that_fires": [
+      "sodium_ascorbyl_phosphate",
+      "titanium_dioxide"
+    ],
+    "source": "https://www.olay.com/products/total-effects-face-moisturizer-original"
+  },
+  {
+    "name": "Neutrogena Hydro Boost Water Gel",
+    "claimed": [
+      "glycerin",
+      "hyaluronic_acid"
+    ],
+    "mine": 20,
+    "found": [
+      "glycerin",
+      "hyaluronic_acid"
+    ],
+    "missing": [],
+    "extra": [],
+    "extra_that_fires": [],
+    "source": "https://www.neutrogena.com/products/skincare/neutrogena-hydro-boost-water-gel-with-hyaluronic-acid/6811047",
+    "web_price": 19.97,
+    "price_delta_pct": -0.15000000000000568
+  },
+  {
+    "name": "Neutrogena Rapid Wrinkle Repair Retinol",
+    "claimed": [
+      "hyaluronic_acid",
+      "retinol"
+    ],
+    "mine": 23,
+    "found": [
+      "glycerin",
+      "hyaluronic_acid",
+      "l_ascorbic_acid",
+      "retinol"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin",
+      "l_ascorbic_acid"
+    ],
+    "extra_that_fires": [
+      "l_ascorbic_acid"
+    ],
+    "source": "https://www.neutrogena.com/products/skincare/rapid-wrinkle-repair-regenerating-anti-wrinkle-retinol-cream-hyaluronic-acid/6811098"
+  },
+  {
+    "name": "Neutrogena Oil-Free Acne Wash",
+    "claimed": [
+      "salicylic_acid"
+    ],
+    "mine": 9,
+    "found": [
+      "glycerin",
+      "salicylic_acid"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin"
+    ],
+    "extra_that_fires": [],
+    "source": "https://www.neutrogena.com/products/skincare/neutrogena-oil-free-acne-wash/6818662",
+    "web_price": 8.87,
+    "price_delta_pct": -1.444444444444453
+  },
+  {
+    "name": "Vichy Mineral 89",
+    "claimed": [
+      "hyaluronic_acid"
+    ],
+    "mine": 32,
+    "found": [
+      "glycerin",
+      "hyaluronic_acid"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin"
+    ],
+    "extra_that_fires": [],
+    "source": "https://www.vichy.co.uk/all-products/skincare/face-serums/dryness/mineral-89-hyaluronic-acid-hydrating-serum--hypoallergenic%2C-for-all-skin-types",
+    "web_price": 29.99,
+    "price_delta_pct": -6.281250000000005
+  },
+  {
+    "name": "Vichy LiftActiv Vitamin C Serum",
+    "claimed": [
+      "l_ascorbic_acid"
+    ],
+    "mine": 44,
+    "found": [
+      "glycerin",
+      "hyaluronic_acid",
+      "l_ascorbic_acid"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin",
+      "hyaluronic_acid"
+    ],
+    "extra_that_fires": [],
+    "source": "https://www.vichyusa.com/skin-care/skin-care-product-type/face-serum/liftactiv-vitamin-c-serum-vitamincserum.html",
+    "web_price": 34.99,
+    "price_delta_pct": -20.477272727272723
+  },
+  {
+    "name": "Vichy Normaderm Phytosolution",
+    "claimed": [
+      "niacinamide",
+      "salicylic_acid"
+    ],
+    "mine": 25,
+    "found": [
+      "glycerin",
+      "hyaluronic_acid",
+      "salicylic_acid"
+    ],
+    "missing": [
+      "niacinamide"
+    ],
+    "extra": [
+      "glycerin",
+      "hyaluronic_acid"
+    ],
+    "extra_that_fires": [],
+    "source": "https://www.vichy.co.uk/all-products/skincare/creams-and-face-moisturizers/blemishes/normaderm-phytosolution-double-correction-daily-care-moisturiser",
+    "web_price": 30.01,
+    "price_delta_pct": 20.040000000000006
+  },
+  {
+    "name": "Innisfree Green Tea Seed Serum",
+    "claimed": [
+      "glycerin",
+      "hyaluronic_acid"
+    ],
+    "mine": 32,
+    "found": [
+      "allantoin",
+      "glycerin",
+      "hyaluronic_acid",
+      "l_ascorbic_acid",
+      "lactic_acid",
+      "niacinamide",
+      "panthenol",
+      "squalane"
+    ],
+    "missing": [],
+    "extra": [
+      "allantoin",
+      "l_ascorbic_acid",
+      "lactic_acid",
+      "niacinamide",
+      "panthenol",
+      "squalane"
+    ],
+    "extra_that_fires": [
+      "allantoin",
+      "l_ascorbic_acid",
+      "lactic_acid",
+      "niacinamide",
+      "panthenol"
+    ],
+    "source": "https://us.innisfree.com/products/green-tea-seed-hyaluronic-serum",
+    "web_price": 30.0,
+    "price_delta_pct": -6.25
+  },
+  {
+    "name": "Innisfree Retinol Cica Repair Serum",
+    "claimed": [
+      "centella",
+      "retinol"
+    ],
+    "mine": 40,
+    "found": [
+      "allantoin",
+      "centella",
+      "ceramides",
+      "glycerin",
+      "hyaluronic_acid",
+      "niacinamide",
+      "peptides",
+      "retinol",
+      "salicylic_acid"
+    ],
+    "missing": [],
+    "extra": [
+      "allantoin",
+      "ceramides",
+      "glycerin",
+      "hyaluronic_acid",
+      "niacinamide",
+      "peptides",
+      "salicylic_acid"
+    ],
+    "extra_that_fires": [
+      "allantoin",
+      "ceramides",
+      "niacinamide",
+      "salicylic_acid"
+    ],
+    "source": "https://us.innisfree.com/products/retinol-cica-moisture-recovery-serum",
+    "web_price": 37.0,
+    "price_delta_pct": -7.5
+  },
+  {
+    "name": "Innisfree Bija Trouble Facial Foam",
+    "claimed": [
+      "salicylic_acid"
+    ],
+    "mine": 15,
+    "found": [
+      "glycerin"
+    ],
+    "missing": [
+      "salicylic_acid"
+    ],
+    "extra": [
+      "glycerin"
+    ],
+    "extra_that_fires": [],
+    "source": "https://skinsort.com/products/innisfree/bija-trouble-facial-foam",
+    "web_price": 12.99,
+    "price_delta_pct": -13.399999999999999
+  },
+  {
+    "name": "Glytone Mild Gel Cleanser",
+    "claimed": [
+      "glycolic_acid"
+    ],
+    "mine": 34,
+    "found": [
+      "glycerin",
+      "glycolic_acid"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin"
+    ],
+    "extra_that_fires": [],
+    "source": "https://glytone.com/products/mild-gel-cleanser",
+    "web_price": 36.0,
+    "price_delta_pct": 5.88235294117647
+  },
+  {
+    "name": "Glytone Rejuvenate Mild Cream",
+    "claimed": [
+      "glycolic_acid"
+    ],
+    "mine": 58,
+    "found": [
+      "glycerin",
+      "glycolic_acid",
+      "titanium_dioxide"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin",
+      "titanium_dioxide"
+    ],
+    "extra_that_fires": [
+      "titanium_dioxide"
+    ],
+    "source": "https://glytone.com/products/rejuvenating-cream-10",
+    "web_price": 55.0,
+    "price_delta_pct": -5.172413793103448
+  },
+  {
+    "name": "SkinCeuticals C E Ferulic",
+    "claimed": [
+      "l_ascorbic_acid"
+    ],
+    "mine": 182,
+    "found": [
+      "glycerin",
+      "hyaluronic_acid",
+      "l_ascorbic_acid",
+      "panthenol"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin",
+      "hyaluronic_acid",
+      "panthenol"
+    ],
+    "extra_that_fires": [
+      "panthenol"
+    ],
+    "source": "https://ca.lorealdermatologicalbeautypartnershop.com/en/CA635494363708.html",
+    "web_price": 185.0,
+    "price_delta_pct": 1.6483516483516485
+  },
+  {
+    "name": "SkinCeuticals Blemish + Age Defense",
+    "claimed": [
+      "glycolic_acid",
+      "salicylic_acid"
+    ],
+    "mine": 102,
+    "found": [
+      "glycolic_acid",
+      "salicylic_acid"
+    ],
+    "missing": [],
+    "extra": [],
+    "extra_that_fires": [],
+    "source": "https://inkeedecoder.com/products/skinceuticals-blemish-age-defense-serum",
+    "web_price": 115.0,
+    "price_delta_pct": 12.745098039215685
+  },
+  {
+    "name": "SkinCeuticals Triple Lipid Restore",
+    "claimed": [
+      "ceramides",
+      "squalane"
+    ],
+    "mine": 155,
+    "found": [
+      "ceramides",
+      "glycerin"
+    ],
+    "missing": [
+      "squalane"
+    ],
+    "extra": [
+      "glycerin"
+    ],
+    "extra_that_fires": [],
+    "source": "https://www.skinceuticals.com/skincare/anti-aging-creams/triple-lipid-restore-2-4-2/S09.html",
+    "web_price": 155.0,
+    "price_delta_pct": 0.0
+  },
+  {
+    "name": "COSRX Advanced Snail 96 Mucin Power Essence",
+    "claimed": [
+      "glycerin"
+    ],
+    "mine": 25,
+    "found": [
+      "allantoin",
+      "hyaluronic_acid",
+      "panthenol"
+    ],
+    "missing": [
+      "glycerin"
+    ],
+    "extra": [
+      "allantoin",
+      "hyaluronic_acid",
+      "panthenol"
+    ],
+    "extra_that_fires": [
+      "allantoin",
+      "panthenol"
+    ],
+    "source": "https://www.cosrx.com/products/advanced-snail-96-mucin-power-essence?variant=51086327742680",
+    "web_price": 25.0,
+    "price_delta_pct": 0.0
+  },
+  {
+    "name": "COSRX BHA Blackhead Power Liquid",
+    "claimed": [
+      "salicylic_acid"
+    ],
+    "mine": 25,
+    "found": [
+      "hyaluronic_acid",
+      "niacinamide",
+      "panthenol"
+    ],
+    "missing": [
+      "salicylic_acid"
+    ],
+    "extra": [
+      "hyaluronic_acid",
+      "niacinamide",
+      "panthenol"
+    ],
+    "extra_that_fires": [
+      "niacinamide",
+      "panthenol"
+    ],
+    "source": "https://www.cosrx.com/products/bha-blackhead-power-liquid",
+    "web_price": 25.0,
+    "price_delta_pct": 0.0
+  },
+  {
+    "name": "COSRX The Retinol 0.1 Cream",
+    "claimed": [
+      "retinol"
+    ],
+    "mine": 23,
+    "found": [
+      "allantoin",
+      "glycerin",
+      "hyaluronic_acid",
+      "l_ascorbic_acid",
+      "panthenol",
+      "retinol"
+    ],
+    "missing": [],
+    "extra": [
+      "allantoin",
+      "glycerin",
+      "hyaluronic_acid",
+      "l_ascorbic_acid",
+      "panthenol"
+    ],
+    "extra_that_fires": [
+      "allantoin",
+      "l_ascorbic_acid",
+      "panthenol"
+    ],
+    "source": "https://www.revolve.com/cosrx-the-retinol-01-cream/dp/CORX-WU74/",
+    "web_price": 23.5,
+    "price_delta_pct": 2.1739130434782608
+  },
+  {
+    "name": "Beauty of Joseon Relief Sun Rice + Probiotics",
+    "claimed": [
+      "organic_uv_filters"
+    ],
+    "mine": 18,
+    "found": [
+      "glycerin",
+      "niacinamide",
+      "organic_uv_filters"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin",
+      "niacinamide"
+    ],
+    "extra_that_fires": [
+      "niacinamide"
+    ],
+    "source": "https://www.jolse.com/product/beauty-of-joseon-relief-sun-rice-probiotics-50ml/46958/",
+    "web_price": 18.0,
+    "price_delta_pct": 0.0
+  },
+  {
+    "name": "Beauty of Joseon Glow Serum Propolis + Niacinamide",
+    "claimed": [
+      "niacinamide"
+    ],
+    "mine": 17,
+    "found": [
+      "centella",
+      "glycerin",
+      "hyaluronic_acid",
+      "niacinamide"
+    ],
+    "missing": [],
+    "extra": [
+      "centella",
+      "glycerin",
+      "hyaluronic_acid"
+    ],
+    "extra_that_fires": [
+      "centella"
+    ],
+    "source": "https://beautyofjoseon.com/products/glow-serum-propolis-niacinamide",
+    "web_price": 15.3,
+    "price_delta_pct": -9.999999999999996
+  },
+  {
+    "name": "Anua Heartleaf 77 Soothing Toner",
+    "claimed": [
+      "centella"
+    ],
+    "mine": 24,
+    "found": [
+      "centella",
+      "glycerin",
+      "hyaluronic_acid",
+      "panthenol"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin",
+      "hyaluronic_acid",
+      "panthenol"
+    ],
+    "extra_that_fires": [
+      "panthenol"
+    ],
+    "source": "https://anua.com/products/heartleaf-77-soothing-toner",
+    "web_price": 21.0,
+    "price_delta_pct": -12.5
+  },
+  {
+    "name": "Round Lab 1025 Dokdo Toner",
+    "claimed": [
+      "glycerin",
+      "panthenol"
+    ],
+    "mine": 22,
+    "found": [
+      "allantoin",
+      "glycerin",
+      "panthenol"
+    ],
+    "missing": [],
+    "extra": [
+      "allantoin"
+    ],
+    "extra_that_fires": [
+      "allantoin"
+    ],
+    "source": "https://roundlab.com/products/1025-dokdo-toner-lotion-kit",
+    "web_price": 16.99,
+    "price_delta_pct": -22.77272727272728
+  },
+  {
+    "name": "Torriden DIVE-IN Low Molecular Hyaluronic Acid Serum",
+    "claimed": [
+      "hyaluronic_acid",
+      "panthenol"
+    ],
+    "mine": 20,
+    "found": [
+      "allantoin",
+      "centella",
+      "ceramides",
+      "glycerin",
+      "hyaluronic_acid",
+      "panthenol"
+    ],
+    "missing": [],
+    "extra": [
+      "allantoin",
+      "centella",
+      "ceramides",
+      "glycerin"
+    ],
+    "extra_that_fires": [
+      "allantoin",
+      "centella",
+      "ceramides"
+    ],
+    "source": "https://torriden.us/products/dive-in-serum",
+    "web_price": 24.0,
+    "price_delta_pct": 20.0
+  },
+  {
+    "name": "Dr.G Red Blemish Clear Soothing Cream",
+    "claimed": [
+      "centella",
+      "panthenol"
+    ],
+    "mine": 30,
+    "found": [
+      "allantoin",
+      "centella",
+      "glycerin",
+      "niacinamide",
+      "panthenol"
+    ],
+    "missing": [],
+    "extra": [
+      "allantoin",
+      "glycerin",
+      "niacinamide"
+    ],
+    "extra_that_fires": [
+      "allantoin",
+      "niacinamide"
+    ],
+    "source": "https://skinsort.com/products/dr-g/r-e-d-blemish-clear-soothing-cream",
+    "web_price": 34.95,
+    "price_delta_pct": 16.50000000000001
+  },
+  {
+    "name": "PanOxyl Acne Foaming Wash",
+    "claimed": [
+      "benzoyl_peroxide"
+    ],
+    "mine": 11,
+    "found": [
+      "benzoyl_peroxide",
+      "glycerin"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin"
+    ],
+    "extra_that_fires": [],
+    "source": "https://panoxyl.com/acne-products/acne-foaming-wash-benzoyl-peroxide/",
+    "web_price": 9.89,
+    "price_delta_pct": -10.090909090909085
+  },
+  {
+    "name": "Differin Adapalene Gel 0.1%",
+    "claimed": [
+      "adapalene"
+    ],
+    "mine": 14,
+    "found": [
+      "adapalene"
+    ],
+    "missing": [],
+    "extra": [],
+    "extra_that_fires": [],
+    "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0739d631-171b-42a8-bd55-0022b8df2d8a",
+    "web_price": 13.49,
+    "price_delta_pct": -3.6428571428571415
+  },
+  {
+    "name": "Vaseline Original Petroleum Jelly",
+    "claimed": [
+      "petrolatum"
+    ],
+    "mine": 5,
+    "found": [
+      "petrolatum"
+    ],
+    "missing": [],
+    "extra": [],
+    "extra_that_fires": [],
+    "source": "https://www.vaseline.com/us/en/p/vaseline-healing-jelly-original.html/00305212352009",
+    "web_price": 5.99,
+    "price_delta_pct": 19.800000000000004
+  },
+  {
+    "name": "Eucerin Advanced Repair Lotion",
+    "claimed": [
+      "ceramides",
+      "urea"
+    ],
+    "mine": 14,
+    "found": [
+      "ceramides",
+      "glycerin",
+      "lactic_acid",
+      "urea"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin",
+      "lactic_acid"
+    ],
+    "extra_that_fires": [
+      "lactic_acid"
+    ],
+    "source": "https://www.target.com/p/eucerin-advanced-repair-unscented-body-lotion-for-dry-skin-16-9-fl-oz/-/A-11005178",
+    "web_price": 12.79,
+    "price_delta_pct": -8.64285714285715
+  },
+  {
+    "name": "The Inkey List Retinol Serum",
+    "claimed": [
+      "retinol",
+      "squalane"
+    ],
+    "mine": 12,
+    "found": [
+      "glycerin",
+      "hyaluronic_acid",
+      "peptides",
+      "squalane",
+      "thd_ascorbate"
+    ],
+    "missing": [
+      "retinol"
+    ],
+    "extra": [
+      "glycerin",
+      "hyaluronic_acid",
+      "peptides",
+      "thd_ascorbate"
+    ],
+    "extra_that_fires": [
+      "thd_ascorbate"
+    ],
+    "source": "https://skinsort.com/products/the-inkey-list/retinol-anti-aging-serum"
+  },
+  {
+    "name": "The Inkey List Niacinamide Serum",
+    "claimed": [
+      "niacinamide"
+    ],
+    "mine": 9,
+    "found": [
+      "allantoin",
+      "glycerin",
+      "hyaluronic_acid",
+      "niacinamide",
+      "panthenol",
+      "squalane"
+    ],
+    "missing": [],
+    "extra": [
+      "allantoin",
+      "glycerin",
+      "hyaluronic_acid",
+      "panthenol",
+      "squalane"
+    ],
+    "extra_that_fires": [
+      "allantoin",
+      "panthenol"
+    ],
+    "source": "https://www.theinkeylist.com/products/niacinamide-serum",
+    "web_price": 13.0,
+    "price_delta_pct": 44.44444444444444
   }
 ]

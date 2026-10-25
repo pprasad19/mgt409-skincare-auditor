@@ -25,11 +25,14 @@
 
 #
 # DELIBERATE EXCLUSIONS
-# Citric acid is an AHA and is in almost every product on the market, where
+# Citric acid is an AHA and appears in 30 of the 94 published ingredient
+# lists in data/learned_products.json — a third of everything — where
 # it is a pH adjuster at a fraction of a percent rather than an exfoliating
 # active. Matching it would fire AHA conflict rules on nearly every shelf.
 # It is left out on the same principle as the short ambiguous aliases: a
 # false positive here warns someone about a conflict that is not there.
+# Malic and tartaric acid appear in 2 and 1 lists respectively, which is
+# the frequency of an active rather than a buffer, so those are included.
 
 ingredients:
 
@@ -445,6 +448,96 @@ ingredients:
     potency: 2
     note: An oil-soluble vitamin C derivative. Absent until 25 Oct 2026, so a product using it read as having no vitamin C and the redundancy and oxidiser rules did not fire.
     source: "Added 25 Oct 2026 after a sweep of published ingredient lists found it unrecognised. Grouped with the other derivatives at near-neutral pH; the pH range is a formulation convention rather than a sourced figure."
+    review: reasoned
+
+  - id: betaine_salicylate
+    name: Betaine salicylate
+    inci: [Betaine Salicylate]
+    aliases: []
+    class: bha
+    ph_range: [3.5, 5.0]
+    photosensitising: true
+    time: pm
+    pregnancy: caution
+    prescription: false
+    potency: 3
+    note: The BHA in a lot of Korean formulations, used where salicylic acid would be in a Western one. Absent until 25 Oct 2026, so COSRX BHA Blackhead Power Liquid resolved to no BHA at all and escaped the pregnancy gate.
+    source: "Added 25 Oct 2026 after a sweep of 94 published ingredient lists found it unmatched in two products. Treated as a BHA by class, which is what the gates and timing rules key on; the pH range and potency are formulation conventions rather than sourced figures, and its photosensitivity is inherited from the class rather than separately established."
+    review: reasoned
+
+  - id: hydroxypinacolone_retinoate
+    name: Hydroxypinacolone retinoate
+    inci: [Hydroxypinacolone Retinoate, Granactive Retinoid]
+    aliases: [hpr]
+    class: retinoid
+    ph_range: [5.0, 6.5]
+    photosensitising: true
+    time: pm
+    pregnancy: avoid
+    prescription: false
+    potency: 3
+    note: What "Granactive Retinoid" on a label means. A retinoic acid ester, so it belongs to the retinoid class and its pregnancy gate, and it was invisible until 25 Oct 2026.
+    source: "Added 25 Oct 2026 after the catalogue sweep found The Ordinary Granactive Retinoid 2% Emulsion resolving to no retinoid. Classed as a retinoid, which routes it through SKC-001 and the photosensitivity timing rules; pregnancy avoid is inherited from the class convention recorded on the other retinoids rather than separately sourced."
+    review: reasoned
+
+  - id: retinyl_acetate
+    name: Retinyl acetate
+    inci: [Retinyl Acetate]
+    aliases: []
+    class: retinoid
+    ph_range: [5.0, 6.5]
+    photosensitising: true
+    time: pm
+    pregnancy: avoid
+    prescription: false
+    potency: 2
+    note: A retinoid ester, weaker than retinol. The Inkey List Retinol Serum contains this rather than retinol, so the product resolved to nothing.
+    source: "Added 25 Oct 2026 from the catalogue sweep. Classed as a retinoid for the gate and the timing rules; potency set below retinol as an ester, which is convention rather than a measured ratio."
+    review: reasoned
+
+  - id: ascorbyl_glucoside
+    name: Ascorbyl glucoside
+    inci: [Ascorbyl Glucoside]
+    aliases: []
+    class: vitamin_c
+    ph_range: [5.0, 7.0]
+    photosensitising: false
+    time: any
+    pregnancy: ok
+    prescription: false
+    potency: 2
+    note: A water-soluble vitamin C derivative, stable near neutral pH. Found in Vichy Normaderm during the sweep.
+    source: "Added 25 Oct 2026 from the catalogue sweep. Grouped with the other derivatives at near-neutral pH; the range is a formulation convention."
+    review: reasoned
+
+  - id: malic_acid
+    name: Malic acid
+    inci: [Malic Acid]
+    aliases: []
+    class: aha
+    ph_range: [3.0, 4.0]
+    photosensitising: true
+    time: pm
+    pregnancy: caution
+    prescription: false
+    potency: 2
+    note: An AHA. Appears in 2 of 94 published lists, which is the frequency of an active rather than the pH adjuster citric acid is.
+    source: "Added 25 Oct 2026. Treated as an AHA by class, inheriting the FDA photosensitivity position and the SKC-004 pregnancy gate recorded on glycolic acid. Not separately sourced."
+    review: reasoned
+
+  - id: tartaric_acid
+    name: Tartaric acid
+    inci: [Tartaric Acid]
+    aliases: []
+    class: aha
+    ph_range: [3.0, 4.0]
+    photosensitising: true
+    time: pm
+    pregnancy: caution
+    prescription: false
+    potency: 2
+    note: As malic acid. One of the acids in The Ordinary's AHA 30% peel.
+    source: "Added 25 Oct 2026. Treated as an AHA by class, as malic acid. Not separately sourced."
     review: reasoned
 
   - id: ceramides
