@@ -21,7 +21,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 
 from limits import MAX_PRODUCTS, Trim, cap_images, cap_products, cap_text  # noqa: E402
-from models import InputProduct  # noqa: E402
+from models import Observation, SkinReading, InputProduct  # noqa: E402
 from render import render  # noqa: E402
 from rules import Rules  # noqa: E402
 
@@ -212,6 +212,52 @@ def main() -> int:
             wrong = [g for g in r.gaps if g.kind == "no_sun_protection"]
             assert not wrong, f"{label}: told it has no sunscreen while holding one"
 
+    def no_diagnosis_reaches_the_page():
+        """The observer must not name a condition, structurally.
+
+        Observation.concern is a Literal over six observable concerns, so
+        a diagnosis cannot be expressed there. `seen`, `where` and
+        `lighting_note` are free text and are rendered verbatim, so "the
+        classic butterfly pattern of rosacea" reached the reader as a
+        diagnosis from an app whose entire escalation design exists to
+        avoid making one. The prompt forbids it in three places; this is
+        the code that does not depend on the prompt.
+        """
+        from agents import scrub_diagnosis
+
+        hostile = SkinReading(
+            observations=[Observation(
+                concern="redness", where="cheeks", confidence="clear",
+                seen="the classic butterfly pattern of rosacea, papules typical "
+                     "of subtype 2 — consistent with seborrheic dermatitis too",
+            )],
+            lighting_note="even light, no sign of actinic keratosis",
+            needs_a_clinician=False,
+        )
+        cleaned, removed = scrub_diagnosis(hostile)
+        assert removed, "named conditions were not detected"
+        # A model reaching for a diagnosis is a referral signal, not only a bug.
+        assert cleaned.needs_a_clinician, "diagnosis found but not escalated"
+
+        page = render(rules.audit([]), None, skin=cleaned)
+        for word in ("rosacea", "papule", "dermatitis", "keratosis", "subtype"):
+            assert word not in page.lower(), f"{word!r} reached the page"
+
+        # And it must leave an honest observation alone, or the guard costs
+        # more than it saves.
+        fine = SkinReading(
+            observations=[Observation(
+                concern="dryness", where="forehead and cheeks", confidence="possible",
+                seen="small flakes catching the light along the brow",
+            )],
+            lighting_note="bright and even",
+            needs_a_clinician=False,
+        )
+        same, hits = scrub_diagnosis(fine)
+        assert not hits, f"false positive on an innocent reading: {hits}"
+        assert same.observations[0].seen == fine.observations[0].seen
+        assert not same.needs_a_clinician, "innocent reading wrongly escalated"
+
     for name, fn in [
         ("verification caveat stripped", caveat_is_stripped),
         ("empty shelf", empty_shelf),
@@ -227,6 +273,7 @@ def main() -> int:
         ("unknown product form", unknown_form),
         ("caps handle junk", caps_are_safe_on_junk),
         ("sunscreen recognised from its label", sunscreen_is_recognised_from_its_label),
+        ("no diagnosis reaches the page", no_diagnosis_reaches_the_page),
     ]:
         check(name, fn)
 

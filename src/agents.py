@@ -287,6 +287,81 @@ def _brief(audit: AuditResult) -> str:
     return "\n".join(lines)
 
 
+# Condition names the skin observer must never produce. Stems rather than
+# whole words, so "rosacea" catches "rosacea-like" and "dermatit" catches
+# both dermatitis and dermatitic.
+#
+# Deliberately not here: the words the system is allowed to use. "Redness",
+# "dryness", "texture", "spots" and "congestion" are descriptions of what a
+# photograph shows. "Rosacea" is a claim about why.
+CONDITION_STEMS = (
+    "acne", "rosacea", "eczema", "psoriasis", "melasma", "dermatit",
+    "seborrhoe", "seborrhe", "perioral", "keratosis", "keratos",
+    "folliculit", "vitiligo", "impetigo", "cellulit", "lupus",
+    "urticaria", "hives", "comedon", "milia", "cystic acne",
+    "carcinoma", "melanoma", "actinic", "basal cell", "squamous",
+    "pustul", "papul", "nodulocystic",
+)
+
+_CONDITION_RE = re.compile(
+    r"\b(" + "|".join(CONDITION_STEMS) + r")\w*", re.IGNORECASE
+)
+
+NEUTERED = "something here the photograph cannot settle"
+
+
+def names_a_condition(text: str) -> list[str]:
+    """Condition words in a piece of observer prose, lowercased."""
+    return sorted({m.group(0).lower() for m in _CONDITION_RE.finditer(text or "")})
+
+
+def scrub_diagnosis(reading: "SkinReading") -> tuple["SkinReading", list[str]]:
+    """Remove any named condition from the observer's free text.
+
+    The observer's `concern` field is a Literal over six observable
+    concerns, so a diagnosis cannot be expressed there — pydantic rejects
+    it. The prose fields are not constrained, and `seen` is rendered on
+    the page verbatim, so "the classic butterfly pattern of rosacea"
+    reaches the reader as a diagnosis from an app that promises not to
+    make one.
+
+    The prompt forbids this in three places and that is the right place to
+    start, but this project has already learned once that a prompt is not
+    a guarantee: the verification caveat took three prompt revisions and
+    then had to be stripped in code anyway. Naming a condition is a larger
+    thing to get wrong than a miscounted total.
+
+    Finding one is treated as a signal rather than only an error. A model
+    reaching for a diagnosis saw something it thought warranted one, so
+    the reading is escalated to a clinician at the same time as the claim
+    is removed. The user loses a sentence and gains the right referral.
+
+    Returns the cleaned reading and the words that were removed.
+    """
+    hits: list[str] = []
+
+    def clean(text: str) -> str:
+        found = names_a_condition(text)
+        if not found:
+            return text
+        hits.extend(found)
+        return NEUTERED
+
+    observations = []
+    for ob in reading.observations:
+        observations.append(
+            ob.model_copy(update={"seen": clean(ob.seen), "where": clean(ob.where)})
+        )
+
+    cleaned = reading.model_copy(update={
+        "observations": observations,
+        "lighting_note": clean(reading.lighting_note),
+        # A model that reached for a diagnosis is telling us something.
+        "needs_a_clinician": reading.needs_a_clinician or bool(hits),
+    })
+    return cleaned, sorted(set(hits))
+
+
 def strip_verification_caveat(summary: str) -> str:
     r"""Remove a trailing clause about verification.
 
@@ -426,6 +501,13 @@ async def observe_skin(
     reading = result.output
     if usage_log is not None:
         usage_log.record("skin_observer", result.usage)
+
+    # The prose fields are not constrained by the output type, so a named
+    # condition can reach the page through them. Removed here rather than
+    # trusted to the prompt, and recorded when it happens: an observer
+    # reaching for a diagnosis is a fact about the run worth keeping.
+    reading, diagnoses = scrub_diagnosis(reading)
+
     if trail is not None:
         trail.record(
             agent="skin_observer",
@@ -437,6 +519,7 @@ async def observe_skin(
                 ],
                 "needs_a_clinician": reading.needs_a_clinician,
                 "lighting_note": bool(reading.lighting_note),
+                "named_conditions_removed": diagnoses,
             },
         )
     return reading
