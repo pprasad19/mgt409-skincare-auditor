@@ -90,17 +90,22 @@ def annotate(image_bytes: bytes, boxes: list[dict]) -> str | None:
         # rather than needing the outline to be found first.
         draw.rectangle(px, fill=(*colour, 38))
 
-        caption = LABELS.get(box.get("status", "missed"), "")
-        name = (box.get("label") or "").strip()
-        text = f"{caption}: {name}" if name else caption
-        if len(text) > 42:
-            text = text[:40] + "…"
-
-        tw = draw.textlength(text, font=font)
-        th = text_size + 7
-        ty = px[1] - th if px[1] - th > 0 else px[1]
-        draw.rectangle((px[0], ty, px[0] + tw + 12, ty + th), fill=(*colour, 235))
-        draw.text((px[0] + 6, ty + 3), text, font=font, fill=(255, 255, 255))
+        # A number, not a name.
+        #
+        # Captions on the image overlapped each other, covered the products
+        # they pointed at, and truncated the names anyway — on a real shelf
+        # of twenty bottles it was unreadable. The number ties to a legend
+        # beside the photograph, which has room for the full name and can be
+        # read without hunting.
+        marker = str(box.get("index", "?"))
+        mw = draw.textlength(marker, font=font)
+        size = max(text_size + 10, round(mw) + 14)
+        mx0, my0 = px[0], max(0, px[1] - size // 3)
+        draw.ellipse((mx0, my0, mx0 + size, my0 + size), fill=(*colour, 245))
+        draw.text(
+            (mx0 + (size - mw) / 2, my0 + (size - text_size) / 2 - 1),
+            marker, font=font, fill=(255, 255, 255),
+        )
 
     out = io.BytesIO()
     img.save(out, format="JPEG", quality=JPEG_QUALITY, optimize=True)
@@ -108,7 +113,7 @@ def annotate(image_bytes: bytes, boxes: list[dict]) -> str | None:
     return f"data:image/jpeg;base64,{encoded}"
 
 
-def boxes_for(reading, audit) -> dict[int, list[dict]]:
+def boxes_for(reading, audit) -> tuple[dict[int, list[dict]], list[dict]]:
     """Group boxes by which uploaded photograph they belong to.
 
     Status comes from the audit rather than the reading: whether a product was
@@ -116,6 +121,8 @@ def boxes_for(reading, audit) -> dict[int, list[dict]]:
     """
     by_name = {p.product.name: p for p in audit.products}
     grouped: dict[int, list[dict]] = {}
+    legend: list[dict] = []
+    counter = 0
 
     for product in reading.products:
         if not product.region or not product.region.bbox:
@@ -129,14 +136,22 @@ def boxes_for(reading, audit) -> dict[int, list[dict]]:
             status = "read"
         else:
             status = "missed"
+        counter += 1
+        name = resolved.product.name
         grouped.setdefault(product.region.image_index, []).append(
-            {"bbox": product.region.bbox, "status": status, "label": product.name}
+            {"bbox": product.region.bbox, "status": status,
+             "label": name, "index": counter}
         )
+        legend.append({"index": counter, "status": status, "label": name})
 
     for region in reading.unreadable_regions:
-        if region.bbox:
-            grouped.setdefault(region.image_index, []).append(
-                {"bbox": region.bbox, "status": "missed", "label": region.label}
-            )
+        if not region.bbox:
+            continue
+        counter += 1
+        grouped.setdefault(region.image_index, []).append(
+            {"bbox": region.bbox, "status": "missed",
+             "label": region.label, "index": counter}
+        )
+        legend.append({"index": counter, "status": "missed", "label": region.label})
 
-    return grouped
+    return grouped, legend

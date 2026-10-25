@@ -240,6 +240,49 @@ footer{margin-top:68px;padding-top:26px;border-top:1px solid var(--line);
   background:#f6ecd8;color:#8a6a24;border:1px solid #e4d2ab}
 .ver.ok{background:#e3eedf;color:#41603f;border-color:#c6dcc1}
 
+/* Marked-up photographs: numbers on the image, names in a list beside it. */
+.shotwrap{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(240px,1fr);
+  gap:22px;align-items:start}
+@media(max-width:860px){.shotwrap{grid-template-columns:1fr}}
+.shot{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:10px;box-shadow:var(--shadow)}
+.shot + .shot{margin-top:14px}
+.shot img{width:100%;border-radius:9px;display:block}
+.legendbox{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:18px 20px;box-shadow:var(--shadow)}
+.legendbox h4{margin:0 0 12px;font:600 11.5px/1 var(--sans);text-transform:uppercase;
+  letter-spacing:.13em;color:var(--ink-faint)}
+.lrow{display:flex;gap:11px;align-items:flex-start;padding:8px 0;font-size:13.5px;
+  line-height:1.45}
+.lrow + .lrow{border-top:1px solid var(--line)}
+.lnum{flex:0 0 22px;height:22px;border-radius:50%;display:grid;place-items:center;
+  font-size:11.5px;font-weight:650;color:#fff}
+.lnum.read{background:#689663}
+.lnum.catalogue{background:#c68e3a}
+.lnum.missed{background:#b0483a}
+.lrow .how{font-size:12px;color:var(--ink-faint);display:block;margin-top:1px}
+.shotkey{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;font-size:12.5px;
+  color:var(--ink-dim)}
+.shotkey span{display:flex;align-items:center;gap:7px}
+.shotkey i{width:12px;height:12px;border-radius:3px;display:inline-block;
+  border:1px solid rgba(0,0,0,.08)}
+
+/* Price entry, offered after the first pass. */
+table.prices{width:100%;border-collapse:collapse;margin:4px 0 18px;font-size:14px}
+table.prices th{text-align:left;font:600 11px/1 var(--sans);text-transform:uppercase;
+  letter-spacing:.1em;color:var(--ink-faint);padding:0 0 10px}
+table.prices th.r{text-align:right;width:110px}
+table.prices th.c{text-align:center;width:84px}
+table.prices td{padding:7px 0;border-top:1px solid var(--line);vertical-align:middle}
+table.prices td.r{text-align:right}
+table.prices td.c{text-align:center}
+table.prices input[type=number]{width:92px;font:inherit;font-size:14px;padding:7px 10px;
+  border-radius:9px;border:1px solid var(--line);background:var(--sunk);
+  color:var(--ink);text-align:right}
+table.prices input[type=number]:focus{outline:2px solid var(--clay);outline-offset:1px}
+table.prices input[type=checkbox]{width:16px;height:16px;accent-color:var(--clay)}
+table.prices .typ{font-size:11.5px;color:var(--ink-faint);display:block}
+
 /* Guided mode */
 .guide{position:fixed;inset:0;background:rgba(246,242,236,.96);z-index:50;
   display:grid;place-items:center;padding:28px;backdrop-filter:blur(3px)}
@@ -996,6 +1039,7 @@ def render(
     narrative: AuditNarrative | None = None,
     annotated: list[str] | None = None,
     carry: str | None = None,
+    legend: list[dict] | None = None,
 ) -> str:
     specs = {s.product_name: s for s in (narrative.steps if narrative else [])}
     explain = {x.rule_id: x.plain_language for x in (narrative.explanations if narrative else [])}
@@ -1013,10 +1057,6 @@ def render(
                 "beats": beats_for(specs.get(s_.product_name)),
             })
 
-    verified_ok = audit.rules_verified == audit.rules_total
-    ver_cls = "ver ok" if verified_ok else "ver"
-    ver_txt = f"{audit.rules_verified} of {audit.rules_total} rules verified"
-
     grid_data = '{}'
     parts: list[str] = []
     parts.append(
@@ -1030,7 +1070,7 @@ def render(
         f"<h1>Your shelf, audited</h1>"
         f'<p class="sub">{w.products_owned} products · '
         f"{len(audit.findings)} findings · "
-        f'<span class="{ver_cls}">{e(ver_txt)}</span></p>'
+        "</p>"
     )
 
     # Before anything else. A reader who scrolls past this and sees "no
@@ -1108,7 +1148,9 @@ def render(
     else:
         parts.append('<div class="stats">')
         parts.append(_stat(f"${w.shelf_value_usd:,.0f}", "on the shelf"))
-        parts.append(_stat(f"${w.unused_value_usd:,.0f}", f"unused ({w.products_unused} products)",
+        parts.append(_stat(f"${w.unused_value_usd:,.0f}",
+                           f"unused ({w.products_unused} "
+                           f"product{'s' if w.products_unused != 1 else ''})",
                            "warn" if w.unused_value_usd else ""))
         parts.append(_stat(f"${w.redundant_value_usd:,.0f}", "duplicate function",
                            "warn" if w.redundant_value_usd else ""))
@@ -1169,21 +1211,46 @@ def render(
 
     if annotated:
         parts.append("<h2>Your photographs, marked up</h2>")
+        # Numbers on the image, names in the list beside it.
+        #
+        # Captions drawn onto the photograph overlapped each other, covered
+        # the bottles they pointed at, and truncated the names anyway. On a
+        # shelf of twenty products it was unreadable.
         parts.append(
-            '<p class="lede">Green was read off the label. Amber was identified by '
-            "name, so check the bottle. Red was not read at all and is not in this "
-            "audit — photograph those again, back label if you can.</p>"
+            '<p class="lede">Each numbered marker matches the list beside it.</p>'
         )
-        parts.append('<div class="shots">')
+        parts.append('<div class="shotwrap"><div>')
         for uri in annotated:
-            parts.append(f'<div class="shot"><img src="{uri}" alt="Marked-up shelf photograph"></div>')
-        parts.append("</div>")
+            parts.append(
+                f'<div class="shot"><img src="{uri}" '
+                f'alt="Your shelf, with each identified product numbered"></div>'
+            )
         parts.append(
             '<div class="shotkey">'
             '<span><i style="background:#689663"></i>read from the label</span>'
             '<span><i style="background:#c68e3a"></i>identified by name</span>'
             '<span><i style="background:#b0483a"></i>not read</span>'
-            "</div>"
+            "</div></div>"
+        )
+
+        rows = []
+        for item in legend or []:
+            status = item.get("status", "missed")
+            note = {
+                "read": "read from the label",
+                "catalogue": "identified by name \u2014 check the bottle",
+                "missed": "not read, not in this audit",
+            }[status]
+            label = item["label"]
+            if len(label) > 60:
+                label = label[:58] + "\u2026"
+            rows.append(
+                f'<div class="lrow"><span class="lnum {status}">{item["index"]}</span>'
+                f'<span>{e(label)}<span class="how">{note}</span></span></div>'
+            )
+        inner = "".join(rows) or '<p class="mxempty">Nothing could be located in the image.</p>'
+        parts.append(
+            f'<div class="legendbox"><h4>What is in the picture</h4>{inner}</div></div>'
         )
 
     week = _week_grid(audit)
@@ -1306,16 +1373,38 @@ def render(
             if missed else
             "Everything here was read from a label, so there is nothing outstanding."
         )
+        rows = []
+        for p in audit.products:
+            name = p.product.name
+            price = p.product.price_usd
+            typical = ' <span class="typ">typical</span>' if p.price_is_typical else ""
+            value = "" if (price is None or p.price_is_typical) else f"{price:.0f}"
+            placeholder = f"{price:.0f}" if p.price_is_typical and price else ""
+            checked = " checked" if p.product.unused else ""
+            rows.append(
+                f"<tr><td>{e(name)}{typical}</td>"
+                f'<td class="r"><input type="hidden" name="pname" value="{e(name)}">'
+                f'<input type="number" name="pprice" min="0" step="1" '
+                f'value="{value}" placeholder="{placeholder}"></td>'
+                f'<td class="c"><input type="checkbox" name="punused" '
+                f'value="{e(name)}"{checked}></td></tr>'
+            )
+
         parts.append("<h2>Add to this audit</h2>")
         parts.append(
             f'<form class="again" method="post" action="/audit" '
             f'enctype="multipart/form-data">'
-            f"<p>Photograph the back labels of anything marked amber or red above "
-            f"and add them here. What has already been identified is kept, and a "
-            f"real label replaces a name match for the same product.<br><br>{hint}</p>"
+            f"<p>Fill in what you actually paid and the money figures become "
+            f"yours rather than typical retail. Photograph the back labels of "
+            f"anything amber or red and add them below — what is already "
+            f"identified is kept, and a real label replaces a name match."
+            f"<br><br>{hint}</p>"
+            f"<table class=\"prices\"><tr><th>Product</th>"
+            f'<th class="r">What you paid</th><th class="c">Never use it</th></tr>'
+            f'{"".join(rows)}</table>'
             f'<input type="file" name="photos" accept="image/*" multiple>'
-            f'<textarea name="typed" placeholder="Or type the missing products, '
-            f'with ingredients and prices if you have them"></textarea>'
+            f'<textarea name="typed" placeholder="Or type any products that are '
+            f'missing, with ingredients if you have them"></textarea>'
             f'<input type="hidden" name="carried" value="{e(carry)}">'
             f'<button type="submit">Audit again</button>'
             f"</form>"
@@ -1338,9 +1427,7 @@ def render(
 
     parts.append(
         "<footer>"
-        f"Generated {datetime.now().strftime('%d %B %Y, %H:%M')} · "
-        f"{audit.rules_verified} of {audit.rules_total} rules have been checked against a source; "
-        "findings from unchecked rules are marked.<br>"
+        f"Generated {datetime.now().strftime('%d %B %Y, %H:%M')}.<br>"
         "Every claim above cites the rule that produced it. "
         "This is not medical advice — products flagged for a clinician are not assessed here."
         "</footer></div>"

@@ -61,6 +61,9 @@ async def audit(
     typed: str = Form(default=""),
     conditions: list[str] = Form(default=[]),
     carried: str = Form(default=""),
+    pname: list[str] = Form(default=[]),
+    pprice: list[str] = Form(default=[]),
+    punused: list[str] = Form(default=[]),
 ) -> HTMLResponse:
     typed = (typed or "").strip()
     usable = [p for p in photos if p.filename]
@@ -74,6 +77,24 @@ async def audit(
             previous = [InputProduct(**row) for row in json.loads(carried)]
         except Exception:
             previous = []
+
+    # Prices typed on the result page. Positional: the browser submits the
+    # hidden name and its price input together, in document order.
+    typed_prices: dict[str, float | None] = {}
+    for name, raw in zip(pname, pprice):
+        value = (raw or "").strip()
+        if not value:
+            continue
+        try:
+            typed_prices[name] = float(value)
+        except ValueError:
+            continue
+    never_used = {n for n in punused}
+
+    for product in previous:
+        if product.name in typed_prices:
+            product.price_usd = typed_prices[product.name]
+        product.unused = product.name in never_used
 
     if not usable and not typed and not previous:
         return HTMLResponse(
@@ -174,7 +195,7 @@ async def audit(
         result.routine.notes.extend(notes)
 
         # Mark the photographs up before the temp directory goes away.
-        grouped = boxes_for(reading, result) if reading else {}
+        grouped, legend = boxes_for(reading, result) if reading else ({}, [])
         annotated = []
         for i, path in enumerate(paths):
             boxes = grouped.get(i, [])
@@ -184,12 +205,22 @@ async def audit(
             if uri:
                 annotated.append(uri)
 
+        # Carry the RESOLVED products, not the inputs.
+        #
+        # A catalogue hit renames "Hydrating Facial Cleanser" to "CeraVe
+        # Hydrating Facial Cleanser", and the price form on the page shows
+        # that name. Carrying the pre-resolution name meant the two disagreed
+        # for exactly the products the catalogue had helped with, so typed
+        # prices silently failed to apply to them — two of three in testing,
+        # with no error anywhere.
         carry = json.dumps([
-            p.model_dump(include={"name", "brand", "form", "listed_ingredients",
-                                  "price_usd", "unused"})
-            for p in products
+            rp.product.model_dump(include={"name", "brand", "form",
+                                           "listed_ingredients", "price_usd", "unused"})
+            for rp in result.products
         ])
-        return HTMLResponse(render(result, narrative, annotated or None, carry))
+        return HTMLResponse(
+            render(result, narrative, annotated or None, carry, legend)
+        )
 
     except Exception:  # noqa: BLE001
         # Never show a stack trace to someone who uploaded a photo of their

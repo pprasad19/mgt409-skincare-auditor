@@ -4546,5 +4546,236 @@
       "cache_write_tokens": 562,
       "output_tokens": 497
     }
+  },
+  {
+    "run_id": "2010ba04",
+    "seq": 1,
+    "timestamp": "2026-10-25T01:03:03.890054+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "products": [
+        "PITERA",
+        "2",
+        "The Ordinary. Niacinamide 10% + Zinc 1%",
+        "Glytone",
+        "Olay",
+        "imfre",
+        "CeraVe Hydrating Facial Cleanser",
+        "CeraVe Acne Foaming Cream Cleanser",
+        "Glytone",
+        "Vichy",
+        "Avene",
+        "Neutrogena"
+      ],
+      "unreadable": [
+        "Several partly obscured jars, tubes, and bottles on both shelves; labels too small or blocked to identify with confidence."
+      ],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3103,
+      "cache_read_tokens": 1536,
+      "cache_write_tokens": 0,
+      "output_tokens": 1065
+    }
+  },
+  {
+    "run_id": "2010ba04",
+    "seq": 2,
+    "timestamp": "2026-10-25T01:03:08.407075+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 22,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3068,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 382,
+      "output_tokens": 942
+    }
+  },
+  {
+    "run_id": "8725478b",
+    "seq": 1,
+    "timestamp": "2026-10-25T01:10:59.785219+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "products": [
+        "Hydrating Facial Cleanser",
+        "Acne Foaming Cream Cleanser",
+        "The Ordinary Retinol 0.5% in Squalane"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2593,
+      "cache_read_tokens": 2393,
+      "cache_write_tokens": 74,
+      "output_tokens": 174
+    }
+  },
+  {
+    "run_id": "8725478b",
+    "seq": 2,
+    "timestamp": "2026-10-25T01:11:03.237322+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 2,
+      "steps": 4,
+      "rejected": [
+        "verification caveat stripped from summary"
+      ]
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 298,
+      "output_tokens": 369
+    }
+  },
+  {
+    "run_id": "3b47a68e",
+    "seq": 1,
+    "timestamp": "2026-10-25T01:11:36.593576+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "products": [
+        "Hydrating Facial Cleanser",
+        "Acne Foaming Cream Cleanser",
+        "The Ordinary Retinol 0.5% in Squalane"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2593,
+      "cache_read_tokens": 2393,
+      "cache_write_tokens": 74,
+      "output_tokens": 174
+    }
+  },
+  {
+    "run_id": "3b47a68e",
+    "seq": 2,
+    "timestamp": "2026-10-25T01:11:36.769830+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 2,
+      "steps": 4,
+      "rejected": [
+        "verification caveat stripped from summary"
+      ]
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 298,
+      "output_tokens": 369
+    }
+  },
+  {
+    "run_id": "f1272f01",
+    "seq": 1,
+    "timestamp": "2026-10-25T01:11:53.019259+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 2,
+      "steps": 4,
+      "rejected": [
+        "verification caveat stripped from summary"
+      ]
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 298,
+      "output_tokens": 377
+    }
+  },
+  {
+    "run_id": "2c709551",
+    "seq": 1,
+    "timestamp": "2026-10-25T01:12:53.072620+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "products": [
+        "Hydrating Facial Cleanser",
+        "Acne Foaming Cream Cleanser",
+        "The Ordinary Retinol 0.5% in Squalane"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2593,
+      "cache_read_tokens": 2393,
+      "cache_write_tokens": 74,
+      "output_tokens": 174
+    }
+  },
+  {
+    "run_id": "2c709551",
+    "seq": 2,
+    "timestamp": "2026-10-25T01:12:53.435749+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 2,
+      "steps": 4,
+      "rejected": [
+        "verification caveat stripped from summary"
+      ]
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 298,
+      "output_tokens": 369
+    }
+  },
+  {
+    "run_id": "028782ca",
+    "seq": 1,
+    "timestamp": "2026-10-25T01:12:56.927848+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 2,
+      "steps": 4,
+      "rejected": [
+        "verification caveat stripped from summary"
+      ]
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 298,
+      "output_tokens": 391
+    }
   }
 ]
