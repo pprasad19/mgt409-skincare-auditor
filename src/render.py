@@ -522,6 +522,7 @@ table.prices .typ{font-size:11.5px;color:var(--ink-faint);display:block}
   border:1px solid var(--line);background:var(--card);color:var(--ink-dim);
   text-decoration:none;cursor:pointer;display:inline-block}
 .reset:hover{background:var(--sunk);color:var(--ink)}
+.tally{display:block;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font:400 15px/1.6 var(--sans);color:var(--ink-dim)}
 .film-get{font-size:13.5px;padding:7px 14px;border-radius:999px;border:1px dashed var(--line);color:var(--ink-dim);text-decoration:none}
 .film-get:hover{background:var(--sunk);color:var(--ink)}
 .film-count{font-size:12.5px;color:var(--ink-faint);margin-left:auto}
@@ -1935,7 +1936,39 @@ def render(
         parts.append(
             '<p class="lede">The main summary of your shelf — what matters most, and what to do first.</p>'
         )
-        parts.append(f'<div class="card summary">{e(narrative.summary)}</div>')
+        # The engine's own count, in the same block as the model's prose.
+        #
+        # validate_narrative checks the explanations and the steps against
+        # the audit and drops anything invented. It does not check the
+        # summary, which is free text and reaches the page verbatim — the
+        # project's own attack A8 is named "corrupt the summary, which the
+        # validator does not check". A summary reading "no conflicts were
+        # found" above a list of three is the worst shape of wrong, because
+        # the reassuring sentence is the one a skimmer reads.
+        #
+        # There is no structural fix for it the way there is for a named
+        # condition: "contradicts the findings" is unbounded semantics, not
+        # a vocabulary to match against. What can be done is deny the
+        # summary the last word. The header already carries the count, but
+        # a header away is far enough to miss; this sits inside the same
+        # card, and the model cannot write it.
+        tally = ""
+        if audit.findings:
+            order = ["critical", "high", "medium", "low"]
+            present = [f.severity for f in audit.findings if f.severity in order]
+            worst = min(present, key=order.index) if present else None
+            n = len({f.rule_id for f in audit.findings})
+            tally = (
+                f'<span class="tally">The engine found {n} '
+                f'{_plural(n, "finding")} on this shelf'
+                + (f", the most serious rated {SEVERITY_LABEL[worst].lower()}."
+                   if worst else ".")
+                + " Each is listed below with the rule that produced it."
+                "</span>"
+            )
+        parts.append(
+            f'<div class="card summary">{e(narrative.summary)}{tally}</div>'
+        )
 
     parts.append("<h2>Money</h2>")
     if w.shelf_value_usd == 0:

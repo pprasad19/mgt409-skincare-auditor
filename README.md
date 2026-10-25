@@ -113,6 +113,7 @@ python audit_cli.py --shelf data/sample_shelf.json --explain --html output/audit
 | `python test_mcp.py` | the MCP server agrees with the app |
 | `python test_thesis.py` | a narrative contradicting every finding changes nothing |
 | `python test_failure.py` | each agent failing in turn, no stack traces, no leaks |
+| `python test_validator.py` | invented rules and ghost products are dropped |
 | `python make_attacks.py` | regenerate the adversarial label images |
 | `python redteam.py --mode naive` | run the attacks with no defences |
 | `python redteam.py --mode defended` | run them again with defences on |
