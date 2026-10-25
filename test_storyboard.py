@@ -96,14 +96,21 @@ css = (Path(__file__).resolve().parent / "src" / "render.py").read_text(encoding
 RULE = re.compile(r"([^{}\n][^{}]*)\{([^}]*)\}")
 rules = [(sel.strip(), body) for sel, body in RULE.findall(css)]
 
-ALL_ANIMS = sorted(set(MOTIONS.values()) |
-                   {"rinse", "towel", "absorb", "dispense", "maskon", "maskoff"})
+from render import OPENING_ANIMS
+
+# Everything the storyboard can emit, and the split between the two
+# renderers. The player has no CSS for the opening act, so render() filters
+# it out; if that filter is ever dropped the player would draw a bare face
+# under a caption for four scenes.
+PLAYER_ANIMS = sorted(set(MOTIONS.values()) |
+                      {"rinse", "towel", "absorb", "dispense", "maskon", "maskoff"})
+ALL_ANIMS = sorted(set(PLAYER_ANIMS) | set(OPENING_ANIMS))
 
 # Dispensing fades the face back and shows the dose instead, so its motion
 # lives on the dose elements rather than on a [data-anim] selector.
 DRIVEN_BY = {"dispense": ".dosedot"}
 
-for anim in ALL_ANIMS:
+for anim in PLAYER_ANIMS:
     needle = DRIVEN_BY.get(anim, '[data-anim="%s"]' % anim)
     moving = [
         (sel, body) for sel, body in rules
@@ -175,6 +182,61 @@ check_true("paths are short", all(len(path_for(a)) <= 7 for a in
                                  ("whole face", "whole face and neck", "the T-zone")))
 check_true("paths are never empty", len(path_for("left elbow")) > 0)
 
+
+# No scene type may draw a blank frame.
+#
+# Asserted by rendering each one and comparing it against a frame whose
+# animation name matches nothing. A new scene type added to the storyboard
+# and forgotten in the drawing code still produces a caption and a
+# duration, so it looks like a step rather than like a bug -- which is
+# exactly how the rinse scene shipped drawing nothing at all.
+_FONTS = filmstrip._fonts()
+STOPS = points_for("whole face")
+
+
+def _scene(anim):
+    base = {
+        "anim": anim, "caption": "caption", "where": "whole face",
+        "real": "20 seconds", "screen": 2.0, "slot": "Morning",
+        "order": 1, "of": 1, "name": "A Product", "form": "serum", "why": "",
+        "container": "dropper", "dose": {"kind": "pea", "n": 1},
+        "ribbon": ["a", "b"], "at": 0,
+        "points": [], "rest": [],
+    }
+    if anim in ("shelf", "sort"):
+        base["items"] = [{"label": "A", "container": "tub", "slot": "am"},
+                         {"label": "B", "container": "pump", "slot": "pm"}]
+    elif anim == "clash":
+        base["pair"] = ["A", "B"]
+        base["containers"] = ["tub", "pump"]
+        base["rule"] = "SKA-001"
+    elif anim == "week":
+        base["rows"] = [{"label": "A", "every": 2, "offset": 0},
+                        {"label": "B", "every": 2, "offset": 1}]
+    elif anim in ("rinse", "towel", "absorb", "maskoff"):
+        base["rest"] = STOPS
+    elif anim != "dispense":
+        base["points"] = STOPS
+    return base
+
+
+blank = filmstrip._frame(_scene("__nothing__"), 0.5, 0.5, _FONTS)
+for anim in ALL_ANIMS:
+    drawn = filmstrip._frame(_scene(anim), 0.55, 0.5, _FONTS)
+    pair = zip(blank.get_flattened_data(), drawn.get_flattened_data())
+    differs = sum(1 for a, b in pair if a != b)
+    check_true("%s draws something" % anim, differs > 400)
+
+check_true("opening act is not in the player's set",
+           not (set(OPENING_ANIMS) & set(PLAYER_ANIMS)))
+
+render_src = (Path(__file__).resolve().parent / "src" / "render.py").read_text(
+    encoding="utf-8")
+check_true("render filters the opening out of the player",
+           'sc["anim"] not in OPENING_ANIMS' in render_src)
+check_true("the gif still gets every scene",
+           "_routine_gif(film_scenes)" in render_src)
+
 # The GIF. A download button that hands over a broken file is worse than no
 # button, and a failure here must cost the button and not the audit.
 from render import _routine_gif
@@ -210,4 +272,5 @@ check_true("data uri", uri.startswith("data:image/gif;base64,"))
 print("ok  %d checks passed" % ok)
 print("    face regions, exclusions, fallbacks, time compression,")
 print("    every scene animation actually animating,")
-print("    containers, doses and stroke paths, and the GIF export")
+print("    containers, doses and stroke paths, the opening act,")
+print("    no scene drawing blank, and the GIF export")

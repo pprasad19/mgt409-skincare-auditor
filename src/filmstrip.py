@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import io
 import math
+from contextlib import contextmanager
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -61,6 +62,10 @@ CLAY = (168, 106, 75)
 WATER = (127, 166, 191)
 TOWEL = (207, 216, 205)
 SAND = (192, 138, 62)
+SAGE = (107, 129, 105)
+CRIT = (164, 73, 60)
+
+DAY_INITIALS = ["M", "T", "W", "T", "F", "S", "S"]
 
 FONT_DIR = Path("C:/Windows/Fonts")
 
@@ -85,10 +90,30 @@ def _fonts():
         "title": _font(["georgiab.ttf", "arialbd.ttf", "DejaVuSans-Bold.ttf"], 21),
         "body": _font(["segoeui.ttf", "arial.ttf", "DejaVuSans.ttf"], 17),
         "small": _font(["segoeui.ttf", "arial.ttf", "DejaVuSans.ttf"], 13),
+        "tiny": _font(["segoeui.ttf", "arial.ttf", "DejaVuSans.ttf"], 10),
     }
 
 
+# A transform stack in face-space, so anything already drawn at full size --
+# the containers above all -- can be reused small and somewhere else. The
+# opening scenes need seven bottles on a shelf, and redrawing each one at a
+# second scale would guarantee the two versions drift apart.
+_TRANSFORM: list[tuple[float, float, float]] = [(0.0, 0.0, 1.0)]
+
+
+@contextmanager
+def _at(dx: float, dy: float, k: float):
+    _TRANSFORM.append((dx, dy, k))
+    try:
+        yield
+    finally:
+        _TRANSFORM.pop()
+
+
 def _xy(x: float, y: float) -> tuple[float, float]:
+    dx, dy, k = _TRANSFORM[-1]
+    x = (x - 100.0) * k + 100.0 + dx
+    y = (y - 120.0) * k + 120.0 + dy
     return OX + x * SCALE, OY + y * SCALE
 
 
@@ -484,20 +509,152 @@ def _wrap(draw, text: str, font, width: int, limit: int = 2) -> list[str]:
     return lines
 
 
+SHELF_K = 0.30          # containers shrunk to shelf size
+
+
+def _tiny_label(draw, text: str, x: float, y: float, fonts, colour=INK_FAINT,
+                alpha: float = 1.0) -> None:
+    px, py = _xy(x, y)
+    w = draw.textlength(text, font=fonts["tiny"])
+    draw.text((px - w / 2, py), text, font=fonts["tiny"],
+              fill=colour + (int(255 * alpha),) if len(colour) == 3 else colour)
+
+
+def _side_label(draw, text: str, x: float, y: float, fonts, colour=INK_DIM,
+                alpha: float = 1.0) -> None:
+    """Left-aligned, for a label that sits beside its bottle."""
+    px, py = _xy(x, y)
+    draw.text((px, py), text, font=fonts["tiny"],
+              fill=colour + (int(255 * alpha),))
+
+
+def _right_label(draw, text: str, x: float, y: float, fonts, colour=INK_DIM,
+                 alpha: float = 1.0) -> None:
+    """Right-aligned, so a column of labels lines up against its grid."""
+    px, py = _xy(x, y)
+    w = draw.textlength(text, font=fonts["tiny"])
+    draw.text((px - w, py), text, font=fonts["tiny"],
+              fill=colour + (int(255 * alpha),))
+
+
+def _row_positions(n: int, left: float, right: float) -> list[float]:
+    if n <= 1:
+        return [(left + right) / 2]
+    step = (right - left) / (n - 1)
+    return [left + i * step for i in range(n)]
+
+
+def _opening(draw, scene: dict, t: float, fonts) -> None:
+    """The four scenes that are only true of this shelf.
+
+    Drawn with the same `_container` the dispense scenes use, shrunk
+    through the transform stack. A second set of small bottle drawings
+    would have been two sources of truth for what a dropper looks like.
+    """
+    anim = scene["anim"]
+
+    if anim in ("shelf", "sort"):
+        items = scene.get("items") or []
+        if not items:
+            return
+        xs = _row_positions(len(items), 34, 166)
+
+        if anim == "shelf":
+            shelf_y = 168
+            draw.line([*_xy(26, shelf_y), *_xy(174, shelf_y)],
+                      fill=LINE + (255,), width=3)
+            for i, (item, x) in enumerate(zip(items, xs)):
+                appear = min(1.0, max(0.0, t * len(items) - i * 0.7))
+                if appear <= 0:
+                    continue
+                with _at(x - 65, shelf_y - 140 + (1 - appear) * -14, SHELF_K):
+                    _container(draw, item["container"], 1.0)
+            return
+
+        # sort: the same bottles slide into two columns
+        slide = min(1.0, t * 1.6)
+        draw.line([*_xy(104, 40), *_xy(104, 196)], fill=LINE + (255,), width=2)
+        _tiny_label(draw, "MORNING", 56, 38, fonts, INK_DIM)
+        _tiny_label(draw, "EVENING", 148, 38, fonts, INK_DIM)
+
+        am = [i for i in items if i["slot"] in ("am", "both")]
+        pm = [i for i in items if i["slot"] in ("pm", "both")]
+        # No names here. A bottle and a readable product name will not both
+        # fit in a half-panel column, and shrinking the name to "CeraV..."
+        # is worse than leaving it out: the technique scenes that follow
+        # name every product in full. What this scene has to show is that
+        # the shelf divides, and which bottles land on which side.
+        for column, cx in ((am, 56), (pm, 148)):
+            ys = _row_positions(max(len(column), 1), 66,
+                                min(66 + 26 * max(len(column) - 1, 0), 194))
+            for item, y in zip(column, ys):
+                start = xs[items.index(item)]
+                x = start + (cx - start) * slide
+                y0 = 168 - 140
+                yy = y0 + (y - 140 - y0) * slide
+                with _at(x - 65, yy, 0.27):
+                    _container(draw, item["container"], 1.0)
+        return
+
+    if anim == "clash":
+        pair = scene.get("pair") or ["", ""]
+        cans = scene.get("containers") or ["bottle", "bottle"]
+        push = math.sin(min(t * 1.4, 1.0) * math.pi / 2) * 26
+        for i, (label, can) in enumerate(zip(pair, cans)):
+            x = 100 + (-1 if i == 0 else 1) * (16 + push)
+            with _at(x - 65, 10, 0.42):
+                _container(draw, can, 1.0)
+            _tiny_label(draw, label, x, 186, fonts)
+        # the spark between them
+        if push > 4:
+            flick = 0.55 + 0.45 * math.sin(t * 16)
+            for k in range(3):
+                yy = 96 + k * 16
+                draw.line([*_xy(94, yy), *_xy(100, yy + 8)],
+                          fill=CRIT + (int(230 * flick),), width=3)
+                draw.line([*_xy(100, yy + 8), *_xy(106, yy)],
+                          fill=CRIT + (int(230 * flick),), width=3)
+        rule = scene.get("rule", "")
+        if rule:
+            _tiny_label(draw, rule, 100, 56, fonts, CRIT)
+        return
+
+    if anim == "week":
+        rows = scene.get("rows") or []
+        cols = _row_positions(7, 74, 176)
+        for d, x in enumerate(cols):
+            _tiny_label(draw, DAY_INITIALS[d], x, 58, fonts, INK_FAINT)
+        ys = _row_positions(max(len(rows), 1), 92, 92 + 30 * max(len(rows) - 1, 0))
+        lit_to = t * 7
+        for r, (row, y) in enumerate(zip(rows, ys)):
+            _right_label(draw, row["label"], 68, y - 4, fonts, INK_DIM)
+            for d, x in enumerate(cols):
+                on = d % row["every"] == row["offset"]
+                shown = d <= lit_to
+                if on and shown:
+                    _blob(draw, x, y, 7, SAGE, 0.9)
+                else:
+                    _ring(draw, x, y, 6, LINE, 0.9, 2)
+        return
+
+
 def _frame(scene: dict, t: float, progress: float, fonts) -> Image.Image:
     base = Image.new("RGB", (W, H), PAPER)
     draw = ImageDraw.Draw(base)
 
     _rounded(draw, [0, 0, W - 1, H - 1], 18, fill=CARD, outline=LINE)
     _rounded(draw, list(PANEL), 14, fill=SUNK)
-    if scene["anim"] != "dispense":
+    faceless = scene["anim"] in ("dispense", "shelf", "sort", "clash", "week")
+    if not faceless:
         _face(draw)
 
     # Moving parts go on their own layer so they can be semi-transparent.
     layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     ld = ImageDraw.Draw(layer)
 
-    if scene["anim"] == "dispense":
+    if scene["anim"] in ("shelf", "sort", "clash", "week"):
+        _opening(ld, scene, t, fonts)
+    elif scene["anim"] == "dispense":
         _container(ld, scene.get("container", "bottle"), t)
         _dose(ld, scene.get("dose", {"kind": "pea", "n": 1}), t)
     elif scene["points"]:
@@ -509,8 +666,10 @@ def _frame(scene: dict, t: float, progress: float, fonts) -> Image.Image:
 
     # --- the caption column ---------------------------------------------
     x = 324
-    draw.text((x, 34), f'{scene["slot"].upper()}  ·  STEP {scene["order"]} OF {scene["of"]}',
-              font=fonts["label"], fill=INK_FAINT)
+    head = scene["slot"].upper()
+    if scene.get("of"):
+        head += f'  ·  STEP {scene["order"]} OF {scene["of"]}'
+    draw.text((x, 34), head, font=fonts["label"], fill=INK_FAINT)
 
     y = 54
     for line in _wrap(draw, scene["name"], fonts["title"], W - x - 28, 2):
@@ -518,8 +677,10 @@ def _frame(scene: dict, t: float, progress: float, fonts) -> Image.Image:
         y += 25
 
     y += 6
-    draw.text((x, y), scene["caption"], font=fonts["body"], fill=INK)
-    y += 24
+    for line in _wrap(draw, scene["caption"], fonts["body"], W - x - 28, 2):
+        draw.text((x, y), line, font=fonts["body"], fill=INK)
+        y += 22
+    y += 2
     if scene["where"]:
         for line in _wrap(draw, "on " + scene["where"], fonts["small"], W - x - 28, 2):
             draw.text((x, y), line, font=fonts["small"], fill=INK_DIM)
@@ -534,9 +695,30 @@ def _frame(scene: dict, t: float, progress: float, fonts) -> Image.Image:
         _rounded(draw, [x, y, x + tw + 22, y + 22], 11, fill=SUNK)
         draw.text((x + 11, y + 4), pill, font=fonts["label"], fill=INK_DIM)
 
-    # --- progress and the honesty line ----------------------------------
-    draw.rectangle([x, H - 52, W - 28, H - 49], fill=LINE)
-    draw.rectangle([x, H - 52, x + (W - 28 - x) * progress, H - 49], fill=CLAY)
+    # --- the ribbon and the honesty line --------------------------------
+    #
+    # One segment per step, the current one lit. A continuous progress bar
+    # told the viewer how far through the file they were, which is not
+    # something anyone wants to know; this tells them where they are in
+    # their own routine, and it makes two frames of similar actions
+    # visibly different from each other.
+    ribbon = scene.get("ribbon") or [""]
+    at = scene.get("at", 0)
+    right = W - 28
+    gap = 5
+    seg = (right - x - gap * (len(ribbon) - 1)) / max(len(ribbon), 1)
+    for i in range(len(ribbon)):
+        sx = x + i * (seg + gap)
+        done = at >= 0 and i < at
+        here = i == at
+        top = H - 54 if here else H - 52
+        draw.rounded_rectangle(
+            [sx, top, sx + seg, H - 48],
+            radius=3,
+            fill=CLAY if here else (SAND if done else LINE),
+        )
+    # No label under the ribbon: the title already names this step, and
+    # saying it twice in one frame reads as a mistake.
     draw.text((x, H - 38), "Sped up. Real times shown above.",
               font=fonts["small"], fill=INK_FAINT)
 
@@ -550,12 +732,13 @@ def _palette() -> Image.Image:
     spends colours on antialiasing noise.
     """
     colours: list[tuple[int, int, int]] = [
-        PAPER, CARD, SUNK, LINE, INK, INK_DIM, INK_FAINT, CLAY, WATER, TOWEL, SAND,
+        PAPER, CARD, SUNK, LINE, INK, INK_DIM, INK_FAINT, CLAY, WATER, TOWEL,
+        SAND, SAGE, CRIT, GLASS, CAP, SKIN, SKIN_LINE,
     ]
     # Dots and water are drawn semi-transparent over two backgrounds, so the
     # blends need to exist in the palette or they dither.
     for bg in (SUNK, CARD):
-        for fg in (CLAY, WATER, SAND, TOWEL, INK_FAINT, SKIN, SKIN_LINE):
+        for fg in (CLAY, WATER, SAND, TOWEL, INK_FAINT, SKIN, SKIN_LINE, SAGE, CRIT):
             for a in (0.15, 0.25, 0.35, 0.5, 0.65, 0.8, 0.92):
                 colours.append(tuple(int(f * a + b * (1 - a)) for f, b in zip(fg, bg)))
     colours = list(dict.fromkeys(colours))[:256]

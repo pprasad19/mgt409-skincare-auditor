@@ -5951,5 +5951,93 @@
       "cache_write_tokens": 464,
       "output_tokens": 597
     }
+  },
+  {
+    "run_id": "49186fbc",
+    "seq": 1,
+    "timestamp": "2026-10-25T04:53:16.338316+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 13,
+      "identified": 10,
+      "products": [
+        "Regenerist Ultra Rich",
+        "Hydrating Water Tint",
+        "Toleriane Double Repair Face Moisturizer",
+        "Cleansing Treatment",
+        "Hyaluronic Acid",
+        "Baby Cheeks All-in-One Hydrating Milk",
+        "Moisturizing Cream",
+        "Hydrating Facial Cleanser",
+        "Good Genes",
+        "Niacinamide 10% + Zinc 1%"
+      ],
+      "unreadable": [
+        "Small turquoise product with visible 'RoC' branding; product name cannot be read clearly.",
+        "Small pale bottle or tube partially hidden behind the Olay product near the lower-left/center.",
+        "Partially obscured white container behind the center products; label not readable."
+      ],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3118,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 0,
+      "output_tokens": 1038
+    }
+  },
+  {
+    "run_id": "49186fbc",
+    "seq": 2,
+    "timestamp": "2026-10-25T04:53:17.890331+00:00",
+    "agent": "skin_observer",
+    "step": "observe",
+    "defended": true,
+    "detail": {
+      "observations": [
+        {
+          "concern": "breakouts",
+          "confidence": "clear"
+        },
+        {
+          "concern": "redness",
+          "confidence": "possible"
+        },
+        {
+          "concern": "texture",
+          "confidence": "possible"
+        }
+      ],
+      "needs_a_clinician": false,
+      "lighting_note": false
+    },
+    "usage": {
+      "input_tokens": 1325,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 98
+    }
+  },
+  {
+    "run_id": "49186fbc",
+    "seq": 3,
+    "timestamp": "2026-10-25T04:53:18.419472+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3150,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 464,
+      "output_tokens": 597
+    }
   }
 ]

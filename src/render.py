@@ -26,7 +26,17 @@ import re
 import json
 from datetime import datetime
 
-from storyboard import scenes_for
+# Eight bottles is as many as fit on the shelf legibly.
+MAX_SHELF = 8
+
+# The opening act is drawn by filmstrip.py only. The in-page player has no
+# CSS for a shelf, a sort, a clash or a week, and handing it scenes it
+# cannot draw would show a bare face under a caption for four scenes --
+# a blank frame that looks like a step, which is the failure this project
+# keeps finding. The split is deliberate and test_storyboard checks it.
+OPENING_ANIMS = frozenset({"shelf", "sort", "clash", "week"})
+
+from storyboard import container_for, scenes_for
 from models import AuditNarrative, AuditResult
 
 SEVERITY_LABEL = {
@@ -450,7 +460,17 @@ table.prices .typ{font-size:11.5px;color:var(--ink-faint);display:block}
   text-transform:uppercase;color:var(--ink-dim);background:var(--sunk);
   border-radius:999px;padding:3px 11px}
 .film-why{margin-top:14px;font-size:12.5px;color:var(--ink-faint)}
-.film-bar{height:3px;background:var(--line);border-radius:2px;margin:16px 0 12px;
+/* One chip per step, the current one lit. The page has room for the names,
+   which the GIF does not, so here they are clickable: a ribbon you can
+   steer with beats a progress bar you can only watch. */
+.film-rib{display:flex;gap:5px;margin:16px 0 12px;flex-wrap:wrap}
+.film-rib button{flex:1 1 auto;min-width:0;font:inherit;font-size:11.5px;
+  padding:5px 7px;border-radius:7px;border:1px solid var(--line);
+  background:var(--sunk);color:var(--ink-faint);cursor:pointer;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
+.film-rib button.done{background:var(--card);color:var(--ink-dim)}
+.film-rib button.here{background:var(--clay);border-color:var(--clay);color:#fff}
+.film-bar{height:3px;background:var(--line);border-radius:2px;margin:0 0 12px;
   overflow:hidden}
 .film-fill{height:100%;width:0;background:var(--clay);border-radius:2px}
 .film-ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -1200,8 +1220,25 @@ FILM_JS = """
   var btnPlay= document.getElementById('f-play');
   var btnBack= document.getElementById('f-back');
   var btnNext= document.getElementById('f-next');
+  var elRib  = document.getElementById('f-rib');
 
   var i = 0, playing = false, timer = null, raf = null;
+
+  /* The ribbon doubles as a way in: a viewer who wants the retinol step
+   * should not have to sit through the cleanser to reach it. */
+  var RIB = (FILM[0] && FILM[0].ribbon) || [];
+  var ribBtns = RIB.map(function(label, n){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = label;
+    b.addEventListener('click', function(){
+      for(var k = 0; k < FILM.length; k++){
+        if(FILM[k].at === n){ stop(); show(k); return; }
+      }
+    });
+    elRib.appendChild(b);
+    return b;
+  });
 
   /* Drawing-units radius per dose, so the player and the GIF show the same
    * sizes. A rice grain and a dime are nearly four times apart and that
@@ -1278,6 +1315,9 @@ FILM_JS = """
     elWhy.textContent   = s.why || '';
     elWhy.style.display = s.why ? '' : 'none';
     elCount.textContent = (i + 1) + ' / ' + FILM.length;
+    ribBtns.forEach(function(b, n){
+      b.className = n === s.at ? 'here' : (n < s.at ? 'done' : '');
+    });
     runBar(s.screen);
     if(playing){
       clearTimeout(timer);
@@ -1394,39 +1434,177 @@ def _routine_gif(scenes: list[dict]) -> str:
     return "data:image/gif;base64," + base64.b64encode(data).decode("ascii")
 
 
+def _short(name: str, limit: int = 13) -> str:
+    """A product name small enough for the ribbon, cut at a word."""
+    name = " ".join(name.split())
+    if len(name) <= limit:
+        return name
+    cut = name[:limit].rsplit(" ", 1)[0]
+    return (cut or name[:limit]).rstrip(",.") + "\u2026"
+
+
+def _opening_scenes(audit, explain: dict, ribbon: list[str]) -> list[dict]:
+    """Shelf, sorted, clashing, rotating — before any technique is shown.
+
+    Reads only what the audit already contains. If a shelf has no conflict
+    and nothing alternates, those scenes are simply absent rather than
+    drawn empty: a film that opens by announcing it found nothing is worse
+    than one that gets on with it.
+    """
+    products = list(audit.products)
+    if not products:
+        return []
+
+    # Which half of the day each product ends up in.
+    where: dict[str, set[str]] = {}
+    for label, steps in (("am", audit.routine.am), ("pm", audit.routine.pm)):
+        for st in steps:
+            where.setdefault(st.product_name, set()).add(label)
+
+    items = []
+    for rp in products[:MAX_SHELF]:
+        name = rp.product.name
+        slots = where.get(name, set())
+        items.append({
+            "label": _short(name, 12),
+            "container": container_for(rp.form),
+            "slot": "both" if len(slots) > 1 else (next(iter(slots)) if slots else "off"),
+        })
+
+    base = {"points": [], "rest": [], "ribbon": ribbon, "at": -1,
+            "real": "", "where": "", "why": "", "form": "",
+            "container": "bottle", "dose": {"kind": "pea", "n": 1}}
+
+    extra = len(products) - len(items)
+    scenes = [{
+        **base,
+        "anim": "shelf",
+        "items": items,
+        "slot": "Your shelf",
+        "order": 0, "of": 0,
+        "name": f"{len(products)} products"
+                + (f" ({extra} more not shown)" if extra > 0 else ""),
+        "caption": "what the photographs showed",
+        "screen": 2.4,
+    }, {
+        **base,
+        "anim": "sort",
+        "items": items,
+        "slot": "Your shelf",
+        "order": 0, "of": 0,
+        "name": "Morning and evening",
+        "caption": f"{sum(1 for i in items if i['slot'] in ('am', 'both'))} in the morning, "
+                   f"{sum(1 for i in items if i['slot'] in ('pm', 'both'))} at night",
+        "screen": 2.6,
+    }]
+
+    # The worst conflict, if there is one. One is enough: the page lists
+    # them all, and a film that works through six of them is a list read
+    # aloud.
+    rank = {"critical": 0, "high": 1, "medium": 2, "low": 3}
+    clashes = [f for f in audit.findings
+               if getattr(f, "type", "") == "conflict" and len(f.products) >= 2]
+    clashes.sort(key=lambda f: rank.get(getattr(f, "severity", "low"), 9))
+    if clashes:
+        worst = clashes[0]
+        scenes.append({
+            **base,
+            "anim": "clash",
+            "pair": [_short(n, 15) for n in worst.products[:2]],
+            "containers": [
+                container_for(next((rp.form for rp in products
+                                    if rp.product.name == n), ""))
+                for n in worst.products[:2]
+            ],
+            "rule": worst.rule_id,
+            "slot": "Why this order",
+            "order": 0, "of": 0,
+            "name": explain.get(worst.rule_id) or worst.mechanism,
+            "caption": worst.guidance or "these two are kept apart",
+            "screen": 3.2,
+        })
+
+    alternating = [st for st in audit.routine.pm if st.frequency != "daily"]
+    if len(alternating) >= 2:
+        n = len(alternating)
+        scenes.append({
+            **base,
+            "anim": "week",
+            "rows": [{"label": _short(st.product_name, 15), "every": n, "offset": i}
+                     for i, st in enumerate(alternating)],
+            "slot": "Why this order",
+            "order": 0, "of": 0,
+            "name": f"{n} products rotate",
+            "caption": "one per night, so none of them is dropped",
+            "screen": 3.2,
+        })
+
+    return scenes
+
+
+def _merge_slots(slots: set[str]) -> str:
+    """How to label a product used once, or in both halves of the day."""
+    if slots == {"Morning", "Evening"}:
+        return "Morning and evening"
+    return next(iter(slots)) if slots else ""
+
+
 def _film_scenes(audit, specs: dict, explain: dict) -> list[dict]:
     """One scene per beat, for the player and the GIF alike.
 
     Built from the same `beats_for` the written steps and the audio use, so
     a duration can never say one thing in the text and another in the
     picture.
-    """
-    scenes: list[dict] = []
-    for slot, label, steps in (("am", "Morning", audit.routine.am),
-                               ("pm", "Evening", audit.routine.pm)):
-        for st in steps:
-            spec = specs.get(st.product_name)
-            beats = beats_for(spec)
-            for sc in scenes_for(st, spec, beats):
-                # The rule that put this step here, in the user's words where
-                # the narrator wrote one. A picture that cannot say why it is
-                # in this order is decoration.
-                why = ""
-                for rid in st.because:
-                    if rid in explain:
-                        why = f"{rid} · {explain[rid]}"
-                        break
-                else:
-                    if st.because:
-                        why = " · ".join(st.because)
-                scenes.append({
-                    **sc,
-                    "slot": label, "order": st.order, "of": len(steps),
-                    "name": st.product_name, "form": st.form,
-                    "why": why,
-                })
 
-    return scenes
+    Each product appears once. Walking the morning and then the evening
+    showed the cleanser, the niacinamide and the moisturiser twice each,
+    which was a third of the running time spent repeating itself. The
+    written routine below still lists both halves of the day in full --
+    that is a schedule, and a schedule has to repeat. This is a
+    demonstration of a technique, and a technique does not change between
+    breakfast and bedtime.
+    """
+    # Which halves of the day each product is used in, and the first step
+    # it appears as. Morning order first, then anything evening-only.
+    slots: dict[str, set[str]] = {}
+    firsts: list[tuple[str, object]] = []
+    for label, steps in (("Morning", audit.routine.am), ("Evening", audit.routine.pm)):
+        for st in steps:
+            if st.product_name not in slots:
+                slots[st.product_name] = set()
+                firsts.append((st.product_name, st))
+            slots[st.product_name].add(label)
+
+    ribbon = [_short(name) for name, _ in firsts]
+
+    scenes: list[dict] = []
+    for index, (name, st) in enumerate(firsts):
+        spec = specs.get(name)
+        beats = beats_for(spec)
+        for sc in scenes_for(st, spec, beats):
+            # The rule that put this step here, in the user's words where
+            # the narrator wrote one. A picture that cannot say why it is
+            # in this order is decoration.
+            why = ""
+            for rid in st.because:
+                if rid in explain:
+                    why = f"{rid} · {explain[rid]}"
+                    break
+            else:
+                if st.because:
+                    why = " · ".join(st.because)
+            scenes.append({
+                **sc,
+                "slot": _merge_slots(slots[name]),
+                "order": index + 1, "of": len(firsts),
+                "name": name, "form": st.form,
+                "why": why,
+                # Where this sits in the whole routine, so a frame is
+                # locatable even when the action resembles the last one.
+                "ribbon": ribbon, "at": index,
+            })
+
+    return _opening_scenes(audit, explain, ribbon) + scenes
 
 
 def _film_markup(scenes: list[dict], gif_uri: str = "") -> str:
@@ -1457,6 +1635,7 @@ def _film_markup(scenes: list[dict], gif_uri: str = "") -> str:
         '<p class="film-where" id="f-where"></p>'
         '<span class="film-real" id="f-real"></span>'
         '<p class="film-why" id="f-why"></p>'
+        '<div class="film-rib" id="f-rib"></div>'
         '<div class="film-bar"><div class="film-fill" id="f-fill"></div></div>'
         '<div class="film-ctl">'
         '<button type="button" id="f-play">Play</button>'
@@ -1546,7 +1725,8 @@ def render(
             })
 
     film_scenes = _film_scenes(audit, specs, explain)
-    film_markup = _film_markup(film_scenes, _routine_gif(film_scenes))
+    player_scenes = [sc for sc in film_scenes if sc["anim"] not in OPENING_ANIMS]
+    film_markup = _film_markup(player_scenes, _routine_gif(film_scenes))
 
     grid_data = '{}'
     parts: list[str] = []
@@ -2051,7 +2231,7 @@ def render(
 
     parts.append(
         f"<script>var DATA_STEPS={script_json(seq)};var MX_DATA={grid_data};"
-        f"var FILM={script_json(film_scenes)};"
+        f"var FILM={script_json(player_scenes)};"
         f"{JS}{SPEECH_JS}{GRID_JS}{LOADING_JS}{FILM_JS}"
         "document.getElementById('print').addEventListener('click',function(){window.print()});"
         "</script></body></html>"
