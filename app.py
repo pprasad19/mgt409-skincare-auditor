@@ -286,7 +286,28 @@ async def audit(
         if reading is not None:
             result.unreadable = list(reading.unreadable)
             result.visible_count = reading.visible_count
-        narrative, _ = await explain_audit(result, usage_log=log, trail=trail)
+        # The narrator is the last call, and by the time it runs the audit
+        # already exists and is already correct — the engine decided every
+        # finding, every severity and the whole routine without it. Letting
+        # a failure here return the generic error page threw all of that
+        # away, along with the shelf read the user already paid for, and
+        # told them the audit failed when it had not.
+        #
+        # render() has always accepted narrative=None: the page falls back
+        # to the engine's own guidance text for each finding. Less
+        # readable, entirely true.
+        try:
+            narrative, _ = await explain_audit(result, usage_log=log, trail=trail)
+        except Exception:
+            traceback.print_exc()
+            narrative = None
+            notes_from_narrator = [
+                "The plain-language write-up could not be generated this time. "
+                "Everything below is the audit itself, which does not depend on "
+                "it — the wording is the engine's own rather than rephrased."
+            ]
+        else:
+            notes_from_narrator = []
         log.write()
 
         # A trap tool firing means an agent tried to do something no task
@@ -304,7 +325,7 @@ async def audit(
                         "count": len(fired)},
             )
 
-        notes = [t.note for t in trims]
+        notes = [t.note for t in trims] + notes_from_narrator
         for pname, lost in url_suppressed.items():
             notes.append(
                 f"The page for {pname} lists " + ", ".join(lost)
