@@ -232,6 +232,10 @@ class ReadProduct(BaseModel):
         default=False,
         description="True only if the user said they do not use it.",
     )
+    region: Region | None = Field(
+        default=None,
+        description="Where this product sits in the photograph, when it came from one.",
+    )
     label_text: str = Field(
         default="",
         description="Every word visible on the label, transcribed verbatim and in "
@@ -241,12 +245,37 @@ class ReadProduct(BaseModel):
     )
 
 
+class Region(BaseModel):
+    """Where something sits in a photograph, as fractions of width and height.
+
+    Fractions rather than pixels so the box survives whatever resizing happens
+    between the upload and the annotated copy. Vision models are approximate
+    at this, so these are "roughly here", not outlines.
+    """
+
+    label: str
+    bbox: list[float] = Field(
+        default_factory=list,
+        description="[x0, y0, x1, y1], each 0-1 from the top-left of the image.",
+    )
+    image_index: int = Field(
+        default=0,
+        description="Which uploaded photograph, when there is more than one.",
+    )
+
+
 class ShelfReading(BaseModel):
     products: list[ReadProduct] = Field(default_factory=list)
     unreadable: list[str] = Field(
         default_factory=list,
         description="Things visible but not identifiable. Recording them is how "
                     "the system admits what it missed instead of quietly dropping it.",
+    )
+    unreadable_regions: list[Region] = Field(
+        default_factory=list,
+        description="Where those unidentified items are, so the photograph can be "
+                    "marked up. A list of descriptions tells someone they missed "
+                    "something; a box tells them which bottle.",
     )
     suspicious_text: list[str] = Field(
         default_factory=list,

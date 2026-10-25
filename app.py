@@ -26,6 +26,7 @@ from fastapi import FastAPI, File, Form, UploadFile  # noqa: E402
 from fastapi.responses import HTMLResponse  # noqa: E402
 
 from agents import explain_audit, new_run_id, read_shelf  # noqa: E402
+from annotate import annotate, boxes_for  # noqa: E402
 from limits import MAX_IMAGE_BYTES, Trim  # noqa: E402
 from models import InputProduct  # noqa: E402
 from pages import error_page, landing  # noqa: E402
@@ -143,7 +144,18 @@ async def audit(
             )
         result.routine.notes.extend(notes)
 
-        return HTMLResponse(render(result, narrative))
+        # Mark the photographs up before the temp directory goes away.
+        grouped = boxes_for(reading, result)
+        annotated = []
+        for i, path in enumerate(paths):
+            boxes = grouped.get(i, [])
+            if not boxes:
+                continue
+            uri = annotate(path.read_bytes(), boxes)
+            if uri:
+                annotated.append(uri)
+
+        return HTMLResponse(render(result, narrative, annotated or None))
 
     except Exception:  # noqa: BLE001
         # Never show a stack trace to someone who uploaded a photo of their

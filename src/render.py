@@ -991,7 +991,11 @@ def _print_card(audit: AuditResult, specs: dict) -> str:
     )
 
 
-def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
+def render(
+    audit: AuditResult,
+    narrative: AuditNarrative | None = None,
+    annotated: list[str] | None = None,
+) -> str:
     specs = {s.product_name: s for s in (narrative.steps if narrative else [])}
     explain = {x.rule_id: x.plain_language for x in (narrative.explanations if narrative else [])}
     w = audit.waste
@@ -1147,6 +1151,25 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
             parts.append(_step_row(s, specs.get(s.product_name), slot, len(steps)))
         parts.append("</div>")
     parts.append("</div>")
+
+    if annotated:
+        parts.append("<h2>Your photographs, marked up</h2>")
+        parts.append(
+            '<p class="lede">Green was read off the label. Amber was identified by '
+            "name, so check the bottle. Red was not read at all and is not in this "
+            "audit — photograph those again, back label if you can.</p>"
+        )
+        parts.append('<div class="shots">')
+        for uri in annotated:
+            parts.append(f'<div class="shot"><img src="{uri}" alt="Marked-up shelf photograph"></div>')
+        parts.append("</div>")
+        parts.append(
+            '<div class="shotkey">'
+            '<span><i style="background:#689663"></i>read from the label</span>'
+            '<span><i style="background:#c68e3a"></i>identified by name</span>'
+            '<span><i style="background:#b0483a"></i>not read</span>'
+            "</div>"
+        )
 
     week = _week_grid(audit)
     if week:
