@@ -288,6 +288,12 @@ class AuditResult(BaseModel):
         default_factory=list,
         description="Things the reader saw in a photograph but could not identify at all.",
     )
+    visible_count: int = Field(
+        default=0,
+        description="Distinct products the reader could see. Compared against the "
+                    "number identified so a shortfall is stated rather than left "
+                    "for the user to notice.",
+    )
     rules_verified: int = 0
     rules_total: int = 0
 
@@ -358,6 +364,16 @@ class ShelfReading(BaseModel):
         default_factory=list,
         description="Things visible but not identifiable. Recording them is how "
                     "the system admits what it missed instead of quietly dropping it.",
+    )
+    visible_count: int = Field(
+        default=0,
+        description="How many distinct skincare products are visible in the "
+                    "photographs, counted whether or not they could be identified. "
+                    "Counting and identifying are different jobs: an unreadable "
+                    "entry saying \"several bottles along the lower shelf\" is one "
+                    "description covering an unknown number of products, so the "
+                    "list of what was missed cannot be used to work out how much "
+                    "was missed.",
     )
     unreadable_regions: list[Region] = Field(
         default_factory=list,

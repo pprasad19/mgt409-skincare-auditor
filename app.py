@@ -234,6 +234,7 @@ async def audit(
         result = RULES.audit(products, gate_ids, trims=trims, concerns=concern_ids)
         if reading is not None:
             result.unreadable = list(reading.unreadable)
+            result.visible_count = reading.visible_count
         narrative, _ = await explain_audit(result, usage_log=log, trail=trail)
         log.write()
 

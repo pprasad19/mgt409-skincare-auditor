@@ -748,6 +748,20 @@ def e(text: object) -> str:
     return html.escape(str(text), quote=True)
 
 
+def _shortfall(audit) -> str:
+    """How many products were seen but not identified, for the headline.
+
+    Prefers the reader's own count of what is in the picture over the number
+    of unreadable entries, because one entry can describe several products.
+    A user who handed over thirteen and reads twelve should not have to work
+    out where the other one went.
+    """
+    seen = audit.visible_count
+    identified = len(audit.products)
+    missed = max(seen - identified, 0) if seen else len(audit.unreadable)
+    return f"{missed} not identified · " if missed else ""
+
+
 def _stat(value: str, label: str, tone: str = "") -> str:
     cls = f"stat {tone}".strip()
     return f'<div class="{cls}"><div class="n">{e(value)}</div><div class="l">{e(label)}</div></div>'
@@ -1104,7 +1118,7 @@ def render(
         # in a note below it. A user who handed over thirteen products and
         # read "12 products" has to go looking for the missing one; told "12
         # products · 2 not identified" they already know where it went.
-        f'{f"{len(audit.unreadable)} not identified · " if audit.unreadable else ""}'
+        f'{_shortfall(audit)}'
         f'{len(audit.findings)} finding'
         f'{"s" if len(audit.findings) != 1 else ""}</p>'
     )

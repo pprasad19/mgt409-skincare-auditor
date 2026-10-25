@@ -6323,5 +6323,255 @@
       "output": 0.000169,
       "total": 0.00024495
     }
+  },
+  {
+    "run_id": "39ed3f4a",
+    "run_label": "web-797feb49",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-25T03:03:32.485391+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "1,536 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3103,
+      "cache_read_tokens": 1536,
+      "cache_write_tokens": 0,
+      "output_tokens": 1271,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001567,
+      "cached_input": 1.536e-05,
+      "cache_write": 0.0,
+      "output": 0.0006355,
+      "total": 0.00080756
+    }
+  },
+  {
+    "run_id": "39ed3f4a",
+    "run_label": "web-797feb49",
+    "step": "lookup:KALE + GREEN TEA SPINACH VITAM",
+    "timestamp": "2026-10-25T03:03:49.919911+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 1,494 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 2316,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1494,
+      "output_tokens": 503,
+      "requests": 2,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 8.22e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00018675,
+      "output": 0.0002515,
+      "total": 0.00052045
+    }
+  },
+  {
+    "run_id": "39ed3f4a",
+    "run_label": "web-797feb49",
+    "step": "lookup:LA ROCHE-POSAY HYDRATING GENTL",
+    "timestamp": "2026-10-25T03:04:09.196418+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 1,546 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 2364,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1546,
+      "output_tokens": 419,
+      "requests": 2,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 8.18e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00019325,
+      "output": 0.0002095,
+      "total": 0.00048455
+    }
+  },
+  {
+    "run_id": "39ed3f4a",
+    "run_label": "web-797feb49",
+    "step": "lookup:INKEY LIST MAKEUP MELTING CLEA",
+    "timestamp": "2026-10-25T03:04:31.279002+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 1,337 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 2152,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1337,
+      "output_tokens": 373,
+      "requests": 2,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 8.15e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00016713,
+      "output": 0.0001865,
+      "total": 0.00043513
+    }
+  },
+  {
+    "run_id": "39ed3f4a",
+    "run_label": "web-797feb49",
+    "step": "lookup:CeraVe Hydrating Toner",
+    "timestamp": "2026-10-25T03:04:41.561361+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": false,
+    "cache_mode_note": "cache requested but neither read nor written (prompt below the floor?)",
+    "tokens": {
+      "input_tokens": 1799,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 384,
+      "requests": 2,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001799,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 0.000192,
+      "total": 0.0003719
+    }
+  },
+  {
+    "run_id": "39ed3f4a",
+    "run_label": "web-797feb49",
+    "step": "lookup:LA ROCHE-POSAY TOLERIANE DOUBL",
+    "timestamp": "2026-10-25T03:05:01.712823+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 1,348 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 2170,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1348,
+      "output_tokens": 404,
+      "requests": 2,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 8.22e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.0001685,
+      "output": 0.000202,
+      "total": 0.0004527
+    }
+  },
+  {
+    "run_id": "39ed3f4a",
+    "run_label": "web-797feb49",
+    "step": "lookup:U Beauty The Super Hydrator",
+    "timestamp": "2026-10-25T03:05:17.527148+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 2,253 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 3063,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2253,
+      "output_tokens": 650,
+      "requests": 2,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 8.1e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00028162,
+      "output": 0.000325,
+      "total": 0.00068762
+    }
+  },
+  {
+    "run_id": "39ed3f4a",
+    "run_label": "web-797feb49",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-25T03:05:23.741941+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 3,372 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 3498,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3372,
+      "output_tokens": 1269,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.0004215,
+      "output": 0.0006345,
+      "total": 0.0010686
+    }
+  },
+  {
+    "run_id": "cd5d8345",
+    "run_label": "web-cf4c96c1",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-25T03:09:40.516727+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": false,
+    "cache_mode_note": "cache requested but neither read nor written (prompt below the floor?)",
+    "tokens": {
+      "input_tokens": 3252,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 256,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 0.0003252,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 0.000128,
+      "total": 0.0004532
+    }
+  },
+  {
+    "run_id": "cd5d8345",
+    "run_label": "web-cf4c96c1",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-25T03:09:42.253079+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,560 tokens read from cache",
+    "tokens": {
+      "input_tokens": 2774,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 88,
+      "output_tokens": 178,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.56e-05,
+      "cache_write": 1.1e-05,
+      "output": 8.9e-05,
+      "total": 0.0001382
+    }
   }
 ]

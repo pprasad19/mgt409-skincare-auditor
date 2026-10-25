@@ -136,6 +136,23 @@ that no longer contains the active, and the user checks the bottle. Being
 wrong in the other direction is silent, and the user keeps degrading an
 expensive product with no idea anything is wrong.
 
+## Count everything, then identify what you can
+
+Set **visible_count** to the number of distinct skincare products you can
+see, whether or not you could name them. A bottle turned away from the
+camera still counts. A box behind another box counts if you can tell it is
+there.
+
+This is a separate job from identifying, and it matters because the two
+numbers tell the user different things. Someone who handed over thirteen
+products and reads "12 products" wants to know whether the thirteenth was
+missed or merged. The count answers that; the list of things you could not
+read does not, because one entry saying "several bottles along the lower
+shelf" might be covering five of them.
+
+Count carefully and do not round. If you are unsure whether two shapes are
+one product or two, count two and say so in `unreadable`.
+
 ## Partial information is fine
 
 A shelf photo taken in a real bathroom will have products at angles, behind
