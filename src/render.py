@@ -25,6 +25,7 @@ import re
 import json
 from datetime import datetime
 
+from storyboard import scenes_for
 from models import AuditNarrative, AuditResult
 
 SEVERITY_LABEL = {
@@ -346,6 +347,94 @@ table.prices .typ{font-size:11.5px;color:var(--ink-faint);display:block}
 }
 .lmsg{font:400 19px/1.45 var(--serif);color:var(--ink);min-height:28px}
 .lsub{font-size:13.5px;color:var(--ink-faint);margin-top:10px}
+
+/* The routine, drawn moving. See src/storyboard.py for why this is drawn
+   rather than generated: a clip from a video model could not cite a rule or
+   show the user's own products, and every other screen here can. */
+.film{margin:34px 0 10px;background:var(--card);border:1px solid var(--line);
+  border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.film-top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+  padding:18px 22px 0}
+.film-top h3{margin:0;font:600 18px/1.3 var(--serif)}
+.film-note{font-size:12.5px;color:var(--ink-faint)}
+.film-body{display:grid;grid-template-columns:270px 1fr;gap:26px;padding:16px 22px 22px;align-items:start}
+@media(max-width:620px){.film-body{grid-template-columns:1fr}}
+.stage{background:var(--sunk);border-radius:14px;padding:4px 18px;position:relative}
+.stage svg{display:block;width:100%;height:auto}
+.face-line{fill:none;stroke:var(--ink-faint);stroke-width:1.6;stroke-linecap:round}
+.face-skin{fill:var(--card)}
+
+/* Product dots. One per anchor; the driver staggers them with --d so a
+   whole-face application lands as a spread, not a single flash. */
+.pd{fill:var(--clay);opacity:0;transform-box:fill-box;transform-origin:center}
+.stage[data-anim="dab"]    .pd{animation:pd-dab   1.1s ease-out     infinite var(--d)}
+.stage[data-anim="orbit"]  .pd{animation:pd-orbit 1.5s linear       infinite var(--d)}
+.stage[data-anim="foam"]   .pd{animation:pd-foam  1.6s ease-in-out  infinite var(--d)}
+.stage[data-anim="press"]  .pd{animation:pd-press 1.9s ease-in-out  infinite var(--d)}
+.stage[data-anim="tap"]    .pd{animation:pd-tap   .75s ease-in-out  infinite var(--d)}
+.stage[data-anim="sweep"]  .pd{animation:pd-sweep 1.7s ease-in-out  infinite var(--d)}
+.stage[data-anim="absorb"] .pd,
+.stage[data-anim="rinse"]  .pd,
+.stage[data-anim="towel"]  .pd{animation:none;opacity:0}
+
+@keyframes pd-dab{0%{opacity:0;transform:scale(.2)}
+  30%{opacity:.95;transform:scale(1)}100%{opacity:.5;transform:scale(1)}}
+@keyframes pd-orbit{0%{opacity:.9;transform:translate(0,0)}
+  25%{transform:translate(5px,-4px)}50%{transform:translate(0,-6px)}
+  75%{transform:translate(-5px,-4px)}100%{opacity:.9;transform:translate(0,0)}}
+@keyframes pd-foam{0%{opacity:.9;transform:scale(1) translate(0,0)}
+  40%{opacity:.75;transform:scale(1.9) translate(4px,-3px)}
+  70%{opacity:.6;transform:scale(2.4) translate(-3px,2px)}
+  100%{opacity:.9;transform:scale(1) translate(0,0)}}
+@keyframes pd-press{0%{opacity:.35;transform:scale(1.5)}
+  45%{opacity:.95;transform:scale(.72)}75%{opacity:.95;transform:scale(.72)}
+  100%{opacity:.35;transform:scale(1.5)}}
+@keyframes pd-tap{0%{opacity:.9;transform:translateY(0) scale(1)}
+  50%{opacity:1;transform:translateY(-3.5px) scale(.85)}
+  100%{opacity:.9;transform:translateY(0) scale(1)}}
+@keyframes pd-sweep{0%{opacity:0;transform:translateX(0) scale(.6)}
+  25%{opacity:.95;transform:translateX(0) scale(1)}
+  100%{opacity:.25;transform:translateX(var(--out,6px)) scale(1.25)}}
+
+/* Finishes. Water runs down, a towel presses, absorbing is a slow sheen. */
+.water{opacity:0}
+.wstream{fill:none;stroke:#7fa6bf;stroke-width:2.4;stroke-linecap:round;opacity:0}
+.stage[data-anim="rinse"] .wstream{animation:water 1.2s linear infinite}
+.stage[data-anim="rinse"] .water{opacity:1}
+.stage[data-anim="rinse"] .wstream:nth-child(2){animation-delay:.18s}
+.stage[data-anim="rinse"] .wstream:nth-child(3){animation-delay:.36s}
+@keyframes water{0%{opacity:0;transform:translateY(-16px)}
+  20%{opacity:.75}80%{opacity:.75}100%{opacity:0;transform:translateY(30px)}}
+.towel{opacity:0;transform-box:fill-box;transform-origin:center}
+.stage[data-anim="towel"] .towel{animation:towel 1.4s ease-in-out infinite}
+@keyframes towel{0%,100%{opacity:0;transform:scale(.9)}
+  35%,65%{opacity:.55;transform:scale(1)}}
+.sheen{opacity:0}
+.stage[data-anim="absorb"] .sheen{animation:sheen 2.4s ease-in-out infinite}
+@keyframes sheen{0%,100%{opacity:0}50%{opacity:.55}}
+
+/* The caption column. */
+.film-step{font:600 17px/1.35 var(--serif);margin:2px 0 2px}
+.film-form{font-size:12.5px;color:var(--ink-faint);margin-bottom:14px;letter-spacing:.04em;text-transform:lowercase}
+.film-do{font-size:15.5px;color:var(--ink);margin:0 0 4px}
+.film-where{font-size:13.5px;color:var(--ink-dim);margin:0 0 10px}
+.film-real{display:inline-block;font-size:11.5px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--ink-dim);background:var(--sunk);
+  border-radius:999px;padding:3px 11px}
+.film-why{margin-top:14px;font-size:12.5px;color:var(--ink-faint)}
+.film-bar{height:3px;background:var(--line);border-radius:2px;margin:16px 0 12px;
+  overflow:hidden}
+.film-fill{height:100%;width:0;background:var(--clay);border-radius:2px}
+.film-ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.film-ctl button{font:inherit;font-size:14px;padding:7px 15px;border-radius:999px;
+  border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.film-ctl button:hover{background:var(--sunk)}
+.film-ctl button.on{background:var(--clay);border-color:var(--clay);color:#fff}
+.film-count{font-size:12.5px;color:var(--ink-faint);margin-left:auto}
+@media(prefers-reduced-motion:reduce){
+  .stage *{animation:none !important}
+  .pd{opacity:.85 !important}
+}
 
 /* Guided mode */
 .guide{position:fixed;inset:0;background:rgba(246,242,236,.96);z-index:50;
@@ -1057,6 +1146,104 @@ def _week_grid(audit: AuditResult) -> str:
     )
 
 
+FACE_SVG = '<svg viewBox="0 0 200 240" role="img" aria-label="A drawn face showing where to apply each product"><ellipse class="face-skin" cx="100" cy="124" rx="63" ry="84"/><ellipse class="face-line" cx="100" cy="124" rx="63" ry="84"/><path class="face-line" d="M62 96q14-8 28-2"/><path class="face-line" d="M110 94q14-6 28 2"/><path class="face-line" d="M66 110q10-7 20 0"/><path class="face-line" d="M114 110q10-7 20 0"/><path class="face-line" d="M100 112v20q0 5 6 6"/><path class="face-line" d="M86 166q14 9 28 0"/><path class="face-line" d="M74 198q4 18 0 26"/><path class="face-line" d="M126 198q-4 18 0 26"/><g class="water"><path class="wstream" d="M76 60v34"/><path class="wstream" d="M100 52v40"/><path class="wstream" d="M124 60v34"/></g><g class="towel"><rect x="44" y="92" width="112" height="64" rx="14" fill="#cfd8cd" stroke="#b6c3b4" stroke-width="1.5"/></g><g class="sheen"><ellipse cx="100" cy="124" rx="55" ry="74" fill="none" stroke="var(--sand)" stroke-width="3" stroke-dasharray="5 7"/></g><g id="pdots"></g></svg>'
+
+FILM_JS = """
+/* The routine animation. Scenes come from src/storyboard.py; this only plays
+ * them. Screen time is compressed — the real duration is printed next to each
+ * scene — because the preview is for learning the order, and guided mode is
+ * for standing at the sink. */
+(function(){
+  var root = document.getElementById('film');
+  if(!root || !window.FILM || !FILM.length) return;
+
+  var stage = document.getElementById('stage');
+  var dots  = document.getElementById('pdots');
+  var elStep = document.getElementById('f-step');
+  var elForm = document.getElementById('f-form');
+  var elDo   = document.getElementById('f-do');
+  var elWhere= document.getElementById('f-where');
+  var elReal = document.getElementById('f-real');
+  var elWhy  = document.getElementById('f-why');
+  var elFill = document.getElementById('f-fill');
+  var elCount= document.getElementById('f-count');
+  var btnPlay= document.getElementById('f-play');
+  var btnBack= document.getElementById('f-back');
+  var btnNext= document.getElementById('f-next');
+
+  var i = 0, playing = false, timer = null, raf = null;
+
+  function draw(scene){
+    while(dots.firstChild) dots.removeChild(dots.firstChild);
+    stage.setAttribute('data-anim', scene.anim);
+    scene.points.forEach(function(p, n){
+      var c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx', p.x); c.setAttribute('cy', p.y); c.setAttribute('r', 5.5);
+      c.setAttribute('class','pd');
+      /* Stagger, and push sweeps outward from the midline so the motion
+       * reads as spreading rather than drifting sideways. */
+      c.style.setProperty('--d', (n * 0.09).toFixed(2) + 's');
+      c.style.setProperty('--out', (p.x < 100 ? -7 : 7) + 'px');
+      dots.appendChild(c);
+    });
+  }
+
+  function show(n){
+    i = (n + FILM.length) % FILM.length;
+    var s = FILM[i];
+    draw(s);
+    elStep.textContent  = s.slot + ' step ' + s.order + ' of ' + s.of + ' — ' + s.name;
+    elForm.textContent = s.form || '';
+    elForm.style.display = s.form ? '' : 'none';
+    elDo.textContent    = s.caption;
+    elWhere.textContent = s.where ? 'on ' + s.where : '';
+    elWhere.style.display = s.where ? '' : 'none';
+    elReal.textContent  = s.real;
+    elWhy.textContent   = s.why || '';
+    elWhy.style.display = s.why ? '' : 'none';
+    elCount.textContent = (i + 1) + ' / ' + FILM.length;
+    runBar(s.screen);
+    if(playing){
+      clearTimeout(timer);
+      timer = setTimeout(function(){
+        if(i === FILM.length - 1){ stop(); } else { show(i + 1); }
+      }, s.screen * 1000);
+    }
+  }
+
+  function runBar(secs){
+    cancelAnimationFrame(raf);
+    var t0 = performance.now();
+    elFill.style.width = '0%';
+    (function tick(now){
+      var pct = Math.min((now - t0) / (secs * 1000), 1) * 100;
+      elFill.style.width = pct.toFixed(1) + '%';
+      if(pct < 100 && playing) raf = requestAnimationFrame(tick);
+    })(t0);
+  }
+
+  function play(){
+    playing = true;
+    btnPlay.textContent = 'Pause';
+    btnPlay.classList.add('on');
+    show(i);
+  }
+  function stop(){
+    playing = false;
+    clearTimeout(timer); cancelAnimationFrame(raf);
+    btnPlay.textContent = 'Play';
+    btnPlay.classList.remove('on');
+  }
+
+  btnPlay.addEventListener('click', function(){ playing ? stop() : play(); });
+  btnBack.addEventListener('click', function(){ stop(); show(i - 1); });
+  btnNext.addEventListener('click', function(){ stop(); show(i + 1); });
+
+  show(0);
+})();
+"""
+
+
 def beats_for(spec) -> list[dict]:
     """The physical sequence for one step: apply, then finish, then any wait.
 
@@ -1104,6 +1291,66 @@ def beats_for(spec) -> list[dict]:
         })
 
     return out
+
+
+def _film(audit, specs: dict, explain: dict) -> tuple[str, list[dict]]:
+    """The routine, drawn moving, one scene per beat.
+
+    Returns the markup and the scene list. The scenes are built from the same
+    `beats_for` the written steps and the audio use, so a duration can never
+    say one thing in the text and another in the picture.
+    """
+    scenes: list[dict] = []
+    for slot, label, steps in (("am", "Morning", audit.routine.am),
+                               ("pm", "Evening", audit.routine.pm)):
+        for st in steps:
+            spec = specs.get(st.product_name)
+            beats = beats_for(spec)
+            for sc in scenes_for(st, spec, beats):
+                # The rule that put this step here, in the user's words where
+                # the narrator wrote one. A picture that cannot say why it is
+                # in this order is decoration.
+                why = ""
+                for rid in st.because:
+                    if rid in explain:
+                        why = f"{rid} · {explain[rid]}"
+                        break
+                else:
+                    if st.because:
+                        why = " · ".join(st.because)
+                scenes.append({
+                    **sc,
+                    "slot": label, "order": st.order, "of": len(steps),
+                    "name": st.product_name, "form": st.form,
+                    "why": why,
+                })
+
+    if not scenes:
+        return "", []
+
+    markup = (
+        '<section class="film" id="film">'
+        '<div class="film-top"><h3>Watch the routine</h3>'
+        '<span class="film-note">A preview, sped up. Each scene shows how long '
+        'it actually takes.</span></div>'
+        '<div class="film-body">'
+        f'<div class="stage" id="stage" data-anim="dab">{FACE_SVG}</div>'
+        '<div>'
+        '<p class="film-step" id="f-step"></p>'
+        '<p class="film-form" id="f-form"></p>'
+        '<p class="film-do" id="f-do"></p>'
+        '<p class="film-where" id="f-where"></p>'
+        '<span class="film-real" id="f-real"></span>'
+        '<p class="film-why" id="f-why"></p>'
+        '<div class="film-bar"><div class="film-fill" id="f-fill"></div></div>'
+        '<div class="film-ctl">'
+        '<button type="button" id="f-play">Play</button>'
+        '<button type="button" id="f-back">Back</button>'
+        '<button type="button" id="f-next">Next</button>'
+        '<span class="film-count" id="f-count"></span>'
+        '</div></div></div></section>'
+    )
+    return markup, scenes
 
 
 def _print_card(audit: AuditResult, specs: dict) -> str:
@@ -1182,6 +1429,8 @@ def render(
                 "name": s_.product_name, "freq": s_.frequency,
                 "beats": beats_for(specs.get(s_.product_name)),
             })
+
+    film_markup, film_scenes = _film(audit, specs, explain)
 
     grid_data = '{}'
     parts: list[str] = []
@@ -1374,6 +1623,9 @@ def render(
             parts.append(_step_row(s, specs.get(s.product_name), slot, len(steps)))
         parts.append("</div>")
     parts.append("</div>")
+
+    if film_markup:
+        parts.append(film_markup)
 
     if annotated:
         parts.append("<h2>Your photographs, marked up</h2>")
@@ -1683,7 +1935,8 @@ def render(
 
     parts.append(
         f"<script>var DATA_STEPS={script_json(seq)};var MX_DATA={grid_data};"
-        f"{JS}{SPEECH_JS}{GRID_JS}{LOADING_JS}"
+        f"var FILM={script_json(film_scenes)};"
+        f"{JS}{SPEECH_JS}{GRID_JS}{LOADING_JS}{FILM_JS}"
         "document.getElementById('print').addEventListener('click',function(){window.print()});"
         "</script></body></html>"
     )

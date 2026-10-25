@@ -5441,5 +5441,200 @@
       "cache_write_tokens": 0,
       "output_tokens": 792
     }
+  },
+  {
+    "run_id": "3eae9345",
+    "seq": 1,
+    "timestamp": "2026-10-25T03:25:12.733427+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 9,
+      "identified": 9,
+      "products": [
+        "the cleansing foam / la mousse d\u00e9maquillante",
+        "pr\u0438\u043cera",
+        "[blue bottle with Korean text]",
+        "[blue-and-white bottle with pump]",
+        "[dark blue bottle, label partly obscured]",
+        "[white bottle]",
+        "[purple jar]",
+        "[wide dark jar with green label]",
+        "[partly hidden pale container]"
+      ],
+      "unreadable": [
+        "Partly hidden pale container behind the La Mer tube and dark blue bottle; product name is not readable."
+      ],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3198,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 0,
+      "output_tokens": 792
+    }
+  },
+  {
+    "run_id": "3eae9345",
+    "seq": 2,
+    "timestamp": "2026-10-25T03:25:14.659834+00:00",
+    "agent": "skin_observer",
+    "step": "observe",
+    "defended": true,
+    "detail": {
+      "observations": [
+        {
+          "concern": "breakouts",
+          "confidence": "clear"
+        },
+        {
+          "concern": "redness",
+          "confidence": "possible"
+        },
+        {
+          "concern": "texture",
+          "confidence": "possible"
+        }
+      ],
+      "needs_a_clinician": false,
+      "lighting_note": false
+    },
+    "usage": {
+      "input_tokens": 1325,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 98
+    }
+  },
+  {
+    "run_id": "3eae9345",
+    "seq": 3,
+    "timestamp": "2026-10-25T03:25:34.509489+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 18,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3074,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 388,
+      "output_tokens": 875
+    }
+  },
+  {
+    "run_id": "d6a51459",
+    "seq": 1,
+    "timestamp": "2026-10-25T03:26:58.689322+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 3,
+      "steps": 16,
+      "rejected": [
+        "verification caveat stripped from summary",
+        "application spec for unknown product 'primera pr\u0438\u043c\u0435\u0440\u0430'"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3338,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 652,
+      "output_tokens": 1021
+    }
+  },
+  {
+    "run_id": "623f3ed6",
+    "seq": 1,
+    "timestamp": "2026-10-25T03:29:19.867892+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 13,
+      "identified": 10,
+      "products": [
+        "Regenerist Ultra Rich",
+        "Hydrating Water Tint",
+        "Toleriane Double Repair Face Moisturizer",
+        "Cleansing Treatment",
+        "Hyaluronic Acid",
+        "Baby Cheeks All-in-One Hydrating Milk",
+        "Moisturizing Cream",
+        "Hydrating Facial Cleanser",
+        "Good Genes",
+        "Niacinamide 10% + Zinc 1%"
+      ],
+      "unreadable": [
+        "Small turquoise product with visible 'RoC' branding; product name cannot be read clearly.",
+        "Small pale bottle or tube partially hidden behind the Olay product near the lower-left/center.",
+        "Partially obscured white container behind the center products; label not readable."
+      ],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3118,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 0,
+      "output_tokens": 1038
+    }
+  },
+  {
+    "run_id": "623f3ed6",
+    "seq": 2,
+    "timestamp": "2026-10-25T03:29:20.767933+00:00",
+    "agent": "skin_observer",
+    "step": "observe",
+    "defended": true,
+    "detail": {
+      "observations": [
+        {
+          "concern": "breakouts",
+          "confidence": "clear"
+        },
+        {
+          "concern": "redness",
+          "confidence": "possible"
+        },
+        {
+          "concern": "texture",
+          "confidence": "possible"
+        }
+      ],
+      "needs_a_clinician": false,
+      "lighting_note": false
+    },
+    "usage": {
+      "input_tokens": 1325,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 98
+    }
+  },
+  {
+    "run_id": "623f3ed6",
+    "seq": 3,
+    "timestamp": "2026-10-25T03:31:08.613540+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3150,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 464,
+      "output_tokens": 597
+    }
   }
 ]

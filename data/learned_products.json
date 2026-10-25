@@ -9,6 +9,26 @@
     "source_url": "",
     "typical_price_usd": null
   },
+  "[partly hidden pale container]": {
+    "found": false,
+    "inci": [],
+    "looked_up": "2026-10-25T03:26:53.763630+00:00",
+    "matched_name": "",
+    "note": "",
+    "price_source_url": "",
+    "source_url": "",
+    "typical_price_usd": null
+  },
+  "[wide dark jar with green label]": {
+    "found": false,
+    "inci": [],
+    "looked_up": "2026-10-25T03:26:48.620742+00:00",
+    "matched_name": "",
+    "note": "",
+    "price_source_url": "",
+    "source_url": "",
+    "typical_price_usd": null
+  },
   "cerave [blue-and-white bottle with pump]": {
     "found": true,
     "inci": [
@@ -77,6 +97,16 @@
     "price_source_url": "https://www.target.com/p/cerave-hydrating-toner-for-face-alcohol-free-facial-toner-for-normal-to-dry-skin-6-8-fl-oz/-/A-84230687",
     "source_url": "https://www.cerave.com/skincare/cleansers/hydrating-toner",
     "typical_price_usd": 10.89
+  },
+  "e.l.f. hydrating water tint": {
+    "found": false,
+    "inci": [],
+    "looked_up": "2026-10-25T03:29:52.763906+00:00",
+    "matched_name": "",
+    "note": "",
+    "price_source_url": "",
+    "source_url": "",
+    "typical_price_usd": null
   },
   "glytone acne treatment lotion": {
     "found": true,
@@ -316,6 +346,84 @@
     "source_url": "https://www.laroche-posay.us/our-products/face/face-moisturizer/toleriane-double-repair-face-moisturizer-tolerianedoublerepair.html",
     "typical_price_usd": 24.99
   },
+  "mixsoon [white bottle]": {
+    "found": false,
+    "inci": [],
+    "looked_up": "2026-10-25T03:25:30.053040+00:00",
+    "matched_name": "",
+    "note": "",
+    "price_source_url": "",
+    "source_url": "",
+    "typical_price_usd": null
+  },
+  "olay [purple jar]": {
+    "found": true,
+    "inci": [
+      "Water",
+      "Dimethicone",
+      "Glycerin",
+      "Distarch Phosphate",
+      "Dimethicone Crosspolymer",
+      "Retinol",
+      "Retinyl Propionate",
+      "Niacinamide",
+      "Palmitoyl Dipeptide-7",
+      "Palmitoyl Pentapeptide-4",
+      "Tripeptide-3",
+      "Carnosine",
+      "Hydroxyacetophenone",
+      "Butylene Glycol",
+      "C13-14 Isoalkane",
+      "Dimethiconol",
+      "Laureth-4",
+      "Laureth-7",
+      "Disodium EDTA",
+      "Polyacrylamide",
+      "Acrylates/C10-30 Alkyl Acrylate Crosspolymer",
+      "Titanium Dioxide",
+      "Phenoxyethanol"
+    ],
+    "looked_up": "2026-10-25T03:26:39.675915+00:00",
+    "matched_name": "Olay Regenerist Retinol24 Night Moisturizer",
+    "note": "\u201cPurple jar\u201d is ambiguous; this is the likely match, the standard 1.7 oz Retinol24 Night Moisturizer, not the Retinol24 MAX variant. Formula and price may change; confirm the label on your jar.",
+    "price_source_url": "https://www.olay.com/products/olay-retinol24-night-moisturizer",
+    "source_url": "https://www.olay.com/products/olay-retinol24-night-moisturizer",
+    "typical_price_usd": 39.99
+  },
+  "olay regenerist ultra rich": {
+    "found": true,
+    "inci": [
+      "Water",
+      "Niacinamide",
+      "Glycerin",
+      "Hexyldecanol",
+      "Dimethicone",
+      "Paraffin",
+      "Stearyl Alcohol",
+      "Polyacrylamide",
+      "Panthenol",
+      "Cetyl Alcohol",
+      "Palmitoyl Pentapeptide-4",
+      "Tocopheryl Acetate",
+      "Butyrospermum Parkii (Shea Butter)",
+      "Hydrogenated Polydecene",
+      "Hydroxyacetophenone",
+      "C13-14 Isoparaffin",
+      "Laureth-7",
+      "Cetearyl Alcohol",
+      "Cetearyl Glucoside",
+      "Behenyl Alcohol",
+      "Disodium EDTA",
+      "PEG-100 Stearate",
+      "Phenoxyethanol"
+    ],
+    "looked_up": "2026-10-25T03:29:33.300069+00:00",
+    "matched_name": "Olay Regenerist Ultra Rich Moisturizer Fragrance-Free",
+    "note": "This is the fragrance-free Ultra Rich Moisturizer formula; standard size is 1.7 oz. Olay notes that package ingredients may differ, so check the jar for its definitive list.",
+    "price_source_url": "https://www.olay.com/products/regenerist-ultra-rich-moisturizer",
+    "source_url": "https://www.olay.com/products/regenerist-ultra-rich-moisturizer",
+    "typical_price_usd": 39.99
+  },
   "primera pr\u0438\u043cera": {
     "found": false,
     "inci": [],
@@ -365,6 +473,33 @@
     "source_url": "https://pyunkangyulglobal.com/products/pyunkangyul-ato-lotion-blue-label-350ml",
     "typical_price_usd": null
   },
+  "s l e e k e baby cheeks all-in-one hydrating milk": {
+    "found": true,
+    "inci": [
+      "Water",
+      "Propanediol",
+      "Cocos Nucifera (Coconut) Water",
+      "Glycerin",
+      "Cetearyl Isononanoate",
+      "Dicaprylyl Carbonate",
+      "Polyglyceryl-10 Oleate",
+      "Phyllostachys Bambusoides Leaf Extract",
+      "Algae Extract",
+      "Leuconostoc/Radish Root Ferment Filtrate",
+      "Tocopheryl Acetate",
+      "Polyglyceryl-2 Oleate",
+      "Phenoxyethanol",
+      "Ethylhexylglycerin",
+      "Disodium EDTA",
+      "Xanthan Gum"
+    ],
+    "looked_up": "2026-10-25T03:31:04.868694+00:00",
+    "matched_name": "Versed Baby Cheeks All-in-One Hydrating Milk",
+    "note": "The ingredient source matches the requested Baby Cheeks product. The $18 price is a published US retailer listing for 4 fl oz, though the item is currently shown as sold out.",
+    "price_source_url": "https://www.revolve.com/versed-baby-cheeks-allinone-hydrating-milk/dp/VSDE-WU21/",
+    "source_url": "https://skinsort.com/products/versed/baby-cheeks-all-in-one-hydrating-milk",
+    "typical_price_usd": 18.0
+  },
   "tatcha the water cream": {
     "found": true,
     "inci": [
@@ -410,6 +545,41 @@
     "price_source_url": "https://www.sephora.com/product/the-water-cream-P418218",
     "source_url": "https://tatcha.com/products/the-water-cream-lightweight-moisturizer",
     "typical_price_usd": 74.0
+  },
+  "the inkey list cleansing treatment": {
+    "found": false,
+    "inci": [],
+    "looked_up": "2026-10-25T03:30:12.926576+00:00",
+    "matched_name": "",
+    "note": "",
+    "price_source_url": "",
+    "source_url": "",
+    "typical_price_usd": null
+  },
+  "the inkey list hyaluronic acid": {
+    "found": true,
+    "inci": [
+      "Water (Aqua/Eau)",
+      "Propanediol",
+      "Sodium Hyaluronate",
+      "Glycerin",
+      "Butylene Glycol",
+      "Phenoxyethanol",
+      "Ammonium Acryloyldimethyltaurate/VP Copolymer",
+      "Leuconostoc/Radish Root Ferment Filtrate",
+      "Hyaluronic Acid",
+      "Carbomer",
+      "Sodium Lactate",
+      "Polysorbate 20",
+      "Palmitoyl Tetrapeptide-7",
+      "Palmitoyl Tripeptide-1"
+    ],
+    "looked_up": "2026-10-25T03:30:26.451658+00:00",
+    "matched_name": "The INKEY List Hyaluronic Acid Hydrating Face Serum",
+    "note": "",
+    "price_source_url": "https://www.theinkeylist.com/products/hyaluronic-acid-serum",
+    "source_url": "https://www.sephora.com/product/hyaluronic-acid-hydrating-face-serum-P443845",
+    "typical_price_usd": 13.0
   },
   "u beauty the super hydrator": {
     "found": true,

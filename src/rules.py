@@ -133,9 +133,21 @@ class Rules:
 
     # -- resolution --------------------------------------------------------
 
-    def infer_form(self, product: InputProduct) -> str:
+    def infer_form(self, product: InputProduct, catalogue_form: str | None = None) -> str:
+        """What kind of product this is, best source first.
+
+        The catalogue sits above the keyword guess because it is a statement
+        about a specific product, while the keywords are a guess from a name.
+        Leaving it out was not a near miss: "La Roche-Posay Anthelios UVMune
+        400" contains no word resembling sunscreen, so it fell all the way
+        through to the default and was treated as a serum. The shelf then got
+        told it had no sunscreen on it while its sunscreen sat in the routine,
+        ordered as a serum rather than last in the morning.
+        """
         if product.form and product.form in self.forms:
             return product.form
+        if catalogue_form and catalogue_form in self.forms:
+            return catalogue_form
         haystack = f"{product.brand or ''} {product.name}".lower()
         for form_id, keywords in FORM_KEYWORDS:
             if any(k in haystack for k in keywords):
@@ -243,6 +255,7 @@ class Rules:
         # Nothing readable on the label — fall back to the catalogue, and
         # record that we did, so the page can tell the user to check the bottle.
         from_catalogue = None
+        catalogue_form: str | None = None
         # Carried in when the price arrived from the web lookup; set below
         # when it comes from the catalogue. Either way it is not the user's.
         typical_price = product.price_is_typical
@@ -251,6 +264,7 @@ class Rules:
             if hit:
                 actives = [a for a in hit["actives"].split(",") if a]
                 from_catalogue = f"{hit['brand']} {hit['name']}"
+                catalogue_form = hit["form"]
                 # The catalogue knows the brand the photograph did not show.
                 # Renaming here means every later mention is unambiguous.
                 # Use the catalogue's own name, not the reader's with a brand
@@ -276,7 +290,7 @@ class Rules:
 
         return ResolvedProduct(
             product=product,
-            form=self.infer_form(product),
+            form=self.infer_form(product, catalogue_form),
             actives=actives,
             classes=classes,
             unmatched_terms=unmatched,
