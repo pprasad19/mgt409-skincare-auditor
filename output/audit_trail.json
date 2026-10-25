@@ -5049,5 +5049,161 @@
       "cache_write_tokens": 148,
       "output_tokens": 358
     }
+  },
+  {
+    "run_id": "42afa6f0",
+    "seq": 1,
+    "timestamp": "2026-10-25T01:34:40.308432+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "products": [
+        "CeraVe",
+        "Minimalist",
+        "Minimalist",
+        "Minimalist",
+        "Minimalist",
+        "SOLVED",
+        "Aquilogica 3 in 1 Tinted Sunscreen SPF 50",
+        "Minimalist",
+        "Minimalist"
+      ],
+      "unreadable": [
+        "Small pink and white skincare tube at far left, label largely obscured",
+        "Pink skincare tube in front-left, text too small to read",
+        "Tall white tube behind center-left products, text unreadable",
+        "White pump bottle near left-center, label unreadable",
+        "Orange-capped bottle behind droppers, label mostly obscured",
+        "Partially visible bottle at far right, label obscured"
+      ],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2902,
+      "cache_read_tokens": 1536,
+      "cache_write_tokens": 0,
+      "output_tokens": 925
+    }
+  },
+  {
+    "run_id": "42afa6f0",
+    "seq": 2,
+    "timestamp": "2026-10-25T01:34:42.817059+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 7,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2842,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 156,
+      "output_tokens": 392
+    }
+  },
+  {
+    "run_id": "6ec8ab92",
+    "seq": 1,
+    "timestamp": "2026-10-25T01:36:08.459804+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "products": [
+        "GREEN TEA SPINACH VITAMINS SUPERFOOD CLEANSER",
+        "HYDRATING GENTLE CLEANSER",
+        "MAKEUP MELTING CLEANSING BALM",
+        "Hydrating Toner",
+        "TOLERIANE DOUBLE REPAIR FACE MOISTURIZER",
+        "The Super Hydrator",
+        "RESURFACING Compound",
+        "DAILY PERFECTING CREAM",
+        "The Porefessional",
+        "The Ordinary. Niacinamide 10% + Zinc 1%",
+        "The Ordinary. Hyaluronic Acid 2% + B5",
+        "AVOCADO NOURISHING HYDRATION MASK"
+      ],
+      "unreadable": [
+        "Partially visible white/gray product at the bottom left; label and product name are not visible.",
+        "Partially visible package at the bottom right; only a fragment of text is visible, product cannot be identified."
+      ],
+      "suspicious_text": [],
+      "suppressed_terms": [
+        "Ceramides"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3103,
+      "cache_read_tokens": 1536,
+      "cache_write_tokens": 0,
+      "output_tokens": 1271
+    }
+  },
+  {
+    "run_id": "6ec8ab92",
+    "seq": 2,
+    "timestamp": "2026-10-25T01:36:16.041701+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 31,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3390,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 704,
+      "output_tokens": 1752
+    }
+  },
+  {
+    "run_id": "fbe24d68",
+    "seq": 1,
+    "timestamp": "2026-10-25T01:43:35.189354+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "products": [
+        "Glytone Acne Treatment Lotion",
+        "Avene Cicalfate+ Restorative Protective Cream",
+        "The Ordinary Retinol 0.5% in Squalane"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2599,
+      "cache_read_tokens": 2393,
+      "cache_write_tokens": 80,
+      "output_tokens": 202
+    }
+  },
+  {
+    "run_id": "fbe24d68",
+    "seq": 2,
+    "timestamp": "2026-10-25T01:43:37.618009+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 4,
+      "steps": 3,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3106,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 420,
+      "output_tokens": 332
+    }
   }
 ]

@@ -1,0 +1,180 @@
+"""Find a product's ingredient list on the web, and remember it.
+
+A hand-written catalogue cannot serve the public. Seventy-four products covers
+the shelf of someone who shops where I guessed they shop; the long tail of
+skincare is effectively infinite, and a user whose products are not in the
+file gets an audit that silently ignores half their bathroom.
+
+So: when a product cannot be read from a label and is not in the catalogue,
+look it up.
+
+WHAT MAKES THIS DIFFERENT FROM GUESSING
+
+Every lookup records the URL it came from, and the result is written to
+data/learned_products.json — so it is reviewable after the fact, it is free
+the second time anyone owns that product, and the file grows into a catalogue
+that was sourced rather than invented. The page tells the user which products
+were looked up and where from.
+
+THE COSTS, STATED
+
+This puts a network call on the audit path. It is bounded three ways: only
+for products with no other route to an ingredient list, only up to
+MAX_LOOKUPS per audit, and never for something already in the cache. A
+failure is survivable — the product falls back to being unresolved, which the
+page already handles.
+
+Formulations change and differ by region, so a looked-up list is what the web
+says about a product name, not a reading of the bottle in someone's hand. The
+page says so, the same way it does for catalogue matches.
+"""
+
+from __future__ import annotations
+
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+
+from openai import AsyncOpenAI
+from pydantic import BaseModel, Field
+from pydantic_ai import Agent
+
+from env_file import require
+from llm import MODEL_SETTINGS, PORTKEY_BASE_URL, build_model
+from usage import MODEL
+
+CACHE = Path(__file__).resolve().parent.parent / "data" / "learned_products.json"
+
+# Per audit. A shelf of twenty unknowns would otherwise be twenty searches.
+MAX_LOOKUPS = 6
+
+
+class ProductLookup(BaseModel):
+    """What the web says about a product, with where it said it."""
+
+    found: bool = Field(description="False if no credible ingredient list was found.")
+    inci: list[str] = Field(
+        default_factory=list,
+        description="The ingredient list as published, in order, one entry each. "
+                    "Empty if not found — never a plausible-looking guess.",
+    )
+    source_url: str = Field(
+        default="",
+        description="Where the list came from. Required when found is true: a list "
+                    "without a source cannot be checked and is worth no more than "
+                    "a guess.",
+    )
+    matched_name: str = Field(
+        default="",
+        description="The product the source is describing, as the source names it. "
+                    "Lets the user see whether the right thing was found.",
+    )
+    note: str = Field(
+        default="",
+        description="Anything that should qualify this — a regional variant, an "
+                    "uncertain match, a reformulation.",
+    )
+
+
+PROMPT = """You find the published ingredient list for one skincare product.
+
+Search for the product, read the INCI list from a source that actually
+publishes one — the brand's own site is best, then a large retailer, then an
+ingredient database.
+
+Return the list in the order published, one ingredient per entry, and the URL
+you took it from.
+
+**If you cannot find a credible list, set found to false and return nothing
+else.** An ingredient list assembled from what a product of that type usually
+contains is worse than no answer: it will be used to warn someone about
+interactions, and a warning about an ingredient that is not in the bottle is
+a wrong answer that looks authoritative.
+
+If what you find is clearly a different size, region or variant of the same
+product, return it and say so in the note. If it is a different product that
+happens to have a similar name, that is a not-found.
+
+Never return an ingredient list without a source URL."""
+
+
+def _cache() -> dict:
+    if CACHE.is_file():
+        try:
+            return json.loads(CACHE.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            return {}
+    return {}
+
+
+def _key(name: str) -> str:
+    return " ".join(name.lower().split())
+
+
+def cached(name: str) -> dict | None:
+    return _cache().get(_key(name))
+
+
+def remember(name: str, record: dict) -> None:
+    """Append to the learned catalogue. Never overwrites a prior answer."""
+    data = _cache()
+    data[_key(name)] = record
+    CACHE.parent.mkdir(parents=True, exist_ok=True)
+    tmp = CACHE.with_name(CACHE.name + ".writing")
+    tmp.write_text(json.dumps(data, indent=2, sort_keys=True), encoding="utf-8")
+    tmp.replace(CACHE)
+
+
+def _searcher():
+    """A web-search tool over Portkey, the same route Homework 2 used."""
+    api = AsyncOpenAI(base_url=PORTKEY_BASE_URL, api_key=require("PORTKEY_API_KEY"))
+
+    async def web_search(query: str) -> str:
+        """Search the web and return what the results say."""
+        response = await api.responses.create(
+            model=MODEL,
+            tools=[{"type": "web_search_preview"}],
+            input=query,
+        )
+        return response.output_text or "(no results)"
+
+    return web_search
+
+
+async def find_ingredients(product_name: str, usage_log=None) -> dict | None:
+    """Look one product up. Returns a record, or None if nothing credible.
+
+    Cached results come back without a network call.
+    """
+    hit = cached(product_name)
+    if hit is not None:
+        return hit if hit.get("found") else None
+
+    agent = Agent(
+        build_model(),
+        output_type=ProductLookup,
+        system_prompt=PROMPT,
+        tools=[_searcher()],
+        model_settings=MODEL_SETTINGS,
+    )
+    try:
+        result = await agent.run(f"Find the ingredient list for: {product_name}")
+    except Exception:
+        return None
+
+    out = result.output
+    if usage_log is not None:
+        usage_log.record(f"lookup:{product_name[:30]}", result.usage)
+
+    # A list without a source is not evidence, whatever the model says.
+    ok = bool(out.found and out.inci and out.source_url)
+    record = {
+        "found": ok,
+        "inci": out.inci if ok else [],
+        "source_url": out.source_url,
+        "matched_name": out.matched_name,
+        "note": out.note,
+        "looked_up": datetime.now(timezone.utc).isoformat(),
+    }
+    remember(product_name, record)
+    return record if ok else None

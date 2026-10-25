@@ -5898,5 +5898,155 @@
       "output": 0.000179,
       "total": 0.0002357
     }
+  },
+  {
+    "run_id": "e27cf67d",
+    "run_label": "web-42afa6f0",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-25T01:34:40.307924+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "1,536 tokens read from cache",
+    "tokens": {
+      "input_tokens": 2902,
+      "cache_read_tokens": 1536,
+      "cache_write_tokens": 0,
+      "output_tokens": 925,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001366,
+      "cached_input": 1.536e-05,
+      "cache_write": 0.0,
+      "output": 0.0004625,
+      "total": 0.00061446
+    }
+  },
+  {
+    "run_id": "e27cf67d",
+    "run_label": "web-42afa6f0",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-25T01:34:42.816670+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,560 tokens read from cache",
+    "tokens": {
+      "input_tokens": 2842,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 156,
+      "output_tokens": 392,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.56e-05,
+      "cache_write": 1.95e-05,
+      "output": 0.000196,
+      "total": 0.0002537
+    }
+  },
+  {
+    "run_id": "e4468374",
+    "run_label": "web-6ec8ab92",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-25T01:36:08.459358+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "1,536 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3103,
+      "cache_read_tokens": 1536,
+      "cache_write_tokens": 0,
+      "output_tokens": 1271,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001567,
+      "cached_input": 1.536e-05,
+      "cache_write": 0.0,
+      "output": 0.0006355,
+      "total": 0.00080756
+    }
+  },
+  {
+    "run_id": "e4468374",
+    "run_label": "web-6ec8ab92",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-25T01:36:16.041330+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,560 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3390,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 704,
+      "output_tokens": 1752,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.56e-05,
+      "cache_write": 8.8e-05,
+      "output": 0.000876,
+      "total": 0.0010022
+    }
+  },
+  {
+    "run_id": "40d7ada7",
+    "run_label": "web-fbe24d68",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-25T01:43:35.188930+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,393 tokens read from cache",
+    "tokens": {
+      "input_tokens": 2599,
+      "cache_read_tokens": 2393,
+      "cache_write_tokens": 80,
+      "output_tokens": 202,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.393e-05,
+      "cache_write": 1e-05,
+      "output": 0.000101,
+      "total": 0.00014753
+    }
+  },
+  {
+    "run_id": "40d7ada7",
+    "run_label": "web-fbe24d68",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-25T01:43:37.617587+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,560 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3106,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 420,
+      "output_tokens": 332,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.56e-05,
+      "cache_write": 5.25e-05,
+      "output": 0.000166,
+      "total": 0.0002567
+    }
   }
 ]

@@ -1069,6 +1069,7 @@ def render(
     carry: str | None = None,
     legend: list[dict] | None = None,
     skin=None,
+    sourced: dict | None = None,
 ) -> str:
     specs = {s.product_name: s for s in (narrative.steps if narrative else [])}
     explain = {x.rule_id: x.plain_language for x in (narrative.explanations if narrative else [])}
@@ -1097,9 +1098,10 @@ def render(
 
     parts.append(
         f"<h1>Your shelf, audited</h1>"
-        f'<p class="sub">{w.products_owned} products · '
-        f"{len(audit.findings)} findings · "
-        "</p>"
+        f'<p class="sub">{w.products_owned} product'
+        f'{"s" if w.products_owned != 1 else ""} · '
+        f'{len(audit.findings)} finding'
+        f'{"s" if len(audit.findings) != 1 else ""}</p>'
     )
 
     # Before anything else. A reader who scrolls past this and sees "no
@@ -1120,6 +1122,28 @@ def render(
             f'back labels of these, or type their ingredients in, and run it '
             f'again.</span>'
             f'<span class="why">Not checked: {e(names)}{e(more)}</span></div>'
+        )
+
+    # Looked up on the web. Each one carries the URL it came from, so a
+    # reader can check it — that is the whole difference between this and a
+    # guess.
+    if sourced:
+        rows = []
+        for name, rec in sourced.items():
+            link = e(rec.get("source_url") or "")
+            shown = e(rec.get("matched_name") or "source")
+            note = rec.get("note") or ""
+            tail = f" <em>{e(note)}</em>" if note else ""
+            rows.append(
+                f"<li><b>{e(name)}</b> — "
+                f'<a href="{link}" style="color:var(--clay)">{shown}</a>{tail}</li>'
+            )
+        parts.append(
+            f'<div class="note" style="margin-top:12px">'
+            f"<strong>{len(sourced)} product(s) had their ingredients looked up "
+            f"online.</strong> Published formulations differ by region and change "
+            f"over time, so check the bottle before acting on anything that "
+            f'depends on them.<ul style="margin:10px 0 0">{"".join(rows)}</ul></div>'
         )
 
     # Catalogue matches are a claim about a product, not a reading of the one

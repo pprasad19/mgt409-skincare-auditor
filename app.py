@@ -29,6 +29,7 @@ from fastapi.responses import HTMLResponse  # noqa: E402
 from agents import explain_audit, new_run_id, observe_skin, read_shelf  # noqa: E402
 from annotate import annotate, boxes_for  # noqa: E402
 from limits import MAX_IMAGE_BYTES, Trim  # noqa: E402
+from lookup import MAX_LOOKUPS, find_ingredients  # noqa: E402
 from models import InputProduct, display_name  # noqa: E402
 from pages import error_page, landing  # noqa: E402
 import render as render_mod  # noqa: E402
@@ -208,6 +209,24 @@ async def audit(
         incoming += [o.concern for o in (skin.observations if skin else [])]
         concern_ids = [c for c in incoming if c in RULES.concerns]
         gate_ids = [c for c in incoming if c not in RULES.concerns]
+        # Anything with no ingredients and no catalogue entry gets looked up.
+        #
+        # A hand-written catalogue cannot cover the public's bathrooms. The
+        # order matters: a label beats the catalogue, the catalogue beats the
+        # web, and the web beats telling someone their product was ignored.
+        sourced: dict[str, dict] = {}
+        budget = MAX_LOOKUPS
+        for product in products:
+            if product.listed_ingredients or budget <= 0:
+                continue
+            if RULES.match_catalogue(product):
+                continue
+            record = await find_ingredients(product.name, usage_log=log)
+            budget -= 1
+            if record:
+                product.listed_ingredients = record["inci"]
+                sourced[product.name] = record
+
         result = RULES.audit(products, gate_ids, trims=trims, concerns=concern_ids)
         if reading is not None:
             result.unreadable = list(reading.unreadable)
@@ -261,7 +280,7 @@ async def audit(
             for rp in result.products
         ])
         return HTMLResponse(
-            render(result, narrative, annotated or None, carry, legend, skin)
+            render(result, narrative, annotated or None, carry, legend, skin, sourced)
         )
 
     except Exception:  # noqa: BLE001
