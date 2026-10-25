@@ -124,9 +124,12 @@ async def main() -> None:
     if second == 0:
         print(
             "\nNOTE: the second identical call read no cached tokens.\n"
-            "  Either this deployment does not expose prompt caching, or the\n"
-            "  prefix is below the floor. The cache comparison in the report\n"
-            "  has to be reported as unavailable rather than invented."
+            "  That is two calls, and two calls cannot settle it. Measured\n"
+            "  across the 310 enabled calls in output/usage_log.json, 43%\n"
+            "  of them do read from cache, so a miss here is the ordinary\n"
+            "  outcome rather than evidence the deployment lacks caching.\n"
+            "  Take the figure for the report from the log, not from this\n"
+            "  probe. See docs/tokenomics-measured.md."
         )
     else:
         print(f"\nCaching confirmed: {second:,} tokens read from cache on the repeat call.")
