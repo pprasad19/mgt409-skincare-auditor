@@ -478,6 +478,28 @@ table.prices .typ{font-size:11.5px;color:var(--ink-faint);display:block}
   border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
 .film-ctl button:hover{background:var(--sunk)}
 .film-ctl button.on{background:var(--clay);border-color:var(--clay);color:#fff}
+/* Start over. Quiet, because it throws work away, but present at both
+   ends of the page: someone who wants a clean form should not have to
+   scroll past their whole audit to find one. */
+/* The add-to-audit form had no styling of its own, so its file picker and
+   textarea fell back to browser defaults and sat in a cramped row next to
+   the submit button. The landing page's form is the one users meet first;
+   this one should not look like a different site. */
+.again input[type=file]{font:inherit;font-size:14px;width:100%;padding:14px;
+  border-radius:12px;border:1px dashed var(--line);background:var(--sunk);
+  cursor:pointer;display:block;margin-bottom:12px}
+.again textarea{width:100%;min-height:110px;display:block;margin-bottom:16px;
+  font:14.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;padding:14px;
+  border-radius:12px;border:1px solid var(--line);background:var(--sunk);
+  color:var(--ink);resize:vertical}
+.again textarea:focus,.again input[type=file]:focus{outline:2px solid var(--clay);
+  outline-offset:1px}
+.again button[type=submit]{font-size:15.5px;padding:12px 28px}
+.topbar{display:flex;justify-content:flex-end;margin:0 0 -8px}
+.reset{font:inherit;font-size:13px;padding:6px 13px;border-radius:999px;
+  border:1px solid var(--line);background:var(--card);color:var(--ink-dim);
+  text-decoration:none;cursor:pointer;display:inline-block}
+.reset:hover{background:var(--sunk);color:var(--ink)}
 .film-get{font-size:13.5px;padding:7px 14px;border-radius:999px;border:1px dashed var(--line);color:var(--ink-dim);text-decoration:none}
 .film-get:hover{background:var(--sunk);color:var(--ink)}
 .film-count{font-size:12.5px;color:var(--ink-faint);margin-left:auto}
@@ -1434,6 +1456,12 @@ def _routine_gif(scenes: list[dict]) -> str:
     return "data:image/gif;base64," + base64.b64encode(data).decode("ascii")
 
 
+def _plural(n: int, word: str) -> str:
+    """"1 product", "2 products". Written out because "product(s)" in the
+    middle of a sentence reads as something nobody finished."""
+    return word if n == 1 else word + "s"
+
+
 def _short(name: str, limit: int = 13) -> str:
     """A product name small enough for the ribbon, cut at a word."""
     name = " ".join(name.split())
@@ -1738,6 +1766,12 @@ def render(
     )
 
     parts.append(
+        '<div class="topbar">'
+        '<a class="reset" href="/" data-reset>Start over with a new shelf</a>'
+        "</div>"
+    )
+
+    parts.append(
         f"<h1>Your shelf, audited</h1>"
         f'<p class="sub">{w.products_owned} product'
         f'{"s" if w.products_owned != 1 else ""} · '
@@ -1798,7 +1832,8 @@ def render(
             )
         parts.append(
             f'<div class="note" style="margin-top:12px">'
-            f"<strong>{len(sourced)} product(s) had their ingredients looked up "
+            f"<strong>{len(sourced)} {_plural(len(sourced), 'product')} had "
+            f"{'its' if len(sourced) == 1 else 'their'} ingredients looked up "
             f"online.</strong> Published formulations differ by region and change "
             f"over time, so check the bottle before acting on anything that "
             f'depends on them.<ul style="margin:10px 0 0">{"".join(rows)}</ul></div>'
@@ -1814,7 +1849,8 @@ def render(
         )
         parts.append(
             f'<div class="note" style="margin-top:12px">'
-            f"<strong>{len(from_cat)} product(s) were identified by name, not by "
+            f"<strong>{len(from_cat)} {_plural(len(from_cat), 'product')} "
+            f"{'was' if len(from_cat) == 1 else 'were'} identified by name, not by "
             f"reading a label.</strong> Their ingredients come from a reference "
             f"list, so they are what these products <em>usually</em> contain — "
             f"formulations change. Worth a glance at the bottle before acting on "
@@ -2202,6 +2238,12 @@ def render(
             f'<input type="hidden" name="carried" value="{e(carry)}">'
             f'<button type="submit">Audit again</button>'
             f"</form>"
+            f'<p style="margin:14px 0 0">'
+            f'<a class="reset" href="/" data-reset>Start over with a new shelf</a>'
+            f'<span style="font-size:12.5px;color:var(--ink-faint);margin-left:10px">'
+            f"Clears everything above. Use this for a different person's "
+            f"shelf — \u201cAudit again\u201d keeps what you have already given it."
+            f"</span></p>"
         )
 
     parts.append(LOADING_MARKUP)
@@ -2234,6 +2276,10 @@ def render(
         f"var FILM={script_json(player_scenes)};"
         f"{JS}{SPEECH_JS}{GRID_JS}{LOADING_JS}{FILM_JS}"
         "document.getElementById('print').addEventListener('click',function(){window.print()});"
+        "document.querySelectorAll('[data-reset]').forEach(function(a){"
+        "a.addEventListener('click',function(ev){"
+        "if(!confirm('Start over? This clears the products you have given it so far.'))"
+        "{ev.preventDefault();}});});"
         "</script></body></html>"
     )
     return "".join(parts)
