@@ -4922,5 +4922,132 @@
       "cache_write_tokens": 174,
       "output_tokens": 250
     }
+  },
+  {
+    "run_id": "cf300a36",
+    "seq": 1,
+    "timestamp": "2026-10-25T01:28:10.221537+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "products": [
+        "PITERA",
+        "2",
+        "The Ordinary. Niacinamide 10% + Zinc 1%",
+        "Glytone",
+        "Olay",
+        "imfre",
+        "CeraVe Hydrating Facial Cleanser",
+        "CeraVe Acne Foaming Cream Cleanser",
+        "Glytone",
+        "Vichy",
+        "Avene",
+        "Neutrogena"
+      ],
+      "unreadable": [
+        "Several partly obscured jars, tubes, and bottles on both shelves; labels too small or blocked to identify with confidence."
+      ],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3103,
+      "cache_read_tokens": 1536,
+      "cache_write_tokens": 0,
+      "output_tokens": 1065
+    }
+  },
+  {
+    "run_id": "cf300a36",
+    "seq": 2,
+    "timestamp": "2026-10-25T01:28:12.021313+00:00",
+    "agent": "skin_observer",
+    "step": "observe",
+    "defended": true,
+    "detail": {
+      "observations": [
+        {
+          "concern": "texture",
+          "confidence": "faint"
+        },
+        {
+          "concern": "dark_marks",
+          "confidence": "faint"
+        }
+      ],
+      "needs_a_clinician": false,
+      "lighting_note": false
+    },
+    "usage": {
+      "input_tokens": 1280,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 80
+    }
+  },
+  {
+    "run_id": "cf300a36",
+    "seq": 3,
+    "timestamp": "2026-10-25T01:28:12.318243+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 22,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3068,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 382,
+      "output_tokens": 942
+    }
+  },
+  {
+    "run_id": "c60495e7",
+    "seq": 1,
+    "timestamp": "2026-10-25T01:31:27.897277+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "products": [
+        "SK-II PITERA",
+        "Hydrating Facial Cleanser",
+        "Olay"
+      ],
+      "unreadable": [
+        "Multiple bottles and boxes along the lower shelf, especially on the right hand side"
+      ],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2599,
+      "cache_read_tokens": 2393,
+      "cache_write_tokens": 80,
+      "output_tokens": 171
+    }
+  },
+  {
+    "run_id": "c60495e7",
+    "seq": 2,
+    "timestamp": "2026-10-25T01:31:30.259954+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2834,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 148,
+      "output_tokens": 358
+    }
   }
 ]

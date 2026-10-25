@@ -195,9 +195,23 @@ class Rules:
         haystack = normalise(f"{product.brand or ''} {product.name}")
         if not haystack:
             return None
+
         for term, cat_id in self.catalogue_terms:
-            if term and term in haystack:
-                return self.catalogue[cat_id]
+            if not term or term not in haystack:
+                continue
+            hit = self.catalogue[cat_id]
+            # Refuse the match if the input names a different brand we know
+            # about. "Glytone Hydrating Facial Cleanser" matching CeraVe's
+            # product would attach CeraVe's ingredients and price to someone
+            # else's bottle — a wrong answer that looks authoritative.
+            stated = {
+                normalise(row["brand"])
+                for row in self.catalogue.values()
+                if normalise(row["brand"]) in haystack
+            }
+            if stated and normalise(hit["brand"]) not in stated:
+                continue
+            return hit
         return None
 
     def resolve(self, product: InputProduct) -> ResolvedProduct:
@@ -237,7 +251,11 @@ class Rules:
                 from_catalogue = f"{hit['brand']} {hit['name']}"
                 # The catalogue knows the brand the photograph did not show.
                 # Renaming here means every later mention is unambiguous.
-                updates = {"name": display_name(hit["brand"], product.name)}
+                # Use the catalogue's own name, not the reader's with a brand
+                # bolted on. Prepending produced "CeraVe Glytone Hydrating
+                # Facial Cleanser" when the reader had run two shelf items
+                # together — a product that does not exist, stated confidently.
+                updates = {"name": f"{hit['brand']} {hit['name']}"}
                 # Only when the user said nothing. What someone actually paid
                 # always wins over what a product usually costs.
                 if product.price_usd is None and hit["typical_price_usd"]:

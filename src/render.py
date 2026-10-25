@@ -241,7 +241,7 @@ footer{margin-top:68px;padding-top:26px;border-top:1px solid var(--line);
 .ver.ok{background:#e3eedf;color:#41603f;border-color:#c6dcc1}
 
 /* Marked-up photographs: numbers on the image, names in a list beside it. */
-.shotwrap{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(240px,1fr);
+.shotwrap{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(290px,1fr);
   gap:22px;align-items:start}
 @media(max-width:860px){.shotwrap{grid-template-columns:1fr}}
 .shot{background:var(--card);border:1px solid var(--line);border-radius:14px;
@@ -252,8 +252,9 @@ footer{margin-top:68px;padding-top:26px;border-top:1px solid var(--line);
   padding:18px 20px;box-shadow:var(--shadow)}
 .legendbox h4{margin:0 0 12px;font:600 11.5px/1 var(--sans);text-transform:uppercase;
   letter-spacing:.13em;color:var(--ink-faint)}
-.lrow{display:flex;gap:11px;align-items:flex-start;padding:8px 0;font-size:13.5px;
-  line-height:1.45}
+.lrow{display:flex;gap:11px;align-items:flex-start;padding:9px 0;font-size:13.5px;
+  line-height:1.5}
+.lrow > span:last-child{min-width:0;overflow-wrap:anywhere}
 .lrow + .lrow{border-top:1px solid var(--line)}
 .lnum{flex:0 0 22px;height:22px;border-radius:50%;display:grid;place-items:center;
   font-size:11.5px;font-weight:650;color:#fff}
@@ -1269,9 +1270,10 @@ def render(
                 "catalogue": "identified by name \u2014 check the bottle",
                 "missed": "not read, not in this audit",
             }[status]
+            # Not truncated. The legend is a vertical list with room to wrap,
+            # and "Multiple bottles and boxes along lower shelf, especially c\u2026"
+            # tells a reader nothing about which bottles.
             label = item["label"]
-            if len(label) > 60:
-                label = label[:58] + "\u2026"
             rows.append(
                 f'<div class="lrow"><span class="lnum {status}">{item["index"]}</span>'
                 f'<span>{e(label)}<span class="how">{note}</span></span></div>'
@@ -1459,7 +1461,19 @@ def render(
         for p in audit.products:
             name = p.product.name
             price = p.product.price_usd
-            typical = ' <span class="typ">typical</span>' if p.price_is_typical else ""
+            # Three states worth distinguishing, because an empty price box
+            # looks like a bug when it is actually a limit. A brand name is
+            # not a product: "Glytone" could be a $34 cleanser or a $58 cream,
+            # and filling that in would be inventing a number.
+            if p.price_is_typical:
+                typical = ' <span class="typ">typical retail</span>'
+            elif not p.actives and not p.matched_from_catalogue:
+                typical = (
+                    ' <span class="typ">only the brand was readable — '
+                    "name the product below and it can be priced</span>"
+                )
+            else:
+                typical = ""
             value = "" if (price is None or p.price_is_typical) else f"{price:.0f}"
             placeholder = f"{price:.0f}" if p.price_is_typical and price else ""
             checked = " checked" if p.product.unused else ""
