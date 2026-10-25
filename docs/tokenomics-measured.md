@@ -83,9 +83,32 @@ that the experiment failed instead of reporting a saving it had not
 measured.
 
 **So the report should quote the production figures above, not the A/B.**
-The evidence that caching works is 135 calls out of 336 reading from
-cache during ordinary use, not a three-call experiment that did not
-reproduce it.
+
+The probe and the log looked contradictory — one said caching might not
+exist, the other showed 302,419 tokens read from it — so the difference
+was worth chasing rather than waving at.
+
+It is not a size floor: the largest prompt that never cached (5,898
+tokens) is bigger than the smallest that did (1,721). It is not recency
+either: calls that missed had a *shorter* median gap since the previous
+call of the same kind (12s) than calls that hit (32s).
+
+It is simply the hit rate. Cross-tabulating against the `cache_enabled`
+flag the log already records:
+
+```
+cache_enabled=False   2 of 91 read from cache
+cache_enabled=True  134 of 310 read from cache     43%
+```
+
+The flag works, caching is real, and it lands on about two calls in
+five. preflight makes two calls, so a run of it seeing nothing is the
+ordinary outcome, not a finding. Its note used to instruct the report to
+record the comparison as unavailable; it now points at the log instead.
+
+The lesson is worth the paragraph: a two-sample probe concluded a
+capability was absent, and a 310-sample log shows it present 43% of the
+time. The probe was not wrong about what it saw.
 
 ## Scaling
 
