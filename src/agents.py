@@ -220,6 +220,10 @@ async def read_shelf(
             step="read",
             usage=result.usage,
             detail={
+                # Both numbers, because the gap between them is the question
+                # users actually ask ("I gave you 13 and you found 12").
+                "visible_count": reading.visible_count,
+                "identified": len(reading.products),
                 "products": [p.name for p in reading.products],
                 "unreadable": reading.unreadable,
                 "suspicious_text": reading.suspicious_text,
