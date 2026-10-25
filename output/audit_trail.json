@@ -4262,5 +4262,67 @@
       "cache_write_tokens": 490,
       "output_tokens": 680
     }
+  },
+  {
+    "run_id": "49010ac3",
+    "seq": 1,
+    "timestamp": "2026-10-25T00:39:06.342589+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "products": [
+        "PITERA",
+        "The Ordinary.",
+        "Hydrating Facial Cleanser",
+        "Acne Foaming Cream Cleanser",
+        "Age Lift",
+        "Daily Facial Cleanser",
+        "Hydrating Facial Cleanser",
+        "Hydrating Facial Cleanser"
+      ],
+      "unreadable": [
+        "Upper shelf, far-left partially cropped bottle; text not readable",
+        "Upper shelf, pale-green bottle near left-center; label text not readable",
+        "Upper shelf, black dropper bottle marked with a large 2; remaining name not legible",
+        "Upper shelf, black-and-white jar and container; product names not legible",
+        "Upper shelf, Innisfree green-capped container; label too small to read fully",
+        "Upper shelf, Olay dark container; product name not legible",
+        "Upper shelf, GLYTONE white carton; smaller product text not legible",
+        "Upper shelf, green SATIN bottle; remaining text not legible",
+        "Upper shelf, amber bottle, label unreadable",
+        "Upper shelf, several small The Ordinary dropper bottles; individual product names too small to read",
+        "Upper and lower shelves, partially obscured containers with unreadable labels",
+        "Lower shelf, multiple CeraVe and other tubes, bottles, and jars with names obscured or too small to read",
+        "Lower shelf, Vichy products at right; individual product names unreadable"
+      ],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2587,
+      "cache_read_tokens": 1536,
+      "cache_write_tokens": 0,
+      "output_tokens": 544
+    }
+  },
+  {
+    "run_id": "49010ac3",
+    "seq": 2,
+    "timestamp": "2026-10-25T00:39:06.659008+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 16,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2966,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 280,
+      "output_tokens": 807
+    }
   }
 ]

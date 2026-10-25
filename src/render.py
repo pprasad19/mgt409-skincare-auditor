@@ -150,6 +150,13 @@ details.mech .body{font-size:14.5px;color:var(--ink-dim);padding:10px 0 0 16px;
   border-radius:12px;padding:17px 20px;margin-bottom:12px}
 .escal .who{font-size:12.5px;color:var(--crit);font-weight:600;margin-bottom:5px}
 
+.allclear{background:#f2f7f1;border:1px solid #d4e3d0;border-left:3px solid var(--sage);
+  border-radius:14px;padding:22px 26px}
+.allclear .head{display:block;font:500 20px/1.4 var(--serif);margin-bottom:9px}
+.allclear .body{display:block;font-size:15.5px;line-height:1.6;color:var(--ink-dim)}
+.askprice{background:var(--card);border:1px dashed var(--line);border-radius:14px;
+  padding:22px 26px;font-size:15px;line-height:1.6;color:var(--ink-dim)}
+.askprice b{color:var(--ink)}
 .gap{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--sage);
   border-radius:14px;padding:22px 26px;margin-top:16px;box-shadow:var(--shadow)}
 .gap.urgent{border-left-color:var(--sand);background:#fdf7ea;border-color:#ecdcb9}
@@ -1082,15 +1089,27 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
         )
         parts.append(f'<div class="card summary">{e(narrative.summary)}</div>')
 
-    parts.append("<h2>Money</h2><div class=\"stats\">")
-    parts.append(_stat(f"${w.shelf_value_usd:,.0f}", "on the shelf"))
-    parts.append(_stat(f"${w.unused_value_usd:,.0f}", f"unused ({w.products_unused} products)",
-                       "warn" if w.unused_value_usd else ""))
-    parts.append(_stat(f"${w.redundant_value_usd:,.0f}", "duplicate function",
-                       "warn" if w.redundant_value_usd else ""))
-    parts.append(_stat(f"${w.conflicted_value_usd:,.0f}", "in high-severity conflict",
-                       "bad" if w.conflicted_value_usd else ""))
-    parts.append("</div>")
+    parts.append("<h2>Money</h2>")
+    if w.shelf_value_usd == 0:
+        # Four zeroes look like a broken feature. They mean nobody said what
+        # anything cost — which is a thing the user can fix, so ask.
+        parts.append(
+            '<div class="askprice"><b>No prices yet.</b> This section works out '
+            "what is sitting unused, what you have bought twice, and what is "
+            "being wasted by a clash — all of which need to know what things "
+            "cost. Add a price after any product (<i>CeraVe Cleanser, $16</i>) "
+            "and mention anything you never use, then run it again.</div>"
+        )
+    else:
+        parts.append('<div class="stats">')
+        parts.append(_stat(f"${w.shelf_value_usd:,.0f}", "on the shelf"))
+        parts.append(_stat(f"${w.unused_value_usd:,.0f}", f"unused ({w.products_unused} products)",
+                           "warn" if w.unused_value_usd else ""))
+        parts.append(_stat(f"${w.redundant_value_usd:,.0f}", "duplicate function",
+                           "warn" if w.redundant_value_usd else ""))
+        parts.append(_stat(f"${w.conflicted_value_usd:,.0f}", "in high-severity conflict",
+                           "bad" if w.conflicted_value_usd else ""))
+        parts.append("</div>")
 
     if audit.escalations:
         parts.append("<h2>Needs a clinician</h2>")
@@ -1194,8 +1213,22 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
         parts.append("</div></details>")
 
     parts.append("<h2>What to do</h2>")
-    _section("first", "Fix these first",
-             "costing you money or results", open_=True, oneline=False)
+
+    if not audit.findings:
+        # An empty heading reads as a failed render. No conflicts is a result,
+        # and for a shelf of gentle products it is the expected one.
+        checked = len(audit.products) - len(audit.unresolved)
+        parts.append(
+            '<div class="allclear"><span class="head">Nothing to fix.</span>'
+            f'<span class="body">No clashes, no duplicates and no ordering '
+            f"problems among the {checked} product"
+            f'{"s" if checked != 1 else ""} that could be checked. That is a '
+            "straightforward shelf — the products on it do not interact in ways "
+            "worth warning you about.</span></div>"
+        )
+    else:
+        _section("first", "Fix these first",
+                 "costing you money or results", open_=True, oneline=False)
 
     # Gaps, not restatements.
     #
