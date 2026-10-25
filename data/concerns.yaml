@@ -20,8 +20,22 @@
 # would invite exactly the claim the escalation gates exist to prevent. What
 # is here is what a person can see in a mirror and say for themselves.
 #
-# STATUS: unverified, like the rules. Which actives address which concern is
-# well-trodden ground, but it has not been checked against a source here.
+# WHAT IS DELIBERATELY NOT HERE
+# Prescription-only actives. tretinoin and hydroquinone address several of
+# these concerns and appear in none of them, because suggesting that someone
+# acquire a prescription drug is not this tool's business — and SKC-010
+# escalates those same actives when a user already owns one. Recommending
+# what you escalate for would be incoherent. Adapalene is listed under
+# breakouts because Differin 0.1% is sold over the counter.
+#
+# Note that this is a convention in the data rather than something the code
+# enforces: rules.suggest() does not filter on the prescription flag. Adding
+# a prescription active to a concern here would make the app recommend it.
+#
+# PROVENANCE — reviewed 25 Oct 2026, same three states as the rules table.
+# These mappings are well-trodden cosmeceutical ground rather than
+# contested, but almost none of them was checked against a specific source,
+# so most are `reasoned` rather than `verified`.
 
 concerns:
 
@@ -33,6 +47,9 @@ concerns:
     note: >-
       Oil-soluble exfoliants work inside the pore; niacinamide moderates oil
       production over time.
+    source: "Salicylic acid's oil-solubility and niacinamide's effect on sebum are both standard cosmeceutical positions; neither was checked against a specific study here."
+    review: reasoned
+
 
   - id: dryness
     label: Dryness and tightness
@@ -42,15 +59,21 @@ concerns:
     note: >-
       Humectants draw water in, ceramides and emollients stop it leaving again.
       Both halves matter.
+    source: "Humectant plus occlusive-emollient is the standard framing of barrier repair and is the one the ceramide evidence behind SKA-060 rests on."
+    review: reasoned
+
 
   - id: redness
     label: Redness and sensitivity
     observable: true
     observation_hint: visible redness, especially across the cheeks
-    addressed_by: [centella, panthenol, niacinamide, azelaic_acid, ceramides]
+    addressed_by: [centella, panthenol, allantoin, bisabolol, niacinamide, azelaic_acid, ceramides]
     note: >-
       Barrier support first. Strong actives often make this worse before
       anything else helps.
+    source: "Barrier-support-first is the conventional approach. Centella, panthenol, allantoin and bisabolol are the standard soothing agents; PMC12494960 found panthenol and ceramides measurably reduce retinol irritation, which is the closest thing to a source any of these has."
+    review: reasoned
+
 
   - id: texture
     label: Rough or uneven texture
@@ -58,6 +81,9 @@ concerns:
     observation_hint: visible unevenness, small bumps, or a matte rough surface
     addressed_by: [glycolic_acid, lactic_acid, mandelic_acid, salicylic_acid, retinol]
     note: Exfoliation and cell turnover, introduced slowly.
+    source: "Exfoliation and turnover. Prescription retinoids omitted deliberately — see the header."
+    review: reasoned
+
 
   - id: dark_marks
     label: Dark marks and uneven tone
@@ -67,6 +93,9 @@ concerns:
     note: >-
       Slow work, and daily sunscreen does more for it than any active — without
       that the rest is undone faster than it accumulates.
+    source: "The pathway reasoning is sourced on SKA-051 and SKA-052: pigment production and melanosome transfer are separate steps and the listed actives act at different points. The note that sunscreen does more than any active is supported by the photosensitivity sources behind SKA-082 and SKA-083."
+    review: verified
+
 
   - id: breakouts
     label: Spots and congestion
@@ -76,23 +105,35 @@ concerns:
     note: >-
       If this is persistent or painful rather than occasional, it is a
       clinician's question, not this tool's.
+    source: "Standard first-line actives. Adapalene included because Differin 0.1% is over the counter in the US; the note routes persistent or painful cases to a clinician rather than treating them here."
+    review: reasoned
+
 
   - id: fine_lines
     label: Fine lines
     observable: false
     addressed_by: [retinol, retinaldehyde, l_ascorbic_acid, peptides, hyaluronic_acid]
     note: Retinoids have the strongest evidence; everything else is supporting.
+    source: "Retinoids having the strongest evidence is the conventional position and is not contested; it was not checked against a specific trial here."
+    review: reasoned
+
 
   - id: dullness
     label: Dullness
     observable: false
     addressed_by: [l_ascorbic_acid, glycolic_acid, lactic_acid, niacinamide]
     note: Antioxidants in the morning, gentle exfoliation at night.
+    source: "Antioxidants plus gentle exfoliation. The weakest-evidenced concern on this list and the one whose definition is least precise."
+    review: reasoned
+
 
   - id: sun_protection
     label: Protecting against sun damage
     observable: false
-    addressed_by: [organic_uv_filters, zinc_oxide, l_ascorbic_acid]
+    addressed_by: [organic_uv_filters, zinc_oxide, titanium_dioxide, l_ascorbic_acid]
     note: >-
       The only item on this list that prevents rather than repairs, and the one
       that makes every other active worth using.
+    source: "The only preventive entry. FDA guidance and the tretinoin label text behind SKA-082 and SKA-083 establish that the listed photosensitising actives raise UV sensitivity, which is what makes this the one that matters most. titanium_dioxide added 25 Oct 2026 — it was missing while zinc oxide was listed."
+    review: verified
+
