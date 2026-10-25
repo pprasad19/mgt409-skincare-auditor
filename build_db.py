@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import re
 import sqlite3
+from collections import Counter
 import sys
 from pathlib import Path
 
@@ -341,8 +342,8 @@ def main() -> None:
         "catalogue products": len(catalogue),
         "catalogue phrases": con.execute("SELECT COUNT(*) FROM catalogue_terms").fetchone()[0],
     }
-    unverified = sum(1 for r in ingredients if r["review"] != "verified")
-    unverified += sum(1 for r in interactions + contraindications if r["review"] != "verified")
+    rows = list(ingredients) + list(interactions) + list(contraindications)
+    states = Counter(r["review"] for r in rows)
 
     con.close()
 
@@ -366,10 +367,16 @@ def main() -> None:
             if gaps and len(gaps) <= 8:
                 print(f"         missing: {', '.join(gaps)}")
 
-    if unverified:
-        print(f"\n  {unverified} rows still marked review: pending.")
-        print("  These are not evidence until a human checks them.")
-        print("  Translations in ingredient_aliases.yaml are unverified too.")
+    # Printed every build, because the moment this stops being visible is
+    # the moment a drafted row starts being treated as a checked one.
+    print("\n  provenance")
+    print(f"    {states['verified']:>4}  verified   checked against a published source")
+    print(f"    {states['reasoned']:>4}  reasoned   reviewed, no source for this specific")
+    print(f"    {'':>4}             claim, kept on a recorded mechanism")
+    if states["pending"]:
+        print(f"    {states['pending']:>4}  pending    nobody has looked yet")
+    print("\n  Only verified rows are presented to the user as settled.")
+    print("  Translations in ingredient_aliases.yaml remain unchecked.")
 
 
 if __name__ == "__main__":

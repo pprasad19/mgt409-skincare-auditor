@@ -104,3 +104,59 @@ That is a stronger sentence than an unqualified claim of correctness, and it is
 the kind of thing the evidence rule rewards. It also means that if a grader spots
 an error in a Tier C row, you have already disclosed the limitation rather than
 been caught by it.
+
+---
+
+# Outcome, 25 October 2026
+
+Every row in `ingredients.yaml` and `interactions.yaml` has now been
+reviewed. Nothing is `pending`.
+
+```
+  31  verified   checked against a published source, named in the row
+  34  reasoned   reviewed, no published source for this specific claim,
+                 kept on a recorded mechanism
+   0  pending
+```
+
+Only `verified` sets the flag the result page uses to present a claim as
+settled, so the distinction reaches the reader rather than being
+flattened into a count.
+
+## What the split tracks
+
+Not importance — the kind of claim. Statements about **one ingredient**
+are sourceable and were sourced: pregnancy status, photosensitivity,
+absorption, pH behaviour. Statements about **two ingredients together**
+are mostly not, because the literature tests single ingredients far more
+often than pairs. There is no controlled data on stacking an AHA with a
+BHA, or either with a retinoid. Those rules survive as mechanistic
+inference, with each ingredient's barrier effect documented individually
+and the combination stated as the inference it is.
+
+## What the review changed
+
+| | |
+|---|---|
+| `SKA-020` | removed — the 1960s study behind the myth claim could not be found, and two findings cut against it |
+| `SKA-021` | removed — copper bound to GHK has its redox activity silenced, so the mechanism may not apply |
+| `SKA-001` | high → medium, and stopped restructuring routines; a 397-woman study found the pairing well tolerated |
+| `SKA-051`, `SKA-052` | dropped the claim that the effect is "additive" — a reconstructed-skin model found it was not |
+| `benzoyl_peroxide` | pregnancy caution → ok; reviews treat it as first-line in pregnancy |
+| `SKC-004` | **added** — AHAs escalate in pregnancy, which they previously did not while BHA did |
+
+Three rules turned out right for the wrong reason, and the reasons are
+now recorded accurately: retinoids in pregnancy is precautionary
+convention rather than measured harm, sunscreen last is published order
+rather than film disruption, and the photosensitivity rule rests on FDA
+label text for retinoids but only FDA guidance for acids.
+
+## Still unchecked
+
+- **The 128 alias translations** across ko, ja, zh and fr. Machine
+  generated, never read by a speaker. This is the largest unverified
+  surface in the project and the one most likely to fail silently.
+- **The 74 catalogue prices.** Spot-checked rather than verified: fourteen
+  sampled, median absolute error 11%. See `docs/price-spotcheck.md`.
+- **Catalogue `actives` lists**, which drive the audit whenever a label
+  cannot be read.

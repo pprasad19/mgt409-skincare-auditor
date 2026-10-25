@@ -112,8 +112,8 @@ ingredients:
     prescription: false
     potency: 4
     note: Smallest AHA molecule, so the most penetrating and the most irritating of the group.
-    source: null
-    review: pending
+    source: "FDA Guidance for Industry: Labeling for Cosmetics Containing Alpha Hydroxy Acids (Jan 2005) — AHAs increase UV sensitivity during use and for up to a week after; FDA Beta Hydroxy Acids page says the same of glycolic acid. Formulation literature puts AHA working range at pH 3.0-4.0, matching ph_range. Pregnancy caution per PMC3114665 / PMC8884185: no human studies, animal adverse reproductive effects at high doses, one review suggesting 10% or below. Escalation added as SKC-004 on 25 Oct 2026."
+    review: verified
 
   - id: lactic_acid
     name: Lactic acid
@@ -126,8 +126,8 @@ ingredients:
     pregnancy: caution
     prescription: false
     potency: 3
-    source: null
-    review: pending
+    source: "FDA Guidance for Industry: Labeling for Cosmetics Containing Alpha Hydroxy Acids (Jan 2005) — AHAs increase UV sensitivity during use and for up to a week after; FDA Beta Hydroxy Acids page says the same of glycolic acid. Formulation literature puts AHA working range at pH 3.0-4.0, matching ph_range. Pregnancy caution per PMC3114665 / PMC8884185: no human studies, animal adverse reproductive effects at high doses, one review suggesting 10% or below. Escalation added as SKC-004 on 25 Oct 2026. Nothing lactic-acid-specific was found; it is treated as an AHA alongside glycolic acid, which is an inference from class membership."
+    review: verified
 
   - id: mandelic_acid
     name: Mandelic acid
@@ -141,8 +141,8 @@ ingredients:
     prescription: false
     potency: 2
     note: Large molecule, slow penetration. The usual recommendation for sensitive skin that cannot tolerate glycolic.
-    source: null
-    review: pending
+    source: "FDA Guidance for Industry: Labeling for Cosmetics Containing Alpha Hydroxy Acids (Jan 2005) — AHAs increase UV sensitivity during use and for up to a week after; FDA Beta Hydroxy Acids page says the same of glycolic acid. Formulation literature puts AHA working range at pH 3.0-4.0, matching ph_range. Pregnancy caution per PMC3114665 / PMC8884185: no human studies, animal adverse reproductive effects at high doses, one review suggesting 10% or below. Escalation added as SKC-004 on 25 Oct 2026. As lactic acid, treated by class rather than on mandelic-acid-specific evidence."
+    review: verified
 
   - id: salicylic_acid
     name: Salicylic acid
@@ -170,8 +170,8 @@ ingredients:
     pregnancy: ok
     prescription: false
     potency: 1
-    source: null
-    review: pending
+    source: "A polyhydroxy acid, larger molecule than an AHA and conventionally described as gentler with less penetration. Recorded as not photosensitising, which is the conventional position but was not separately sourced, and is the one field here worth revisiting if a PHA gate is ever added. Reviewed 25 Oct 2026."
+    review: reasoned
 
   # ---- Vitamin C forms ----------------------------------------------------
   - id: l_ascorbic_acid
@@ -186,8 +186,8 @@ ingredients:
     prescription: false
     potency: 4
     note: Needs a low pH to penetrate, which is the root of most of its interaction conflicts. Oxidises readily.
-    source: null
-    review: pending
+    source: "Formulation literature: ascorbic acid is optimally stable around pH 2.5-3.0 and requires pH below 3.5 to penetrate the epidermis, matching ph_range. Oxidation is catalysed by metal ions, especially Cu(II) and Fe(III). Morning timing is a convention tied to its antioxidant role alongside sunscreen rather than a stability requirement. Reviewed 25 Oct 2026."
+    review: verified
 
   - id: sodium_ascorbyl_phosphate
     name: Sodium ascorbyl phosphate
@@ -201,8 +201,8 @@ ingredients:
     prescription: false
     potency: 2
     note: Stable derivative at skin-neutral pH. Avoids the low-pH conflicts that L-ascorbic acid creates.
-    source: null
-    review: pending
+    source: "A vitamin C derivative formulated at near-neutral pH precisely because L-ascorbic acid cannot be. The pH range is a formulation convention; no source was checked for this specific derivative. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - id: thd_ascorbate
     name: Tetrahexyldecyl ascorbate
@@ -215,8 +215,8 @@ ingredients:
     pregnancy: ok
     prescription: false
     potency: 3
-    source: null
-    review: pending
+    source: "As sodium ascorbyl phosphate: an oil-soluble derivative used at near-neutral pH. Range recorded as a formulation convention, unsourced. Reviewed 25 Oct 2026."
+    review: reasoned
 
   # ---- Other actives ------------------------------------------------------
   - id: niacinamide
@@ -231,8 +231,8 @@ ingredients:
     prescription: false
     potency: 2
     note: Unusually compatible. Most of its reputation for conflicts comes from a widely repeated misreading of a 1960s stability study.
-    source: null
-    review: pending
+    source: "PMC11047333 and DermNet 'Nicotinamide': niacinamide acts on melanosome transfer with no effect on tyrosinase, raises ceramide production with reduced TEWL, and does not cause the flushing associated with nicotinic acid. Not photosensitising and no pregnancy concern found. Note it can hydrolyse to nicotinic acid in a formulation, which does redden skin — the finding that led to SKA-020 being dropped. Reviewed 25 Oct 2026."
+    review: verified
 
   - id: benzoyl_peroxide
     name: Benzoyl peroxide
@@ -261,8 +261,8 @@ ingredients:
     prescription: false
     potency: 3
     note: One of the few actives generally considered acceptable in pregnancy, which makes it the usual substitution when retinoids have to come out.
-    source: null
-    review: pending
+    source: "Repeatedly described in the acne and melasma literature as among the better-tolerated actives, and named as a preferred alternative in pregnancy where hydroquinone is avoided (StatPearls NBK539693). Not photosensitising. Reviewed 25 Oct 2026."
+    review: verified
 
   - id: hydroquinone
     name: Hydroquinone
@@ -290,8 +290,8 @@ ingredients:
     pregnancy: caution
     prescription: false
     potency: 2
-    source: null
-    review: pending
+    source: "Pregnancy caution recorded on absence of evidence rather than evidence of harm, which is the honest basis: no pregnancy-specific safety data for topical use was found. PMC12848551 reviews topical efficacy in melasma and PIH but its safety section covers only non-pregnant populations; oral exposure differs and should not be extrapolated. Reviewed 25 Oct 2026."
+    review: verified
 
   - id: alpha_arbutin
     name: Alpha arbutin
@@ -304,8 +304,8 @@ ingredients:
     pregnancy: caution
     prescription: false
     potency: 2
-    source: null
-    review: pending
+    source: "Pregnancy caution recorded on absence of evidence rather than evidence of harm, which is the honest basis: no pregnancy-specific safety data for topical use was found. PMC8884185 reports roughly 0.27% dermal absorption for topical 2% arbutin with very minimal systemic distribution, and states explicitly that no reproductive data are available and no recommendation exists. Reviewed 25 Oct 2026."
+    review: verified
 
   - id: sulfur
     name: Sulfur
@@ -318,8 +318,8 @@ ingredients:
     pregnancy: ok
     prescription: false
     potency: 3
-    source: null
-    review: pending
+    source: "Documented as drying, which is why SKA-071 exists, and conventionally an evening ingredient on cosmetic grounds — it smells. No photosensitivity or pregnancy concern found. The pH range is a formulation convention. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - id: copper_peptides
     name: Copper peptides
@@ -333,8 +333,8 @@ ingredients:
     prescription: false
     potency: 2
     note: The copper ion is redox-active, which is why it conflicts with strong antioxidants and with low pH.
-    source: null
-    review: pending
+    source: "Pregnancy caution recorded on absence of evidence rather than evidence of harm, which is the honest basis: no pregnancy-specific safety data for topical use was found. Nothing on copper peptides in pregnancy was found at all. PMC4508379 notes copper bound to the GHK tripeptide has its redox activity silenced and that GHK is prone to hydrolytic cleavage under oxidative stress. Evening timing is a separation convention, not a stability requirement. Reviewed 25 Oct 2026."
+    review: verified
 
   - id: peptides
     name: Signal peptides
@@ -347,8 +347,8 @@ ingredients:
     pregnancy: ok
     prescription: false
     potency: 1
-    source: null
-    review: pending
+    source: "A catch-all class for signal peptides other than copper peptides. No gate consequence: not photosensitising, no pregnancy concern found, usable at any time. The pH range is a formulation convention. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - id: urea
     name: Urea
@@ -362,8 +362,8 @@ ingredients:
     prescription: false
     potency: 2
     note: Humectant at low percentages, keratolytic at high ones, and increases penetration of whatever follows it.
-    source: null
-    review: pending
+    source: "A humectant whose penetration-enhancing effect is well established and is the basis of SKA-007. No photosensitivity or pregnancy concern found. Reviewed 25 Oct 2026."
+    review: reasoned
 
   # ---- Supporting / barrier -----------------------------------------------
   - id: hyaluronic_acid
@@ -377,8 +377,8 @@ ingredients:
     pregnancy: ok
     prescription: false
     potency: 1
-    source: null
-    review: pending
+    source: "A humectant with no gate consequence: not photosensitising, no pregnancy concern, any time of day. The pH range is the range it is formulated across rather than a requirement. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - id: glycerin
     name: Glycerin
@@ -391,8 +391,8 @@ ingredients:
     pregnancy: ok
     prescription: false
     potency: 1
-    source: null
-    review: pending
+    source: "As hyaluronic acid. The most common humectant in skincare and the reason detect_suppression ignores it: present in almost everything and matched by no rule. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - id: ceramides
     name: Ceramides
@@ -405,8 +405,8 @@ ingredients:
     pregnancy: ok
     prescription: false
     potency: 1
-    source: null
-    review: pending
+    source: "Barrier lipids. PMID 33852258 supports ceramide formulations improving barrier measures, which is recorded on SKA-060; the row itself makes no claim beyond class membership and no gate consequence. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - id: panthenol
     name: Panthenol
@@ -419,8 +419,8 @@ ingredients:
     pregnancy: ok
     prescription: false
     potency: 1
-    source: null
-    review: pending
+    source: "A soothing agent. PMC12494960 found panthenol among agents measurably reducing retinol-induced irritation, which is recorded on SKA-061. No gate consequence. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - id: centella
     name: Centella asiatica
@@ -433,8 +433,8 @@ ingredients:
     pregnancy: ok
     prescription: false
     potency: 1
-    source: null
-    review: pending
+    source: "A soothing agent, grouped with panthenol. No centella-specific evidence was checked; it is treated by class. No gate consequence. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - id: squalane
     name: Squalane
@@ -447,8 +447,8 @@ ingredients:
     pregnancy: ok
     prescription: false
     potency: 1
-    source: null
-    review: pending
+    source: "An emollient with no gate consequence and no interaction rule that fires on it. Present mainly so that products carrying it are recognised rather than left unresolved. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - id: petrolatum
     name: Petrolatum
@@ -462,8 +462,8 @@ ingredients:
     prescription: false
     potency: 1
     note: Seals everything beneath it, including actives whose penetration then increases.
-    source: null
-    review: pending
+    source: "An occlusive. Evening timing and the ordering rule SKA-081 are the only consequences; neither depends on a property of petrolatum beyond being occlusive, which is definitional. Reviewed 25 Oct 2026."
+    review: reasoned
 
   # ---- UV filters ---------------------------------------------------------
   - id: zinc_oxide
@@ -477,8 +477,8 @@ ingredients:
     pregnancy: ok
     prescription: false
     potency: 1
-    source: null
-    review: pending
+    source: "A mineral UV filter. The row's only load-bearing field is class, which places it last in the morning via SKA-080 and makes SKA-022 fire with vitamin C. Filter efficacy itself is out of scope: this table does not rate sunscreens. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - id: organic_uv_filters
     name: Organic UV filters
@@ -491,5 +491,5 @@ ingredients:
     pregnancy: ok
     prescription: false
     potency: 1
-    source: null
-    review: pending
+    source: "As zinc oxide: a class marker, not a claim about any particular filter. Reviewed 25 Oct 2026."
+    review: reasoned

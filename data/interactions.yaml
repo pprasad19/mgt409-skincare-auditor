@@ -74,8 +74,8 @@ interactions:
       works inside the pore rather than across the whole surface.
     guidance: Alternate nights, or move the BHA to the morning if tolerated.
     resolution: alternate_nights
-    source: null
-    review: pending
+    source: "No controlled data on stacking a BHA with a retinoid. Each is independently documented as disrupting the lipid barrier and raising transepidermal water loss, and stratum corneum thinning from faster turnover is documented as reducing barrier protection. The combination is mechanistic inference from those, not a tested claim. Severity is medium rather than high for that reason. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - rule_id: SKA-003
     a: class:retinoid
@@ -117,8 +117,8 @@ interactions:
       irritates.
     guidance: Vitamin C in the morning, retinoid at night. They are not incompatible, just badly matched in one session.
     resolution: separate_am_pm
-    source: null
-    review: pending
+    source: "Formulation literature: ascorbic acid is optimally stable around pH 2.5-3.0 and needs pH below 3.5 to penetrate, while retinol is chemically unstable below pH 5 and acidic conditions promote retinoid dimerisation, which antioxidants and packaging do not prevent. The pH ranges are genuinely incompatible. Sources are patent and formulator texts rather than peer-reviewed stability studies; no head-to-head comparison of separation strategies was found. Reviewed 25 Oct 2026."
+    review: verified
 
   - rule_id: SKA-006
     a: class:retinoid
@@ -131,8 +131,8 @@ interactions:
       moisturisers that are not marketed as retinoid products.
     guidance: Keep the stronger one. Check moisturiser labels for a second retinoid you did not know about.
     resolution: drop_one
-    source: null
-    review: pending
+    source: "Partly definitional. Two retinoids deliver the same mechanism, and retinoid irritation is documented as dose-dependent, so compounding dose without compounding benefit follows. The practical claim that this happens by accident through retinyl palmitate in moisturisers is an observation about product formulation, not a studied effect. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - rule_id: SKA-007
     a: class:retinoid
@@ -142,8 +142,8 @@ interactions:
     mechanism: Urea increases penetration of what follows it, which raises both the effect and the irritation of a retinoid.
     guidance: Workable, but introduce slowly and watch for stinging.
     resolution: none
-    source: null
-    review: pending
+    source: "Urea's penetration-enhancing effect is well established and retinoid irritation is dose-dependent, so raising delivery raising irritation follows. No study tests urea with a retinoid specifically. Kept at low severity as mechanistic inference. Reviewed 25 Oct 2026."
+    review: reasoned
 
   # ---- Acid conflicts -----------------------------------------------------
   - rule_id: SKA-010
@@ -157,8 +157,8 @@ interactions:
       over-exfoliation state users mistake for sensitivity.
     guidance: Use on different days unless your skin has clearly tolerated both together.
     resolution: alternate_nights
-    source: null
-    review: pending
+    source: "No controlled data on combining an AHA with a BHA. AHAs at peeling concentrations are documented to disrupt corneocyte cohesion and irritate, and the barrier takes time to repair between exposures, so combined exfoliation exceeding repair capacity follows mechanically. Not demonstrated. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - rule_id: SKA-011
     a: class:aha
@@ -168,8 +168,8 @@ interactions:
     mechanism: Two AHA products do the same job. The second one is spend without additional benefit, and raises irritation.
     guidance: Keep one. Mandelic if your skin is reactive, glycolic if it is not.
     resolution: drop_one
-    source: null
-    review: pending
+    source: "Definitional rather than empirical: two AHA products perform the same exfoliating function, so the second is duplicated spend. The added-irritation half rests on the same dose reasoning as the other stacking rules and is not separately tested. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - rule_id: SKA-012
     a: class:aha
@@ -179,8 +179,8 @@ interactions:
     mechanism: Acid-driven barrier disruption plus an oxidiser is a reliable route to irritation.
     guidance: Separate by time of day.
     resolution: separate_am_pm
-    source: null
-    review: pending
+    source: "Acid-driven barrier disruption and oxidative irritation from benzoyl peroxide are each documented; the combination is not tested. Benzoyl peroxide is separately documented as oxidising salicylic acid in solution, which supports the general principle that it reacts with other actives. Reviewed 25 Oct 2026."
+    review: reasoned
 
   # ---- Vitamin C ----------------------------------------------------------
   - rule_id: SKA-022
@@ -193,8 +193,8 @@ interactions:
       sunscreen. The two protect against different parts of the same damage.
     guidance: Vitamin C in the morning under sunscreen is the ideal pairing.
     resolution: none
-    source: null
-    review: pending
+    source: "Topical vitamin C's photoprotective action is documented in vitro, including reducing UV-triggered collagen-degrading pathways, and sunscreen filters UV before it reaches skin, so the two act at different points. No clinical trial quantifies the combined benefit, and the in-vitro findings do not establish clinical effect. Low severity synergy. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - rule_id: SKA-023
     a: class:vitamin_c
@@ -204,8 +204,8 @@ interactions:
     mechanism: Multiple vitamin C products deliver the same antioxidant action at additional cost.
     guidance: Keep one. A stable derivative if the L-ascorbic acid stings or oxidises before you finish it.
     resolution: drop_one
-    source: null
-    review: pending
+    source: "Definitional, as SKA-011. Multiple vitamin C products deliver the same antioxidant action; this is a spending observation rather than a chemical claim. Reviewed 25 Oct 2026."
+    review: reasoned
 
   # ---- Copper peptides ----------------------------------------------------
   - rule_id: SKA-030
@@ -216,8 +216,8 @@ interactions:
     mechanism: Low pH destabilises the peptide-copper complex, so the peptide product stops doing what it was bought for.
     guidance: Separate by time of day or alternate nights.
     resolution: separate_am_pm
-    source: null
-    review: pending
+    source: "Ascorbic acid and peptide-copper chemistry both depend on pH, and low pH destabilising a peptide-copper complex is chemically reasonable, but nothing found tests a copper peptide with an AHA. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - rule_id: SKA-031
     a: class:copper_peptide
@@ -227,8 +227,8 @@ interactions:
     mechanism: Commonly separated on stability grounds, though the evidence is thinner than for the vitamin C interaction.
     guidance: Alternate nights if you want to be careful. Low confidence rule.
     resolution: alternate_nights
-    source: null
-    review: pending
+    source: "The rule already describes its own evidence as thin and that is accurate: nothing found tests copper peptides with retinoids. Retained at low severity as a separation convention rather than a demonstrated interaction. Note that the related SKA-021 was removed because copper bound to the GHK tripeptide has its redox activity silenced, which weakens mechanistic arguments about copper peptides generally. Reviewed 25 Oct 2026."
+    review: reasoned
 
   # ---- Benzoyl peroxide ---------------------------------------------------
   - rule_id: SKA-040
@@ -239,8 +239,8 @@ interactions:
     mechanism: Together these can produce temporary staining or uneven darkening of the skin — the opposite of the intended effect.
     guidance: Do not layer. Use at different times of day.
     resolution: separate_am_pm
-    source: null
-    review: pending
+    source: "Benzoyl peroxide is documented as a strong oxidiser that releases free radical oxygen species and oxidises other actives. Hydroquinone is an easily oxidised phenol. Temporary staining from the pair is widely reported but no published source for it was found. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - rule_id: SKA-041
     a: ing:benzoyl_peroxide
@@ -250,8 +250,8 @@ interactions:
     mechanism: An oxidiser applied with an antioxidant. Each works against the other.
     guidance: Separate by time of day.
     resolution: separate_am_pm
-    source: null
-    review: pending
+    source: "An oxidiser applied with an antioxidant, each documented as such, and benzoyl peroxide is separately documented oxidising salicylic acid in solution. The specific pairing with vitamin C is not tested. Reviewed 25 Oct 2026."
+    review: reasoned
 
   # ---- Niacinamide synergies ----------------------------------------------
   - rule_id: SKA-050
@@ -264,8 +264,8 @@ interactions:
       irritation that causes most people to abandon a retinoid in the first weeks.
     guidance: Good pairing. Applying niacinamide first can make a retinoid easier to tolerate.
     resolution: none
-    source: null
-    review: pending
+    source: "PMC13036733 and PMC11047333: niacinamide combined with retinoids eases the irritation that is a common reason patients stop, improving adherence; a 5% niacinamide omega-ceramide cream eased xerosis and irritation from oral isotretinoin. 2% niacinamide twice daily for four weeks raised ceramide levels with reduced TEWL. Evidence is small, mostly open-label trials. Reviewed 25 Oct 2026."
+    review: verified
 
   - rule_id: SKA-051
     a: ing:niacinamide
@@ -275,8 +275,8 @@ interactions:
     mechanism: The two interrupt pigment transfer by different mechanisms, so the effect on uneven tone is additive.
     guidance: Effective combination for pigmentation.
     resolution: none
-    source: null
-    review: pending
+    source: "The mechanistic rationale is well established: melanin production and melanosome transfer are separate steps, and niacinamide acts on transfer with no effect on tyrosinase, so combining it with an agent acting elsewhere in the pathway is reasonable. No head-to-head melasma trial quantifies the benefit, and a reconstructed-skin model found a transfer inhibitor plus a tyrosinase inhibitor fell short of full additivity. The mechanism text was corrected on 25 Oct 2026 to drop the claim that the effect is additive. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - rule_id: SKA-052
     a: ing:alpha_arbutin
@@ -286,8 +286,8 @@ interactions:
     mechanism: Both act on pigment production at different points in the pathway.
     guidance: Reasonable to use together.
     resolution: none
-    source: null
-    review: pending
+    source: "As SKA-051: acting at different points in the pigment pathway is a sound rationale for combining, but additivity was specifically not observed in a reconstructed-skin model and no trial quantifies it. Wording corrected to drop 'additive'. Reviewed 25 Oct 2026."
+    review: reasoned
 
   # ---- Barrier support ----------------------------------------------------
   - rule_id: SKA-060
@@ -301,8 +301,8 @@ interactions:
     mechanism: Retinoids transiently impair the barrier; ceramides supply the lipids needed to rebuild it.
     guidance: Apply the ceramide moisturiser after the retinoid.
     resolution: none
-    source: null
-    review: pending
+    source: "PMID 33852258 and PMC11047333: ceramide-containing routines reduced UV-induced erythema and pigmentation and improved hydration; niacinamide-driven ceramide increases correlate with reduced TEWL and better barrier function. Retinoid-induced irritation is itself documented as lipid-barrier disruption with raised TEWL, so supplying barrier lipids addresses the documented mechanism. Reviewed 25 Oct 2026."
+    review: verified
 
   - rule_id: SKA-061
     a: class:soothing
@@ -313,8 +313,8 @@ interactions:
     mechanism: Reduces the inflammatory response to exfoliation without blocking the exfoliation itself.
     guidance: Useful alongside an acid routine.
     resolution: none
-    source: null
-    review: pending
+    source: "PMC12494960 shows soothing agents including ceramides and panthenol measurably reduce 0.1% retinol-induced irritation in a patch test. Extending that from retinol to AHA irritation is inference: the inflammatory response differs. Low severity. Reviewed 25 Oct 2026."
+    review: reasoned
 
   # ---- Over-exfoliation / total load --------------------------------------
   - rule_id: SKA-070
@@ -325,8 +325,8 @@ interactions:
     mechanism: Both can irritate, though azelaic acid is among the better-tolerated actives.
     guidance: Usually fine. Introduce one at a time.
     resolution: none
-    source: null
-    review: pending
+    source: "Azelaic acid is repeatedly described as among the better-tolerated actives, and retinoid irritation is documented. No study pairs them. Low severity reflects that this is the mildest of the irritation-stacking rules. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - rule_id: SKA-071
     a: ing:sulfur
@@ -336,8 +336,8 @@ interactions:
     mechanism: Both are drying. Together they frequently push skin past the point where it can repair overnight.
     guidance: Alternate nights.
     resolution: alternate_nights
-    source: null
-    review: pending
+    source: "Sulfur and retinoids are each documented as drying. The combination is not tested. Kept at medium rather than high on the same reasoning as the other stacking rules. Reviewed 25 Oct 2026."
+    review: reasoned
 
   # ---- Ordering and timing ------------------------------------------------
   - rule_id: SKA-080
@@ -361,8 +361,8 @@ interactions:
     mechanism: An occlusive seals the skin. Applied too early it blocks everything that follows from reaching it.
     guidance: Occlusives go last at night.
     resolution: reorder
-    source: null
-    review: pending
+    source: "AAD skincare layering guidance places an occlusive last, after other skincare. The mechanism recorded here is the ordering consequence rather than a measured blocking effect; as with SKA-080, a study of sunscreen applied before or after other topicals found efficacy unchanged, so 'seals the skin' should be read as the reason for the published order, not as a demonstrated barrier to absorption. Reviewed 25 Oct 2026."
+    review: verified
 
   - rule_id: SKA-082
     a: class:aha
@@ -400,8 +400,8 @@ contraindications:
       Topical retinoids are conventionally avoided during pregnancy. This product
       should be reviewed with your clinician before use.
     action: escalate
-    source: null
-    review: pending
+    source: "Malta Medicines Authority review of topical retinoids in pregnancy: systemic exposure after topical application is negligible and unlikely to affect a foetus, and contraindication in pregnancy is nonetheless recommended as a precaution. Escalating to a clinician rather than refusing is the behaviour that matches a precautionary convention. Reviewed 25 Oct 2026."
+    review: verified
 
   - rule_id: SKC-002
     condition: pregnancy
@@ -442,8 +442,8 @@ contraindications:
       This product was prescribed for you. Any change to how it is used belongs
       with the clinician who prescribed it, not with this tool.
     action: escalate
-    source: null
-    review: pending
+    source: "A design decision, not a factual claim. A prescribed product was chosen by a clinician who knows things this tool does not, so any change to how it is used belongs with them. The alternative, letting generated advice override a prescription, is the single worst thing this system could do. Recorded as reasoning rather than sourced. Reviewed 25 Oct 2026."
+    review: reasoned
 
   - rule_id: SKC-011
     condition: declined_to_say
@@ -453,5 +453,5 @@ contraindications:
       Routing to the cautious path because contraindication information was not
       provided. This is the intended behaviour, not a failure.
     action: escalate
-    source: null
-    review: pending
+    source: "A design decision, not a factual claim. When contraindication information was not provided, the cautious path is taken rather than assuming absence of a condition. Stated in the message so the user knows it is intended behaviour and not a failure to answer. Reviewed 25 Oct 2026."
+    review: reasoned
