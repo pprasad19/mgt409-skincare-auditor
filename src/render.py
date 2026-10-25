@@ -995,6 +995,7 @@ def render(
     audit: AuditResult,
     narrative: AuditNarrative | None = None,
     annotated: list[str] | None = None,
+    carry: str | None = None,
 ) -> str:
     specs = {s.product_name: s for s in (narrative.steps if narrative else [])}
     explain = {x.rule_id: x.plain_language for x in (narrative.explanations if narrative else [])}
@@ -1276,6 +1277,35 @@ def render(
         )
 
     parts.append(_print_card(audit, specs))
+
+    if carry is not None:
+        # Carried in a hidden field rather than a session. The app holds no
+        # state between requests and stores nothing, which is what the landing
+        # page promises about photographs; a server-side session would quietly
+        # make that untrue.
+        missed = [u.name for u in audit.unresolved] + [
+            p.product.name for p in audit.products if p.matched_from_catalogue
+        ]
+        hint = (
+            f"Worth re-photographing: {e(', '.join(missed[:5]))}"
+            f"{' and others' if len(missed) > 5 else ''}."
+            if missed else
+            "Everything here was read from a label, so there is nothing outstanding."
+        )
+        parts.append("<h2>Add to this audit</h2>")
+        parts.append(
+            f'<form class="again" method="post" action="/audit" '
+            f'enctype="multipart/form-data">'
+            f"<p>Photograph the back labels of anything marked amber or red above "
+            f"and add them here. What has already been identified is kept, and a "
+            f"real label replaces a name match for the same product.<br><br>{hint}</p>"
+            f'<input type="file" name="photos" accept="image/*" multiple>'
+            f'<textarea name="typed" placeholder="Or type the missing products, '
+            f'with ingredients and prices if you have them"></textarea>'
+            f'<input type="hidden" name="carried" value="{e(carry)}">'
+            f'<button type="submit">Audit again</button>'
+            f"</form>"
+        )
 
     parts.append(
         '<div class="guide" id="guide" hidden><div class="gbox">'

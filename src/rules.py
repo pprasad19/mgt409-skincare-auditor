@@ -17,6 +17,7 @@ from pathlib import Path
 from limits import Trim, cap_products
 from models import (
     Unresolved,
+    display_name,
     ApplicationSpec,
     AuditResult,
     Escalation,
@@ -231,6 +232,11 @@ class Rules:
             if hit:
                 actives = [a for a in hit["actives"].split(",") if a]
                 from_catalogue = f"{hit['brand']} {hit['name']}"
+                # The catalogue knows the brand the photograph did not show.
+                # Renaming here means every later mention is unambiguous.
+                product = product.model_copy(
+                    update={"name": display_name(hit["brand"], product.name)}
+                )
 
         classes = sorted({self.ingredients[a]["class"] for a in actives})
 

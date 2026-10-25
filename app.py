@@ -14,6 +14,7 @@ landing page promises that; this is where the promise is kept.
 
 from __future__ import annotations
 
+import json
 import shutil
 import sys
 import tempfile
@@ -28,7 +29,7 @@ from fastapi.responses import HTMLResponse  # noqa: E402
 from agents import explain_audit, new_run_id, read_shelf  # noqa: E402
 from annotate import annotate, boxes_for  # noqa: E402
 from limits import MAX_IMAGE_BYTES, Trim  # noqa: E402
-from models import InputProduct  # noqa: E402
+from models import InputProduct, display_name  # noqa: E402
 from pages import error_page, landing  # noqa: E402
 from render import render  # noqa: E402
 from rules import Rules  # noqa: E402
@@ -59,11 +60,22 @@ async def audit(
     photos: list[UploadFile] = File(default=[]),
     typed: str = Form(default=""),
     conditions: list[str] = Form(default=[]),
+    carried: str = Form(default=""),
 ) -> HTMLResponse:
     typed = (typed or "").strip()
     usable = [p for p in photos if p.filename]
 
-    if not usable and not typed:
+    # Products identified by an earlier round, posted back in a hidden field.
+    # No session, no storage — the landing page promises photographs are not
+    # kept, and server-side state would quietly make that less true.
+    previous: list[InputProduct] = []
+    if carried:
+        try:
+            previous = [InputProduct(**row) for row in json.loads(carried)]
+        except Exception:
+            previous = []
+
+    if not usable and not typed and not previous:
         return HTMLResponse(
             error_page(
                 "There was nothing to audit.",
@@ -86,7 +98,7 @@ async def audit(
             path.write_bytes(data)
             paths.append(path)
 
-        if not paths and not typed:
+        if not paths and not typed and not previous:
             return HTMLResponse(
                 error_page(
                     "None of those files could be read as photographs.",
@@ -100,12 +112,14 @@ async def audit(
         trail = AuditTrail(run_id=run_id, defended=True)
         trims: list[Trim] = []
 
-        reading = await read_shelf(
-            images=paths, text=typed or None,
-            usage_log=log, trail=trail, trims_out=trims,
-        )
+        reading = None
+        if paths or typed:
+            reading = await read_shelf(
+                images=paths, text=typed or None,
+                usage_log=log, trail=trail, trims_out=trims,
+            )
 
-        if not reading.products:
+        if reading is not None and not reading.products and not previous:
             return HTMLResponse(
                 error_page(
                     "No products could be identified.",
@@ -115,28 +129,43 @@ async def audit(
                 status_code=422,
             )
 
-        products = [
+        fresh = [
             InputProduct(
-                name=p.name, brand=p.brand, form=p.form,
+                name=display_name(p.brand, p.name), brand=p.brand, form=p.form,
                 listed_ingredients=p.listed_ingredients,
                 price_usd=p.price_usd, unused=p.unused,
             )
-            for p in reading.products
+            for p in (reading.products if reading else [])
         ]
+
+        # A real label beats what we carried forward. Someone who went back
+        # and photographed the ingredient panel did it to replace a name
+        # match, so the new read wins on a name collision.
+        merged = {p.name.strip().lower(): p for p in previous}
+        for p in fresh:
+            merged[p.name.strip().lower()] = p
+        products = list(merged.values())
         result = RULES.audit(products, conditions, trims=trims)
-        result.unreadable = list(reading.unreadable)
+        if reading is not None:
+            result.unreadable = list(reading.unreadable)
         narrative, _ = await explain_audit(result, usage_log=log, trail=trail)
         log.write()
 
         notes = [t.note for t in trims]
-        if reading.suppressed_terms:
+        if previous:
+            notes.append(
+                f"{len(previous)} product(s) were carried over from your previous "
+                "audit. Anything you have since photographed has replaced what was "
+                "recorded for it."
+            )
+        if reading is not None and reading.suppressed_terms:
             notes.append(
                 "Something in what you sent said an ingredient was not present, "
                 "but the ingredient was named: "
                 + ", ".join(reading.suppressed_terms)
                 + ". It has been left out of the audit, so check those labels yourself."
             )
-        if reading.suspicious_text:
+        if reading is not None and reading.suspicious_text:
             notes.append(
                 f"{len(reading.suspicious_text)} label(s) carried text written to "
                 "instruct an automated reader rather than describe the product. "
@@ -145,7 +174,7 @@ async def audit(
         result.routine.notes.extend(notes)
 
         # Mark the photographs up before the temp directory goes away.
-        grouped = boxes_for(reading, result)
+        grouped = boxes_for(reading, result) if reading else {}
         annotated = []
         for i, path in enumerate(paths):
             boxes = grouped.get(i, [])
@@ -155,7 +184,12 @@ async def audit(
             if uri:
                 annotated.append(uri)
 
-        return HTMLResponse(render(result, narrative, annotated or None))
+        carry = json.dumps([
+            p.model_dump(include={"name", "brand", "form", "listed_ingredients",
+                                  "price_usd", "unused"})
+            for p in products
+        ])
+        return HTMLResponse(render(result, narrative, annotated or None, carry))
 
     except Exception:  # noqa: BLE001
         # Never show a stack trace to someone who uploaded a photo of their

@@ -4324,5 +4324,136 @@
       "cache_write_tokens": 280,
       "output_tokens": 807
     }
+  },
+  {
+    "run_id": "a74e35cf",
+    "seq": 1,
+    "timestamp": "2026-10-25T00:50:05.543941+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "products": [
+        "PITERA",
+        "Hydrating Facial Cleanser",
+        "Acne Foaming Cream Cleanser",
+        "Age Lift"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2586,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2460,
+      "output_tokens": 208
+    }
+  },
+  {
+    "run_id": "a74e35cf",
+    "seq": 2,
+    "timestamp": "2026-10-25T00:50:08.391707+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2852,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 166,
+      "output_tokens": 396
+    }
+  },
+  {
+    "run_id": "9df51152",
+    "seq": 1,
+    "timestamp": "2026-10-25T00:50:35.941042+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "products": [
+        "PITERA",
+        "Hydrating Facial Cleanser",
+        "Acne Foaming Cream Cleanser",
+        "Age Lift"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2586,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2460,
+      "output_tokens": 208
+    }
+  },
+  {
+    "run_id": "9df51152",
+    "seq": 2,
+    "timestamp": "2026-10-25T00:50:38.801941+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2872,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 186,
+      "output_tokens": 443
+    }
+  },
+  {
+    "run_id": "295983b4",
+    "seq": 1,
+    "timestamp": "2026-10-25T00:50:55.331313+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "products": [
+        "The Ordinary Retinol 0.5% in Squalane"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2594,
+      "cache_read_tokens": 2393,
+      "cache_write_tokens": 75,
+      "output_tokens": 123
+    }
+  },
+  {
+    "run_id": "295983b4",
+    "seq": 2,
+    "timestamp": "2026-10-25T00:50:58.312009+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 3,
+      "steps": 8,
+      "rejected": [
+        "verification caveat stripped from summary"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3129,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 443,
+      "output_tokens": 519
+    }
   }
 ]

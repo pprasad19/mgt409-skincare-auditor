@@ -17,7 +17,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 
-from models import InputProduct  # noqa: E402
+from models import InputProduct, display_name  # noqa: E402
 from rules import Rules  # noqa: E402
 
 MARK = {"critical": "!!", "high": "! ", "medium": "~ ", "low": ". "}
@@ -38,6 +38,8 @@ def main() -> None:
 
     raw = json.loads(Path(args.shelf).read_text(encoding="utf-8"))
     products = [InputProduct(**p) for p in raw["products"]]
+    for p in products:
+        p.name = display_name(p.brand, p.name)
     conditions = args.condition or raw.get("conditions", [])
 
     rules = Rules()

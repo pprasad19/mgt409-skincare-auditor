@@ -18,6 +18,23 @@ Resolution = Literal["separate_am_pm", "alternate_nights", "buffer", "reorder", 
 TimeOfDay = Literal["am", "pm", "both"]
 
 
+def display_name(brand: str | None, name: str) -> str:
+    """Brand first, unless the name already carries it.
+
+    Applied once, at the point a product enters the system, so the routine,
+    the findings, the matrix, the printed card and the agent all use the same
+    string. Three bottles called "Hydrating Facial Cleanser" are not
+    distinguishable without it, and a shelf really can hold three.
+    """
+    name = (name or "").strip()
+    brand = (brand or "").strip()
+    if not brand:
+        return name
+    if brand.lower() in name.lower():
+        return name
+    return f"{brand} {name}".strip()
+
+
 class InputProduct(BaseModel):
     """One product as the user gave it to us, before any resolution."""
 
