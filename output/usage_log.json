@@ -6973,5 +6973,205 @@
       "output": 0.0002985,
       "total": 0.0003947
     }
+  },
+  {
+    "run_id": "7a533e76",
+    "run_label": "web-68da2a4f",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-25T03:50:57.744280+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": false,
+    "cache_mode_note": "cache requested but neither read nor written (prompt below the floor?)",
+    "tokens": {
+      "input_tokens": 3140,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 719,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 0.000314,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 0.0003595,
+      "total": 0.0006735
+    }
+  },
+  {
+    "run_id": "7a533e76",
+    "run_label": "web-68da2a4f",
+    "step": "lookup:Av\u00e8ne A+E",
+    "timestamp": "2026-10-25T03:51:22.269929+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": false,
+    "cache_mode_note": "cache requested but neither read nor written (prompt below the floor?)",
+    "tokens": {
+      "input_tokens": 1644,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 82,
+      "requests": 2,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001644,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 4.1e-05,
+      "total": 0.0002054
+    }
+  },
+  {
+    "run_id": "7a533e76",
+    "run_label": "web-68da2a4f",
+    "step": "lookup:TATCHA THE RICE POLISH",
+    "timestamp": "2026-10-25T03:51:38.351103+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 1,562 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 2373,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1562,
+      "output_tokens": 425,
+      "requests": 2,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 8.11e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00019525,
+      "output": 0.0002125,
+      "total": 0.00048885
+    }
+  },
+  {
+    "run_id": "7a533e76",
+    "run_label": "web-68da2a4f",
+    "step": "lookup:Eau Thermale Av\u00e8ne",
+    "timestamp": "2026-10-25T03:51:53.483914+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": false,
+    "cache_mode_note": "cache requested but neither read nor written (prompt below the floor?)",
+    "tokens": {
+      "input_tokens": 1780,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 221,
+      "requests": 2,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 0.000178,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 0.0001105,
+      "total": 0.0002885
+    }
+  },
+  {
+    "run_id": "7a533e76",
+    "run_label": "web-68da2a4f",
+    "step": "lookup:CAUDALIE Vinosource-Hydra",
+    "timestamp": "2026-10-25T03:52:18.073200+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "1,971 tokens read from cache",
+    "tokens": {
+      "input_tokens": 5268,
+      "cache_read_tokens": 1971,
+      "cache_write_tokens": 2358,
+      "output_tokens": 152,
+      "requests": 3,
+      "tool_calls": 4
+    },
+    "cost_usd": {
+      "uncached_input": 9.39e-05,
+      "cached_input": 1.971e-05,
+      "cache_write": 0.00029475,
+      "output": 7.6e-05,
+      "total": 0.00048436
+    }
+  },
+  {
+    "run_id": "7a533e76",
+    "run_label": "web-68da2a4f",
+    "step": "lookup:ANTIOXIDANT BOOSTER",
+    "timestamp": "2026-10-25T03:52:45.957147+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "1,139 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3889,
+      "cache_read_tokens": 1139,
+      "cache_write_tokens": 1814,
+      "output_tokens": 455,
+      "requests": 3,
+      "tool_calls": 6
+    },
+    "cost_usd": {
+      "uncached_input": 9.36e-05,
+      "cached_input": 1.139e-05,
+      "cache_write": 0.00022675,
+      "output": 0.0002275,
+      "total": 0.00055924
+    }
+  },
+  {
+    "run_id": "7a533e76",
+    "run_label": "web-68da2a4f",
+    "step": "lookup:BIOSSANCE SQUALANE + OMEGA REP",
+    "timestamp": "2026-10-25T03:52:59.057401+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 1,526 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 2343,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1526,
+      "output_tokens": 379,
+      "requests": 2,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 8.17e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00019075,
+      "output": 0.0001895,
+      "total": 0.00046195
+    }
+  },
+  {
+    "run_id": "7a533e76",
+    "run_label": "web-68da2a4f",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-25T03:53:02.650917+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,560 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3054,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 368,
+      "output_tokens": 786,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.56e-05,
+      "cache_write": 4.6e-05,
+      "output": 0.000393,
+      "total": 0.0004772
+    }
   }
 ]

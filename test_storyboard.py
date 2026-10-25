@@ -117,6 +117,41 @@ for sel, body in rules:
                 ".pd" in sel,
             )
 
+
+# The GIF. A download button that hands over a broken file is worse than no
+# button, and a failure here must cost the button and not the audit.
+import filmstrip
+from render import _routine_gif
+
+SCENES = [
+    {"anim": a, "caption": "c", "where": "whole face", "real": "20 seconds",
+     "screen": 1.5, "points": points_for("whole face"),
+     "slot": "Morning", "order": 1, "of": 1, "name": "A Product With Quite A Long Name",
+     "form": "serum", "why": "SKA-001"}
+    for a in sorted(set(MOTIONS.values()) | {"rinse", "towel", "absorb"})
+]
+
+data = filmstrip.build(SCENES)
+check_true("gif has bytes", len(data) > 2000)
+check_true("gif magic", data[:6] in (b"GIF87a", b"GIF89a"))
+check_true("gif is not enormous", len(data) < 3_000_000)
+
+from io import BytesIO
+from PIL import Image
+
+im = Image.open(BytesIO(data))
+check_true("more than one frame", getattr(im, "n_frames", 1) > 1)
+check("canvas", im.size, (filmstrip.W, filmstrip.H))
+
+# An empty routine must not produce a zero-frame file, which some viewers
+# draw as a broken image.
+check("no scenes, no file", filmstrip.build([]), b"")
+check("no scenes, no data uri", _routine_gif([]), "")
+
+uri = _routine_gif(SCENES)
+check_true("data uri", uri.startswith("data:image/gif;base64,"))
+
 print("ok  %d checks passed" % ok)
 print("    face regions, exclusions, fallbacks, time compression,")
-print("    and every scene animation actually animating")
+print("    and every scene animation actually animating,")
+print("    plus the GIF export")

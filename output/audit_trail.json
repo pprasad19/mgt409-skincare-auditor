@@ -5636,5 +5636,56 @@
       "cache_write_tokens": 464,
       "output_tokens": 597
     }
+  },
+  {
+    "run_id": "68da2a4f",
+    "seq": 1,
+    "timestamp": "2026-10-25T03:50:57.745012+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 9,
+      "identified": 9,
+      "products": [
+        "A+E",
+        "THE RICE POLISH",
+        "Eau Thermale Av\u00e8ne",
+        "Vinosource-Hydra",
+        "ANTIOXIDANT BOOSTER",
+        "TRIPLE LIPID RESTORE 2:4:2",
+        "SQUALANE + OMEGA REPAIR CREAM",
+        "Lip Sleeping Mask",
+        "MOUTHWASH"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3140,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 719
+    }
+  },
+  {
+    "run_id": "68da2a4f",
+    "seq": 2,
+    "timestamp": "2026-10-25T03:53:02.651416+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 17,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3054,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 368,
+      "output_tokens": 786
+    }
   }
 ]

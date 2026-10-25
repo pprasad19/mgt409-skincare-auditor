@@ -20,6 +20,7 @@ call, and it cannot fail during a demo.
 
 from __future__ import annotations
 
+import base64
 import html
 import re
 import json
@@ -430,6 +431,8 @@ table.prices .typ{font-size:11.5px;color:var(--ink-faint);display:block}
   border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
 .film-ctl button:hover{background:var(--sunk)}
 .film-ctl button.on{background:var(--clay);border-color:var(--clay);color:#fff}
+.film-get{font-size:13.5px;padding:7px 14px;border-radius:999px;border:1px dashed var(--line);color:var(--ink-dim);text-decoration:none}
+.film-get:hover{background:var(--sunk);color:var(--ink)}
 .film-count{font-size:12.5px;color:var(--ink-faint);margin-left:auto}
 @media(prefers-reduced-motion:reduce){
   .stage *{animation:none !important}
@@ -1293,12 +1296,37 @@ def beats_for(spec) -> list[dict]:
     return out
 
 
-def _film(audit, specs: dict, explain: dict) -> tuple[str, list[dict]]:
-    """The routine, drawn moving, one scene per beat.
+def _routine_gif(scenes: list[dict]) -> str:
+    """The scenes as a GIF data URI, or "" if one could not be made.
 
-    Returns the markup and the scene list. The scenes are built from the same
-    `beats_for` the written steps and the audio use, so a duration can never
-    say one thing in the text and another in the picture.
+    Embedded rather than linked, so a saved page keeps working offline — the
+    same rule the annotated photographs follow. It is drawn from the scene
+    list the player uses, so the file and the page cannot be showing
+    different routines.
+
+    Wrapped because this is the only part of the page that depends on a font
+    being installed and on PIL behaving. A download button is worth having
+    and is not worth losing an audit over.
+    """
+    if not scenes:
+        return ""
+    try:
+        from filmstrip import build
+
+        data = build(scenes)
+    except Exception:
+        return ""
+    if not data:
+        return ""
+    return "data:image/gif;base64," + base64.b64encode(data).decode("ascii")
+
+
+def _film_scenes(audit, specs: dict, explain: dict) -> list[dict]:
+    """One scene per beat, for the player and the GIF alike.
+
+    Built from the same `beats_for` the written steps and the audio use, so
+    a duration can never say one thing in the text and another in the
+    picture.
     """
     scenes: list[dict] = []
     for slot, label, steps in (("am", "Morning", audit.routine.am),
@@ -1325,10 +1353,24 @@ def _film(audit, specs: dict, explain: dict) -> tuple[str, list[dict]]:
                     "why": why,
                 })
 
-    if not scenes:
-        return "", []
+    return scenes
 
-    markup = (
+
+def _film_markup(scenes: list[dict], gif_uri: str = "") -> str:
+    """The player, and a link to the file if one could be built."""
+    if not scenes:
+        return ""
+
+    get = (
+        # A file, because the player only exists while this page is open in a
+        # browser. A deck opened by double-click cannot run it, and a still
+        # of a face with dots on it says nothing.
+        f'<a class="film-get" download="routine.gif" href="{gif_uri}">'
+        "Download GIF</a>"
+        if gif_uri
+        else ""
+    )
+    return (
         '<section class="film" id="film">'
         '<div class="film-top"><h3>Watch the routine</h3>'
         '<span class="film-note">A preview, sped up. Each scene shows how long '
@@ -1347,10 +1389,10 @@ def _film(audit, specs: dict, explain: dict) -> tuple[str, list[dict]]:
         '<button type="button" id="f-play">Play</button>'
         '<button type="button" id="f-back">Back</button>'
         '<button type="button" id="f-next">Next</button>'
+        f'{get}'
         '<span class="film-count" id="f-count"></span>'
         '</div></div></div></section>'
     )
-    return markup, scenes
 
 
 def _print_card(audit: AuditResult, specs: dict) -> str:
@@ -1430,7 +1472,8 @@ def render(
                 "beats": beats_for(specs.get(s_.product_name)),
             })
 
-    film_markup, film_scenes = _film(audit, specs, explain)
+    film_scenes = _film_scenes(audit, specs, explain)
+    film_markup = _film_markup(film_scenes, _routine_gif(film_scenes))
 
     grid_data = '{}'
     parts: list[str] = []
