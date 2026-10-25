@@ -101,6 +101,15 @@ CREATE TABLE contraindications (
     review    TEXT NOT NULL
 );
 
+CREATE TABLE concerns (
+    id               TEXT PRIMARY KEY,
+    label            TEXT NOT NULL,
+    observable       INTEGER NOT NULL,
+    observation_hint TEXT,
+    addressed_by     TEXT NOT NULL,
+    note             TEXT
+);
+
 CREATE TABLE catalogue (
     id      INTEGER PRIMARY KEY,
     brand   TEXT NOT NULL,
@@ -163,6 +172,7 @@ def main() -> None:
     contraindications = rules_doc.get("contraindications", [])
     forms = load("product_forms.yaml")["forms"]
     catalogue = (load("products.yaml") or {}).get("products") or []
+    concerns = (load("concerns.yaml") or {}).get("concerns") or []
 
     ids = {row["id"] for row in ingredients}
     classes = {row["class"] for row in ingredients}
@@ -262,6 +272,18 @@ def main() -> None:
             ),
         )
 
+    for row in concerns:
+        bad = [a for a in row["addressed_by"] if a not in ids]
+        if bad:
+            errors.append(f"concerns.yaml: {row['id']}: unknown ingredients {bad}")
+            continue
+        con.execute(
+            "INSERT INTO concerns VALUES (?,?,?,?,?,?)",
+            (row["id"], row["label"], int(row.get("observable", False)),
+             row.get("observation_hint"), ",".join(row["addressed_by"]),
+             row.get("note")),
+        )
+
     for n, row in enumerate(catalogue):
         bad = [a for a in row["actives"] if a not in ids]
         if bad:
@@ -296,6 +318,7 @@ def main() -> None:
         "interactions": len(interactions),
         "contraindications": len(contraindications),
         "product forms": len(forms),
+        "concerns": len(concerns),
         "catalogue products": len(catalogue),
         "catalogue phrases": con.execute("SELECT COUNT(*) FROM catalogue_terms").fetchone()[0],
     }

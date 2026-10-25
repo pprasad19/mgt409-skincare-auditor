@@ -187,6 +187,32 @@ class Unresolved(BaseModel):
     legibility: str = "name_only"
 
 
+class Suggestion(BaseModel):
+    """Something worth adding, for a concern the shelf does not address.
+
+    Every one traces to a concern the user confirmed and an ingredient the
+    table says addresses it. The model never decides what someone needs: it
+    may only suggest what to look at, and only the user may turn that into a
+    concern.
+    """
+
+    concern: str
+    concern_label: str
+    why: str
+    missing_actives: list[str] = Field(default_factory=list)
+    already_covered_by: list[str] = Field(
+        default_factory=list,
+        description="Products on the shelf that already address this. When this is "
+                    "non-empty there is nothing to buy, and saying so is the useful "
+                    "answer.",
+    )
+    products: list[str] = Field(
+        default_factory=list,
+        description="Catalogue products containing a missing active. Examples, not "
+                    "endorsements.",
+    )
+
+
 class Gap(BaseModel):
     """Something the shelf is missing, rather than something on it being wrong.
 
@@ -214,6 +240,10 @@ class AuditResult(BaseModel):
     routine: Routine
     waste: WasteSummary
     gaps: list[Gap] = Field(default_factory=list)
+    suggestions: list[Suggestion] = Field(
+        default_factory=list,
+        description="What to consider adding, per confirmed concern.",
+    )
     unresolved: list[Unresolved] = Field(
         default_factory=list,
         description="Products with no usable ingredient data. Surfaced prominently: "

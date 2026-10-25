@@ -1,0 +1,98 @@
+# What people are trying to fix, and which actives address it.
+#
+# This is the other half of the audit. The rules table says what is wrong with
+# the products someone already owns; this says what their shelf is missing for
+# the thing they are actually trying to treat.
+#
+# HOW IT IS USED
+# A concern only ever enters the system because the user confirmed it. A face
+# photograph may *suggest* one — "there seems to be shine across the
+# forehead" — but a suggestion is a question, and nothing acts on it until it
+# is ticked. That keeps the model in the business of seeing and the table in
+# the business of recommending.
+#
+# `observable` marks the concerns a photograph can reasonably raise. The rest
+# are things only the person knows, and are offered as checkboxes.
+#
+# NO CONDITIONS HERE ON PURPOSE
+# There is no acne, rosacea, eczema or melasma in this file. Those are
+# diagnoses, this tool does not make them, and a concern list containing them
+# would invite exactly the claim the escalation gates exist to prevent. What
+# is here is what a person can see in a mirror and say for themselves.
+#
+# STATUS: unverified, like the rules. Which actives address which concern is
+# well-trodden ground, but it has not been checked against a source here.
+
+concerns:
+
+  - id: oiliness
+    label: Shine and oiliness
+    observable: true
+    observation_hint: visible shine, particularly across the forehead and nose
+    addressed_by: [niacinamide, salicylic_acid, azelaic_acid]
+    note: >-
+      Oil-soluble exfoliants work inside the pore; niacinamide moderates oil
+      production over time.
+
+  - id: dryness
+    label: Dryness and tightness
+    observable: true
+    observation_hint: visible flaking, dull or papery-looking patches
+    addressed_by: [hyaluronic_acid, glycerin, ceramides, squalane, panthenol, urea]
+    note: >-
+      Humectants draw water in, ceramides and emollients stop it leaving again.
+      Both halves matter.
+
+  - id: redness
+    label: Redness and sensitivity
+    observable: true
+    observation_hint: visible redness, especially across the cheeks
+    addressed_by: [centella, panthenol, niacinamide, azelaic_acid, ceramides]
+    note: >-
+      Barrier support first. Strong actives often make this worse before
+      anything else helps.
+
+  - id: texture
+    label: Rough or uneven texture
+    observable: true
+    observation_hint: visible unevenness, small bumps, or a matte rough surface
+    addressed_by: [glycolic_acid, lactic_acid, mandelic_acid, salicylic_acid, retinol]
+    note: Exfoliation and cell turnover, introduced slowly.
+
+  - id: dark_marks
+    label: Dark marks and uneven tone
+    observable: true
+    observation_hint: visible darker patches or marks left behind after spots
+    addressed_by: [l_ascorbic_acid, niacinamide, alpha_arbutin, tranexamic_acid, azelaic_acid, retinol]
+    note: >-
+      Slow work, and daily sunscreen does more for it than any active — without
+      that the rest is undone faster than it accumulates.
+
+  - id: breakouts
+    label: Spots and congestion
+    observable: true
+    observation_hint: visible raised spots or congestion
+    addressed_by: [salicylic_acid, benzoyl_peroxide, adapalene, azelaic_acid, niacinamide]
+    note: >-
+      If this is persistent or painful rather than occasional, it is a
+      clinician's question, not this tool's.
+
+  - id: fine_lines
+    label: Fine lines
+    observable: false
+    addressed_by: [retinol, retinaldehyde, l_ascorbic_acid, peptides, hyaluronic_acid]
+    note: Retinoids have the strongest evidence; everything else is supporting.
+
+  - id: dullness
+    label: Dullness
+    observable: false
+    addressed_by: [l_ascorbic_acid, glycolic_acid, lactic_acid, niacinamide]
+    note: Antioxidants in the morning, gentle exfoliation at night.
+
+  - id: sun_protection
+    label: Protecting against sun damage
+    observable: false
+    addressed_by: [organic_uv_filters, zinc_oxide, l_ascorbic_acid]
+    note: >-
+      The only item on this list that prevents rather than repairs, and the one
+      that makes every other active worth using.

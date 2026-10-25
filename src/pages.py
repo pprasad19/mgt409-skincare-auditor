@@ -61,7 +61,12 @@ def shell(body: str, title: str) -> str:
     )
 
 
-def landing() -> str:
+def landing(concerns: list[tuple[str, str]] | None = None) -> str:
+    concern_boxes = "".join(
+        f'<label><input type="checkbox" name="concerns" value="{e(cid)}">'
+        f"<span>{e(label)}</span></label>"
+        for cid, label in (concerns or [])
+    )
     body = f"""
 <div class="hero">
   <h1>What's actually on your shelf</h1>
@@ -87,6 +92,13 @@ def landing() -> str:
     going to waste.</p>
     <div class="eg">{e(PLACEHOLDER)}</div>
     <textarea name="typed" placeholder="Paste or type your products here"></textarea>
+  </fieldset>
+
+  <fieldset>
+    <legend>What are you trying to treat?</legend>
+    <p>Optional. Tick anything that applies and the audit will also tell you
+    whether your shelf actually addresses it — and what would, if it does not.</p>
+    <div class="checks">{concern_boxes}</div>
   </fieldset>
 
   <fieldset>

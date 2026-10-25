@@ -16,6 +16,7 @@ from pathlib import Path
 
 from limits import Trim, cap_products
 from models import (
+    Suggestion,
     Unresolved,
     display_name,
     ApplicationSpec,
@@ -117,6 +118,7 @@ class Rules:
         self.interactions = [dict(r) for r in con.execute("SELECT * FROM interactions")]
         self.contraindications = [dict(r) for r in con.execute("SELECT * FROM contraindications")]
         self.forms = {r["id"]: dict(r) for r in con.execute("SELECT * FROM product_forms")}
+        self.concerns = {r["id"]: dict(r) for r in con.execute("SELECT * FROM concerns")}
         self.catalogue = {r["id"]: dict(r) for r in con.execute("SELECT * FROM catalogue")}
         self.catalogue_terms = sorted(
             ((r["term"], r["catalogue_id"]) for r in con.execute("SELECT * FROM catalogue_terms")),
@@ -530,6 +532,53 @@ class Rules:
 
     # -- top level ---------------------------------------------------------
 
+    def suggest(self, products: list[ResolvedProduct], concerns: list[str]) -> list[Suggestion]:
+        """What to consider adding, for concerns the shelf does not address.
+
+        A lookup, not a judgement. The concern came from the user, the
+        actives that address it come from concerns.yaml, and what is already
+        owned comes from the resolved products. Nothing here is the model's
+        opinion about anyone's face.
+
+        Where a concern is already covered, that is the answer — telling
+        someone they need nothing is more useful than finding them something
+        to buy.
+        """
+        owned = {a for p in products for a in p.actives}
+        out: list[Suggestion] = []
+
+        for concern_id in concerns:
+            row = self.concerns.get(concern_id)
+            if not row:
+                continue
+            addressed = [a for a in row["addressed_by"].split(",") if a]
+            covered = [a for a in addressed if a in owned]
+            missing = [a for a in addressed if a not in owned]
+
+            products_for = []
+            if not covered:
+                for entry in self.catalogue.values():
+                    actives = set(entry["actives"].split(","))
+                    if actives & set(missing):
+                        products_for.append(f"{entry['brand']} {entry['name']}")
+                    if len(products_for) >= 3:
+                        break
+
+            out.append(
+                Suggestion(
+                    concern=concern_id,
+                    concern_label=row["label"],
+                    why=row["note"] or "",
+                    missing_actives=[self.ingredients[a]["name"] for a in missing],
+                    already_covered_by=[
+                        p.product.name for p in products
+                        if set(p.actives) & set(covered)
+                    ],
+                    products=products_for,
+                )
+            )
+        return out
+
     def gaps(self, products: list[ResolvedProduct]) -> list[Gap]:
         """What this shelf needs and does not have.
 
@@ -584,6 +633,7 @@ class Rules:
         raw: list[InputProduct],
         conditions: list[str] | None = None,
         trims: list[Trim] | None = None,
+        concerns: list[str] | None = None,
     ) -> AuditResult:
         # The findings pass is O(n^2) in products, so the cap is a cost control
         # as much as a sanity one. Truncate and say so; never drop silently.
@@ -609,6 +659,7 @@ class Rules:
             routine=self.build_routine(products, findings),
             waste=self.waste(products, findings),
             gaps=self.gaps(products),
+            suggestions=self.suggest(products, concerns or []),
             rules_verified=self.rules_verified,
             rules_total=self.rules_total,
         )

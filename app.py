@@ -31,6 +31,7 @@ from annotate import annotate, boxes_for  # noqa: E402
 from limits import MAX_IMAGE_BYTES, Trim  # noqa: E402
 from models import InputProduct, display_name  # noqa: E402
 from pages import error_page, landing  # noqa: E402
+import render as render_mod  # noqa: E402
 from render import render  # noqa: E402
 from rules import Rules  # noqa: E402
 from safety import AuditTrail  # noqa: E402
@@ -42,6 +43,12 @@ app = FastAPI(title="Skincare shelf audit")
 # would add latency for nothing.
 RULES = Rules()
 
+# The concern checkboxes come from the database, so the form and the engine
+# cannot drift apart.
+render_mod.CONCERN_CHOICES = [
+    (c["id"], c["label"]) for c in RULES.concerns.values()
+]
+
 IMAGE_SUFFIX = {
     "image/jpeg": ".jpg",
     "image/jpg": ".jpg",
@@ -52,7 +59,7 @@ IMAGE_SUFFIX = {
 
 @app.get("/", response_class=HTMLResponse)
 def home() -> str:
-    return landing()
+    return landing(render_mod.CONCERN_CHOICES)
 
 
 @app.post("/audit", response_class=HTMLResponse)
@@ -60,6 +67,7 @@ async def audit(
     photos: list[UploadFile] = File(default=[]),
     typed: str = Form(default=""),
     conditions: list[str] = Form(default=[]),
+    concerns: list[str] = Form(default=[]),
     carried: str = Form(default=""),
     pname: list[str] = Form(default=[]),
     pprice: list[str] = Form(default=[]),
@@ -166,7 +174,17 @@ async def audit(
         for p in fresh:
             merged[p.name.strip().lower()] = p
         products = list(merged.values())
-        result = RULES.audit(products, conditions, trims=trims)
+        # Conditions and concerns arrive on the same field; they are different
+        # kinds of thing and go to different places. A condition is a gate, a
+        # concern is a goal.
+        # Two different kinds of thing on two fields. A condition is a gate
+        # that routes to a clinician; a concern is a goal that drives
+        # suggestions. Anything arriving on the wrong one is sorted here
+        # rather than silently ignored.
+        incoming = list(conditions) + list(concerns)
+        concern_ids = [c for c in incoming if c in RULES.concerns]
+        gate_ids = [c for c in incoming if c not in RULES.concerns]
+        result = RULES.audit(products, gate_ids, trims=trims, concerns=concern_ids)
         if reading is not None:
             result.unreadable = list(reading.unreadable)
         narrative, _ = await explain_audit(result, usage_log=log, trail=trail)

@@ -283,6 +283,19 @@ table.prices input[type=number]:focus{outline:2px solid var(--clay);outline-offs
 table.prices input[type=checkbox]{width:16px;height:16px;accent-color:var(--clay)}
 table.prices .typ{font-size:11.5px;color:var(--ink-faint);display:block}
 
+/* Suggestions: the other half of the audit. */
+.sugg{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:20px 24px;box-shadow:var(--shadow)}
+.sugg + .sugg{margin-top:12px}
+.sugg.covered{background:#f2f7f1;border-color:#d4e3d0}
+.sugg h4{margin:0 0 8px;font:500 18px/1.3 var(--serif)}
+.sugg p{margin:0 0 10px;font-size:14.5px;line-height:1.6;color:var(--ink-dim)}
+.sugg .acts{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+.sugg .act{font-size:12.5px;padding:3px 10px;border-radius:999px;
+  background:var(--sunk);border:1px solid var(--line);color:var(--ink)}
+.sugg .eg{font-size:13px;color:var(--ink-faint)}
+.sugg .ok{font-size:14.5px;color:#41603f}
+
 /* Guided mode */
 .guide{position:fixed;inset:0;background:rgba(246,242,236,.96);z-index:50;
   display:grid;place-items:center;padding:28px;backdrop-filter:blur(3px)}
@@ -778,6 +791,10 @@ def _step_row(step, spec, slot: str, total: int) -> str:
     )
 
 
+# Filled by the caller from the database, so the form and the engine cannot
+# drift apart. Empty means no checkboxes rather than a stale hard-coded list.
+CONCERN_CHOICES: list[tuple[str, str]] = []
+
 CELL_CLASS = {"high": "high", "critical": "high", "medium": "med", "low": "good"}
 
 # Rows past this stop being legible; the grid becomes a texture.
@@ -1253,6 +1270,36 @@ def render(
             f'<div class="legendbox"><h4>What is in the picture</h4>{inner}</div></div>'
         )
 
+    if audit.suggestions:
+        parts.append("<h2>What you might add</h2>")
+        parts.append(
+            '<p class="lede">For the concerns you confirmed. Every suggestion is '
+            "an ingredient the table says addresses that concern, not an opinion "
+            "about your skin.</p>"
+        )
+        for s in audit.suggestions:
+            if s.already_covered_by:
+                owned = ", ".join(s.already_covered_by[:3])
+                parts.append(
+                    f'<div class="sugg covered"><h4>{e(s.concern_label)}</h4>'
+                    f'<p class="ok">Already covered — {e(owned)} '
+                    f"{'addresses' if len(s.already_covered_by) == 1 else 'address'} "
+                    f"this. Nothing to add.</p></div>"
+                )
+                continue
+            acts = "".join(f'<span class="act">{e(a)}</span>' for a in s.missing_actives[:6])
+            eg = (
+                f'<div class="eg">Products containing one of these: '
+                f"{e(', '.join(s.products[:3]))}</div>"
+                if s.products else ""
+            )
+            parts.append(
+                f'<div class="sugg"><h4>{e(s.concern_label)}</h4>'
+                f"<p>Nothing on your shelf addresses this.</p>"
+                f'<div class="acts">{acts}</div>'
+                f"{f'<p>{e(s.why)}</p>' if s.why else ''}{eg}</div>"
+            )
+
     week = _week_grid(audit)
     if week:
         parts.append("<h2>Which nights</h2>")
@@ -1390,6 +1437,13 @@ def render(
                 f'value="{e(name)}"{checked}></td></tr>'
             )
 
+        chosen = {s.concern for s in audit.suggestions}
+        concern_boxes = "".join(
+            f'<label><input type="checkbox" name="concerns" value="{e(cid)}"'
+            f'{" checked" if cid in chosen else ""}><span>{e(label)}</span></label>'
+            for cid, label in (CONCERN_CHOICES or [])
+        )
+
         parts.append("<h2>Add to this audit</h2>")
         parts.append(
             f'<form class="again" method="post" action="/audit" '
@@ -1402,6 +1456,9 @@ def render(
             f"<table class=\"prices\"><tr><th>Product</th>"
             f'<th class="r">What you paid</th><th class="c">Never use it</th></tr>'
             f'{"".join(rows)}</table>'
+            f'<div class="checks" style="margin-bottom:16px">'
+            f"<strong style=\"font-size:14px\">What are you trying to treat?</strong>"
+            f"{concern_boxes}</div>"
             f'<input type="file" name="photos" accept="image/*" multiple>'
             f'<textarea name="typed" placeholder="Or type any products that are '
             f'missing, with ingredients if you have them"></textarea>'
