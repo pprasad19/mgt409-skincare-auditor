@@ -1179,13 +1179,25 @@ def _conflict_grid(audit: AuditResult, explain: dict[str, str]) -> tuple[str, st
         label = a if len(a) <= 28 else a[:26] + "…"
         rows.append(f'<tr><th><b>{e(marks[a])}</b>  {e(label)}</th>{"".join(cells)}</tr>')
 
+    # The legend lists what this grid can actually contain, not every
+    # category the schema allows. Dropping SKA-020 left no myth rules in
+    # the table at all, and a swatch for a colour that can never appear
+    # tells the reader the system checks something it does not.
+    present = set(worst.values())
+    swatches = [
+        ("high", "var(--cell-crit)", "conflict"),
+        ("med", "var(--cell-care)", "use with care"),
+        ("good", "var(--cell-good)", "works well together"),
+        ("myth", "var(--cell-myth)", "myth, ignore it"),
+    ]
     key = (
         '<div class="key">'
-        '<span><i style="background:var(--cell-crit)"></i>conflict</span>'
-        '<span><i style="background:var(--cell-care)"></i>use with care</span>'
-        '<span><i style="background:var(--cell-good)"></i>works well together</span>'
-        '<span><i style="background:var(--cell-myth)"></i>myth, ignore it</span>'
-        '<span><i style="background:var(--sunk)"></i>no interaction</span>'
+        + "".join(
+            f'<span><i style="background:{colour}"></i>{label}</span>'
+            for kind, colour, label in swatches
+            if kind in present
+        )
+        + '<span><i style="background:var(--sunk)"></i>no interaction</span>'
         "</div>"
     )
     html_out = (

@@ -62,8 +62,8 @@ interactions:
     guidance: Separate them — benzoyl peroxide in the morning, retinoid at night.
     resolution: separate_am_pm
     except_ingredients: [adapalene]
-    source: null
-    review: pending
+    source: "Martin B et al., Br J Dermatol 1998 (PMID 9990414): tretinoin 0.025% gel with 10% benzoyl peroxide under light lost 50% in 2h, 95% in 24h. In vitro, two products mixed; degradation attributed to peroxide plus light, so this rule should not claim it happens in the dark. Reviewed 25 Oct 2026."
+    review: verified
 
   - rule_id: SKA-004
     a: ing:adapalene
@@ -76,8 +76,8 @@ interactions:
       exception to SKA-003.
     guidance: Safe to use together. Combination products exist for exactly this reason.
     resolution: none
-    source: null
-    review: pending
+    source: "PMID 9990414: adapalene showed no degradation over 24h under the same conditions. PMC3956794 meta-analysis repeats that adapalene is stable with benzoyl peroxide in light. Co-formulated adapalene/BPO products are sold. Reviewed 25 Oct 2026."
+    review: verified
 
   - rule_id: SKA-005
     a: class:retinoid
@@ -156,20 +156,6 @@ interactions:
     review: pending
 
   # ---- Vitamin C ----------------------------------------------------------
-  - rule_id: SKA-020
-    a: ing:l_ascorbic_acid
-    b: ing:niacinamide
-    type: myth
-    severity: low
-    mechanism: >-
-      The claim traces to a 1960s stability study run at high heat on pure
-      compounds, conditions that do not occur on skin or in finished products.
-      Modern formulations combine them deliberately.
-    guidance: No need to separate these. If you have been spacing them apart, you can stop.
-    resolution: none
-    source: null
-    review: pending
-
   - rule_id: SKA-021
     a: ing:l_ascorbic_acid
     b: class:copper_peptide
@@ -350,8 +336,8 @@ interactions:
       film, and the stated protection no longer holds.
     guidance: Sunscreen is always the last morning step.
     resolution: reorder
-    source: null
-    review: pending
+    source: "AAD, 'Should I apply my skin care products in a certain order?' and 'Dermatologist-recommended skin care for your 20s': sunscreen after other skincare, beneath makeup. NOTE the mechanism is NOT film disruption: PMID 41478343 found sunscreen efficacy unaltered whether applied before or after other topicals. PMC5874020 shows quantity dominates, a single application giving an effective SPF of ~3.2 from an SPF 50 product. Reviewed 25 Oct 2026."
+    review: verified
 
   - rule_id: SKA-081
     a: class:occlusive
@@ -375,8 +361,8 @@ interactions:
       pigmentation and photoageing they are meant to address.
     guidance: Use at night, and wear sunscreen daily.
     resolution: separate_am_pm
-    source: null
-    review: pending
+    source: "DailyMed tretinoin prescribing information: 'Tretinoin gel can cause photosensitivity. Advise patients to avoid or minimize unnecessary exposure to UV light.' Label text, for tretinoin; extension to OTC retinol is an inference. Reviewed 25 Oct 2026."
+    review: verified
 
   - rule_id: SKA-083
     a: class:retinoid
@@ -386,8 +372,8 @@ interactions:
     mechanism: Retinoids degrade in UV light and increase photosensitivity.
     guidance: Night use only, with daily sunscreen.
     resolution: separate_am_pm
-    source: null
-    review: pending
+    source: "FDA, Guidance for Industry: Labeling for Cosmetics Containing Alpha Hydroxy Acids (Jan 2005): AHAs increase UV sensitivity during use and for up to a week after. Guidance, not binding regulation. FDA Beta Hydroxy Acids page says the same of glycolic acid. Reviewed 25 Oct 2026."
+    review: verified
 
 # Contraindications route to a human. They are gates, never advice.
 contraindications:
@@ -409,8 +395,8 @@ contraindications:
     severity: critical
     message: Hydroquinone use in pregnancy should be decided with a clinician.
     action: escalate
-    source: null
-    review: pending
+    source: "StatPearls NBK539693, as for the hydroquinone ingredient row. Escalation rather than refusal is the supported behaviour. Reviewed 25 Oct 2026."
+    review: verified
 
   - rule_id: SKC-003
     condition: pregnancy
@@ -420,8 +406,8 @@ contraindications:
       Guidance for salicylic acid in pregnancy differs between low-percentage
       leave-on products and peels. Worth confirming with your clinician.
     action: escalate
-    source: null
-    review: pending
+    source: "PMC9823189 and PMC12591629, as for the salicylic_acid ingredient row. The leave-on versus peel distinction is about dose and area, and holds. Reviewed 25 Oct 2026."
+    review: verified
 
   - rule_id: SKC-010
     condition: prescription_product

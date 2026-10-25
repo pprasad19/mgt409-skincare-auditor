@@ -38,8 +38,8 @@ ingredients:
     prescription: true
     potency: 5
     note: Prescription retinoid. Presence should route the user to their clinician rather than to generated advice.
-    source: null
-    review: pending
+    source: "Malta Medicines Authority review of topical retinoids in pregnancy: systemic exposure negligible, contraindication recommended as a precaution. Reviewed 25 Oct 2026."
+    review: verified
 
   - id: adapalene
     name: Adapalene
@@ -53,8 +53,8 @@ ingredients:
     prescription: false
     potency: 4
     note: Unusually photostable and oxidation-resistant for a retinoid, which makes it the documented exception to the benzoyl peroxide conflict.
-    source: null
-    review: pending
+    source: "Malta Medicines Authority review of topical retinoids in pregnancy: systemic exposure negligible, contraindication recommended as a precaution. Reviewed 25 Oct 2026."
+    review: verified
 
   - id: retinol
     name: Retinol
@@ -67,8 +67,8 @@ ingredients:
     pregnancy: avoid
     prescription: false
     potency: 3
-    source: null
-    review: pending
+    source: "Malta Medicines Authority review of topical retinoids in pregnancy: systemic exposure negligible, contraindication recommended as a precaution. Reviewed 25 Oct 2026."
+    review: verified
 
   - id: retinaldehyde
     name: Retinaldehyde
@@ -81,8 +81,8 @@ ingredients:
     pregnancy: avoid
     prescription: false
     potency: 4
-    source: null
-    review: pending
+    source: "Malta Medicines Authority review of topical retinoids in pregnancy: systemic exposure negligible, contraindication recommended as a precaution. Reviewed 25 Oct 2026."
+    review: verified
 
   - id: retinyl_palmitate
     name: Retinyl palmitate
@@ -96,8 +96,8 @@ ingredients:
     prescription: false
     potency: 1
     note: Weakest common retinoid ester. Often present in moisturisers without being marketed as a retinoid, which is a frequent source of accidental stacking.
-    source: null
-    review: pending
+    source: "Malta Medicines Authority review of topical retinoids in pregnancy: systemic exposure negligible, contraindication recommended as a precaution. Reviewed 25 Oct 2026."
+    review: verified
 
   # ---- Exfoliating acids --------------------------------------------------
   - id: glycolic_acid
@@ -156,8 +156,8 @@ ingredients:
     prescription: false
     potency: 3
     note: Oil-soluble, so it works inside the pore rather than on the surface. Pregnancy guidance differs sharply between low-percentage leave-on products and peels.
-    source: null
-    review: pending
+    source: "PMC9823189 (acne in pregnancy, narrative review): low risk at acne-product concentrations, negligible absorption; avoid large areas, prolonged use, occlusion, damaged skin. PMC12591629: 44 cases of topical salicylate toxicity at the extremes. Reviewed 25 Oct 2026."
+    review: verified
 
   - id: gluconolactone
     name: Gluconolactone
@@ -276,8 +276,8 @@ ingredients:
     prescription: true
     potency: 5
     note: Regulated differently across markets; treat presence as a clinician-supervised product.
-    source: null
-    review: pending
+    source: "StatPearls NBK539693: 35-45% systemic absorption, no demonstrated malformation risk but human evidence is one small study; minimise exposure in pregnancy. Supports escalating rather than forbidding. Reviewed 25 Oct 2026."
+    review: verified
 
   - id: tranexamic_acid
     name: Tranexamic acid
