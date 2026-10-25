@@ -95,6 +95,17 @@ def landing(concerns: list[tuple[str, str]] | None = None) -> str:
   </fieldset>
 
   <fieldset>
+    <legend>A photo of your skin, if you want</legend>
+    <p>Entirely optional. If you add one, it is used to <em>ask</em> you what
+    you might be treating — "there seems to be shine across the forehead, is
+    that something you're working on?" — and you decide what is right. It does
+    not diagnose anything, and nothing it notices counts until you tick it.</p>
+    <p style="font-size:13.5px;color:var(--ink-faint)">Read once, in memory,
+    and gone when the audit finishes. Never stored, never sent anywhere else.</p>
+    <input type="file" name="face" accept="image/*">
+  </fieldset>
+
+  <fieldset>
     <legend>What are you trying to treat?</legend>
     <p>Optional. Tick anything that applies and the audit will also tell you
     whether your shelf actually addresses it — and what would, if it does not.</p>

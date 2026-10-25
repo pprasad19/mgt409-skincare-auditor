@@ -26,7 +26,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 from fastapi import FastAPI, File, Form, UploadFile  # noqa: E402
 from fastapi.responses import HTMLResponse  # noqa: E402
 
-from agents import explain_audit, new_run_id, read_shelf  # noqa: E402
+from agents import explain_audit, new_run_id, observe_skin, read_shelf  # noqa: E402
 from annotate import annotate, boxes_for  # noqa: E402
 from limits import MAX_IMAGE_BYTES, Trim  # noqa: E402
 from models import InputProduct, display_name  # noqa: E402
@@ -65,6 +65,7 @@ def home() -> str:
 @app.post("/audit", response_class=HTMLResponse)
 async def audit(
     photos: list[UploadFile] = File(default=[]),
+    face: UploadFile | None = File(default=None),
     typed: str = Form(default=""),
     conditions: list[str] = Form(default=[]),
     concerns: list[str] = Form(default=[]),
@@ -136,6 +137,18 @@ async def audit(
                 status_code=400,
             )
 
+        # The face photograph is read once, from the temp directory, and the
+        # directory is removed in the finally block below. It is never written
+        # to the audit trail and never reaches the result page.
+        face_path = None
+        if face is not None and face.filename:
+            suffix = IMAGE_SUFFIX.get((face.content_type or "").lower())
+            if suffix:
+                data = await face.read()
+                if 0 < len(data) <= MAX_IMAGE_BYTES:
+                    face_path = tmp / f"face{suffix}"
+                    face_path.write_bytes(data)
+
         run_id = new_run_id()
         log = UsageLog(run_label=f"web-{run_id}", cache_enabled=True)
         trail = AuditTrail(run_id=run_id, defended=True)
@@ -148,7 +161,15 @@ async def audit(
                 usage_log=log, trail=trail, trims_out=trims,
             )
 
-        if reading is not None and not reading.products and not previous:
+        skin = None
+        if face_path is not None:
+            try:
+                skin = await observe_skin(face_path, usage_log=log, trail=trail)
+            except Exception:
+                # A failed observation is a lost suggestion, not a lost audit.
+                traceback.print_exc()
+
+        if reading is not None and not reading.products and not previous and skin is None:
             return HTMLResponse(
                 error_page(
                     "No products could be identified.",
@@ -182,6 +203,9 @@ async def audit(
         # suggestions. Anything arriving on the wrong one is sorted here
         # rather than silently ignored.
         incoming = list(conditions) + list(concerns)
+        # An observation is a suggested concern on the first pass. The user
+        # sees it ticked and can untick it before the next one.
+        incoming += [o.concern for o in (skin.observations if skin else [])]
         concern_ids = [c for c in incoming if c in RULES.concerns]
         gate_ids = [c for c in incoming if c not in RULES.concerns]
         result = RULES.audit(products, gate_ids, trims=trims, concerns=concern_ids)
@@ -237,7 +261,7 @@ async def audit(
             for rp in result.products
         ])
         return HTMLResponse(
-            render(result, narrative, annotated or None, carry, legend)
+            render(result, narrative, annotated or None, carry, legend, skin)
         )
 
     except Exception:  # noqa: BLE001

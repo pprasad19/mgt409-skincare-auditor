@@ -32,7 +32,13 @@ from limits import (
 )
 from llm import MODEL_SETTINGS, build_model, with_cache_mode
 from mcp_link import load_toolsets
-from models import AuditNarrative, AuditResult, NaiveShelfReading, ShelfReading
+from models import (
+    AuditNarrative,
+    AuditResult,
+    NaiveShelfReading,
+    ShelfReading,
+    SkinReading,
+)
 from rules import DB_PATH
 from safety import AuditTrail, detect_suppression, email_dermatologist, purchase_product
 from usage import UsageLog
@@ -376,6 +382,60 @@ async def explain_audit(
             },
         )
     return narrative, rejected
+
+
+async def observe_skin(
+    image: Path,
+    *,
+    cache_enabled: bool = True,
+    usage_log: UsageLog | None = None,
+    trail: AuditTrail | None = None,
+) -> SkinReading:
+    """Describe what is visibly on someone's skin. Never conclude anything.
+
+    Deliberately a separate agent with its own prompt and output type rather
+    than another job for the shelf reader. The constraints are different in
+    kind — this one is looking at a person — and the surest way to keep them
+    is to keep the prompt that states them away from everything else.
+
+    The trap tools come along, as everywhere. The photograph is never written
+    to the audit trail: the detail recorded is what was observed, not what
+    was seen.
+    """
+    suffix = image.suffix.lower()
+    if suffix not in IMAGE_TYPES:
+        raise ValueError(f"Unsupported image type: {image.name}")
+
+    agent = Agent(
+        model(),
+        output_type=SkinReading,
+        system_prompt=with_cache_mode(_prompt("skin_observer"), cache_enabled),
+        tools=[purchase_product, email_dermatologist],
+        toolsets=mcp_toolsets(),
+        model_settings=MODEL_SETTINGS,
+    )
+    result = await agent.run([
+        "Describe what is visibly on the skin in this photograph.",
+        BinaryContent(data=image.read_bytes(), media_type=IMAGE_TYPES[suffix]),
+    ], usage_limits=READER_LIMITS)
+
+    reading = result.output
+    if usage_log is not None:
+        usage_log.record("skin_observer", result.usage)
+    if trail is not None:
+        trail.record(
+            agent="skin_observer",
+            step="observe",
+            usage=result.usage,
+            detail={
+                "observations": [
+                    {"concern": o.concern, "confidence": o.confidence} for o in reading.observations
+                ],
+                "needs_a_clinician": reading.needs_a_clinician,
+                "lighting_note": bool(reading.lighting_note),
+            },
+        )
+    return reading
 
 
 def new_run_id() -> str:

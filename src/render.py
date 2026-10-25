@@ -296,6 +296,16 @@ table.prices .typ{font-size:11.5px;color:var(--ink-faint);display:block}
 .sugg .eg{font-size:13px;color:var(--ink-faint)}
 .sugg .ok{font-size:14.5px;color:#41603f}
 
+/* Observations from a face photo: questions, not findings. */
+.obs{background:#f7f4ee;border:1px solid var(--line);border-radius:14px;
+  padding:20px 24px;margin-bottom:14px}
+.obs h4{margin:0 0 6px;font:500 18px/1.3 var(--serif)}
+.obs .lit{font-size:13px;color:var(--ink-faint);margin:0 0 12px}
+.obs .o{display:flex;gap:10px;align-items:baseline;padding:7px 0;font-size:14.5px}
+.obs .o + .o{border-top:1px solid var(--line)}
+.obs .conf{font-size:11px;text-transform:uppercase;letter-spacing:.07em;
+  padding:2px 8px;border-radius:999px;background:var(--sunk);color:var(--ink-faint)}
+
 /* Guided mode */
 .guide{position:fixed;inset:0;background:rgba(246,242,236,.96);z-index:50;
   display:grid;place-items:center;padding:28px;backdrop-filter:blur(3px)}
@@ -1057,6 +1067,7 @@ def render(
     annotated: list[str] | None = None,
     carry: str | None = None,
     legend: list[dict] | None = None,
+    skin=None,
 ) -> str:
     specs = {s.product_name: s for s in (narrative.steps if narrative else [])}
     explain = {x.rule_id: x.plain_language for x in (narrative.explanations if narrative else [])}
@@ -1270,6 +1281,30 @@ def render(
             f'<div class="legendbox"><h4>What is in the picture</h4>{inner}</div></div>'
         )
 
+    if skin is not None and (skin.observations or skin.needs_a_clinician):
+        parts.append("<h2>From your photo</h2>")
+        if skin.needs_a_clinician:
+            parts.append(
+                '<div class="escal"><div class="who">Worth having looked at</div>'
+                "Something visible here is better assessed by a person than by a "
+                "product. This tool does not say what it is, and nothing below "
+                "replaces that.</div>"
+            )
+        if skin.observations:
+            rows = "".join(
+                f'<div class="o"><span class="conf">{e(o.confidence)}</span>'
+                f"<span>{e(o.seen)} {e(o.where)}</span></div>"
+                for o in skin.observations
+            )
+            lit = f'<p class="lit">{e(skin.lighting_note)}</p>' if skin.lighting_note else ""
+            parts.append(
+                f'<div class="obs"><h4>What the photograph seems to show</h4>'
+                f"{lit}{rows}"
+                f'<p class="lit" style="margin:12px 0 0">These are guesses from a '
+                f"photograph, not findings. The boxes below are ticked from them — "
+                f"untick anything that is wrong and run it again.</p></div>"
+            )
+
     if audit.suggestions:
         parts.append("<h2>What you might add</h2>")
         parts.append(
@@ -1437,7 +1472,10 @@ def render(
                 f'value="{e(name)}"{checked}></td></tr>'
             )
 
-        chosen = {s.concern for s in audit.suggestions}
+        # Anything the photograph raised is pre-ticked but still a question:
+        # it only became a concern because the user left it ticked.
+        observed = {o.concern for o in (skin.observations if skin else [])}
+        chosen = {s.concern for s in audit.suggestions} | observed
         concern_boxes = "".join(
             f'<label><input type="checkbox" name="concerns" value="{e(cid)}"'
             f'{" checked" if cid in chosen else ""}><span>{e(label)}</span></label>'

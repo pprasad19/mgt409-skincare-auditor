@@ -187,6 +187,36 @@ class Unresolved(BaseModel):
     legibility: str = "name_only"
 
 
+class Observation(BaseModel):
+    """Something visible in a face photograph. Not a finding, not a diagnosis.
+
+    Offered back as a question. Nothing here reaches the rules engine until
+    the user has ticked it, which means a wrong observation costs a glance
+    rather than a wrong recommendation.
+    """
+
+    concern: Literal["oiliness", "dryness", "redness", "texture", "dark_marks", "breakouts"]
+    where: str
+    confidence: Literal["clear", "possible", "faint"] = "possible"
+    seen: str
+
+
+class SkinReading(BaseModel):
+    observations: list[Observation] = Field(default_factory=list)
+    lighting_note: str = Field(
+        default="",
+        description="Why the photograph may not support much, if so. Shown to the "
+                    "user, because a confident reading of a badly lit photo is worse "
+                    "than an uncertain one.",
+    )
+    needs_a_clinician: bool = Field(
+        default=False,
+        description="Something visible warrants a person rather than a product. "
+                    "A flag only — the observer is forbidden from naming what it "
+                    "thinks it might be.",
+    )
+
+
 class Suggestion(BaseModel):
     """Something worth adding, for a concern the shelf does not address.
 
