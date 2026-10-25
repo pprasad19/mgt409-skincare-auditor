@@ -146,7 +146,39 @@ def main() -> int:
         assert cap_text(None, trims) is None
         assert len(cap_text("x" * 99_999, trims)) == 20_000
 
+    def caveat_is_stripped():
+        """The verification clause, in every phrasing it has arrived in.
+
+        Three rounds of prompting failed to stop the auditor appending this,
+        and each fix caught the previous phrasing and missed the next:
+        "findings are unverified", then "have not been verified against a
+        source", then "one finding is not yet verified". The rule is now the
+        broad one — any trailing clause mentioning verification at all — and
+        these cases exist so the next variant fails loudly here rather than
+        quietly on the page.
+        """
+        from agents import strip_verification_caveat
+
+        strip = [
+            "Use the wash in the morning; one finding is not yet verified.",
+            "Keep the stronger one. 30 findings have not been verified against a source.",
+            "Separate them by time of day, though these rules are unverified.",
+            "Drop the weaker retinol, but note the rules are unverified.",
+        ]
+        keep = [
+            "Use them on alternate nights rather than together.",
+            "Your acne wash is breaking down the retinol; separate them by time of day.",
+            "Keep the stronger Retinol 1% in Squalane and drop the other.",
+        ]
+        for text in strip:
+            out = strip_verification_caveat(text)
+            assert "verif" not in out.lower(), f"not stripped: {out}"
+            assert len(out) > 20, f"stripped too much: {out}"
+        for text in keep:
+            assert strip_verification_caveat(text) == text, f"wrongly altered: {text}"
+
     for name, fn in [
+        ("verification caveat stripped", caveat_is_stripped),
         ("empty shelf", empty_shelf),
         ("single product", single_product),
         ("product with no ingredients", no_ingredients),

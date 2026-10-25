@@ -24,15 +24,20 @@ Requires Python 3.11+.
 
 ```bash
 python -m venv .venv
-.venv/Scripts/python.exe -m pip install -r requirements.txt   # Windows
-# source .venv/bin/activate && pip install -r requirements.txt  # macOS/Linux
-
+.venv/Scripts/python.exe -m pip install -r requirements.txt
 python build_db.py
+python -m uvicorn app:app --port 8000
 ```
 
-`build_db.py` compiles the YAML rule files into `data/skincare.db` and validates
-every rule selector against the ingredient list first. It should print a row
-count and exit cleanly.
+On macOS or Linux, `source .venv/bin/activate && pip install -r requirements.txt`
+instead of the second line.
+
+Then open **http://localhost:8000**. Upload photographs of your products, or
+type them in, and the audit comes back as a page.
+
+`build_db.py` compiles the YAML rule files into `data/skincare.db` and
+validates every rule selector against the ingredient list first. It should
+print a row count and exit cleanly.
 
 ### API key
 
@@ -47,6 +52,25 @@ PORTKEY_API_KEY=...
 The model is `gpt-6-luna` throughout.
 
 ---
+
+## Without the web app
+
+Everything runs from the command line too, which is also how the test and
+experiment scripts drive it:
+
+```bash
+python audit_cli.py --shelf data/sample_shelf.json --explain --html output/audit.html
+```
+
+| | |
+|---|---|
+| `python test_robustness.py` | malformed and hostile input, no API key needed |
+| `python test_i18n.py` | Korean, French, Japanese, Chinese, no API key needed |
+| `python make_attacks.py` | regenerate the adversarial label images |
+| `python redteam.py --mode naive` | run the attacks with no defences |
+| `python redteam.py --mode defended` | run them again with defences on |
+| `python redteam.py --compare` | write `output/defense_results.md` |
+| `python preflight.py` | check the key, token accounting and caching |
 
 ## Non-English products
 

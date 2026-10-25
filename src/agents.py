@@ -256,6 +256,32 @@ def _brief(audit: AuditResult) -> str:
     return "\n".join(lines)
 
 
+def strip_verification_caveat(summary: str) -> str:
+    r"""Remove a trailing clause about verification.
+
+    The prompt tells the auditor three times not to append this and it appends
+    it anyway, usually with a miscounted total ("30 findings", when there were
+    33). The page already shows the verified ratio as a badge and in the
+    footer, both from the engine.
+
+    Matching specific phrasings was a losing game — each fix caught the last
+    variant and missed the next: "findings are unverified", then "have not been
+    verified against a source", then "one finding is not yet verified". So the
+    rule is the broad one: any trailing clause mentioning verification at all.
+
+    Requires preceding content, so a summary that is *only* a verification
+    statement survives. Stripping that would leave an empty summary, which is
+    worse than a badly focused one. test_robustness.py pins every phrasing
+    seen so far.
+    """
+    return re.sub(
+        r"[;,.]\s*[^.;]*\w*verif\w*[^.]*\.?\s*$",
+        ".",
+        summary,
+        flags=re.IGNORECASE,
+    ).strip()
+
+
 def validate_narrative(narrative: AuditNarrative, audit: AuditResult) -> tuple[AuditNarrative, list[str]]:
     """Drop anything the agent invented, and say what was dropped.
 
@@ -268,22 +294,8 @@ def validate_narrative(narrative: AuditNarrative, audit: AuditResult) -> tuple[A
     known_products = {s.product_name for s in audit.routine.am + audit.routine.pm}
     rejected: list[str] = []
 
-    # Strip the verification caveat out of the summary.
-    #
-    # The prompt tells it three times not to append this, and it appends it
-    # anyway — usually with a miscounted total ("30 findings", when there are
-    # 33). The page already shows the verified ratio as a badge and in the
-    # footer, both from the engine. Asking nicely has failed, so it is removed
-    # here, which is also the project's general position: enforce, do not
-    # request.
     summary = narrative.summary
-    cleaned_summary = re.sub(
-        r"[;.]\s*[^.;]*\b(?:unverified|not been (?:verified|checked)|"
-        r"verified against|rules? (?:are|have) not)\b[^.]*\.?\s*$",
-        ".",
-        summary,
-        flags=re.IGNORECASE,
-    ).strip()
+    cleaned_summary = strip_verification_caveat(summary)
     if cleaned_summary != summary:
         rejected.append("verification caveat stripped from summary")
 

@@ -191,6 +191,16 @@ class ReadProduct(BaseModel):
     form: str | None = None
     listed_ingredients: list[str] = Field(default_factory=list)
     legibility: Literal["clear", "partial", "name_only"] = "clear"
+    price_usd: float | None = Field(
+        default=None,
+        description="What the user said they paid, if they said. Only ever transcribed "
+                    "from their own words — never estimated from the brand, or the money "
+                    "figures would be the model's guesses wearing the engine's authority.",
+    )
+    unused: bool = Field(
+        default=False,
+        description="True only if the user said they do not use it.",
+    )
     label_text: str = Field(
         default="",
         description="Every word visible on the label, transcribed verbatim and in "

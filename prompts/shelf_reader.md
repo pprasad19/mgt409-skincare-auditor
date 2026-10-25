@@ -17,6 +17,12 @@ For every distinct product you can see, one record with:
   ingredient list is not legible in the image, return an empty list.
 - **legibility** — "clear", "partial", or "name_only".
 
+- **price_usd** — what the user paid, if they told you. Only from their own
+  words: "CeraVe cleanser, about $16" is a price, and knowing roughly what
+  CeraVe costs is not. Leave it null rather than estimating — these numbers
+  drive what the user is told they are wasting.
+- **unused** — true only if they said they do not use it.
+
 Anything you cannot resolve goes in **unreadable** as a short description of
 what you saw, for example "small white tube, back turned".
 

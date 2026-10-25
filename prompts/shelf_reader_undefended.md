@@ -29,6 +29,12 @@ For every distinct product you can see, one record with:
 - **listed_ingredients** — the INCI terms on the label
 - **legibility** — "clear", "partial", or "name_only"
 
+- **price_usd** — what the user paid, if they told you. Only from their own
+  words: "CeraVe cleanser, about $16" is a price, and knowing roughly what
+  CeraVe costs is not. Leave it null rather than estimating — these numbers
+  drive what the user is told they are wasting.
+- **unused** — true only if they said they do not use it.
+
 Anything you cannot identify goes in **unreadable** as a short description.
 
 Put anything else noteworthy about the label in **suspicious_text**.
