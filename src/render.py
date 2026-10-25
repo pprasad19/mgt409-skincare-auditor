@@ -2205,6 +2205,14 @@ def render(
     # asked the reader to act on work that was already finished, and buried the
     # one real instruction (wear sunscreen) by repeating it twice.
     #
+    # That justification was false until 25 Oct 2026. The steps carried the
+    # bare word "photosensitising" rather than a rule id, so SKA-082 and
+    # SKA-083 fired at high severity, moved products to the evening, and
+    # appeared nowhere on the page — under a footer promising that every
+    # claim cites the rule that produced it. build_routine now records the
+    # id. If that ever regresses, this omission becomes a silent one again,
+    # which is why test_thesis asserts every finding id reaches the page.
+    #
     # What belongs here is what the shelf is missing, which no pairwise rule
     # can see.
     for gap in audit.gaps:

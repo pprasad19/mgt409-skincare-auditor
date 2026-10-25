@@ -416,6 +416,21 @@ class Rules:
         placement: dict[str, str] = {}
         because: dict[str, list[str]] = {p.product.name: [] for p in products}
 
+        # Which timing rule moved each product, by id.
+        #
+        # This used to record the bare word "photosensitising". The result
+        # page deliberately keeps timing findings out of the findings list,
+        # on the stated grounds that "every step carries the rule id that
+        # placed it" — and it did not. SKA-082 and SKA-083 fired at high
+        # severity, moved products to the evening, and appeared nowhere on
+        # the page at all, under a footer promising that every claim cites
+        # the rule that produced it.
+        timing_rules: dict[str, list[str]] = {}
+        for finding in findings:
+            if finding.type in ("timing", "ordering"):
+                for name in finding.products:
+                    timing_rules.setdefault(name, []).append(finding.rule_id)
+
         for product in products:
             name = product.product.name
             allowed = self.forms[product.form]["times"].split(",")
@@ -428,7 +443,9 @@ class Rules:
                 placement[name] = "pm"
             elif photo:
                 placement[name] = "pm"
-                because[name].append("photosensitising")
+                because[name].extend(
+                    timing_rules.get(name) or ["photosensitising"]
+                )
             elif "pm" in times:
                 placement[name] = "pm"
                 because[name].append("evening-only ingredient")
