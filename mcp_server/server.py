@@ -244,9 +244,24 @@ def coverage() -> dict:
         "interaction_rules": len(r.interactions),
         "contraindication_rules": len(r.contraindications),
         "catalogue_products": len(r.catalogue),
-        "rules_verified": r.rules_verified,
         "rules_total": r.rules_total,
-        "caveat": "rules not yet verified against primary sources are marked per rule",
+        "rules_verified": r.rules_verified,
+        "rules_reasoned": sum(
+            1 for row in r.interactions + r.contraindications
+            if row["review"] == "reasoned"
+        ),
+        "rules_pending": sum(
+            1 for row in r.interactions + r.contraindications
+            if row["review"] == "pending"
+        ),
+        "caveat": (
+            "verified means checked against a published source, named in the "
+            "rule's source field. reasoned means a human reviewed it and found "
+            "no published source for that specific claim, usually because it "
+            "is about two ingredients together and the literature tests them "
+            "singly; the mechanism is recorded instead. Only verified claims "
+            "should be presented as settled."
+        ),
     }
 
 

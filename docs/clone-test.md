@@ -32,6 +32,7 @@ python -m uvicorn app:app --port 8000
 | `test_i18n.py` | 37 checks passed |
 | `test_storyboard.py` | 117 checks passed |
 | `test_urls.py` | 33 checks passed |
+| `test_mcp.py` | 21 checks passed |
 | `uvicorn app:app` | started, `GET /` returned 200 |
 
 Nothing needed editing, no path had to be corrected, and no dependency had
