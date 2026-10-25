@@ -284,8 +284,9 @@ footer{margin-top:68px;padding-top:26px;border-top:1px solid var(--line);
 table.prices{width:100%;border-collapse:collapse;margin:4px 0 18px;font-size:14px}
 table.prices th{text-align:left;font:600 11px/1 var(--sans);text-transform:uppercase;
   letter-spacing:.1em;color:var(--ink-faint);padding:0 0 10px}
-table.prices th.r{text-align:right;width:110px}
-table.prices th.c{text-align:center;width:84px}
+table.prices th.r{text-align:right;width:120px;padding-right:14px}
+table.prices th.c{text-align:center;width:96px}
+table.prices td.r{padding-right:14px}
 table.prices td{padding:7px 0;border-top:1px solid var(--line);vertical-align:middle}
 table.prices td.r{text-align:right}
 table.prices td.c{text-align:center}
@@ -485,6 +486,26 @@ table.prices .typ{font-size:11.5px;color:var(--ink-faint);display:block}
    textarea fell back to browser defaults and sat in a cramped row next to
    the submit button. The landing page's form is the one users meet first;
    this one should not look like a different site. */
+/* Everything below the analysis. Ruled off and set on the page's own
+   background so it reads as a different kind of thing from the findings
+   above it: those are what we found, this is what you can do next. */
+.next{margin:70px 0 0;padding-top:46px;border-top:2px solid var(--line)}
+.next > h2{margin-top:0}
+.next .lede{margin:0 0 22px}
+.again{background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:26px 30px;box-shadow:var(--shadow)}
+.again > p:first-child{margin-top:0}
+.again h4{font:600 11.5px/1 var(--sans);text-transform:uppercase;
+  letter-spacing:.13em;color:var(--ink-faint);margin:26px 0 12px}
+.checks{display:grid;gap:11px;margin-bottom:16px}
+.checks label{display:flex;gap:11px;align-items:flex-start;font-size:15px;
+  cursor:pointer}
+.checks input{margin-top:4px;accent-color:var(--clay);width:16px;height:16px;
+  flex:none}
+.checks .hint{display:block;font-size:13px;color:var(--ink-faint);margin-top:2px}
+.startover{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;
+  margin:18px 0 0;padding:18px 2px 0;border-top:1px dashed var(--line)}
+.startover span{font-size:12.5px;color:var(--ink-faint);flex:1;min-width:220px}
 .again input[type=file]{font:inherit;font-size:14px;width:100%;padding:14px;
   border-radius:12px;border:1px dashed var(--line);background:var(--sunk);
   cursor:pointer;display:block;margin-bottom:12px}
@@ -2217,33 +2238,61 @@ def render(
             for cid, label in (CONCERN_CHOICES or [])
         )
 
-        parts.append("<h2>Add to this audit</h2>")
+        parts.append('<section class="next">')
+        parts.append("<h2>Make this audit better</h2>")
+        parts.append(
+            '<p class="lede">Everything above is only as good as what it was '
+            "given. These improve it, and none of them needs starting over.</p>"
+        )
+        # Numbered as they are added, not written in. A heading over an
+        # empty block is the same failure as a scene that draws nothing: it
+        # announces something and then shows nothing, and the reader assumes
+        # it broke rather than that it had nothing to say.
+        blocks: list[str] = []
+        if rows:
+            blocks.append(
+                "<p>Fill these in and the money figures become yours rather "
+                "than typical retail.</p>"
+                '<table class="prices"><tr><th>Product</th>'
+                '<th class="r">What you paid</th>'
+                f'<th class="c">Never use it</th></tr>{"".join(rows)}</table>'
+            )
+        if concern_boxes:
+            blocks.append(
+                f'<div class="checks" style="margin-bottom:16px">{concern_boxes}</div>'
+            )
+        blocks.append(
+            "<p>Photograph the back labels of anything amber or red above. "
+            "What is already identified is kept, and a real label replaces a "
+            f"name match.<br><br>{hint}</p>"
+            '<input type="file" name="photos" accept="image/*" multiple>'
+            '<textarea name="typed" placeholder="Or type any products that are '
+            'missing, with ingredients if you have them"></textarea>'
+        )
+        titles = []
+        if rows:
+            titles.append("What you paid")
+        if concern_boxes:
+            titles.append("What you are treating")
+        titles.append("Anything missed or unreadable")
+
+        body = "".join(
+            f"<h4>{n} · {title}</h4>{block}"
+            for n, (title, block) in enumerate(zip(titles, blocks), start=1)
+        )
         parts.append(
             f'<form class="again" method="post" action="/audit" '
             f'enctype="multipart/form-data">'
-            f"<p>Fill in what you actually paid and the money figures become "
-            f"yours rather than typical retail. Photograph the back labels of "
-            f"anything amber or red and add them below — what is already "
-            f"identified is kept, and a real label replaces a name match."
-            f"<br><br>{hint}</p>"
-            f"<table class=\"prices\"><tr><th>Product</th>"
-            f'<th class="r">What you paid</th><th class="c">Never use it</th></tr>'
-            f'{"".join(rows)}</table>'
-            f'<div class="checks" style="margin-bottom:16px">'
-            f"<strong style=\"font-size:14px\">What are you trying to treat?</strong>"
-            f"{concern_boxes}</div>"
-            f'<input type="file" name="photos" accept="image/*" multiple>'
-            f'<textarea name="typed" placeholder="Or type any products that are '
-            f'missing, with ingredients if you have them"></textarea>'
+            f"{body}"
             f'<input type="hidden" name="carried" value="{e(carry)}">'
             f'<button type="submit">Audit again</button>'
             f"</form>"
-            f'<p style="margin:14px 0 0">'
+            f'<div class="startover">'
             f'<a class="reset" href="/" data-reset>Start over with a new shelf</a>'
-            f'<span style="font-size:12.5px;color:var(--ink-faint);margin-left:10px">'
-            f"Clears everything above. Use this for a different person's "
-            f"shelf — \u201cAudit again\u201d keeps what you have already given it."
-            f"</span></p>"
+            f"<span>Clears everything above. This is the one for a different "
+            f"person's shelf — \u201cAudit again\u201d keeps what you have "
+            f"already given it.</span>"
+            f"</div></section>"
         )
 
     parts.append(LOADING_MARKUP)
