@@ -53,6 +53,33 @@ The model is `gpt-6-luna` throughout.
 
 ---
 
+## The rules as an MCP server
+
+The ingredient-interaction engine is also exposed over MCP, so any client can
+query it without this app running:
+
+```bash
+python mcp_server/server.py          # stdio
+python mcp_server/server.py --demo   # see what each tool returns
+```
+
+Seven tools — `resolve_ingredients`, `lookup_ingredient`, `check_interactions`,
+`check_contraindications`, `find_product`, `layering_order`, `coverage`. They
+take ingredient ids, display names, INCI terms or local-language names
+interchangeably. Connection config is `.mcp.json`; full documentation is in
+[mcp_server/README.md](mcp_server/README.md).
+
+**The web app does not route through it by default.** A spawned subprocess
+between an upload and an answer is a failure mode bought for nothing when the
+engine is already in the same process. To have the two agents use it:
+
+```bash
+USE_MCP=1 python -m uvicorn app:app --port 8000
+```
+
+Either way the server exists, and if it fails to start the agents carry on
+without it — the engine still produces the verdict.
+
 ## Without the web app
 
 Everything runs from the command line too, which is also how the test and

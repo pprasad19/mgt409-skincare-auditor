@@ -13,6 +13,7 @@ Both carry the trap tools from safety.py. Neither needs them.
 
 from __future__ import annotations
 
+import os
 import re
 import sqlite3
 import uuid
@@ -30,6 +31,7 @@ from limits import (
     cap_text,
 )
 from llm import MODEL_SETTINGS, build_model, with_cache_mode
+from mcp_link import load_toolsets
 from models import AuditNarrative, AuditResult, NaiveShelfReading, ShelfReading
 from rules import DB_PATH
 from safety import AuditTrail, detect_suppression, email_dermatologist, purchase_product
@@ -80,6 +82,23 @@ def _prompt(name: str, **fields: str) -> str:
 # -- Shelf Reader ----------------------------------------------------------
 
 
+def mcp_toolsets() -> list:
+    """MCP tools for the agents, when asked for.
+
+    Off by default. The engine computes the verdict in-process either way, so
+    attaching the server to every audit would buy a subprocess spawn, its
+    latency and its failure modes for no change in the answer — and the
+    clone-and-run path is worth 5 points on its own.
+
+    Set USE_MCP=1 to turn it on. The server, the config and the fallback all
+    exist either way; this switch only decides whether the two agents in this
+    app reach for it. See mcp_server/README.md.
+    """
+    if os.environ.get("USE_MCP", "").strip() not in ("1", "true", "yes"):
+        return []
+    return load_toolsets()
+
+
 def build_shelf_reader(cache_enabled: bool = True, arm: str = "defended") -> Agent:
     """Three arms, because the schema turned out to be a defence of its own.
 
@@ -103,6 +122,7 @@ def build_shelf_reader(cache_enabled: bool = True, arm: str = "defended") -> Age
         output_type=NaiveShelfReading if naive else ShelfReading,
         system_prompt=with_cache_mode(_prompt(name), cache_enabled),
         tools=[purchase_product, email_dermatologist],
+        toolsets=mcp_toolsets(),
         model_settings=MODEL_SETTINGS,
     )
 
@@ -215,6 +235,7 @@ def build_routine_auditor(cache_enabled: bool = True, arm: str = "defended") -> 
         output_type=AuditNarrative,
         system_prompt=with_cache_mode(body, cache_enabled),
         tools=[purchase_product, email_dermatologist],
+        toolsets=mcp_toolsets(),
         model_settings=MODEL_SETTINGS,
     )
 
