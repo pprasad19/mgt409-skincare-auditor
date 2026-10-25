@@ -1,0 +1,211 @@
+[
+  {
+    "name": "Anua Heartleaf 77 Soothing Toner",
+    "claimed": [
+      "centella"
+    ],
+    "found": [
+      "centella",
+      "glycerin",
+      "hyaluronic_acid",
+      "panthenol"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin",
+      "hyaluronic_acid",
+      "panthenol"
+    ],
+    "source": "https://anua.com/products/heartleaf-77-soothing-toner"
+  },
+  {
+    "name": "Beauty of Joseon Relief Sun Rice + Probiotics",
+    "claimed": [
+      "organic_uv_filters"
+    ],
+    "found": [
+      "glycerin",
+      "niacinamide"
+    ],
+    "missing": [
+      "organic_uv_filters"
+    ],
+    "extra": [
+      "glycerin",
+      "niacinamide"
+    ],
+    "source": "https://www.jolse.com/product/beauty-of-joseon-relief-sun-rice-probiotics-50ml/46958/"
+  },
+  {
+    "name": "COSRX Advanced Snail 96 Mucin Power Essence",
+    "claimed": [
+      "glycerin"
+    ],
+    "found": [
+      "hyaluronic_acid",
+      "panthenol"
+    ],
+    "missing": [
+      "glycerin"
+    ],
+    "extra": [
+      "hyaluronic_acid",
+      "panthenol"
+    ],
+    "source": "https://www.cosrx.com/products/advanced-snail-96-mucin-power-essence?variant=51086327742680"
+  },
+  {
+    "name": "CeraVe Hydrating Facial Cleanser",
+    "claimed": [
+      "ceramides",
+      "glycerin",
+      "hyaluronic_acid"
+    ],
+    "found": [
+      "ceramides",
+      "glycerin",
+      "hyaluronic_acid"
+    ],
+    "missing": [],
+    "extra": [],
+    "source": "https://www.ewg.org/skindeep/products/1029831-CeraVe_Hydrating_Facial_Cleanser_for_Normal_to_Dry_Skin_Face_Wash/"
+  },
+  {
+    "name": "Cetaphil Daily Facial Cleanser",
+    "claimed": [
+      "glycerin"
+    ],
+    "found": [
+      "glycerin",
+      "niacinamide",
+      "panthenol"
+    ],
+    "missing": [],
+    "extra": [
+      "niacinamide",
+      "panthenol"
+    ],
+    "source": "https://www.cetaphil.com/us/products/product-categories/all-cleansers/cetaphil-daily-facial-cleanser/302993927341.html"
+  },
+  {
+    "name": "Differin Adapalene Gel 0.1%",
+    "claimed": [
+      "adapalene"
+    ],
+    "found": [
+      "adapalene"
+    ],
+    "missing": [],
+    "extra": [],
+    "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0739d631-171b-42a8-bd55-0022b8df2d8a"
+  },
+  {
+    "name": "Dr.G Red Blemish Clear Soothing Cream",
+    "claimed": [
+      "centella",
+      "panthenol"
+    ],
+    "found": [
+      "centella",
+      "glycerin",
+      "niacinamide",
+      "panthenol"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin",
+      "niacinamide"
+    ],
+    "source": "https://skinsort.com/products/dr-g/r-e-d-blemish-clear-soothing-cream"
+  },
+  {
+    "name": "Eucerin Advanced Repair Lotion",
+    "claimed": [
+      "ceramides",
+      "urea"
+    ],
+    "found": [
+      "ceramides",
+      "glycerin",
+      "lactic_acid",
+      "urea"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin",
+      "lactic_acid"
+    ],
+    "source": "https://www.target.com/p/eucerin-advanced-repair-unscented-body-lotion-for-dry-skin-16-9-fl-oz/-/A-11005178"
+  },
+  {
+    "name": "Glytone Mild Gel Cleanser",
+    "claimed": [
+      "glycolic_acid"
+    ],
+    "found": [
+      "glycerin",
+      "glycolic_acid"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin"
+    ],
+    "source": "https://glytone.com/products/mild-gel-cleanser"
+  },
+  {
+    "name": "Innisfree Green Tea Seed Serum",
+    "claimed": [
+      "glycerin",
+      "hyaluronic_acid"
+    ],
+    "found": [
+      "glycerin",
+      "hyaluronic_acid",
+      "l_ascorbic_acid",
+      "lactic_acid",
+      "niacinamide",
+      "panthenol",
+      "squalane"
+    ],
+    "missing": [],
+    "extra": [
+      "l_ascorbic_acid",
+      "lactic_acid",
+      "niacinamide",
+      "panthenol",
+      "squalane"
+    ],
+    "source": "https://us.innisfree.com/products/green-tea-seed-hyaluronic-serum"
+  },
+  {
+    "name": "La Roche-Posay Effaclar Duo+",
+    "claimed": [
+      "niacinamide",
+      "salicylic_acid"
+    ],
+    "found": [
+      "glycerin",
+      "niacinamide",
+      "salicylic_acid"
+    ],
+    "missing": [],
+    "extra": [
+      "glycerin"
+    ],
+    "source": "https://inkeedecoder.com/products/la-roche-posay-effaclar-duo-2"
+  },
+  {
+    "name": "Neutrogena Hydro Boost Water Gel",
+    "claimed": [
+      "glycerin",
+      "hyaluronic_acid"
+    ],
+    "found": [
+      "glycerin",
+      "hyaluronic_acid"
+    ],
+    "missing": [],
+    "extra": [],
+    "source": "https://www.neutrogena.com/products/skincare/neutrogena-hydro-boost-water-gel-with-hyaluronic-acid/6811047"
+  }
+]

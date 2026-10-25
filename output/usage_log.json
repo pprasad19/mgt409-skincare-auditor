@@ -7998,5 +7998,280 @@
       "output": 0.00027,
       "total": 0.00049062
     }
+  },
+  {
+    "run_id": "520917f1",
+    "run_label": "actives-spot-check",
+    "step": "lookup:Beauty of Joseon Relief Sun Ri",
+    "timestamp": "2026-10-25T14:41:01.917452+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,895 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 2709,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1895,
+      "output_tokens": 603,
+      "requests": 2,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 8.14e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00023687,
+      "output": 0.0003015,
+      "total": 0.00061978
+    }
+  },
+  {
+    "run_id": "520917f1",
+    "run_label": "actives-spot-check",
+    "step": "lookup:COSRX Advanced Snail 96 Mucin ",
+    "timestamp": "2026-10-25T14:41:11.399773+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,078 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 1892,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1078,
+      "output_tokens": 309,
+      "requests": 2,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 8.14e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00013475,
+      "output": 0.0001545,
+      "total": 0.00037065
+    }
+  },
+  {
+    "run_id": "520917f1",
+    "run_label": "actives-spot-check",
+    "step": "lookup:CeraVe Hydrating Facial Cleans",
+    "timestamp": "2026-10-25T14:41:25.842047+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (0 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 1801,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 373,
+      "requests": 2,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001801,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 0.0001865,
+      "total": 0.0003666
+    }
+  },
+  {
+    "run_id": "520917f1",
+    "run_label": "actives-spot-check",
+    "step": "lookup:Cetaphil Daily Facial Cleanser",
+    "timestamp": "2026-10-25T14:41:38.165953+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,075 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 1885,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1075,
+      "output_tokens": 306,
+      "requests": 2,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 8.1e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00013438,
+      "output": 0.000153,
+      "total": 0.00036837
+    }
+  },
+  {
+    "run_id": "520917f1",
+    "run_label": "actives-spot-check",
+    "step": "lookup:Differin Adapalene Gel 0.1%",
+    "timestamp": "2026-10-25T14:41:55.286375+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (0 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 1726,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 322,
+      "requests": 2,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001726,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 0.000161,
+      "total": 0.0003336
+    }
+  },
+  {
+    "run_id": "520917f1",
+    "run_label": "actives-spot-check",
+    "step": "lookup:Dr.G Red Blemish Clear Soothin",
+    "timestamp": "2026-10-25T14:42:10.023145+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,282 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 2095,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1282,
+      "output_tokens": 490,
+      "requests": 2,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 8.13e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00016025,
+      "output": 0.000245,
+      "total": 0.00048655
+    }
+  },
+  {
+    "run_id": "520917f1",
+    "run_label": "actives-spot-check",
+    "step": "lookup:Eucerin Advanced Repair Lotion",
+    "timestamp": "2026-10-25T14:42:37.963693+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,084 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 1893,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1084,
+      "output_tokens": 426,
+      "requests": 2,
+      "tool_calls": 1
+    },
+    "cost_usd": {
+      "uncached_input": 8.09e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.0001355,
+      "output": 0.000213,
+      "total": 0.0004294
+    }
+  },
+  {
+    "run_id": "520917f1",
+    "run_label": "actives-spot-check",
+    "step": "lookup:Glytone Mild Gel Cleanser",
+    "timestamp": "2026-10-25T14:42:53.559710+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,161 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 2887,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1161,
+      "output_tokens": 353,
+      "requests": 3,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001726,
+      "cached_input": 0.0,
+      "cache_write": 0.00014512,
+      "output": 0.0001765,
+      "total": 0.00049423
+    }
+  },
+  {
+    "run_id": "520917f1",
+    "run_label": "actives-spot-check",
+    "step": "lookup:Innisfree Green Tea Seed Serum",
+    "timestamp": "2026-10-25T14:43:16.575448+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,665 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 2475,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1665,
+      "output_tokens": 558,
+      "requests": 2,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 8.1e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00020813,
+      "output": 0.000279,
+      "total": 0.00056813
+    }
+  },
+  {
+    "run_id": "520917f1",
+    "run_label": "actives-spot-check",
+    "step": "lookup:La Roche-Posay Effaclar Duo+",
+    "timestamp": "2026-10-25T14:43:43.774349+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,643 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 2456,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1643,
+      "output_tokens": 428,
+      "requests": 2,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 8.13e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00020537,
+      "output": 0.000214,
+      "total": 0.00050068
+    }
+  },
+  {
+    "run_id": "520917f1",
+    "run_label": "actives-spot-check",
+    "step": "lookup:Neutrogena Hydro Boost Water G",
+    "timestamp": "2026-10-25T14:44:01.309357+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": false,
+    "cache_mode_verified": true,
+    "cache_mode_note": "no cached reads (1,065 written to an entry nothing will reuse)",
+    "tokens": {
+      "input_tokens": 2940,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1065,
+      "output_tokens": 392,
+      "requests": 3,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001875,
+      "cached_input": 0.0,
+      "cache_write": 0.00013312,
+      "output": 0.000196,
+      "total": 0.00051662
+    }
   }
 ]

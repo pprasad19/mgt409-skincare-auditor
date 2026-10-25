@@ -6,69 +6,112 @@
 #     has to be last or it seals the others out
 #
 # `times` limits a form to part of the day. Everything else may appear in both.
+#
+# PROVENANCE — these twelve numbers decide the order of every routine this
+# app produces, so they carry the same review field as the rules table.
+# Three are published AAD guidance. The other nine are the industry
+# layering convention — thinnest to thickest, water before oil — which is a
+# real and near-universal convention but not a clinical finding, and is
+# marked `reasoned` rather than dressed up as evidence.
 
 forms:
   - id: cleanser
     name: Cleanser
     rank: 10
     times: [am, pm]
+    source: "AAD 'Should I apply my skin care products in a certain order?': cleanse, then treatments, then moisturiser and/or sunscreen, then makeup. AAD also states sunscreen goes after other skincare and beneath makeup. Cleanser first is the one step every published order agrees on. Reviewed 25 Oct 2026."
+    review: verified
+
 
   - id: exfoliant
     name: Exfoliant (rinse-off or wipe-off)
     rank: 15
     times: [pm]
     note: Leave-on acids are treatments, not this form. This is the rinse-off kind.
+    source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Placed immediately after cleansing because a rinse-off exfoliant is a cleansing-stage product; the evening restriction follows from the photosensitivity rules SKA-082 and SKA-083, which are themselves sourced. Reviewed 25 Oct 2026."
+    review: reasoned
+
 
   - id: toner
     name: Toner
     rank: 20
     times: [am, pm]
+    source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Reviewed 25 Oct 2026."
+    review: reasoned
+
 
   - id: essence
     name: Essence
     rank: 30
     times: [am, pm]
+    source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Essence sits between toner and serum by convention in Korean routines, which is where the category comes from. The distinction from a toner is not sharp. Reviewed 25 Oct 2026."
+    review: reasoned
+
 
   - id: serum
     name: Serum
     rank: 40
     times: [am, pm]
+    source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Reviewed 25 Oct 2026."
+    review: reasoned
+
 
   - id: treatment
     name: Treatment (leave-on active)
     rank: 45
     times: [am, pm]
     note: Where retinoids, leave-on acids and benzoyl peroxide land.
+    source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Ranked just after serum: both are leave-on actives and the split between them is about potency rather than texture. Reviewed 25 Oct 2026."
+    review: reasoned
+
 
   - id: eye
     name: Eye cream
     rank: 50
     times: [am, pm]
+    source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Eye cream placement is the least settled of these: published routines disagree about whether it precedes or follows moisturiser. Placed before, so a lighter eye product is not applied over a heavier face cream. Reviewed 25 Oct 2026."
+    review: reasoned
+
 
   - id: moisturiser
     name: Moisturiser
     rank: 60
     times: [am, pm]
+    source: "AAD 'Should I apply my skin care products in a certain order?': cleanse, then treatments, then moisturiser and/or sunscreen, then makeup. AAD also states sunscreen goes after other skincare and beneath makeup. Moisturiser after treatments is explicit in the AAD order. Reviewed 25 Oct 2026."
+    review: verified
+
 
   - id: oil
     name: Face oil
     rank: 70
     times: [pm]
     note: After moisturiser, because oil passes through cream but cream does not pass through oil.
+    source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Oil after water-based products is the clearest case of the thin-before-thick principle, since an oil layer is the one most likely to impede what follows. Reviewed 25 Oct 2026."
+    review: reasoned
+
 
   - id: spf
     name: Sunscreen
     rank: 80
     times: [am]
     note: Always the final morning step.
+    source: "AAD 'Should I apply my skin care products in a certain order?': cleanse, then treatments, then moisturiser and/or sunscreen, then makeup. AAD also states sunscreen goes after other skincare and beneath makeup. Sunscreen last among skincare is published guidance, and rank 80 places it after everything except the night-only occlusive, which never co-occurs with it. Note from SKA-080 that the reason is the published order rather than a demonstrated film disruption effect. Reviewed 25 Oct 2026."
+    review: verified
+
 
   - id: occlusive
     name: Occlusive / sleeping mask
     rank: 90
     times: [pm]
+    source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Last at night for the same reason sunscreen is last in the morning: a layer whose job is to seal has to go on top. This is definitional rather than measured — see SKA-081. Reviewed 25 Oct 2026."
+    review: reasoned
+
 
   - id: mask
     name: Treatment mask
     rank: 35
     times: [am, pm]
     note: Used occasionally rather than daily; slots after cleansing.
+    source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Ranked before serums because a treatment mask is applied to cleansed skin and removed before the rest of the routine. Reviewed 25 Oct 2026."
+    review: reasoned
+

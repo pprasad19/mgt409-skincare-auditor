@@ -480,10 +480,25 @@ ingredients:
     source: "A mineral UV filter. The row's only load-bearing field is class, which places it last in the morning via SKA-080 and makes SKA-022 fire with vitamin C. Filter efficacy itself is out of scope: this table does not rate sunscreens. Reviewed 25 Oct 2026."
     review: reasoned
 
+  - id: titanium_dioxide
+    name: Titanium dioxide
+    inci: [Titanium Dioxide, CI 77891]
+    aliases: [mineral sunscreen]
+    class: uv_filter
+    ph_range: [5.0, 8.0]
+    photosensitising: false
+    time: am
+    pregnancy: ok
+    prescription: false
+    potency: 2
+    note: The other mineral filter. Absent until 25 Oct 2026, so a mineral sunscreen using titanium rather than zinc resolved to nothing at all.
+    source: "Added 25 Oct 2026 alongside the organic filter correction. Titanium dioxide is one of the two mineral UV filters and appears on labels under its own name and as CI 77891. Its absence had the same consequence as the organic filter gap: a real sunscreen reading as no sunscreen."
+    review: verified
+
   - id: organic_uv_filters
     name: Organic UV filters
-    inci: [Avobenzone, Octocrylene, Homosalate, Tinosorb S, Uvinul A Plus]
-    aliases: [chemical spf, sunscreen]
+    inci: [Avobenzone, Butyl Methoxydibenzoylmethane, Octocrylene, Homosalate, Octisalate, Ethylhexyl Salicylate, Octinoxate, Ethylhexyl Methoxycinnamate, Oxybenzone, Benzophenone-3, Benzophenone-4, Ensulizole, Phenylbenzimidazole Sulfonic Acid, Ethylhexyl Triazone, Diethylhexyl Butamido Triazone, Diethylamino Hydroxybenzoyl Hexyl Benzoate, Bis-Ethylhexyloxyphenol Methoxyphenyl Triazine, Methylene Bis-Benzotriazolyl Tetramethylbutylphenol, Tris-Biphenyl Triazine, Terephthalylidene Dicamphor Sulfonic Acid, Drometrizole Trisiloxane, Polysilicone-15, Isoamyl p-Methoxycinnamate, 4-Methylbenzylidene Camphor]
+    aliases: [chemical spf, sunscreen, tinosorb s, tinosorb m, tinosorb a2b, uvinul a plus, uvinul t 150, mexoryl sx, mexoryl xl, parsol slx, bemotrizinol, bisoctrizole, ecamsule]
     class: uv_filter
     ph_range: [5.0, 8.0]
     photosensitising: false
@@ -491,5 +506,5 @@ ingredients:
     pregnancy: ok
     prescription: false
     potency: 1
-    source: "As zinc oxide: a class marker, not a claim about any particular filter. Reviewed 25 Oct 2026."
-    review: reasoned
+    source: "INCI names taken from sunscreen ingredient lists, including three products already in data/learned_products.json. The previous list carried Tinosorb S and Uvinul A Plus, which are trade names that no ingredient list prints, and omitted Ethylhexyl Triazone entirely despite it appearing in three of our own cached products. Corrected 25 Oct 2026 after a catalogue spot-check found a real sunscreen resolving to no UV filter and triggering the no-sunscreen gap."
+    review: verified

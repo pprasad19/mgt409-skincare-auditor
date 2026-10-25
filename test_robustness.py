@@ -177,6 +177,41 @@ def main() -> int:
         for text in keep:
             assert strip_verification_caveat(text) == text, f"wrongly altered: {text}"
 
+    def sunscreen_is_recognised_from_its_label():
+        """A shelf holding a sunscreen must never be told it has none.
+
+        This fired for real. The gap check keyed on the product's *form*,
+        which is guessed from its name, and "Beauty of Joseon Relief Sun"
+        contains no word the keyword list knows. Meanwhile the ingredient
+        table listed five UV filters, two of them trade names no label
+        prints, and omitted Ethylhexyl Triazone — which appears in three
+        of the products in our own lookup cache. So a real sunscreen, read
+        from a real label, resolved to no filters, was filed as a serum,
+        and the shelf was told at high severity that it had no sun
+        protection.
+        """
+        labels = {
+            "korean": ["Water", "Diethylamino Hydroxybenzoyl Hexyl Benzoate",
+                       "Ethylhexyl Triazone", "Diethylhexyl Butamido Triazone"],
+            "us drugstore": ["Avobenzone", "Octocrylene", "Homosalate", "Octisalate"],
+            "european": ["Bis-Ethylhexyloxyphenol Methoxyphenyl Triazine",
+                         "Methylene Bis-Benzotriazolyl Tetramethylbutylphenol"],
+            "mineral zinc": ["Zinc Oxide"],
+            "mineral titanium": ["Titanium Dioxide"],
+            "mexoryl": ["Terephthalylidene Dicamphor Sulfonic Acid"],
+        }
+        for label, inci in labels.items():
+            p = rules.resolve(InputProduct(name="Untitled Product", listed_ingredients=inci))
+            assert p.actives, f"{label}: no filter resolved from {inci}"
+            assert p.form == "spf", f"{label}: filed as {p.form}, not spf"
+
+            r = rules.audit([
+                InputProduct(name="Untitled Product", listed_ingredients=inci),
+                InputProduct(name="Retinol Serum", listed_ingredients=["Retinol"]),
+            ])
+            wrong = [g for g in r.gaps if g.kind == "no_sun_protection"]
+            assert not wrong, f"{label}: told it has no sunscreen while holding one"
+
     for name, fn in [
         ("verification caveat stripped", caveat_is_stripped),
         ("empty shelf", empty_shelf),
@@ -191,6 +226,7 @@ def main() -> int:
         ("unknown condition", unknown_condition),
         ("unknown product form", unknown_form),
         ("caps handle junk", caps_are_safe_on_junk),
+        ("sunscreen recognised from its label", sunscreen_is_recognised_from_its_label),
     ]:
         check(name, fn)
 

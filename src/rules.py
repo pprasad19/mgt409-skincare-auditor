@@ -133,7 +133,12 @@ class Rules:
 
     # -- resolution --------------------------------------------------------
 
-    def infer_form(self, product: InputProduct, catalogue_form: str | None = None) -> str:
+    def infer_form(
+        self,
+        product: InputProduct,
+        catalogue_form: str | None = None,
+        actives: list[str] | None = None,
+    ) -> str:
         """What kind of product this is, best source first.
 
         The catalogue sits above the keyword guess because it is a statement
@@ -146,6 +151,14 @@ class Rules:
         """
         if product.form and product.form in self.forms:
             return product.form
+        # A product whose label lists UV filters is a sunscreen, whatever it
+        # is called. This sits above the catalogue and the name keywords
+        # because it is read off the bottle: "Beauty of Joseon Relief Sun"
+        # contains no word the keyword list recognises, and its ingredient
+        # list contains three UV filters. Getting this wrong told a shelf
+        # holding a sunscreen that it had none.
+        if any(self.ingredients[a]["class"] == "uv_filter" for a in (actives or [])):
+            return "spf"
         if catalogue_form and catalogue_form in self.forms:
             return catalogue_form
         haystack = f"{product.brand or ''} {product.name}".lower()
@@ -290,7 +303,7 @@ class Rules:
 
         return ResolvedProduct(
             product=product,
-            form=self.infer_form(product, catalogue_form),
+            form=self.infer_form(product, catalogue_form, actives),
             actives=actives,
             classes=classes,
             unmatched_terms=unmatched,
@@ -629,7 +642,13 @@ class Rules:
             for p in products
             if any(self.ingredients[a]["photosensitising"] for a in p.actives)
         ]
-        has_spf = any(p.form == "spf" for p in products)
+        # Belt and braces with infer_form: a product is sun protection if it
+        # is filed as one or if it actually contains a filter.
+        has_spf = any(
+            p.form == "spf"
+            or any(self.ingredients[a]["class"] == "uv_filter" for a in p.actives)
+            for p in products
+        )
         if photo and not has_spf:
             out.append(
                 Gap(
