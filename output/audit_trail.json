@@ -5407,5 +5407,39 @@
       "cache_write_tokens": 88,
       "output_tokens": 178
     }
+  },
+  {
+    "run_id": "4ade4cb7",
+    "seq": 1,
+    "timestamp": "2026-10-25T03:11:28.189059+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 9,
+      "identified": 9,
+      "products": [
+        "the cleansing foam / la mousse d\u00e9maquillante",
+        "pr\u0438\u043cera",
+        "[blue bottle with Korean text]",
+        "[blue-and-white bottle with pump]",
+        "[dark blue bottle, label partly obscured]",
+        "[white bottle]",
+        "[purple jar]",
+        "[wide dark jar with green label]",
+        "[partly hidden pale container]"
+      ],
+      "unreadable": [
+        "Partly hidden pale container behind the La Mer tube and dark blue bottle; product name is not readable."
+      ],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3198,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 0,
+      "output_tokens": 792
+    }
   }
 ]

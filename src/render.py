@@ -307,6 +307,46 @@ table.prices .typ{font-size:11.5px;color:var(--ink-faint);display:block}
 .obs .conf{font-size:11px;text-transform:uppercase;letter-spacing:.07em;
   padding:2px 8px;border-radius:999px;background:var(--sunk);color:var(--ink-faint)}
 
+/* Loading. A form post takes a few seconds — longer when products have to
+   be looked up — and the browser gives no sign it is working. */
+.loading{position:fixed;inset:0;background:rgba(246,242,236,.97);z-index:90;
+  display:grid;place-items:center;backdrop-filter:blur(3px)}
+.loading[hidden]{display:none}
+.lbox{text-align:center;max-width:360px;padding:0 24px}
+.dropper{position:relative;width:70px;height:112px;margin:0 auto 28px}
+/* A pipette: rubber bulb, glass barrel with a little serum in it, tapered tip. */
+.pipette{position:absolute;left:50%;top:0;width:20px;height:54px;margin-left:-10px;
+  border-radius:10px 10px 2px 2px;
+  background:linear-gradient(180deg,
+    var(--clay) 0%, var(--clay) 30%,
+    #efe9e0 30%, #efe9e0 52%,
+    rgba(168,106,75,.30) 52%, rgba(168,106,75,.30) 100%);
+  box-shadow:inset -2px 0 3px rgba(0,0,0,.06), inset 2px 0 3px rgba(255,255,255,.5)}
+.pipette::after{content:"";position:absolute;left:50%;bottom:-10px;margin-left:-3.5px;
+  width:7px;height:12px;background:rgba(168,106,75,.30);
+  clip-path:polygon(0 0,100% 0,62% 100%,38% 100%)}
+.drop{position:absolute;left:50%;top:58px;width:13px;height:13px;margin-left:-6.5px;
+  background:var(--clay);border-radius:50% 50% 50% 0;transform:rotate(-45deg);
+  animation:fall 2s cubic-bezier(.55,.06,.68,.53) infinite}
+@keyframes fall{
+  0%{top:58px;opacity:0;transform:rotate(-45deg) scale(.5)}
+  18%{opacity:1;transform:rotate(-45deg) scale(1)}
+  70%{top:94px;opacity:1;transform:rotate(-45deg) scale(1)}
+  80%{top:98px;opacity:0;transform:rotate(-45deg) scale(.7)}
+  100%{top:98px;opacity:0}
+}
+.ripple{position:absolute;left:50%;bottom:2px;width:12px;height:12px;margin-left:-6px;
+  border:2px solid var(--sage);border-radius:50%;opacity:0;
+  animation:spread 2s ease-out infinite}
+.ripple.two{animation-delay:.28s}
+@keyframes spread{
+  0%,62%{transform:scale(.3);opacity:0}
+  72%{opacity:.75}
+  100%{transform:scale(3.4);opacity:0}
+}
+.lmsg{font:400 19px/1.45 var(--serif);color:var(--ink);min-height:28px}
+.lsub{font-size:13.5px;color:var(--ink-faint);margin-top:10px}
+
 /* Guided mode */
 .guide{position:fixed;inset:0;background:rgba(246,242,236,.96);z-index:50;
   display:grid;place-items:center;padding:28px;backdrop-filter:blur(3px)}
@@ -718,6 +758,48 @@ GRID_JS = """
     }
     if(pinned) pinned.classList.remove('pin');
     pinned = td; td.classList.add('pin'); show(td.dataset.k);
+  });
+})();
+"""
+
+
+LOADING_MARKUP = '<div class="loading" id="loading" hidden><div class="lbox"><div class="dropper"><div class="pipette"></div><div class="drop"></div><div class="ripple"></div><div class="ripple two"></div></div><div class="lmsg" id="lmsg">Reading your labels</div><div class="lsub">This takes a few seconds. Longer if we have to look anything up.</div></div></div>'
+
+LOADING_JS = """
+/* Show it on submit. The browser then navigates to the response and
+ * replaces the page, so nothing needs to hide it again — except on a
+ * back-navigation, where a restored page would otherwise show a frozen
+ * overlay over a finished audit. */
+(function(){
+  var box = document.getElementById('loading');
+  var msg = document.getElementById('lmsg');
+  if(!box || !msg) return;
+
+  var lines = [
+    'Reading your labels',
+    'Matching the ingredients',
+    'Checking what clashes with what',
+    'Looking up anything we do not recognise',
+    'Working out the order',
+    'Writing it up'
+  ];
+  var i = 0, timer = null;
+
+  function start(){
+    box.hidden = false;
+    i = 0; msg.textContent = lines[0];
+    timer = setInterval(function(){
+      i = (i + 1) % lines.length;
+      msg.textContent = lines[i];
+    }, 2600);
+  }
+
+  document.querySelectorAll('form').forEach(function(f){
+    f.addEventListener('submit', start);
+  });
+
+  window.addEventListener('pageshow', function(ev){
+    if(ev.persisted){ clearInterval(timer); box.hidden = true; }
   });
 })();
 """
@@ -1574,6 +1656,8 @@ def render(
             f"</form>"
         )
 
+    parts.append(LOADING_MARKUP)
+
     parts.append(
         '<div class="guide" id="guide" hidden><div class="gbox">'
         '<div class="gslot" id="g-slot"></div>'
@@ -1599,7 +1683,7 @@ def render(
 
     parts.append(
         f"<script>var DATA_STEPS={script_json(seq)};var MX_DATA={grid_data};"
-        f"{JS}{SPEECH_JS}{GRID_JS}"
+        f"{JS}{SPEECH_JS}{GRID_JS}{LOADING_JS}"
         "document.getElementById('print').addEventListener('click',function(){window.print()});"
         "</script></body></html>"
     )

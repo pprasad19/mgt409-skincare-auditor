@@ -8,7 +8,7 @@ are asked — what is this, what do I give it, and what happens to what I give i
 from __future__ import annotations
 
 from limits import MAX_IMAGES, MAX_PRODUCTS
-from render import CSS, e
+from render import CSS, LOADING_JS, LOADING_MARKUP, e
 
 EXTRA = """
 .hero{padding:72px 0 8px}
@@ -57,7 +57,8 @@ def shell(body: str, title: str) -> str:
         '<!doctype html><html lang="en"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
         f"<title>{e(title)}</title><style>{CSS}{EXTRA}</style></head>"
-        f'<body><div class="wrap">{body}</div></body></html>'
+        f'<body><div class="wrap">{body}</div>{LOADING_MARKUP}'
+        f"<script>{LOADING_JS}</script></body></html>"
     )
 
 
