@@ -22,6 +22,13 @@ from typing import Iterable
 from pydantic_ai import Agent
 from pydantic_ai.messages import BinaryContent
 
+from limits import (
+    AUDITOR_LIMITS,
+    READER_LIMITS,
+    Trim,
+    cap_images,
+    cap_text,
+)
 from llm import MODEL_SETTINGS, build_model, with_cache_mode
 from models import AuditNarrative, AuditResult, NaiveShelfReading, ShelfReading
 from rules import DB_PATH
@@ -108,8 +115,15 @@ async def read_shelf(
     arm: str = "defended",
     usage_log: UsageLog | None = None,
     trail: AuditTrail | None = None,
+    trims_out: list | None = None,
 ) -> ShelfReading:
     """Read products from photographs, typed text, or both."""
+    trims: list[Trim] = list(trims_out) if trims_out is not None else []
+    images = cap_images([Path(p) for p in images], trims)
+    text = cap_text(text, trims)
+    if trims_out is not None:
+        trims_out[:] = trims
+
     parts: list = []
     if text:
         parts.append(f"The user listed these products:\n\n{text}")
@@ -123,7 +137,9 @@ async def read_shelf(
     if not text:
         parts.insert(0, "Read every skincare product you can see in these photographs.")
 
-    result = await build_shelf_reader(cache_enabled, arm).run(parts)
+    result = await build_shelf_reader(cache_enabled, arm).run(
+        parts, usage_limits=READER_LIMITS
+    )
     reading = result.output
     if isinstance(reading, NaiveShelfReading):
         # Normalise so everything downstream sees one shape. The empty list is
@@ -272,7 +288,9 @@ async def explain_audit(
     trail: AuditTrail | None = None,
 ) -> tuple[AuditNarrative, list[str]]:
     defended = arm == "defended"
-    result = await build_routine_auditor(cache_enabled, arm).run(_brief(audit))
+    result = await build_routine_auditor(cache_enabled, arm).run(
+        _brief(audit), usage_limits=AUDITOR_LIMITS
+    )
     # Undefended means the structural check is off too, not just the prompt.
     # validate_narrative is a defence — arguably the strongest one — so leaving
     # it running would understate what the attacks achieve.

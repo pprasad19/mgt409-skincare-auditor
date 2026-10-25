@@ -649,6 +649,27 @@ GRID_JS = """
 """
 
 
+def script_json(value) -> str:
+    """JSON for embedding inside a <script> element.
+
+    json.dumps escapes for JSON, not for HTML. A product name containing
+    "</script>" closes the element early and everything after it is parsed as
+    markup — which is an XSS in a page built from text a stranger uploaded.
+    The body of the page was escaped correctly; this hole was specifically the
+    data handed to JavaScript, and it took a hostile-input test to surface it.
+
+    Breaking the "</" sequence is the standard fix and is invisible to the JSON
+    parser. U+2028 and U+2029 are legal in JSON strings and illegal in JS
+    source, so they go too.
+    """
+    return (
+        json.dumps(value)
+        .replace("</", "<\\/")
+        .replace("\u2028", "\\u2028")
+        .replace("\u2029", "\\u2029")
+    )
+
+
 def e(text: object) -> str:
     return html.escape(str(text), quote=True)
 
@@ -709,6 +730,9 @@ def _step_row(step, spec, slot: str, total: int) -> str:
 
 CELL_CLASS = {"high": "high", "critical": "high", "medium": "med", "low": "good"}
 
+# Rows past this stop being legible; the grid becomes a texture.
+MATRIX_MAX = 16
+
 
 def _conflict_grid(audit: AuditResult, explain: dict[str, str]) -> tuple[str, str]:
     """Product-by-product matrix of what clashes with what.
@@ -721,6 +745,9 @@ def _conflict_grid(audit: AuditResult, explain: dict[str, str]) -> tuple[str, st
     if not paired:
         return "", "{}"
 
+    # Only products that actually interact. A grid of every product is mostly
+    # empty squares, and past roughly twenty rows it stops being readable at
+    # all — the products with nothing to say crowd out the ones with something.
     names: list[str] = []
     for f in paired:
         for n in f.products:
@@ -728,6 +755,12 @@ def _conflict_grid(audit: AuditResult, explain: dict[str, str]) -> tuple[str, st
                 names.append(n)
     if len(names) < 2:
         return "", "{}"
+
+    if len(names) > MATRIX_MAX:
+        # Keep the busiest: a product in six conflicts is why the user is here.
+        degree = {n: sum(1 for f in paired if n in f.products) for n in names}
+        names = sorted(names, key=lambda n: -degree[n])[:MATRIX_MAX]
+        paired = [f for f in paired if all(n in names for n in f.products)]
 
     worst: dict[tuple[str, str], str] = {}
     best: dict[tuple[str, str], object] = {}
@@ -811,7 +844,7 @@ def _conflict_grid(audit: AuditResult, explain: dict[str, str]) -> tuple[str, st
         "open while you read."
         "</div></div></div></div>"
     )
-    return html_out, json.dumps(data)
+    return html_out, script_json(data)
 
 
 DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -1167,7 +1200,7 @@ def render(audit: AuditResult, narrative: AuditNarrative | None = None) -> str:
     )
 
     parts.append(
-        f"<script>var DATA_STEPS={json.dumps(seq)};var MX_DATA={grid_data};"
+        f"<script>var DATA_STEPS={script_json(seq)};var MX_DATA={grid_data};"
         f"{JS}{SPEECH_JS}{GRID_JS}"
         "document.getElementById('print').addEventListener('click',function(){window.print()});"
         "</script></body></html>"

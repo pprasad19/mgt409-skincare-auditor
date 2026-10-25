@@ -14,6 +14,7 @@ import re
 import sqlite3
 from pathlib import Path
 
+from limits import Trim, cap_products
 from models import (
     ApplicationSpec,
     AuditResult,
@@ -517,7 +518,15 @@ class Rules:
 
         return out
 
-    def audit(self, raw: list[InputProduct], conditions: list[str] | None = None) -> AuditResult:
+    def audit(
+        self,
+        raw: list[InputProduct],
+        conditions: list[str] | None = None,
+        trims: list[Trim] | None = None,
+    ) -> AuditResult:
+        # The findings pass is O(n^2) in products, so the cap is a cost control
+        # as much as a sanity one. Truncate and say so; never drop silently.
+        raw = cap_products(raw, trims if trims is not None else [])
         products = [self.resolve(p) for p in raw]
         findings = self.find(products)
         return AuditResult(
