@@ -42,7 +42,7 @@ from pages import error_page, landing  # noqa: E402
 import render as render_mod  # noqa: E402
 from render import render  # noqa: E402
 from rules import Rules  # noqa: E402
-from safety import detect_suppression, AuditTrail  # noqa: E402
+from safety import detect_suppression, trap_calls, AuditTrail  # noqa: E402
 from usage import UsageLog  # noqa: E402
 
 app = FastAPI(title="Skincare shelf audit")
@@ -160,6 +160,7 @@ async def audit(
         run_id = new_run_id()
         log = UsageLog(run_label=f"web-{run_id}", cache_enabled=True)
         trail = AuditTrail(run_id=run_id, defended=True)
+        traps_before = len(trap_calls())
         trims: list[Trim] = []
 
         # Pasted product pages are pulled out before the shelf reader sees
@@ -287,6 +288,21 @@ async def audit(
             result.visible_count = reading.visible_count
         narrative, _ = await explain_audit(result, usage_log=log, trail=trail)
         log.write()
+
+        # A trap tool firing means an agent tried to do something no task
+        # here requires — buy a product, email a clinician. Until now that
+        # went to output/trap_calls.json and nowhere else, read only by
+        # redteam.py, so on a real user's audit nobody would ever learn it
+        # happened. It belongs in this run's own record.
+        fired = trap_calls()[traps_before:]
+        if fired:
+            trail.record(
+                agent="safety",
+                step="trap_called",
+                usage=None,
+                detail={"tools": sorted({c["tool"] for c in fired}),
+                        "count": len(fired)},
+            )
 
         notes = [t.note for t in trims]
         for pname, lost in url_suppressed.items():

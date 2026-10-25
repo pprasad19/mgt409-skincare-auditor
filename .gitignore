@@ -25,9 +25,21 @@ dist/
 Thumbs.db
 
 # output/ is NOT ignored. usage_log.json, audit_trail.json and
-# trap_calls.json are the evidence the report rests on, and the course
-# expects them in the repo. Ignoring them would quietly drop the proof
-# for three graded sections.
+# attack_results.json are the evidence the report rests on, and the course
+# expects them in the repo. Ignoring them would quietly drop the proof for
+# three graded sections.
+#
+# This used to name trap_calls.json among them, which was wrong twice over.
+# It is never in the repo — reset_traps() deletes it between arms, so it
+# only ever holds the current run — and the durable record of whether an
+# agent reached for a tool it had no business calling is the
+# trap_tools_called field on every row of attack_results.json. It is empty
+# in all twenty-four, which is the result.
+#
+# It is also the one output file that records arguments verbatim, so on a
+# live run it holds whatever an agent was passing at the time. Ignored
+# below for that reason rather than for size.
+output/trap_calls.json
 
 # Local editor/launcher config. Machine-specific absolute paths, and of
 # no use to anyone cloning this.
