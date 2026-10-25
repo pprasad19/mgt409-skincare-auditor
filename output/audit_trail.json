@@ -4455,5 +4455,96 @@
       "cache_write_tokens": 443,
       "output_tokens": 519
     }
+  },
+  {
+    "run_id": "0482fd2b",
+    "seq": 1,
+    "timestamp": "2026-10-25T01:00:17.660891+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "products": [
+        "Hydrating Facial Cleanser",
+        "Acne Foaming Cream Cleanser",
+        "The Ordinary Retinol 0.5% in Squalane"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2593,
+      "cache_read_tokens": 2393,
+      "cache_write_tokens": 74,
+      "output_tokens": 174
+    }
+  },
+  {
+    "run_id": "0482fd2b",
+    "seq": 2,
+    "timestamp": "2026-10-25T01:00:20.211513+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 2,
+      "steps": 4,
+      "rejected": [
+        "verification caveat stripped from summary"
+      ]
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 298,
+      "output_tokens": 381
+    }
+  },
+  {
+    "run_id": "ec92aa14",
+    "seq": 1,
+    "timestamp": "2026-10-25T01:01:09.700644+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "products": [
+        "Hydrating Facial Cleanser",
+        "Acne Foaming Cream Cleanser",
+        "The Ordinary Retinol 0.5% in Squalane",
+        "C E Ferulic"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2599,
+      "cache_read_tokens": 2393,
+      "cache_write_tokens": 80,
+      "output_tokens": 243
+    }
+  },
+  {
+    "run_id": "ec92aa14",
+    "seq": 2,
+    "timestamp": "2026-10-25T01:01:12.757078+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 4,
+      "steps": 5,
+      "rejected": [
+        "verification caveat stripped from summary"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3248,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 562,
+      "output_tokens": 497
+    }
   }
 ]
