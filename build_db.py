@@ -107,6 +107,7 @@ CREATE TABLE catalogue (
     name    TEXT NOT NULL,
     form    TEXT,
     actives TEXT NOT NULL,
+    typical_price_usd REAL,
     review  TEXT NOT NULL
 );
 
@@ -267,9 +268,10 @@ def main() -> None:
             errors.append(f"products.yaml: {row['brand']} {row['name']}: unknown {bad}")
             continue
         con.execute(
-            "INSERT INTO catalogue VALUES (?,?,?,?,?,?)",
+            "INSERT INTO catalogue VALUES (?,?,?,?,?,?,?)",
             (n, row["brand"], row["name"], row.get("form"),
-             ",".join(row["actives"]), row.get("review", "pending")),
+             ",".join(row["actives"]), row.get("typical_price_usd"),
+             row.get("review", "pending")),
         )
         phrases = {f"{row['brand']} {row['name']}", row["name"]}
         phrases |= {a for a in row.get("aliases", [])}

@@ -1116,6 +1116,20 @@ def render(
                            "bad" if w.conflicted_value_usd else ""))
         parts.append("</div>")
 
+        # Say whose prices these are. A typical price is the right order of
+        # magnitude for "what is sitting unused" and the wrong basis for any
+        # claim about what this person wasted.
+        typical = [p for p in audit.products if p.price_is_typical]
+        if typical:
+            n, total = len(typical), len(audit.products)
+            parts.append(
+                f'<p class="lede" style="margin-top:14px">'
+                f"{n} of these {total} prices {'is' if n == 1 else 'are'} a typical "
+                f"retail figure rather than what you paid, because you did not say. "
+                f"Good enough to see roughly what is sitting unused; not a quote. "
+                f"Add your own prices to make these numbers yours.</p>"
+            )
+
     if audit.escalations:
         parts.append("<h2>Needs a clinician</h2>")
         for esc in audit.escalations:

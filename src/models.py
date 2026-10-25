@@ -80,6 +80,12 @@ class ResolvedProduct(BaseModel):
         default=1.0,
         description="Share of label terms resolved. Low confidence is shown to the user.",
     )
+    price_is_typical: bool = Field(
+        default=False,
+        description="The price came from the catalogue, not the user. Shown on the "
+                    "page and kept out of anything the report cites as measured — "
+                    "a typical price is not what this person paid.",
+    )
     matched_from_catalogue: str | None = Field(
         default=None,
         description="Set when the actives came from data/products.yaml rather than a "

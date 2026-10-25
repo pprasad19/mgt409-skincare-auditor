@@ -227,6 +227,7 @@ class Rules:
         # Nothing readable on the label — fall back to the catalogue, and
         # record that we did, so the page can tell the user to check the bottle.
         from_catalogue = None
+        typical_price = False
         if not actives:
             hit = self.match_catalogue(product)
             if hit:
@@ -234,9 +235,13 @@ class Rules:
                 from_catalogue = f"{hit['brand']} {hit['name']}"
                 # The catalogue knows the brand the photograph did not show.
                 # Renaming here means every later mention is unambiguous.
-                product = product.model_copy(
-                    update={"name": display_name(hit["brand"], product.name)}
-                )
+                updates = {"name": display_name(hit["brand"], product.name)}
+                # Only when the user said nothing. What someone actually paid
+                # always wins over what a product usually costs.
+                if product.price_usd is None and hit["typical_price_usd"]:
+                    updates["price_usd"] = float(hit["typical_price_usd"])
+                    typical_price = True
+                product = product.model_copy(update=updates)
 
         classes = sorted({self.ingredients[a]["class"] for a in actives})
 
@@ -255,6 +260,7 @@ class Rules:
             unmatched_terms=unmatched,
             confidence=confidence,
             matched_from_catalogue=from_catalogue,
+            price_is_typical=typical_price,
         )
 
     # -- selectors ---------------------------------------------------------
