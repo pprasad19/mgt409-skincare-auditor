@@ -27,15 +27,20 @@ interactions:
     a: class:retinoid
     b: class:aha
     type: conflict
-    severity: high
+    severity: medium
     mechanism: >-
-      Both increase cell turnover and both disrupt the barrier. Used in the same
-      session the irritation is additive, and the resulting inflammation can drive
-      the pigmentation many users bought the acid to treat.
-    guidance: Use on alternate nights rather than together.
-    resolution: alternate_nights
-    source: null
-    review: pending
+      Both increase cell turnover and both disrupt the barrier, so using them in
+      the same session can irritate more than either alone. How much is very
+      individual: an open study of 397 women using retinaldehyde with 6% glycolic
+      acid found the combination well tolerated, and no trial compares alternate
+      nights with nightly use for the pair. Treat this as a tolerance question,
+      not a chemical incompatibility.
+    guidance: >-
+      Fine together for many people. If either one stings, flakes or reddens your
+      skin, move them to different nights before giving either up.
+    resolution: none
+    source: "DermNet 'Topical therapy for acne' supports alternate nights as a tolerability strategy for retinoids alone, not for the combination. PMID 19192015: 397-woman open study of 0.1% retinaldehyde with 6% glycolic acid, highly tolerated, side-effect complaints rare. No controlled trial of alternate-night versus nightly dosing for the pair was found. Downgraded from high to medium on 25 Oct 2026 because the evidence does not support separating them by default."
+    review: verified
 
   - rule_id: SKA-002
     a: class:retinoid
@@ -156,19 +161,6 @@ interactions:
     review: pending
 
   # ---- Vitamin C ----------------------------------------------------------
-  - rule_id: SKA-021
-    a: ing:l_ascorbic_acid
-    b: class:copper_peptide
-    type: conflict
-    severity: medium
-    mechanism: >-
-      A strong reducing agent next to a redox-active copper ion. Each degrades the
-      other, so both products underperform.
-    guidance: Separate by time of day — vitamin C in the morning, peptides at night.
-    resolution: separate_am_pm
-    source: null
-    review: pending
-
   - rule_id: SKA-022
     a: ing:l_ascorbic_acid
     b: class:uv_filter
