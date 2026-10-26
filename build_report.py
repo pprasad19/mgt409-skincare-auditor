@@ -953,10 +953,11 @@ products that triggered it, so a suggestion cannot read as a defect</figcaption>
 <figure>{img("06-film.png", "", width="100%")}
 <figcaption><b>A drawn walkthrough</b> — a tab per half of the day, each step
 timed from the same table the written routine uses</figcaption></figure>
-<figure>{img("05-correct.png", "", width="100%")}
+<figure>{img("07-correct-detail.png", "", width="100%")}
 <figcaption><b>The correction table</b> — it exists because a tester had no way
-to say the app was wrong. Remove a product and it stays gone; a looked-up price
-counts only once you tick it</figcaption></figure>
+to say the app was wrong. A looked-up price counts only once you tick it, and a
+typed one overrides it. Four more columns off to the right: size, never use it,
+prescribed, not mine</figcaption></figure>
 </div>"""),
 
         slide(f"""
@@ -1129,8 +1130,12 @@ saturation curve says they find a new class, not a repeat.</p>
    its caption stranded at the bottom of the slide. */
 .grid2 .shot{{margin:0;min-height:0;flex:0 1 auto;display:flex;
   flex-direction:column;overflow:hidden}}
-.grid2 .shot img{{max-height:100%;max-width:100%;height:auto !important;
-  width:auto !important;object-fit:contain;object-position:left top;
+/* width:100% rather than auto, so a cropped detail smaller than its
+   cell scales UP to fill it instead of sitting at native size and
+   looking tiny. max-height keeps a tall screenshot inside the row and
+   object-fit:contain stops either case distorting. */
+.grid2 .shot img{{width:100% !important;height:auto !important;
+  max-height:100%;object-fit:contain;object-position:left top;
   align-self:flex-start}}
 .grid2 .shot figcaption{{display:none}}
 .grid2 > figure > figcaption{{font-size:.44em;color:var(--dim);
