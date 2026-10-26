@@ -944,6 +944,41 @@
     "source_url": "https://www.cocokind.com/products/calming-magnesium-mist",
     "typical_price_usd": 18.0
   },
+  "cocokind calming magnesium mist": {
+    "found": true,
+    "inci": [
+      "Water (Aqua/Eau)",
+      "Sea Silt Extract",
+      "Leuconostoc/Radish Root Ferment Filtrate",
+      "Glycerin",
+      "Magnesium PCA",
+      "Zinc PCA",
+      "Sodium PCA",
+      "Manganese PCA",
+      "Polylysine",
+      "Nelumbo Nucifera Flower Water",
+      "Nymphaea Caerulea Flower Water",
+      "Biosaccharide Gum-2",
+      "Maltodextrin",
+      "Ethylhexylglycerin",
+      "Citric Acid",
+      "Potassium Sorbate",
+      "Sodium Gluconate",
+      "Sodium Benzoate",
+      "1,2-Hexanediol",
+      "Sodium Hydroxide"
+    ],
+    "looked_up": "2026-10-26T11:37:32.343169+00:00",
+    "mask_minutes": null,
+    "matched_brand": "Cocokind",
+    "matched_name": "Calming Magnesium Mist",
+    "mismatch": "",
+    "note": "Official Cocokind listing; standard size is 4 fl oz.",
+    "price_source_url": "https://www.cocokind.com/products/calming-magnesium-mist",
+    "size": "4 fl oz",
+    "source_url": "https://www.cocokind.com/products/calming-magnesium-mist",
+    "typical_price_usd": 18.0
+  },
   "cocokind calming magnesium mist|18 ml": {
     "found": true,
     "inci": [
@@ -3387,6 +3422,20 @@
     "source_url": "https://www.yesstyle.com/en/la-mer-the-rejuvenating-night-cream-mini-7ml/info.html/pid.1133979421",
     "typical_price_usd": null
   },
+  "la mer rejuvenating cream|7 ml": {
+    "found": false,
+    "inci": [],
+    "looked_up": "2026-10-26T11:33:03.539299+00:00",
+    "mask_minutes": null,
+    "matched_brand": "La Mer",
+    "matched_name": "La Mer The Rejuvenating Night Cream (Mini, 7ml)",
+    "mismatch": "the search could not confirm this exact product",
+    "note": "The search found La Mer The Rejuvenating Night Cream, not a product named simply \u201cRejuvenating Cream.\u201d The INCI and $36.10 price are for the 7 mL mini listing. This is a different named product than the one requested, so treated as a near match rather than a confirmed same product.",
+    "price_source_url": "https://www.yesstyle.com/en/la-mer-the-rejuvenating-night-cream-mini-7ml/info.html/pid.1133979421",
+    "size": "7 ml",
+    "source_url": "https://www.yesstyle.com/en/la-mer-the-rejuvenating-night-cream-mini-7ml/info.html/pid.1133979421",
+    "typical_price_usd": 36.1
+  },
   "la mer rejuvenating night cream|7 ml": {
     "found": true,
     "inci": [
@@ -4829,6 +4878,35 @@
     "size": "200 mL / 6.76 fl oz",
     "source_url": "https://www.skin1004.com/products/skin1004-madagascar-centella-light-cleansing-oil",
     "typical_price_usd": 25.0
+  },
+  "skin1004 madagascar centella light cleansing oil": {
+    "found": true,
+    "inci": [
+      "Ethylhexyl Stearate",
+      "Cetyl Ethylhexanoate",
+      "Sorbeth-30 Tetraoleate",
+      "Caprylic/Capric Triglyceride",
+      "Citrus Aurantium Bergamia (Bergamot) Fruit Oil",
+      "Centella Asiatica Extract",
+      "Simmondsia Chinensis (Jojoba) Seed Oil",
+      "Olea Europaea (Olive) Fruit Oil",
+      "Helianthus Annuus (Sunflower) Seed Oil",
+      "Ethylhexylglycerin",
+      "Pelargonium Graveolens Flower Oil",
+      "Rosa Damascena Flower Oil",
+      "Limonene",
+      "Linalool"
+    ],
+    "looked_up": "2026-10-26T11:37:14.778080+00:00",
+    "mask_minutes": null,
+    "matched_brand": "SKIN1004",
+    "matched_name": "SKIN1004 Madagascar Centella Light Cleansing Oil",
+    "mismatch": "",
+    "note": "The official product page lists the ingredient list. The $18.90 price is reported in SKIN1004 product information for the 200 ml standard size; its product page may show a different price/size.",
+    "price_source_url": "https://info.skin1004.com/guide/centella-oil-cleanser-for-acne-prone-sensitive-skin",
+    "size": "200 ml",
+    "source_url": "https://www.skin1004.com/products/skin1004-madagascar-centella-light-cleansing-oil",
+    "typical_price_usd": 18.9
   },
   "skin1004 madagascar centella light cleansing oil|200 ml / 6.76 fl.oz": {
     "found": true,

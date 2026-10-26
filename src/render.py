@@ -312,7 +312,7 @@ table.prices th{text-align:left;font:600 11px/1 var(--sans);text-transform:upper
 table.prices th.r{text-align:right;width:120px;padding-right:14px}
 table.prices th.c{text-align:center;width:96px}
 table.prices th.found,table.prices td.found{width:182px;text-align:right}
-table.prices th.use,table.prices td.use{width:86px}
+table.prices th.use,table.prices td.use{width:98px}
 table.prices td.r{padding-right:14px}
 table.prices td{padding:7px 0;border-top:1px solid var(--line);vertical-align:middle}
 table.prices td.r{text-align:right}
@@ -396,6 +396,7 @@ table.prices .typ{font-size:11.5px;color:var(--ink-faint);display:block}
   padding:18px 22px 0}
 .film-top h3{margin:0;font:600 18px/1.3 var(--serif)}
 .film-note{font-size:12.5px;color:var(--ink-faint)}
+.film-nights{margin:2px 0 0;font-size:12.5px;color:var(--clay);font-weight:600}
 .film-body{display:grid;grid-template-columns:270px 1fr;gap:26px;padding:16px 22px 22px;align-items:start}
 @media(max-width:620px){.film-body{grid-template-columns:1fr}}
 .stage{background:var(--sunk);border-radius:14px;padding:4px 18px;position:relative}
@@ -863,6 +864,29 @@ def _money(amount) -> str:
     return f"${value:,.0f}" if abs(value - round(value)) < 0.005 else f"${value:,.2f}"
 
 
+def duplicated_names(audit) -> list[str]:
+    """Every product this audit considers to be doing a job twice.
+
+    Two sources, because there are two kinds of duplication and each
+    was being reported on its own. The interaction rules pair
+    INGREDIENTS — two retinoids, two AHAs — and the routine pairs
+    POSITIONS, placing one product per step and marking the rest
+    "one of these, not both". A tester with a toner and a mist read the
+    routine telling her to pick one and the money section telling her
+    nothing was duplicated, on the same page.
+
+    Collected once here so the figure, the tile and the sentence under
+    it cannot name different sets.
+    """
+    names = {n for f in audit.findings
+             if getattr(f, "type", "") == "redundancy" for n in f.products}
+    for step in list(audit.routine.am) + list(audit.routine.pm):
+        if step.instead_of:
+            names.add(step.product_name)
+            names.update(step.instead_of)
+    return sorted(names)
+
+
 def _stat(value: str, label: str, tone: str = "") -> str:
     cls = f"stat {tone}".strip()
     return f'<div class="{cls}"><div class="n">{e(value)}</div><div class="l">{e(label)}</div></div>'
@@ -1138,6 +1162,26 @@ def _conflict_grid(audit: AuditResult, explain: dict[str, str]) -> tuple[str, st
 DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
 
+def alternating_nights(audit: AuditResult) -> dict[str, list[str]]:
+    """Which nights each alternating product actually lands on.
+
+    Extracted so the calendar and the animation share one rotation. A
+    tester asked for the film to reflect alternation too, and the
+    obvious way to do that — recompute `day % n == i` in the scene
+    builder — is how the four surfaces drifted apart over durations
+    before `beats_for` was made the single source. One function, two
+    readers.
+    """
+    alternating = [s for s in audit.routine.pm if s.frequency != "daily"]
+    if len(alternating) < 2:
+        return {}
+    n = len(alternating)
+    return {
+        step.product_name: [DAYS[d] for d in range(7) if d % n == i]
+        for i, step in enumerate(alternating)
+    }
+
+
 def _week_grid(audit: AuditResult) -> str:
     """Turn "alternate nights" into a calendar.
 
@@ -1150,12 +1194,14 @@ def _week_grid(audit: AuditResult) -> str:
     if len(alternating) < 2:
         return ""
 
+    nights = alternating_nights(audit)
     n = len(alternating)
     rows = []
     for i, step in enumerate(alternating):
+        on_days = set(nights.get(step.product_name, []))
         cells = []
         for day in range(7):
-            on = day % n == i
+            on = DAYS[day] in on_days
             cells.append(f'<td class="{"on" if on else "rest"}">{"✓" if on else ""}</td>')
         label = step.product_name if len(step.product_name) <= 30 else step.product_name[:28] + "…"
         rows.append(f'<tr><th class="n">{e(label)}</th>{"".join(cells)}</tr>')
@@ -1186,6 +1232,7 @@ FILM_JS = """
   var dots  = document.getElementById('pdots');
   var elStep = document.getElementById('f-step');
   var elForm = document.getElementById('f-form');
+  var elNights = document.getElementById('f-nights');
   var elDo   = document.getElementById('f-do');
   var elWhere= document.getElementById('f-where');
   var elReal = document.getElementById('f-real');
@@ -1315,6 +1362,11 @@ FILM_JS = """
     elReal.style.display = s.real ? '' : 'none';
     elForm.textContent = s.form || '';
     elForm.style.display = s.form ? '' : 'none';
+    /* Not every night. Without this the film demonstrated an
+     * alternating acid as though it were a nightly step, contradicting
+     * the calendar immediately below it. */
+    elNights.textContent = s.nights ? 'not every night — ' + s.nights : '';
+    elNights.style.display = s.nights ? '' : 'none';
     elDo.textContent    = s.caption;
     elWhere.textContent = s.where ? 'on ' + s.where : '';
     elWhere.style.display = s.where ? '' : 'none';
@@ -1672,6 +1724,13 @@ def _film_scenes(audit, specs: dict, explain: dict) -> list[dict]:
     """
     days = [("Morning", audit.routine.am), ("Evening", audit.routine.pm)]
 
+    # Which nights an alternating product is actually for. A tester:
+    # "if something should be used on alternate nights, the video
+    # animation should also be reflecting that." The film was walking
+    # the evening as though every step happened every night, which is
+    # the instruction the week grid exists to correct.
+    nights = alternating_nights(audit)
+
     # The opening act is about the shelf rather than either routine, so
     # its ribbon is the whole day's.
     all_ribbon = [_short(st.product_name) for _l, steps in days for st in steps]
@@ -1684,10 +1743,17 @@ def _film_scenes(audit, specs: dict, explain: dict) -> list[dict]:
 
         for index, st in enumerate(steps):
             name = st.product_name
+            # Spelled out where we know the rotation, and left as the
+            # rule's own wording where there is only one alternating
+            # product and no rotation to compute.
+            when = ", ".join(nights[name]) if name in nights else ""
+            if not when and st.frequency != "daily":
+                when = st.frequency
             common = {
                 "slot": slot_label, "order": index + 1, "of": len(steps),
                 "name": name, "form": st.form,
                 "ribbon": ribbon, "at": index,
+                "nights": when,
             }
 
             if st.placeholder:
@@ -1781,6 +1847,7 @@ def _film_markup(scenes: list[dict], gifs: dict[str, str] | None = None) -> str:
         '<div>'
         '<p class="film-step" id="f-step"></p>'
         '<p class="film-form" id="f-form"></p>'
+        '<p class="film-nights" id="f-nights"></p>'
         '<p class="film-do" id="f-do"></p>'
         '<p class="film-where" id="f-where"></p>'
         '<span class="film-real" id="f-real"></span>'
@@ -2194,8 +2261,7 @@ def render(
         # knew or what the prices would buy. Both facts are true with no
         # money attached, so both are stated.
         waiting: list[str] = []
-        _dupes = sorted({n for f in audit.findings
-                         if f.type == "redundancy" for n in f.products})
+        _dupes = duplicated_names(audit)
         if _dupes:
             waiting.append(
                 f"<b>{len(_dupes)} products here do a job another one already "
@@ -2229,8 +2295,7 @@ def render(
         # So the tile reports what the engine actually knows. The money
         # when there is money; the count of products otherwise, which is
         # a real finding and needs no price to be true.
-        _dupe_names = sorted({n for f in audit.findings
-                              if f.type == "redundancy" for n in f.products})
+        _dupe_names = duplicated_names(audit)
         if w.redundant_value_usd:
             parts.append(_stat(_money(w.redundant_value_usd),
                                "duplicate function", "warn"))
@@ -2265,8 +2330,7 @@ def render(
         # with one unknown price shows $0 — and a $0 tile with no
         # explanation says "no duplicates here", which is the opposite
         # of what the engine found.
-        dupes = sorted({n for f in audit.findings
-                        if f.type == "redundancy" for n in f.products})
+        dupes = duplicated_names(audit)
         if dupes:
             counted.append(
                 f"<b>Duplicate function</b>: {e(', '.join(dupes))} do a job "
@@ -2676,11 +2740,18 @@ def render(
             # beside one she has already overridden — unticking her own
             # number should hand the retail figure back, not leave the
             # row with nothing to use.
-            use = (
-                f'<input type="checkbox" name="puse" value="{e(name)}"'
-                f'{" checked" if confirmed else ""}>'
-                if found_usd is not None and not mismatch else ""
-            )
+            if found_usd is not None and not mismatch:
+                use = (f'<input type="checkbox" name="puse" value="{e(name)}"'
+                       f'{" checked" if confirmed else ""}>')
+            elif found_usd is not None:
+                # A price for a different bottle cannot be accepted, and
+                # leaving the cell blank made that look like a bug — "the
+                # use retail price checkbox is missing". The absence is a
+                # decision, so it says so, and points at the one thing
+                # that clears it.
+                use = '<span class="typ">size first</span>'
+            else:
+                use = ""
             value = f"{price:.2f}" if hers else ""
             checked = " checked" if p.product.unused else ""
             # Size is shown because it decides the price. It was being

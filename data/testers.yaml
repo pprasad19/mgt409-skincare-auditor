@@ -874,6 +874,87 @@ findings:
     class: advice-too-narrow
     caught_by_tests: false
 
+  # ---- tester 2, round 9 --------------------------------------------
+  - tester: 2
+    round: 9
+    reported: "the use retail price checkbox is missing when I first input a new item into the app"
+    layer: presentation
+    wrong: >-
+      It was missing on exactly one row, and deliberately: a price for a
+      different size cannot be accepted, because no amount of confirming
+      makes a 118 ml figure into an 18 ml bottle's. The cell rendered
+      completely blank, so a decision looked like a bug, and the one thing
+      that clears it was two columns away.
+    fixed: >-
+      The cell says "size first". The reason stays in the Found online cell
+      beside it, which already named both sizes.
+    commit: pending
+    class: invisible-to-the-user
+    caught_by_tests: false
+
+  - tester: 2
+    round: 9
+    reported: "why is the nothing duplicated section not updated if there are similar items - the toner and mist"
+    layer: logic
+    wrong: >-
+      Two faults stacked. Her mist had no keyword and no actives the table
+      knows, so it fell through to the default and was filed as a serum -
+      a different step from her toner, so the two were never compared. And
+      once they were, nothing changed: the duplicate figure reads only
+      `type: redundancy` findings, which pair INGREDIENTS, while two
+      products in one step are paired by the ROUTINE, which marks them
+      "one of these, not both". The routine told her to pick one and the
+      money section said nothing was duplicated, on the same page.
+    fixed: >-
+      "mist" files at the toner position - its own form would mean
+      inventing a rank, a dose and a technique with nothing behind them,
+      and an SPF mist or a cleansing mist still matches its own keyword
+      first. English only; the translated terms for this were in the 232
+      withdrawn for being machine-generated. And waste() now reads the
+      routine's instead_of groups as well as the ingredient findings, with
+      one function behind the figure, the tile and the sentence so they
+      cannot name different sets.
+    commit: pending
+    class: page-contradicts-itself
+    caught_by_tests: false
+
+  - tester: 2
+    round: 9
+    reported: "the what you might add section is not updated when I say I never use the item"
+    layer: logic
+    wrong: >-
+      gaps() built `held` from every product on the shelf, so a cleanser
+      she had marked as never used still counted as having a cleanser and
+      the section had nothing to suggest. A cleanser in a drawer leaves
+      the same hole in a routine as no cleanser at all.
+    fixed: >-
+      gaps() counts what she uses. Third place this had to be taught after
+      the routine builder and the finder, which is the real finding: unused
+      is a property of the shelf-in-use and every reader of the product
+      list needs to know it.
+    commit: pending
+    class: declaration-ignored
+    caught_by_tests: false
+
+  - tester: 2
+    round: 9
+    reported: "if something should be used on alternate nights, the video animation should also be reflecting that"
+    layer: presentation
+    wrong: >-
+      The film walked the evening as though every step happened every
+      night, directly contradicting the week grid printed below it - which
+      exists because "use on alternate nights" is advice people agree with
+      and then do not follow.
+    fixed: >-
+      Each scene carries the nights its product is actually for and the
+      player prints "not every night - Mon, Wed, Fri". The rotation was
+      extracted from the grid into one function that both read, rather
+      than recomputed in the scene builder, which is how the four surfaces
+      drifted over durations before beats_for was made the single source.
+    commit: pending
+    class: surfaces-disagree
+    caught_by_tests: false
+
 # Defects found by me, not by a tester - kept apart from `findings` so
 # the tester count the report quotes stays a tester count. Both turned
 # up in the same ten minutes, in the browser, while checking that the

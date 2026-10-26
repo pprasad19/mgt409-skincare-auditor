@@ -68,8 +68,25 @@ FORM_KEYWORDS = [
                   "洗顔", "クレンジング", "洗顔料", "洁面", "潔面", "洗面奶", "卸妆"]),
     ("exfoliant", ["scrub", "peel", "exfoliat", "gommage", "exfoliante", "peeling",
                    "스크럽", "필링", "角質", "スクラブ", "去角质", "去角質"]),
+    # "mist" is here rather than in its own form. A facial mist is a
+    # watery hydrating step applied at the toner's position, and giving
+    # it a form of its own would mean inventing a rank, a dose and a
+    # technique with nothing to base them on. Filed as a toner it gets
+    # the right position and the right dose.
+    #
+    # Added after a tester expected her toner and her mist to be called
+    # duplicates and was told nothing was duplicated. They were not
+    # being compared: with no keyword and no known actives the mist
+    # fell through to the default and was filed as a serum, which is a
+    # different step, so the engine was right about the shelf it
+    # thought it had and wrong about the shelf she owned.
+    #
+    # English only. The translated terms for this were in the 232 that
+    # were withdrawn for being machine-generated, and one unverified
+    # string is how that whole surface started.
     ("toner", ["toner", "tonic", "tonique", "lotion tonique", "tónico", "토너", "스킨",
-               "스킨토너", "토닝", "화장수", "化粧水", "爽膚水", "爽肤水", "化妆水"]),
+               "스킨토너", "토닝", "화장수", "化粧水", "爽膚水", "爽肤水", "化妆水",
+               "mist", "face mist", "facial mist"]),
     ("essence", ["essence", "에센스", "精華水", "精华水"]),
     ("mask", ["mask", "masque", "mascarilla", "maske", "마스크", "팩", "시트마스크",
               "マスク", "パック", "面膜"]),
@@ -1010,7 +1027,20 @@ class Rules:
 
     # -- money -------------------------------------------------------------
 
-    def waste(self, products: list[ResolvedProduct], findings: list[Finding]) -> WasteSummary:
+    def waste(self, products: list[ResolvedProduct], findings: list[Finding],
+              routine: Routine | None = None) -> WasteSummary:
+        """What the shelf is wasting, in the prices the user confirmed.
+
+        `routine` is optional only so older callers keep working; pass
+        it. The routine knows about a kind of duplication the findings
+        do not: the interaction rules pair INGREDIENTS, so two retinols
+        are a duplicate and two toners are invisible to them. The
+        routine places one product per step and marks the rest
+        `instead_of` — "one of these, not both" — and the money section
+        was ignoring that and reporting "nothing duplicated" on the same
+        page. A tester with a toner and a mist read both and asked which
+        one to believe.
+        """
         by_name = {p.product.name: p for p in products}
         # A price for the wrong size is reference, not arithmetic. It is
         # shown beside its product with the size named; adding it to
@@ -1055,6 +1085,20 @@ class Rules:
         price = lambda n: _countable(by_name[n]) if n in by_name else 0.0
 
         redundant: set[str] = set()
+
+        # The routine's own verdict first. Each `instead_of` is a step
+        # saying it and these others do one job; the cheapest of that
+        # group is the avoidable spend, on the same reasoning the
+        # ingredient rules use.
+        for step in list(getattr(routine, "am", []) or []) + list(
+                getattr(routine, "pm", []) or []):
+            if not step.instead_of:
+                continue
+            group = [step.product_name, *step.instead_of]
+            priced = [n for n in group if price(n) > 0]
+            if len(priced) > 1:
+                redundant.add(min(priced, key=price))
+
         for f in findings:
             if f.type == "redundancy" and len(f.products) == 2:
                 # The cheaper of the two is the avoidable spend — but
@@ -1156,6 +1200,20 @@ class Rules:
         sunscreen does more harm than not using them at all.
         """
         out: list[Gap] = []
+
+        # What she actually uses, not what she owns. A tester marked her
+        # only cleanser as one she never uses and the section still had
+        # nothing to suggest: "the what you might add section is not
+        # updated when I say I never use the item". She is right — a
+        # cleanser in a drawer leaves the same hole in a routine as no
+        # cleanser at all, and this section exists to name holes.
+        #
+        # Third place this had to be taught. The routine builder skips
+        # unused products, the finder now does too, and `held` was still
+        # counting them as coverage. The lesson is that "unused" is a
+        # property of the shelf-in-use and every reader of the product
+        # list has to know it, not a flag one function remembers.
+        products = [p for p in products if not p.product.unused]
 
         held = {p.form for p in products}
 
@@ -1377,8 +1435,8 @@ class Rules:
             unresolved=unresolved,
             findings=findings,
             escalations=self.escalate(products, conditions or []),
-            routine=self.build_routine(products, findings, wanted),
-            waste=self.waste(products, findings),
+            routine=(routine := self.build_routine(products, findings, wanted)),
+            waste=self.waste(products, findings, routine),
             gaps=self.gaps(products, wanted),
             suggestions=self.suggest(products, concerns or []),
             rules_verified=self.rules_verified,
