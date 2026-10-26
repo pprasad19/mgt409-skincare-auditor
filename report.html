@@ -62,10 +62,10 @@ li{margin:.3rem 0}
 <p class="meta">
   Purnima Prasad · MGT 409 — AI Foundations for Managers · final project<br>
   Repository: <a href="https://github.com/pprasad19/mgt409-skincare-auditor">https://github.com/pprasad19/mgt409-skincare-auditor</a>
-  (commit <code>2ff4404</code>)<br>
+  (commit <code>6be8c83</code>)<br>
   App: runs locally — <code>python -m uvicorn app:app --port 8000</code>,
   then <code>http://localhost:8000</code>. Full instructions in the README.<br>
-  Generated 26 October 2026, 09:17 by <code>build_report.py</code>.
+  Generated 26 October 2026, 09:25 by <code>build_report.py</code>.
 </p>
 
 <h2>1 · Motivation</h2>
@@ -263,14 +263,14 @@ combination this tool exists for.</p>
 <h2>4 · Tokenomics</h2>
 
 <p>All figures below are measured from <code>output/usage_log.json</code>,
-which records every call this project has ever made — 1254 calls across
-810 runs, including failed experiments and red-team runs. Regenerate
+which records every call this project has ever made — 1263 calls across
+819 runs, including failed experiments and red-team runs. Regenerate
 with <code>python tools/tokenomics.py</code>.</p>
 
 <h3>Per call</h3>
 <table>
 <tr><th>Step</th><th class="n">Mean cost</th><th class="n">Calls</th></tr>
-<tr><td>routine_auditor</td><td class='n'>$0.00071</td><td class='n'>717</td></tr><tr><td>shelf_reader</td><td class='n'>$0.00064</td><td class='n'>301</td></tr><tr><td>lookup</td><td class='n'>$0.00098</td><td class='n'>160</td></tr><tr><td>skin_observer</td><td class='n'>$0.00042</td><td class='n'>36</td></tr><tr><td>url</td><td class='n'>$0.00111</td><td class='n'>28</td></tr>
+<tr><td>routine_auditor</td><td class='n'>$0.00071</td><td class='n'>725</td></tr><tr><td>shelf_reader</td><td class='n'>$0.00064</td><td class='n'>302</td></tr><tr><td>lookup</td><td class='n'>$0.00098</td><td class='n'>160</td></tr><tr><td>skin_observer</td><td class='n'>$0.00042</td><td class='n'>36</td></tr><tr><td>url</td><td class='n'>$0.00111</td><td class='n'>28</td></tr>
 </table>
 
 <h3>Per run, which is what a user pays for</h3>
@@ -314,14 +314,14 @@ input</b> — writing is 25% <em>more</em> expensive than not caching. A read
 costs $0.01, a tenth. So caching only pays once enough reads have happened to
 cover the writes that created them.</p>
 
-<pre><code>input tokens          3,486,376
-  cache reads         2,260,291   (65% of input)
-  cache writes        809,873
-billed input          $0.16546
-same input, uncached  $0.34864
-saved                 $0.18318   (53% of input spend)</code></pre>
+<pre><code>input tokens          3,514,085
+  cache reads         2,282,115   (65% of input)
+  cache writes        814,624
+billed input          $0.16638
+same input, uncached  $0.35141
+saved                 $0.18502   (53% of input spend)</code></pre>
 
-<p>Caching landed on 840 of 1163 enabled calls
+<p>Caching landed on 848 of 1172 enabled calls
 (72%). The margin depends entirely on that rate: a workload
 with less repetition — users who run one audit and never return — would pay the
 write premium without earning it back.</p>
@@ -426,12 +426,15 @@ missed by the automated suites.</p>
 
 <h3>The finding that matters most</h3>
 
-<p>The two testers' results <b>barely overlap</b>. Tester 1 does their own
-skincare and caught domain errors: a face mask timed at 30 seconds, a cleansing
-oil treated as a face wash, advice that never said what time of day it was for.
-Tester 2 checked the output against the bottles physically in front of them and
-caught identity errors: a product on the page that was never on their shelf, a
-brand attributed to the wrong company, a 7 ml sample priced as a full jar.</p>
+<p>The 3 testers' results <b>barely overlap</b>. Tester 1 does
+their own skincare and caught domain errors: a face mask timed at 30 seconds, a
+cleansing oil treated as a face wash, advice that never said what time of day it
+was for. Tester 2 checked the output against the bottles physically in front of
+them and caught identity errors: a product on the page that was never on their
+shelf, a brand attributed to the wrong company, a 7 ml sample priced as a full
+jar. Tester 3 read it as a document and caught it contradicting itself: a
+prescription escalated to a clinician and then given a dose and a countdown, a
+figure with no way to check what it counted.</p>
 
 <table>
 <tr><th>Failure class</th><th class="n">Findings</th></tr>
@@ -439,10 +442,11 @@ brand attributed to the wrong company, a 7 ml sample priced as a full jar.</p>
 </table>
 
 <p>Of 24 distinct failure classes,
-8 was found by more than one tester. That is the
-practical result: <b>at two testers this was nowhere near saturation</b>, and
-the marginal tester was still returning entirely new categories of defect rather
-than confirming the first one's.</p>
+8 were
+found by more than one tester — 33%.
+That is the practical result: <b>at 3 testers this was still not
+saturated</b>, and the 3th was returning new categories of defect
+rather than confirming the others'.</p>
 
 <h3>Against the automated suites</h3>
 
@@ -458,8 +462,8 @@ all passing.</p>
 argument against the tests — they catch regressions reliably, and three times
 this weekend a test caught me breaking something while fixing something else.
 It is an argument about what tests are <em>for</em>: they encode what I already
-thought to doubt. Every one of the twelve findings was something I had not
-thought to doubt, and most of them produced a clean, confident, correctly
+thought to doubt. Every one of the 58 findings was something I had
+not thought to doubt, and most of them produced a clean, confident, correctly
 formatted page.</p>
 
 <h3>Accuracy of the catalogue</h3>
@@ -664,7 +668,7 @@ hand-written ground truth would turn "a tester found this" into a measurable
 accuracy figure.</li>
 </ol>
 
-<p class="foot">Generated 26 October 2026, 09:17 from
+<p class="foot">Generated 26 October 2026, 09:25 from
 <code>report_data.py</code>, which derives every figure above from the database,
 the usage log, the attack results and the test suites. No number in this
 document was typed by hand.</p>

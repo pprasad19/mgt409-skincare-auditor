@@ -598,12 +598,15 @@ missed by the automated suites.</p>
 
 <h3>The finding that matters most</h3>
 
-<p>The two testers' results <b>barely overlap</b>. Tester 1 does their own
-skincare and caught domain errors: a face mask timed at 30 seconds, a cleansing
-oil treated as a face wash, advice that never said what time of day it was for.
-Tester 2 checked the output against the bottles physically in front of them and
-caught identity errors: a product on the page that was never on their shelf, a
-brand attributed to the wrong company, a 7 ml sample priced as a full jar.</p>
+<p>The {te['reported']} testers' results <b>barely overlap</b>. Tester 1 does
+their own skincare and caught domain errors: a face mask timed at 30 seconds, a
+cleansing oil treated as a face wash, advice that never said what time of day it
+was for. Tester 2 checked the output against the bottles physically in front of
+them and caught identity errors: a product on the page that was never on their
+shelf, a brand attributed to the wrong company, a 7 ml sample priced as a full
+jar. Tester 3 read it as a document and caught it contradicting itself: a
+prescription escalated to a clinician and then given a dose and a countdown, a
+figure with no way to check what it counted.</p>
 
 <table>
 <tr><th>Failure class</th><th class="n">Findings</th></tr>
@@ -611,10 +614,11 @@ brand attributed to the wrong company, a 7 ml sample priced as a full jar.</p>
 </table>
 
 <p>Of {len(classes)} distinct failure classes,
-{len(te['class_overlap'])} was found by more than one tester. That is the
-practical result: <b>at two testers this was nowhere near saturation</b>, and
-the marginal tester was still returning entirely new categories of defect rather
-than confirming the first one's.</p>
+{len(te['class_overlap'])} {"was" if len(te['class_overlap']) == 1 else "were"}
+found by more than one tester — {round(100 * len(te['class_overlap']) / max(len(classes), 1))}%.
+That is the practical result: <b>at {te['reported']} testers this was still not
+saturated</b>, and the {te['reported']}th was returning new categories of defect
+rather than confirming the others'.</p>
 
 <h3>Against the automated suites</h3>
 
@@ -630,8 +634,8 @@ all passing.</p>
 argument against the tests — they catch regressions reliably, and three times
 this weekend a test caught me breaking something while fixing something else.
 It is an argument about what tests are <em>for</em>: they encode what I already
-thought to doubt. Every one of the twelve findings was something I had not
-thought to doubt, and most of them produced a clean, confident, correctly
+thought to doubt. Every one of the {te['count']} findings was something I had
+not thought to doubt, and most of them produced a clean, confident, correctly
 formatted page.</p>
 
 <h3>Accuracy of the catalogue</h3>
