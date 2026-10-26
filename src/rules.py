@@ -925,10 +925,21 @@ class Rules:
         # "on the shelf" would put a 10 oz figure behind a 4 oz bottle
         # and quietly make every total wrong.
         def _countable(p) -> float:
-            # A price for a different size, or one we could not read from
-            # the page the user linked. Both are shown beside the product
-            # and neither belongs in a total: "on the shelf" has to be a
-            # number they can reconcile with what they are looking at.
+            """A price only counts if the user told us it.
+
+            Every money complaint from three testers was a figure this
+            app had guessed — a full-size price against a sample, an
+            Amazon listing it cannot read, an original where the page
+            showed a sale. The inputs are structurally weak and will
+            stay weak, so the totals no longer rest on them.
+
+            A looked-up figure is still shown beside its product and
+            labelled; it is simply never added up. "On the shelf" means
+            what the user said they paid, which is a number they can
+            check against their own bank statement.
+            """
+            if p.product.price_is_typical:
+                return 0.0
             if getattr(p.product, "price_size_mismatch", ""):
                 return 0.0
             if getattr(p.product, "price_off_page", ""):

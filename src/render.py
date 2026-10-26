@@ -2326,11 +2326,16 @@ def render(
         # Four zeroes look like a broken feature. They mean nobody said what
         # anything cost — which is a thing the user can fix, so ask.
         parts.append(
-            '<div class="askprice"><b>No prices yet.</b> This section works out '
-            "what is sitting unused, what you have bought twice, and what is "
-            "being wasted by a clash — all of which need to know what things "
-            "cost. Add a price after any product (<i>CeraVe Cleanser, $16</i>) "
-            "and mention anything you never use, then run it again.</div>"
+            '<div class="askprice"><b>Nothing to add up yet.</b> This section '
+            "works out what is sitting unused, what you have bought twice and "
+            "what a clash is wasting — and it only counts prices you have given "
+            "it. Figures this tool looked up are shown beside each product "
+            "below, but they are estimates and are deliberately left out of "
+            "these totals: a retail guess against a sample bottle was wrong by "
+            "a factor of twenty when a tester checked it. Type what you "
+            "actually paid in the table at the bottom — or write it inline "
+            "(<i>CeraVe Cleanser, $16</i>) — and these figures become yours."
+            "</div>"
         )
     else:
         parts.append('<div class="stats">')
@@ -2355,13 +2360,25 @@ def render(
             names = sorted(p.product.name for p in audit.products
                            if p.product.unused and p.product.price_usd)
             counted.append(f"<b>Unused</b> counts {e(', '.join(names))}.")
-        if w.redundant_value_usd:
-            dupes = sorted({n for f in audit.findings
-                            if f.type == "redundancy" for n in f.products})
+        # Named whenever a duplicate was FOUND, not only when it could be
+        # priced. Now that totals count confirmed prices only, a pair
+        # with one unknown price shows $0 — and a $0 tile with no
+        # explanation says "no duplicates here", which is the opposite
+        # of what the engine found.
+        dupes = sorted({n for f in audit.findings
+                        if f.type == "redundancy" for n in f.products})
+        if dupes:
             counted.append(
-                f"<b>Duplicate function</b> counts {e(', '.join(dupes))} — "
-                f"products that do a job something else here already does. "
-                f"Anything not listed was checked and does not overlap.")
+                f"<b>Duplicate function</b>: {e(', '.join(dupes))} do a job "
+                f"something else here already does"
+                # Careful with this clause: one of the pair may well
+                # have a confirmed price. What is missing is a confirmed
+                # price for the one the figure would count.
+                + ("" if w.redundant_value_usd else
+                   ", though the figure above is zero because it counts only "
+                   "prices you have confirmed and this pair does not have "
+                   "enough of them")
+                + ". Anything not listed was checked and does not overlap.")
         if w.conflicted_value_usd:
             clash = sorted({n for f in audit.findings
                             if f.severity in ("critical", "high")
@@ -2390,7 +2407,8 @@ def render(
                    f"{n} of these {total} prices "
                    f"{'is a retail figure' if n == 1 else 'are retail figures'}")
                 + " we looked up — from the product's own page where you gave "
-                  "a link, otherwise from a published listing. "
+                  "a link, otherwise from a published listing. They are shown "
+                  "for recognition and are NOT in the totals above. "
                 + ("It is not" if n == total == 1
                    else "None of them is" if n == total else "They are not")
                 + " what you actually paid. Good enough to see roughly what is "

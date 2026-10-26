@@ -264,9 +264,19 @@ def testers() -> dict:
         by_tester.setdefault(f["tester"], []).append(f)
         classes[f["class"]] = classes.get(f["class"], 0) + 1
     reported = sorted(by_tester)
+    # How many findings were about price. Counted rather than typed,
+    # because the report argues from this number and a hand-written
+    # "eight" beside a derived "30" is exactly the drift this module
+    # exists to stop.
+    money = [
+        f for f in findings
+        if re.search(r"price|retail|cost|[$]|discount|decimal",
+                     f["reported"] + " " + f["wrong"], re.I)
+    ]
     return {
         "people": people,
         "recruited": len(people),
+        "money_findings": len(money),
         "reported": len(reported),
         "findings": findings,
         "count": len(findings),

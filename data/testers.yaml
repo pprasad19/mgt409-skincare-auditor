@@ -575,3 +575,26 @@ findings:
     class: verdict-without-reason
     caught_by_tests: false
 
+# A design decision rather than a defect, recorded here because the
+# tester evidence is what drove it and the report argues from this row.
+decisions:
+  - date: 2026-10-26
+    question: "does this app need to account for cost, or should it just give a good routine?"
+    evidence: >-
+      8 of 30 tester findings were about price, and every one was about a
+      figure the app had guessed - a full-size price against a 7 ml sample,
+      an Amazon listing it cannot read, an original where the page showed a
+      sale, a retail estimate described as what they paid. None was about the
+      feature existing.
+    decided: >-
+      Keep the money section; stop it guessing. A price is counted only if the
+      user typed it. Looked-up figures stay visible beside each product,
+      labelled with where they came from, and are never summed; a shelf with
+      no confirmed prices says so and asks. This retires the whole defect
+      class instead of fixing instances, and keeps the quantified-impact axis
+      the project's motivation rests on.
+    cost: >-
+      Most users now see "nothing to add up yet" where they previously saw a
+      number. A weaker first impression in exchange for every displayed figure
+      being one the user can check.
+

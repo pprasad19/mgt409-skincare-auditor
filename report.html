@@ -62,10 +62,10 @@ li{margin:.3rem 0}
 <p class="meta">
   Purnima Prasad · MGT 409 — AI Foundations for Managers · final project<br>
   Repository: <a href="https://github.com/pprasad19/mgt409-skincare-auditor">https://github.com/pprasad19/mgt409-skincare-auditor</a>
-  (commit <code>996d3ab</code>)<br>
+  (commit <code>70cc83b</code>)<br>
   App: runs locally — <code>python -m uvicorn app:app --port 8000</code>,
   then <code>http://localhost:8000</code>. Full instructions in the README.<br>
-  Generated 26 October 2026, 03:04 by <code>build_report.py</code>.
+  Generated 26 October 2026, 03:14 by <code>build_report.py</code>.
 </p>
 
 <h2>1 · Motivation</h2>
@@ -261,14 +261,14 @@ combination this tool exists for.</p>
 <h2>4 · Tokenomics</h2>
 
 <p>All figures below are measured from <code>output/usage_log.json</code>,
-which records every call this project has ever made — 856 calls across
-465 runs, including failed experiments and red-team runs. Regenerate
+which records every call this project has ever made — 872 calls across
+481 runs, including failed experiments and red-team runs. Regenerate
 with <code>python tools/tokenomics.py</code>.</p>
 
 <h3>Per call</h3>
 <table>
 <tr><th>Step</th><th class="n">Mean cost</th><th class="n">Calls</th></tr>
-<tr><td>routine_auditor</td><td class='n'>$0.00073</td><td class='n'>398</td></tr><tr><td>shelf_reader</td><td class='n'>$0.00061</td><td class='n'>247</td></tr><tr><td>lookup</td><td class='n'>$0.00096</td><td class='n'>145</td></tr><tr><td>skin_observer</td><td class='n'>$0.00042</td><td class='n'>28</td></tr><tr><td>url</td><td class='n'>$0.00107</td><td class='n'>26</td></tr>
+<tr><td>routine_auditor</td><td class='n'>$0.00072</td><td class='n'>414</td></tr><tr><td>shelf_reader</td><td class='n'>$0.00061</td><td class='n'>247</td></tr><tr><td>lookup</td><td class='n'>$0.00096</td><td class='n'>145</td></tr><tr><td>skin_observer</td><td class='n'>$0.00042</td><td class='n'>28</td></tr><tr><td>url</td><td class='n'>$0.00107</td><td class='n'>26</td></tr>
 </table>
 
 <h3>Per run, which is what a user pays for</h3>
@@ -312,14 +312,14 @@ input</b> — writing is 25% <em>more</em> expensive than not caching. A read
 costs $0.01, a tenth. So caching only pays once enough reads have happened to
 cover the writes that created them.</p>
 
-<pre><code>input tokens          2,178,507
-  cache reads         1,262,876   (58% of input)
-  cache writes        579,807
-billed input          $0.11869
-same input, uncached  $0.21785
-saved                 $0.09916   (46% of input spend)</code></pre>
+<pre><code>input tokens          2,227,345
+  cache reads         1,306,524   (59% of input)
+  cache writes        582,981
+billed input          $0.11972
+same input, uncached  $0.22273
+saved                 $0.10301   (46% of input spend)</code></pre>
 
-<p>Caching landed on 479 of 765 enabled calls
+<p>Caching landed on 495 of 781 enabled calls
 (63%). The margin depends entirely on that rate: a workload
 with less repetition — users who run one audit and never return — would pay the
 write premium without earning it back.</p>
@@ -444,12 +444,12 @@ than confirming the first one's.</p>
 
 <h3>Against the automated suites</h3>
 
-<p>The project has 12 suites and 0 checks,
+<p>The project has 12 suites and 882 checks,
 all passing.</p>
 
 <table>
 <tr><th>Suite</th><th>What it is for</th><th class="n">Checks</th></tr>
-<tr><td><code>test_robustness.py</code></td><td>malformed and hostile input</td><td class='n'>—</td></tr><tr><td><code>test_i18n.py</code></td><td>Korean, French, Japanese, Chinese labels</td><td class='n'>—</td></tr><tr><td><code>test_storyboard.py</code></td><td>the routine animation and its GIF export</td><td class='n'>—</td></tr><tr><td><code>test_urls.py</code></td><td>pasted product pages, and what a hostile one cannot reach</td><td class='n'>—</td></tr><tr><td><code>test_mcp.py</code></td><td>the MCP server agrees with the app</td><td class='n'>—</td></tr><tr><td><code>test_thesis.py</code></td><td>a narrative contradicting every finding changes nothing</td><td class='n'>—</td></tr><tr><td><code>test_failure.py</code></td><td>each agent failing in turn</td><td class='n'>—</td></tr><tr><td><code>test_validator.py</code></td><td>invented rules and ghost products are dropped</td><td class='n'>—</td></tr><tr><td><code>test_provenance.py</code></td><td>unchecked translations declare themselves</td><td class='n'>—</td></tr><tr><td><code>test_gaps.py</code></td><td>what the shelf is missing, and what is not worth flagging</td><td class='n'>—</td></tr><tr><td><code>test_identity.py</code></td><td>the product on the page is the product in the bathroom</td><td class='n'>—</td></tr><tr><td><code>test_correction.py</code></td><td>the user can overrule the app, and it stays overruled</td><td class='n'>—</td></tr>
+<tr><td><code>test_robustness.py</code></td><td>malformed and hostile input</td><td class='n'>16</td></tr><tr><td><code>test_i18n.py</code></td><td>Korean, French, Japanese, Chinese labels</td><td class='n'>281</td></tr><tr><td><code>test_storyboard.py</code></td><td>the routine animation and its GIF export</td><td class='n'>260</td></tr><tr><td><code>test_urls.py</code></td><td>pasted product pages, and what a hostile one cannot reach</td><td class='n'>35</td></tr><tr><td><code>test_mcp.py</code></td><td>the MCP server agrees with the app</td><td class='n'>21</td></tr><tr><td><code>test_thesis.py</code></td><td>a narrative contradicting every finding changes nothing</td><td class='n'>16</td></tr><tr><td><code>test_failure.py</code></td><td>each agent failing in turn</td><td class='n'>31</td></tr><tr><td><code>test_validator.py</code></td><td>invented rules and ghost products are dropped</td><td class='n'>18</td></tr><tr><td><code>test_provenance.py</code></td><td>unchecked translations declare themselves</td><td class='n'>24</td></tr><tr><td><code>test_gaps.py</code></td><td>what the shelf is missing, and what is not worth flagging</td><td class='n'>86</td></tr><tr><td><code>test_identity.py</code></td><td>the product on the page is the product in the bathroom</td><td class='n'>45</td></tr><tr><td><code>test_correction.py</code></td><td>the user can overrule the app, and it stays overruled</td><td class='n'>49</td></tr>
 </table>
 
 <p><b>They caught none of the 30 defects above.</b> That is not an
@@ -521,6 +521,29 @@ first cleanse is required on this app's own internal logic — it tells everyone
 to wear sunscreen, and sunscreen does not come off with water — rather than on
 a published source, and is marked <code>reasoned</code> accordingly.</p>
 
+<h3>The money section, and what it cost to keep</h3>
+
+<p>8 of the 30 tester findings were about price. Every one of
+them was about a figure the app had <em>guessed</em>: a full-size price shown
+against a 7 ml sample, an Amazon listing this tool cannot read, an original
+where the page displayed a sale price, a retail estimate described as what the
+user paid. Not one tester objected to the feature existing.</p>
+
+<p>That split matters, because the obvious reading — "the money section causes
+a quarter of the complaints, cut it" — is the wrong one. The feature is sound
+and its <em>inputs</em> are weak, and they will stay weak: Amazon serves this
+reader a 3.7&nbsp;KB stub with no structured data, the seeded catalogue's
+median price error is 11%, and a looked-up figure is
+a different size or a different product often enough to matter.</p>
+
+<p>So on the last day the totals stopped depending on them. <b>A price is
+counted only if the user typed it.</b> Figures the tool found are still shown
+beside each product, labelled with where they came from, and never summed — and
+a shelf with no confirmed prices now says so and asks, rather than quietly
+adding up estimates. That retired the whole class rather than fixing its
+instances one at a time, and it is the clearest example in this project of the
+difference between a feature being wrong and a feature being fed badly.</p>
+
 <h3>The pattern across every real bug</h3>
 
 <div class="card key">
@@ -564,7 +587,7 @@ hand-written ground truth would turn "a tester found this" into a measurable
 accuracy figure.</li>
 </ol>
 
-<p class="foot">Generated 26 October 2026, 03:04 from
+<p class="foot">Generated 26 October 2026, 03:14 from
 <code>report_data.py</code>, which derives every figure above from the database,
 the usage log, the attack results and the test suites. No number in this
 document was typed by hand.</p>

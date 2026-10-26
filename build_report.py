@@ -693,6 +693,29 @@ first cleanse is required on this app's own internal logic — it tells everyone
 to wear sunscreen, and sunscreen does not come off with water — rather than on
 a published source, and is marked <code>reasoned</code> accordingly.</p>
 
+<h3>The money section, and what it cost to keep</h3>
+
+<p>{te['money_findings']} of the {te['count']} tester findings were about price. Every one of
+them was about a figure the app had <em>guessed</em>: a full-size price shown
+against a 7 ml sample, an Amazon listing this tool cannot read, an original
+where the page displayed a sale price, a retail estimate described as what the
+user paid. Not one tester objected to the feature existing.</p>
+
+<p>That split matters, because the obvious reading — "the money section causes
+a quarter of the complaints, cut it" — is the wrong one. The feature is sound
+and its <em>inputs</em> are weak, and they will stay weak: Amazon serves this
+reader a 3.7&nbsp;KB stub with no structured data, the seeded catalogue's
+median price error is {cat.get('median_error', '—')}, and a looked-up figure is
+a different size or a different product often enough to matter.</p>
+
+<p>So on the last day the totals stopped depending on them. <b>A price is
+counted only if the user typed it.</b> Figures the tool found are still shown
+beside each product, labelled with where they came from, and never summed — and
+a shelf with no confirmed prices now says so and asks, rather than quietly
+adding up estimates. That retired the whole class rather than fixing its
+instances one at a time, and it is the clearest example in this project of the
+difference between a feature being wrong and a feature being fed badly.</p>
+
 <h3>The pattern across every real bug</h3>
 
 <div class="card key">

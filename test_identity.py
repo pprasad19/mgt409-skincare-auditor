@@ -202,6 +202,55 @@ check_true("and the product still resolves normally", resolved.form is not None)
 check("a mismatch field exists to be set", sample.price_size_mismatch, "")
 
 
+
+# --- the totals rest only on prices the user confirmed ----------------
+# Eight of twenty-eight tester findings were about money, and every one
+# was a price the app had guessed: a full-size figure against a 7 ml
+# sample, an Amazon listing it cannot read, an original where the page
+# showed a sale, a retail estimate described as what they paid. None
+# was about the feature existing.
+#
+# The inputs are structurally weak and will stay weak — Amazon serves
+# this reader a stub, the seeded catalogue's median price error is 11%.
+# So the totals stopped depending on them. A looked-up figure is still
+# shown beside its product and labelled; it is never summed. This is
+# the check that keeps it that way, because the tempting fix for an
+# empty-looking money section is to start counting estimates again.
+def _audit(*products):
+    return R.audit(list(products), concerns=[])
+
+
+guessed = _audit(
+    InputProduct(name="A", listed_ingredients=["Retinol"],
+                 price_usd=40.0, price_is_typical=True),
+    InputProduct(name="B", listed_ingredients=["Tretinoin"],
+                 price_usd=12.0, price_is_typical=True),
+)
+check("a shelf priced only by lookup totals nothing",
+      guessed.waste.shelf_value_usd, 0.0)
+
+confirmed = _audit(
+    InputProduct(name="A", listed_ingredients=["Retinol"], price_usd=40.0),
+    InputProduct(name="B", listed_ingredients=["Tretinoin"], price_usd=12.0),
+)
+check("prices the user gave are counted", confirmed.waste.shelf_value_usd, 52.0)
+check_true("and so is the duplicate between them",
+           confirmed.waste.redundant_value_usd > 0)
+
+mixed = _audit(
+    InputProduct(name="A", listed_ingredients=["Retinol"], price_usd=40.0),
+    InputProduct(name="B", listed_ingredients=["Tretinoin"],
+                 price_usd=12.0, price_is_typical=True),
+)
+check("only the confirmed half counts", mixed.waste.shelf_value_usd, 40.0)
+
+# The looked-up figure still reaches the product, so the page can show
+# it. Dropping it would lose the recognition value along with the risk.
+check("the estimate is kept on the product",
+      [p.product.price_usd for p in guessed.products], [40.0, 12.0])
+check_true("and is still marked as an estimate",
+           all(p.price_is_typical for p in guessed.products))
+
 if failures:
     print(f"FAILED {len(failures)} of {checks} checks\n")
     for f in failures:

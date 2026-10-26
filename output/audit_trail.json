@@ -14708,5 +14708,506 @@
       "cache_write_tokens": 3244,
       "output_tokens": 112
     }
+  },
+  {
+    "run_id": "c2ccaadb",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:08:07.218942+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 358
+    }
+  },
+  {
+    "run_id": "67ffbb65",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:08:10.134547+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "50439139",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:08:12.818513+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "acd67708",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:08:15.786884+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3040,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 186,
+      "output_tokens": 475
+    }
+  },
+  {
+    "run_id": "51bc2c3d",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:08:18.977733+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3066,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 212,
+      "output_tokens": 555
+    }
+  },
+  {
+    "run_id": "0a965d18",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:08:22.154454+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 1,
+      "steps": 7,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3114,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 260,
+      "output_tokens": 414
+    }
+  },
+  {
+    "run_id": "2e3252cb",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:08:25.717404+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 1,
+      "steps": 1,
+      "rejected": [
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'",
+        "application spec for unknown product 'Sunscreen'",
+        "application spec for unknown product 'Cleansing oil or balm'",
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3063,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 209,
+      "output_tokens": 398
+    }
+  },
+  {
+    "run_id": "2e315018",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:08:29.608217+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3088,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 234,
+      "output_tokens": 424
+    }
+  },
+  {
+    "run_id": "525b4636",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:10:34.515861+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 358
+    }
+  },
+  {
+    "run_id": "2847a98b",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:10:37.401413+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "3093c622",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:10:40.065559+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "3b0d5ff8",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:10:43.647450+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3040,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 186,
+      "output_tokens": 475
+    }
+  },
+  {
+    "run_id": "45065542",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:10:47.364508+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3066,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 212,
+      "output_tokens": 555
+    }
+  },
+  {
+    "run_id": "0ec18770",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:10:51.124490+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 1,
+      "steps": 7,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3114,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 260,
+      "output_tokens": 414
+    }
+  },
+  {
+    "run_id": "9ebbff00",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:10:55.814372+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 1,
+      "steps": 1,
+      "rejected": [
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'",
+        "application spec for unknown product 'Sunscreen'",
+        "application spec for unknown product 'Cleansing oil or balm'",
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3063,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 209,
+      "output_tokens": 398
+    }
+  },
+  {
+    "run_id": "cacee34f",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:11:00.966690+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3088,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 234,
+      "output_tokens": 424
+    }
+  },
+  {
+    "run_id": "cdab53db",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:16:05.136007+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "54fa6050",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:16:43.633585+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 358
+    }
+  },
+  {
+    "run_id": "9c051f1c",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:16:47.374944+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "f3b230d8",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:16:50.851183+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "b60ef1f8",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:16:54.641503+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3040,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 186,
+      "output_tokens": 475
+    }
+  },
+  {
+    "run_id": "0941438b",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:16:58.734893+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3066,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 212,
+      "output_tokens": 555
+    }
+  },
+  {
+    "run_id": "64223aa9",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:17:02.834511+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 1,
+      "steps": 7,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3114,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 260,
+      "output_tokens": 414
+    }
+  },
+  {
+    "run_id": "9007c962",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:17:07.440021+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 1,
+      "steps": 1,
+      "rejected": [
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'",
+        "application spec for unknown product 'Sunscreen'",
+        "application spec for unknown product 'Cleansing oil or balm'",
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3063,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 209,
+      "output_tokens": 398
+    }
+  },
+  {
+    "run_id": "2187832e",
+    "seq": 1,
+    "timestamp": "2026-10-26T07:17:12.254876+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3088,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 234,
+      "output_tokens": 424
+    }
   }
 ]
