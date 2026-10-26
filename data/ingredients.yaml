@@ -350,7 +350,11 @@ ingredients:
   - id: peptides
     name: Signal peptides
     inci: [Palmitoyl Tripeptide-1, Palmitoyl Tetrapeptide-7, Acetyl Hexapeptide-8, Palmitoyl Pentapeptide-4, Palmitoyl Tripeptide-8, Palmitoyl Tripeptide-5, Palmitoyl Dipeptide-7, Acetyl Hexapeptide-37, Acetyl Tetrapeptide-11, Tripeptide-1, Tripeptide-3, Hexapeptide-11, Oligopeptide-1]
-    aliases: [matrixyl, argireline]
+    # "peptides" sat only in the French list, so an English label reading
+    # "Peptides" resolved through a term nobody had checked and the page
+    # warned about it. It is the same word in both languages; filed here it
+    # is a checked alias, and the French entry collapses into it.
+    aliases: [matrixyl, argireline, peptides]
     class: peptide
     ph_range: [5.0, 7.0]
     photosensitising: false

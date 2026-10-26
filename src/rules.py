@@ -101,6 +101,14 @@ def term_pattern(term: str) -> str:
     return re.escape(term)
 
 
+LANGUAGE_NAMES = {
+    "intl:zh": "Chinese",
+    "intl:ko": "Korean",
+    "intl:ja": "Japanese",
+    "intl:fr": "French",
+}
+
+
 class Rules:
     """Everything loaded from the compiled database."""
 
@@ -111,8 +119,12 @@ class Rules:
         con.row_factory = sqlite3.Row
 
         self.ingredients = {r["id"]: dict(r) for r in con.execute("SELECT * FROM ingredients")}
+        # (term, ingredient_id, kind). The kind says where the term came
+        # from — inci, name, alias, or intl:<lang> — which is what lets a
+        # match report that it rests on a translation nobody has checked.
         self.terms = sorted(
-            ((r["term"], r["ingredient_id"]) for r in con.execute("SELECT * FROM ingredient_terms")),
+            ((r["term"], r["ingredient_id"], r["kind"])
+             for r in con.execute("SELECT * FROM ingredient_terms")),
             key=lambda t: -len(t[0]),
         )
         self.interactions = [dict(r) for r in con.execute("SELECT * FROM interactions")]
@@ -198,7 +210,7 @@ class Rules:
         consumed: list[tuple[int, int]] = []
         found: list[str] = []
 
-        for term, ingredient_id in self.terms:
+        for term, ingredient_id, kind in self.terms:
             if ingredient_id in found:
                 continue
             for match in re.finditer(term_pattern(term), label):
@@ -239,6 +251,19 @@ class Rules:
             return hit
         return None
 
+    def _stated_in_checked_terms(self, ingredient_id: str, label: str) -> bool:
+        """Does the label name this ingredient in a term a human has checked?
+
+        Only asked about an ingredient that matched a machine translation,
+        to decide whether that translation actually carried the match or
+        merely happened to be the longer string.
+        """
+        return any(
+            re.search(term_pattern(term), label)
+            for term, other, kind in self.terms
+            if other == ingredient_id and not kind.startswith("intl:")
+        )
+
     def resolve(self, product: InputProduct) -> ResolvedProduct:
         """Match label terms to known ingredients, longest term first.
 
@@ -250,7 +275,8 @@ class Rules:
         consumed: list[tuple[int, int]] = []
         actives: list[str] = []
 
-        for term, ingredient_id in self.terms:
+        found_via: dict[str, str] = {}
+        for term, ingredient_id, kind in self.terms:
             if ingredient_id in actives:
                 continue
             for match in re.finditer(term_pattern(term), label):
@@ -259,6 +285,7 @@ class Rules:
                     continue
                 consumed.append(span)
                 actives.append(ingredient_id)
+                found_via[ingredient_id] = kind
                 break
 
         matched_text = {label[s:e].strip() for s, e in consumed}
@@ -310,6 +337,26 @@ class Rules:
             confidence=confidence,
             matched_from_catalogue=from_catalogue,
             price_is_typical=typical_price,
+            # Actives found only through a machine-translated term. INCI is
+            # international, so most non-English labels still resolve through
+            # verified terms and this stays empty; when it does not, the page
+            # says which product rested on an unchecked translation rather
+            # than tainting every audit equally.
+            # The matching loop takes the longest term first, so whether a
+            # label carrying both "Niacinamide" and the Korean name matches
+            # the checked term or the unchecked one is an accident of which
+            # string is longer. Before flagging, look again: if any checked
+            # term for that ingredient is also on the label, the translation
+            # was not load-bearing and there is nothing to warn about.
+            # Runs only over ingredients already flagged, which is normally
+            # none.
+            translated_only={
+                self.ingredients[a]["name"]:
+                    LANGUAGE_NAMES.get(found_via[a], found_via[a].removeprefix("intl:"))
+                for a in sorted(actives)
+                if found_via.get(a, "").startswith("intl:")
+                and not self._stated_in_checked_terms(a, label)
+            },
         )
 
     # -- selectors ---------------------------------------------------------

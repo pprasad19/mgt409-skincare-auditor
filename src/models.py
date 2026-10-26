@@ -91,6 +91,18 @@ class ResolvedProduct(BaseModel):
                     "page and kept out of anything the report cites as measured — "
                     "a typical price is not what this person paid.",
     )
+    translated_only: dict[str, str] = Field(
+        default_factory=dict,
+        description="Actives identified only by a non-English term from "
+                    "ingredient_aliases.yaml, which is machine-generated and "
+                    "has never been read by a speaker. A missing translation "
+                    "costs a finding, which is safe; a wrong one invents an "
+                    "ingredient, which is not. Naming them lets the page warn "
+                    "about the product that rests on one instead of every "
+                    "audit equally. Maps the ingredient to the language "
+                    "whose name matched, so the reader knows which word "
+                    "on the bottle to check.",
+    )
     matched_from_catalogue: str | None = Field(
         default=None,
         description="Set when the actives came from data/products.yaml rather than a "

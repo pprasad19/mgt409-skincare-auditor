@@ -259,12 +259,30 @@ def main() -> None:
                 row.get("note"), row.get("source"), row["review"],
             ),
         )
-        terms = {(normalise(row["name"]), "name")}
-        terms |= {(normalise(t), "inci") for t in row.get("inci") or []}
-        terms |= {(normalise(t), "alias") for t in row.get("aliases") or []}
-        for lang, words in (intl.get(row["id"]) or {}).items():
-            terms |= {(normalise(t), f"intl:{lang}") for t in words}
-        for term, kind in terms:
+        # One row per term, and the kind decides how far it is trusted — a
+        # term found only through an `intl:*` kind makes the result page warn
+        # that no speaker has checked it. So a term that is both an INCI name
+        # and an entry in a translation list has to be recorded as the INCI
+        # name, not the translation.
+        #
+        # This was a set of (term, kind) pairs with INSERT OR IGNORE, which
+        # kept whichever pair the set happened to yield first. Set iteration
+        # order over strings is randomised per process, so the kind of every
+        # duplicated term varied between builds. One run filed "avobenzone"
+        # — a word that is identical in both lists — as French, and an
+        # English sunscreen label was then warned about as an unchecked
+        # translation. Precedence, applied in order, makes it deterministic.
+        kinds: dict[str, str] = {}
+        for term, kind in (
+            [(normalise(t), "inci") for t in row.get("inci") or []]
+            + [(normalise(row["name"]), "name")]
+            + [(normalise(t), "alias") for t in row.get("aliases") or []]
+            + [(normalise(t), f"intl:{lang}")
+               for lang, words in (intl.get(row["id"]) or {}).items()
+               for t in words]
+        ):
+            kinds.setdefault(term, kind)
+        for term, kind in sorted(kinds.items()):
             con.execute(
                 "INSERT OR IGNORE INTO ingredient_terms VALUES (?,?,?)",
                 (term, row["id"], kind),

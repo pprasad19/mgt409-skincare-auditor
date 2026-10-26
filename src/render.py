@@ -1914,6 +1914,44 @@ def render(
             f'anything below that depends on them.<ul style="margin:10px 0 0">{rows}</ul></div>'
         )
 
+    # The aliases are the largest unverified surface in the project: 232
+    # non-English ingredient terms, machine-generated, never read by a
+    # speaker of any of those languages. The risk is one-sided. A missing
+    # translation costs a finding, which is safe. A wrong one finds an
+    # ingredient that is not there, and that warning looks exactly like a
+    # real one.
+    #
+    # There is no speaker to check them, so the next best thing is to make a
+    # wrong one visible where it would do harm. INCI is international, so
+    # most non-English labels still resolve through verified terms and this
+    # block never appears; when it does, it names the product, the
+    # ingredient and the language, which is enough for the reader to check
+    # the one word that matters.
+    translated = [p for p in audit.products if p.translated_only]
+    if translated:
+        rows = "".join(
+            f"<li><b>{e(p.product.name)}</b> → "
+            + ", ".join(
+                f"{e(name)} (matched its {e(lang)} name)"
+                for name, lang in sorted(p.translated_only.items())
+            )
+            + "</li>"
+            for p in translated
+        )
+        n = len(translated)
+        parts.append(
+            f'<div class="note" style="margin-top:12px">'
+            f"<strong>{n} {_plural(n, 'product')} "
+            f"{'was' if n == 1 else 'were'} identified using a non-English "
+            f"ingredient name that no speaker of that language has checked."
+            f"</strong> Our non-English ingredient names were translated "
+            f"automatically and have not been reviewed. Everything below that "
+            f"depends on {'this product' if n == 1 else 'these products'} is "
+            f"worth confirming against the bottle first — the ingredient may "
+            f"not be in it."
+            f'<ul style="margin:10px 0 0">{rows}</ul></div>'
+        )
+
     if audit.unreadable:
         # Wording stays input-agnostic: this fires for typed lists too, where
         # it previously claimed things were "visible in the photographs".
