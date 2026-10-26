@@ -44,7 +44,7 @@ from pages import error_page, landing  # noqa: E402
 import render as render_mod  # noqa: E402
 from render import render  # noqa: E402
 from rules import normalise, Rules  # noqa: E402
-from safety import detect_suppression, trap_calls, AuditTrail  # noqa: E402
+from safety import unsupported_names, detect_suppression, trap_calls, AuditTrail  # noqa: E402
 from usage import UsageLog  # noqa: E402
 
 app = FastAPI(title="Skincare shelf audit")
@@ -82,7 +82,10 @@ async def audit(
     carried: str = Form(default=""),
     pname: list[str] = Form(default=[]),
     pprice: list[str] = Form(default=[]),
+    psize: list[str] = Form(default=[]),
     punused: list[str] = Form(default=[]),
+    pdrop: list[str] = Form(default=[]),
+    dropped: str = Form(default=""),
 ) -> HTMLResponse:
     typed = (typed or "").strip()
     usable = [p for p in photos if p.filename]
@@ -108,11 +111,38 @@ async def audit(
             typed_prices[name] = float(value)
         except ValueError:
             continue
+    typed_sizes = {name: (raw or "").strip()
+                   for name, raw in zip(pname, psize) if (raw or "").strip()}
     never_used = {n for n in punused}
 
+    # Products the user has said are not theirs. Every other input on this
+    # page adds something; this is the only one that takes something away,
+    # and without it a product the reader invented could not be removed at
+    # all — the user's correction went into the free-text box and came
+    # back as a second invented product.
+    #
+    # Carried forward, because a dismissal that does not stick is not a
+    # dismissal: re-reading the same photograph invents the same product
+    # again, and being made to tick it off every round is worse than the
+    # bug. Matched on the normalised name, since the reader rarely types
+    # one the same way twice.
+    refused: set[str] = set()
+    if dropped:
+        try:
+            refused = {normalise(n) for n in json.loads(dropped) if n}
+        except Exception:
+            refused = set()
+    refused |= {normalise(n) for n in pdrop if n}
+
+    previous = [p for p in previous if normalise(p.name) not in refused]
     for product in previous:
         if product.name in typed_prices:
             product.price_usd = typed_prices[product.name]
+        if product.name in typed_sizes:
+            # The user looking at the bottle beats anything read off a
+            # photograph of it.
+            product.size = typed_sizes[product.name]
+            product.price_size_mismatch = ""
         product.unused = product.name in never_used
 
     if not usable and not typed and not previous:
@@ -294,6 +324,9 @@ async def audit(
         # A real label beats what we carried forward. Someone who went back
         # and photographed the ingredient panel did it to replace a name
         # match, so the new read wins on a name collision.
+        fresh = [p for p in fresh if normalise(p.name) not in refused]
+        from_urls = [p for p in from_urls if normalise(p.name) not in refused]
+
         merged = {p.name.strip().lower(): p for p in previous}
         for p in from_urls:
             merged[p.name.strip().lower()] = p
@@ -340,18 +373,23 @@ async def audit(
                 product.listed_ingredients = record["inci"]
                 # What someone actually paid always wins; this fills a gap.
                 if product.price_usd is None and record.get("typical_price_usd"):
-                    product.price_usd = float(record["typical_price_usd"])
-                    product.price_is_typical = True
-                    # A 7 ml sample priced as a full jar is wrong by a
-                    # factor of twenty, and the money section is built
-                    # entirely from this number. Still shown — a
-                    # wrong-size price still ranks what is going to
-                    # waste — but never silently.
+                    # A 7 ml sample priced as a full jar is wrong by a factor
+                    # of twenty, and every number in the money section is built
+                    # from this one. Showing it with a caveat was the first
+                    # attempt and the tester rejected it again: a wrong price is
+                    # not a rough price. So it is refused, and the person
+                    # holding the bottle is asked instead.
                     priced_size = (record.get("size") or "").strip()
-                    if product.size and priced_size and \
-                            normalise(priced_size) != normalise(product.size):
+                    wrong_size = bool(
+                        product.size and priced_size
+                        and normalise(priced_size) != normalise(product.size)
+                    )
+                    if wrong_size:
                         product.price_size_mismatch = priced_size
                         size_prices[product.name] = (product.size, priced_size)
+                    else:
+                        product.price_usd = float(record["typical_price_usd"])
+                        product.price_is_typical = True
                 sourced[product.name] = record
 
         # How long a mask stays on is a property of that mask, not of
@@ -424,6 +462,13 @@ async def audit(
                         "count": len(fired)},
             )
 
+        # Products the reader named but whose names appear nowhere in the
+        # text it transcribed from their own labels. The signature of an
+        # invented product — and the thing a tester hit twice, because
+        # the previous fix guarded the web lookup and this never went
+        # near it.
+        invented = unsupported_names(reading) if reading is not None else []
+
         notes = [t.note for t in trims] + notes_from_narrator
         if same_name_links:
             notes.append(
@@ -436,12 +481,26 @@ async def audit(
                 + ". If these really are the same product, the duplicate check "
                   "above will have said so."
             )
+        if invented:
+            names = ", ".join(invented)
+            notes.append(
+                f"Check that {names} {'is' if len(invented) == 1 else 'are'} "
+                f"really yours. {'That name' if len(invented) == 1 else 'Those names'} "
+                f"did not appear anywhere in the text read off "
+                f"{'its' if len(invented) == 1 else 'their'} own label, which "
+                f"usually means the product was identified from something other "
+                f"than what is in the photograph. Tick “Not mine” in the "
+                f"table below to remove "
+                f"{'it' if len(invented) == 1 else 'them'} for good."
+            )
         for pname, (yours, priced) in size_prices.items():
             notes.append(
-                f"The price shown for {pname} is for the {priced} size, but the "
-                f"one in your photograph is {yours}. Everything in the money "
-                f"section that depends on it is wrong by that ratio — type what "
-                f"you actually paid to fix it."
+                f"No price is shown for {pname}: yours is the {yours} size and "
+                f"the only published price we could find is for {priced}. Those "
+                f"differ by far more than anything else in the money section, so "
+                f"using it would make every figure here wrong rather than "
+                f"roughly right. Type what you paid — and the size box in the "
+                f"table below is there if we read the size wrong."
             )
         for pname, why in wrong_product.items():
             notes.append(
@@ -512,6 +571,7 @@ async def audit(
         # for exactly the products the catalogue had helped with, so typed
         # prices silently failed to apply to them — two of three in testing,
         # with no error anywhere.
+        refused_json = json.dumps(sorted(refused))
         carry = json.dumps([
             rp.product.model_dump(include={"name", "brand", "form",
                                            "listed_ingredients", "price_usd", "unused"})
@@ -519,7 +579,7 @@ async def audit(
         ])
         return HTMLResponse(
             render(result, narrative, annotated or None, carry, legend, skin,
-                   sourced, failed_urls=failed_urls)
+                   sourced, failed_urls=failed_urls, dropped=refused_json)
         )
 
     except Exception:  # noqa: BLE001

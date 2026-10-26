@@ -1824,6 +1824,7 @@ def render(
     skin=None,
     sourced: dict | None = None,
     failed_urls: list[str] | None = None,
+    dropped: str = "",
 ) -> str:
     specs = {s.product_name: s for s in (narrative.steps if narrative else [])}
     explain = {x.rule_id: x.plain_language for x in (narrative.explanations if narrative else [])}
@@ -2454,13 +2455,23 @@ def render(
             value = "" if (price is None or p.price_is_typical) else f"{price:.0f}"
             placeholder = f"{price:.0f}" if p.price_is_typical and price else ""
             checked = " checked" if p.product.unused else ""
+            # Size is shown because it decides the price. It was being
+            # read off the label and used silently, so when the price
+            # came back wrong — a 7 ml sample priced as a full jar —
+            # there was no way to tell whether the size had been misread
+            # or the price had, and no way to correct either.
+            size_val = e(p.product.size or "")
             rows.append(
                 f"<tr><td>{e(name)}{typical}</td>"
                 f'<td class="r"><input type="hidden" name="pname" value="{e(name)}">'
                 f'<input type="number" name="pprice" min="0" step="1" '
                 f'value="{value}" placeholder="{placeholder}"></td>'
+                f'<td class="c"><input type="text" name="psize" '
+                f'value="{size_val}" placeholder="e.g. 7 ml" size="7"></td>'
                 f'<td class="c"><input type="checkbox" name="punused" '
-                f'value="{e(name)}"{checked}></td></tr>'
+                f'value="{e(name)}"{checked}></td>'
+                f'<td class="c"><input type="checkbox" name="pdrop" '
+                f'value="{e(name)}"></td></tr>'
             )
 
         # Anything the photograph raised is pre-ticked but still a question:
@@ -2487,10 +2498,17 @@ def render(
         if rows:
             blocks.append(
                 "<p>Fill these in and the money figures become yours rather "
-                "than typical retail.</p>"
+                "than typical retail. <b>Not mine</b> removes a product "
+                "entirely — tick it for anything listed here that you do not "
+                "own, and it will stay gone on the next round even if you "
+                "send the same photograph again. The size decides which "
+                "price is the right one: a sample and a full jar differ by "
+                "more than the rest of this section puts together.</p>"
                 '<table class="prices"><tr><th>Product</th>'
                 '<th class="r">What you paid</th>'
-                f'<th class="c">Never use it</th></tr>{"".join(rows)}</table>'
+                '<th class="c">Size</th>'
+                '<th class="c">Never use it</th>'
+                f'<th class="c">Not mine</th></tr>{"".join(rows)}</table>'
             )
         if concern_boxes:
             blocks.append(
@@ -2503,7 +2521,9 @@ def render(
             '<input type="file" name="photos" accept="image/*" multiple>'
             '<textarea name="typed" placeholder="Or type any products that are '
             'missing — or paste a link to one, which is the most reliable '
-            'thing you can give us"></textarea>'
+            'thing you can give us. To correct something that is already '
+            'wrong, use the table above: typing about it here adds a '
+            'product rather than fixing one."></textarea>'
         )
         titles = []
         if rows:
@@ -2521,6 +2541,11 @@ def render(
             f'enctype="multipart/form-data">'
             f"{body}"
             f'<input type="hidden" name="carried" value="{e(carry)}">'
+            # Products the user has already said are not theirs. Posted
+            # back so the refusal survives the round — otherwise the
+            # same photograph invents the same product again and they
+            # have to dismiss it every time.
+            f'<input type="hidden" name="dropped" value="{e(dropped)}">'
             f'<button type="submit">Audit again</button>'
             f"</form>"
             f'<div class="startover">'

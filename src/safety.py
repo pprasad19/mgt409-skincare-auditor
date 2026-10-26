@@ -25,6 +25,8 @@ from __future__ import annotations
 import json
 import os
 import threading
+
+from rules import normalise
 import time
 import traceback
 import uuid
@@ -154,6 +156,56 @@ def reset_traps() -> None:
 
 
 # -- code layer: suppression cross-check -----------------------------------
+
+
+# Words that appear in product names everywhere and prove nothing about
+# whether a particular label was read.
+_GENERIC = {
+    "the", "and", "for", "with", "new", "size", "oz", "ml", "fl",
+    "cream", "serum", "lotion", "gel", "oil", "wash", "cleanser", "toner",
+    "mask", "balm", "spf", "sunscreen", "moisturiser", "moisturizer",
+    "face", "facial", "skin", "daily", "night", "day", "treatment",
+}
+
+
+def unsupported_names(reading) -> list[str]:
+    """Products whose name appears nowhere in their own transcribed label.
+
+    The reader transcribes every word it can see into `label_text`. A
+    name that shares no distinctive word with that transcription was not
+    read off the container; it came from somewhere else. That is the
+    signature of an invented product, and a tester hit it twice — an
+    enzyme powder wash that was never on their shelf, which survived a
+    fix aimed at the web lookup because it had never been near the web
+    lookup.
+
+    Conservative on purpose, because the cost of a false positive is
+    telling someone a real product might not be theirs:
+
+      - a product with no transcription at all is skipped, since there
+        is nothing to check it against rather than evidence against it
+      - generic words are ignored; "Facial Cleanser" matching "cleanser"
+        on the label is not evidence that this cleanser was read
+      - one surviving distinctive word is enough
+
+    Returns names, and changes nothing. The page offers the user a way
+    to drop them; a heuristic that deleted products by itself would
+    eventually delete a real one.
+    """
+    out: list[str] = []
+    for product in getattr(reading, "products", []) or []:
+        evidence = normalise(getattr(product, "label_text", "") or "")
+        if not evidence:
+            continue
+        words = [
+            w for w in normalise(product.name or "").split()
+            if len(w) > 2 and w not in _GENERIC and not w.isdigit()
+        ]
+        if not words:
+            continue
+        if not any(w in evidence for w in words):
+            out.append(product.name)
+    return out
 
 
 def detect_suppression(raw_text: str, reading, rules) -> list[str]:

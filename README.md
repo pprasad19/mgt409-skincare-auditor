@@ -89,6 +89,23 @@ step belongs — morning, evening or both — read from the same `times`
 column the routine builder uses, so a gap cannot name a different time of
 day from the routine beside it.
 
+**You can tell it that it is wrong.** Every input on the result page used
+to be additive — photographs add products, the text box adds products,
+and whatever was already identified is posted back and merged in again
+each round. There was no way to remove anything, so a tester looking at a
+product they did not own typed "that isn't mine" into the only box
+available and got a second invented product named after their complaint.
+
+The table now has **Not mine**, which removes a product and keeps it
+removed: the refusal is carried forward, so re-sending the same
+photograph does not bring it back. A vision model can be made to invent
+fewer products and cannot be made to invent none, which makes this a
+safety mechanism rather than a convenience — the person holding the
+bottles is the only one who can settle it. `unsupported_names()` tries to
+catch it first, by checking each product's name against the text the
+reader transcribed from that product's own label: a name that appears
+nowhere in its own label was not read off anything.
+
 **A lookup that cannot confirm the product reports nothing.** Handed a
 half-legible "centella cleansing oil", the web lookup used to return the
 most famous one there is and attach *its* ingredient list — which then
@@ -175,6 +192,7 @@ python audit_cli.py --shelf data/sample_shelf.json --explain --html output/audit
 | `python test_provenance.py` | a product found only via an unchecked translation says so |
 | `python test_gaps.py` | what the shelf is missing, and what is not worth flagging |
 | `python test_identity.py` | the product on the page is the product in the bathroom |
+| `python test_correction.py` | the user can overrule the app, and it stays overruled |
 | `python make_attacks.py` | regenerate the adversarial label images |
 | `python redteam.py --mode naive` | run the attacks with no defences |
 | `python redteam.py --mode defended` | run them again with defences on |

@@ -9040,5 +9040,542 @@
       "cache_write_tokens": 339,
       "output_tokens": 398
     }
+  },
+  {
+    "run_id": "d19a20fc",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:07:26.901853+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 7,
+      "identified": 7,
+      "products": [
+        "ROUND LAB 1025 DOKDO TONER",
+        "LIGHT CLEANSING OIL",
+        "Calming Intensive Serum",
+        "BHA Blackhead Power Liquid",
+        "THE RENEWING OIL CREAM",
+        "ANTHELIOS UVMUNE 400",
+        "Retinol Eye Cream"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3726,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 0,
+      "output_tokens": 745
+    }
+  },
+  {
+    "run_id": "d19a20fc",
+    "seq": 2,
+    "timestamp": "2026-10-26T03:07:30.707321+00:00",
+    "agent": "skin_observer",
+    "step": "observe",
+    "defended": true,
+    "detail": {
+      "observations": [
+        {
+          "concern": "breakouts",
+          "confidence": "clear"
+        },
+        {
+          "concern": "redness",
+          "confidence": "possible"
+        },
+        {
+          "concern": "texture",
+          "confidence": "possible"
+        }
+      ],
+      "needs_a_clinician": false,
+      "lighting_note": false,
+      "named_conditions_removed": []
+    },
+    "usage": {
+      "input_tokens": 1724,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 106
+    }
+  },
+  {
+    "run_id": "d19a20fc",
+    "seq": 3,
+    "timestamp": "2026-10-26T03:10:43.003962+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 4,
+      "steps": 10,
+      "rejected": [
+        "verification caveat stripped from summary"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3418,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 564,
+      "output_tokens": 726
+    }
+  },
+  {
+    "run_id": "3c969e4b",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:15:53.250305+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 3,
+      "products": [
+        "calming mist",
+        "cleansing oil",
+        "retinol serum"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3248,
+      "cache_read_tokens": 3026,
+      "cache_write_tokens": 96,
+      "output_tokens": 177
+    }
+  },
+  {
+    "run_id": "3c969e4b",
+    "seq": 2,
+    "timestamp": "2026-10-26T03:17:38.213263+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 7,
+      "steps": 14,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3889,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 1035,
+      "output_tokens": 992
+    }
+  },
+  {
+    "run_id": "c674dd37",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:19:33.418608+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 7,
+      "identified": 8,
+      "products": [
+        "ROUND LAB 1025 DOKDO TONER",
+        "MADAGASCAR CENTELLA FIRST CLEANSING OIL",
+        "Retinol Intense Reactivating Serum",
+        "Retinol Intense Reactivating Serum",
+        "Green Tea Enzyme Powder Wash",
+        "THE REJUVENATING NIGHT CREAM",
+        "ANTHELIOS UVMUNE 400",
+        "Retinol Intense Reactivating Serum"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": [
+        "Salicylic acid"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3611,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 0,
+      "output_tokens": 821
+    }
+  },
+  {
+    "run_id": "c674dd37",
+    "seq": 2,
+    "timestamp": "2026-10-26T03:22:07.148718+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 10,
+      "steps": 21,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 4121,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 1267,
+      "output_tokens": 1305
+    }
+  },
+  {
+    "run_id": "a4462662",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:22:46.112516+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 7,
+      "identified": 8,
+      "products": [
+        "ROUND LAB 1025 DOKDO TONER",
+        "MADAGASCAR CENTELLA FIRST CLEANSING OIL",
+        "Retinol Intense Reactivating Serum",
+        "Retinol Intense Reactivating Serum",
+        "Green Tea Enzyme Powder Wash",
+        "THE REJUVENATING NIGHT CREAM",
+        "ANTHELIOS UVMUNE 400",
+        "Retinol Intense Reactivating Serum"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": [
+        "Salicylic acid"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3611,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 0,
+      "output_tokens": 821
+    }
+  },
+  {
+    "run_id": "a4462662",
+    "seq": 2,
+    "timestamp": "2026-10-26T03:22:46.685462+00:00",
+    "agent": "skin_observer",
+    "step": "observe",
+    "defended": true,
+    "detail": {
+      "observations": [
+        {
+          "concern": "breakouts",
+          "confidence": "clear"
+        },
+        {
+          "concern": "redness",
+          "confidence": "possible"
+        },
+        {
+          "concern": "texture",
+          "confidence": "possible"
+        }
+      ],
+      "needs_a_clinician": false,
+      "lighting_note": false,
+      "named_conditions_removed": []
+    },
+    "usage": {
+      "input_tokens": 1724,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 106
+    }
+  },
+  {
+    "run_id": "a4462662",
+    "seq": 3,
+    "timestamp": "2026-10-26T03:22:51.430115+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 1,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3190,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 336,
+      "output_tokens": 648
+    }
+  },
+  {
+    "run_id": "bbaecd0a",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:26:27.203951+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 3,
+      "products": [
+        "COSRX product (exact product name not provided)",
+        "La Mer night cream",
+        "Calming Magnesium Mist"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3246,
+      "cache_read_tokens": 3026,
+      "cache_write_tokens": 94,
+      "output_tokens": 218
+    }
+  },
+  {
+    "run_id": "bbaecd0a",
+    "seq": 2,
+    "timestamp": "2026-10-26T03:28:17.471577+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 1,
+      "steps": 17,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3315,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 461,
+      "output_tokens": 990
+    }
+  },
+  {
+    "run_id": "88b08d8f",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:38:59.557416+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "976dc8b1",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:39:56.819550+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3012,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 158,
+      "output_tokens": 372
+    }
+  },
+  {
+    "run_id": "ad7d2cd3",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:40:01.184233+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 4,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 130,
+      "output_tokens": 273
+    }
+  },
+  {
+    "run_id": "888a1360",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:40:19.917364+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3012,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 158,
+      "output_tokens": 372
+    }
+  },
+  {
+    "run_id": "4e5f09a2",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:40:21.988355+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 4,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 130,
+      "output_tokens": 273
+    }
+  },
+  {
+    "run_id": "a28a7d73",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:40:30.912291+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3012,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 158,
+      "output_tokens": 372
+    }
+  },
+  {
+    "run_id": "ffffccfd",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:40:32.670276+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 4,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 130,
+      "output_tokens": 273
+    }
+  },
+  {
+    "run_id": "51741c77",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:41:32.982573+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "98887485",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:42:12.056271+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 3,
+      "products": [
+        "CeraVe Hydrating Facial Cleanser",
+        "The Ordinary Niacinamide 10% + Zinc 1%",
+        "CeraVe Moisturizing Cream"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3417,
+      "cache_read_tokens": 3183,
+      "cache_write_tokens": 108,
+      "output_tokens": 291
+    }
+  },
+  {
+    "run_id": "98887485",
+    "seq": 2,
+    "timestamp": "2026-10-26T03:42:15.496211+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3030,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 176,
+      "output_tokens": 397
+    }
+  },
+  {
+    "run_id": "9b0f24d5",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:42:36.225903+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 2,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 130,
+      "output_tokens": 160
+    }
   }
 ]

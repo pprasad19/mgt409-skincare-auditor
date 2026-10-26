@@ -35,7 +35,19 @@ what you saw, for example "small white tube, back turned".
 
 ## The one rule that matters
 
-Never supply an ingredient you did not read.
+Never supply an ingredient you did not read. **And never report a product
+you cannot see.**
+
+The second half of that was unwritten until a tester was shown an enzyme
+powder wash that was not on their shelf. If you can make out four
+containers, return four records. Do not add a product because the shelf
+looks like the kind of shelf that would have one, because a routine seems
+incomplete without it, or because a partly hidden container probably is
+one — a container you cannot identify is a name you do not return, and
+the page handles that correctly. An invented product is worse than a
+missing one: every conflict, every routine step and every figure computed
+from it is about a bottle that does not exist, and the user has no way to
+tell which.
 
 You may well know what is in a popular product. That knowledge is not admissible
 here. The whole system rests on the claim that its advice traces to a label and
