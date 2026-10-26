@@ -735,7 +735,7 @@ findings:
       own - which is how a checkbox column is read - it could mean the
       product, the row, or the size.
     fixed: "The column is Use retail price, in the header and in every sentence that refers to it."
-    commit: pending
+    commit: d72b9ec
     class: typography
     caught_by_tests: false
 
@@ -757,7 +757,7 @@ findings:
       only if the figure actually appears in her text; otherwise it is a
       found price, labelled and offered like any other. An instruction in a
       prompt is not an invariant.
-    commit: pending
+    commit: d72b9ec
     class: confidently-wrong-provenance
     caught_by_tests: false
 
@@ -774,7 +774,7 @@ findings:
       price_found_usd is separate from price_usd and is never overwritten.
       Both are shown, the tick stays available beside a figure she has
       overridden, and the totals prefer hers.
-    commit: pending
+    commit: d72b9ec
     class: unrepresentable-in-the-schema
     caught_by_tests: false
 
@@ -790,7 +790,7 @@ findings:
       Overtaken by the decision to withdraw the audio entirely, recorded
       below. The alternation itself is shown in the which-nights grid and in
       the written step, neither of which had the defect.
-    commit: pending
+    commit: d72b9ec
     class: not-a-defect
     caught_by_tests: false
 
@@ -813,7 +813,7 @@ findings:
       duplicated job, which is a real finding that needs no price. On an
       unpriced shelf the section now names the duplicate in words and says
       what confirming a price would buy.
-    commit: pending
+    commit: d72b9ec
     class: verdict-without-reason
     caught_by_tests: false
 
