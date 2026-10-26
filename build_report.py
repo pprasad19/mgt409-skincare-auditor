@@ -464,9 +464,9 @@ combination this tool exists for.</p>
 
 {img("03-routine.png", "The routine, ordered by the forms table. The acid and the retinoid are separated across nights rather than stacked; each step carries the rule that placed it.")}
 
-{img("04-gaps.png", "What the shelf is missing — in three tiers, so a suggestion cannot read as a defect.")}
-
 {img("06-film.png", "The drawn walkthrough, with a tab per half of the day. Every duration here is the same figure the written step shows, because both render from <code>beats_for</code>; <code>tools/four_surfaces.py</code> checks that the four renderings agree. Downloadable as a GIF per half-day, so it survives being sent to someone.")}
+
+{img("04-gaps.png", "What the shelf is missing — in three tiers, so a suggestion cannot read as a defect.")}
 
 
 
@@ -948,18 +948,18 @@ that produced it, with the engine's own count inside the summary</figcaption>
 <figure>{img("03-routine.png", "", width="100%")}
 <figcaption><b>A morning and evening order</b> — steps you do not own shown in
 place, alternating nights marked</figcaption></figure>
+<figure>{img("06-film.png", "", width="100%")}
+<figcaption><b>The same routine, drawn</b> — a tab per half of the day, every
+duration the figure the written step shows</figcaption></figure>
+</div>"""),
+
+        slide(f"""
+<p class="kicker">What is missing — and how you correct it</p>
+<div class="grid2">
 <figure>{img("04-gaps.png", "", width="100%")}
 <figcaption><b>What to do</b> — missing steps in three tiers, each naming the
 products that triggered it, so a suggestion cannot read as a defect</figcaption>
 </figure>
-</div>"""),
-
-        slide(f"""
-<p class="kicker">…and how you correct it</p>
-<div class="grid2">
-<figure>{img("06-film.png", "", width="100%")}
-<figcaption><b>A drawn walkthrough</b> — a tab per half of the day, each step
-timed from the same table the written routine uses</figcaption></figure>
 <figure>{img("07-correct-detail.png", "", width="100%")}
 <figcaption><b>The correction table</b>, first four columns — it exists because
 a tester had no way to say the app was wrong. A looked-up price counts only
