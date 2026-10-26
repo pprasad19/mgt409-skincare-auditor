@@ -58,7 +58,7 @@ def pct(x: float) -> str:
     return f"{x:.0%}"
 
 
-def img(name: str, caption: str, width: str = "100%") -> str:
+def img(name: str, caption: str, width: str = "74%") -> str:
     """Embed a screenshot, or say plainly that it is missing.
 
     A missing image that renders as nothing is how a report ships with a
@@ -87,7 +87,7 @@ CSS = """
       --bg:#fbfaf7;--card:#fff;--clay:#9c5f44;--sand:#c8a77f;--ok:#4a7c59}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);
-     font:16px/1.65 Charter,"Iowan Old Style",Georgia,serif;
+     font:14.5px/1.45 Charter,"Iowan Old Style",Georgia,serif;
      -webkit-font-smoothing:antialiased}
 .wrap{max-width:46rem;margin:0 auto;padding:3.5rem 1.5rem 6rem}
 h1{font-size:2.1rem;line-height:1.15;margin:0 0 .4rem;letter-spacing:-.02em}
@@ -277,12 +277,25 @@ def build_report(d: dict) -> str:
         for row in at["rows"]
     )
 
+    # One row per failure class, not per finding.
+    #
+    # The verbatim table ran to 58 rows and four printed pages against a
+    # ten-to-fifteen page limit, which is what "filler costs points"
+    # means. A class with its count, how many testers hit it and one of
+    # their sentences carries the same argument in a quarter of the
+    # space; data/testers.yaml in the repo holds every finding in full,
+    # and is cited here as the source.
+    by_class: dict[str, list] = {}
+    for f in te["findings"]:
+        by_class.setdefault(f["class"], []).append(f)
+
     finding_rows = "".join(
-        f"<tr><td class='n'>{f['tester']}.{f['round']}</td>"
-        f"<td>{e(f['reported'])}</td>"
-        f"<td>{e(f['layer'])}</td>"
-        f"<td><code>{e(f['class'])}</code></td></tr>"
-        for f in te["findings"]
+        f"<tr><td><code>{e(k)}</code></td>"
+        f"<td class='n'>{len(v)}</td>"
+        f"<td class='n'>{len({x['tester'] for x in v})}</td>"
+        f"<td>{e(min(v, key=lambda x: len(x['reported']))['reported'])}</td></tr>"
+        for k, v in sorted(by_class.items(),
+                           key=lambda kv: (-len(kv[1]), kv[0]))[:12]
     )
 
     step_rows = "".join(
@@ -292,10 +305,6 @@ def build_report(d: dict) -> str:
     )
 
     classes = te["classes"]
-    class_rows = "".join(
-        f"<tr><td><code>{e(k)}</code></td><td class='n'>{v}</td></tr>"
-        for k, v in sorted(classes.items(), key=lambda kv: -kv[1])
-    )
 
     monthly = plain["median"]
     return f"""<!doctype html>
@@ -433,7 +442,7 @@ combination this tool exists for.</p>
 
 {img("04-gaps.png", "What the shelf is missing — in three tiers, so a suggestion cannot read as a defect.")}
 
-{img("06-film.png", "The walkthrough, after a tester asked for two animations rather than one: a tab per half of the day, each numbered from its own step one, each with its own downloadable GIF. The ribbon is the routine, and it is clickable.")}
+
 
 {img("05-correct.png", "The correction table, which exists because a tester had no way to tell the app it was wrong. <b>Found online</b> shows the figure this tool dug up and where it came from; <b>Use retail price</b> accepts that figure, <b>What you paid</b> overrides it, and an untouched figure is never summed. <b>Not mine</b> removes a product and keeps it removed; <b>Size</b> decides which price applies; <b>Prescribed</b> is the only way a product is treated as a prescription — the app no longer infers it from the ingredient table.")}
 
@@ -592,9 +601,15 @@ far. They produced <b>{te['count']} distinct defects</b>, every one of which was
 missed by the automated suites.</p>
 
 <table>
-<tr><th class="n">T.R</th><th>What they said</th><th>Layer</th><th>Class</th></tr>
+<tr><th>Failure class</th><th class="n">Found</th><th class="n">Testers</th>
+    <th>One of the reports</th></tr>
 {finding_rows}
 </table>
+
+<p class="note">The 12 classes that recurred most, one row each, with the
+shortest report in it. All {len(classes)} classes and all {te['count']}
+findings — what was wrong, what changed, and the commit that carried it — are
+in <code>data/testers.yaml</code> in the repository.</p>
 
 <h3>The finding that matters most</h3>
 
@@ -607,11 +622,6 @@ shelf, a brand attributed to the wrong company, a 7 ml sample priced as a full
 jar. Tester 3 read it as a document and caught it contradicting itself: a
 prescription escalated to a clinician and then given a dose and a countdown, a
 figure with no way to check what it counted.</p>
-
-<table>
-<tr><th>Failure class</th><th class="n">Findings</th></tr>
-{class_rows}
-</table>
 
 <p>Of {len(classes)} distinct failure classes,
 {len(te['class_overlap'])} {"was" if len(te['class_overlap']) == 1 else "were"}
@@ -731,10 +741,10 @@ for a different size cannot be ticked at all, since no amount of confirmation
 makes a 200&nbsp;ml price into a 7&nbsp;ml bottle's. The discipline is
 unchanged and the work it demanded of the user is gone.</p>
 
-<p>That retired the whole class rather than fixing its instances one at a time,
-and it is the clearest example in this project of the difference between a
-feature being wrong and a feature being fed badly — and of the fact that a
-correct rule can still be the wrong thing to put in front of someone.</p>
+<p>That retired the whole class rather than its instances one at a time: the
+difference between a feature being wrong and a feature being fed badly, and a
+reminder that a correct rule can still be the wrong thing to put in front of
+someone.</p>
 
 <h3>What came out, and why that counts as a result</h3>
 
@@ -783,43 +793,28 @@ specifically to prove four renderings agree about durations, contained no beat
 longer than two minutes — the only range where they all render identically no
 matter what. Each was found by accident or by a tester, not by the suite.</p>
 
-<p>The clearest demonstration of both patterns arrived on the last day, out of
-verifying a fix rather than writing one. Checking in a browser that
-tester&nbsp;1's <em>Use retail price</em> column worked, I submitted six products, typed
-no price, and read <b>&ldquo;$96 on the shelf&rdquo;</b> above six rows the page
-itself had labelled &ldquo;retail, looked up&rdquo;. Two defects sat behind
-that one page and neither threw anything. The hidden field that carries products between
-rounds serialised six of fourteen fields, so on every resubmission a looked-up
-price returned as a price the user had stated, a size she had typed to correct
-one vanished, and a prescription she had named was forgotten &mdash; three
-symptoms three different testers had reported, each previously fixed at the
-surface it appeared on. And <code>price_is_typical</code> existed twice: the
-page read the copy on the resolution, the money rules read the copy on the
-product, and the branch that takes a price from the catalogue set only the
-first. One fact with two homes, and the arithmetic reading the home the reader
-never sees.</p>
-
-<p>Both are closed &mdash; the carry now dumps the whole model, and the totals
-read the same flag the page renders, so a label and a figure cannot disagree by
-construction. {ts['total_checks']} automated checks caught neither, and the
-invariant test written afterwards was verified by putting the bug back and
-watching it fail. That is the honest summary of testing here: the suites are
+<p>The clearest demonstration arrived on the last day, out of verifying a fix
+rather than writing one: checking that a tester's <em>Use retail price</em>
+column worked, I submitted six products, typed no price, and read
+<b>&ldquo;$96 on the shelf&rdquo;</b> above six rows the page itself had
+labelled &ldquo;retail, looked up&rdquo;. Two defects sat behind that one
+number and neither threw anything. Both are closed, and the invariant test
+written afterwards was verified by putting the bug back and watching it fail.
+{ts['total_checks']} automated checks had caught neither &mdash; the suites are
 good at the properties I thought to state and close to blind where code meets
 data.</p>
 
-<p>{te['self_found_count']} defects in this project were found this way —
-by me, while checking a fix a tester had asked for, rather than by the
-suite or by the tester. They are kept apart from the {te['count']} tester
-findings above so that number stays a count of what testers reported, and
-they are listed here because each one is the same lesson from a different
-angle: the code was asking the wrong source for something another part of
-it already knew.</p>
+<p>{te['self_found_count']} defects were found this way — by me, checking a
+fix a tester had asked for, rather than by the suite or the tester. They are
+kept out of the {te['count']} above so that number stays a count of what
+testers reported. Each is the same lesson: the code asked the wrong source
+for something another part of it already knew.</p>
 
 <table>
 <tr><th style="width:30%">Found while</th><th>What it was</th></tr>
 {"".join(
     f"<tr><td>{e(m['found_while'])}</td>"
-    f"<td>{e(m['what'])}<br><em>{e(m['fixed'])}</em></td></tr>"
+    f"<td>{e(m['what'])}</td></tr>"
     for m in te.get("self_found", [])
 )}
 </table>
@@ -897,8 +892,21 @@ contradicting every finding changes nothing
               .replace("</figcaption>", "</p>")),
 
         slide(f"""
-<h2>What it produces</h2>
-{img("02-findings.png", "", width="76%")}"""),
+<h2 style="font-size:1.25em;margin-bottom:.3em">What it produces</h2>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5em 1.1em">
+<div>{img("02-findings.png", "", width="100%")}
+<p style="font-size:.4em;color:#6f6962;margin:.15em 0 0">Findings, each citing
+the rule that produced it</p></div>
+<div>{img("03-routine.png", "", width="100%")}
+<p style="font-size:.4em;color:#6f6962;margin:.15em 0 0">A morning and evening
+order, with the rule behind each position</p></div>
+<div>{img("04-gaps.png", "", width="100%")}
+<p style="font-size:.4em;color:#6f6962;margin:.15em 0 0">What is <i>not</i> on
+the shelf, in three tiers</p></div>
+<div>{img("06-film.png", "", width="100%")}
+<p style="font-size:.4em;color:#6f6962;margin:.15em 0 0">A drawn walkthrough,
+one tab per half of the day</p></div>
+</div>"""),
 
         slide(f"""
 <h2>Cost</h2>
@@ -934,13 +942,20 @@ has no comprehension to exploit.</p>"""),
 
         slide(f"""
 <h2>{te['count']} defects from {te['reported']} real testers</h2>
-<p style="font-size:.8em">{ts['total_checks']} automated checks across
+<div style="display:flex;gap:1.2em;align-items:flex-start">
+<div style="flex:1.1">
+<p style="font-size:.7em">{ts['total_checks']} automated checks across
 {len(ts['suites'])} suites caught <b>none of them</b>.</p>
-<p class="fragment" style="font-size:.75em">Tester 1 knew skincare → domain
-errors.<br>Tester 2 checked against the bottles → identity errors.</p>
-<p class="fragment" style="font-size:.75em;color:#9c5f44">
+<p class="fragment" style="font-size:.65em">Tester 1 knew skincare → domain
+errors.<br>Tester 2 checked against the bottles → identity errors.<br>
+Tester 3 read it as a document → the page contradicting itself.</p>
+<p class="fragment" style="font-size:.65em;color:#9c5f44">
 {len(classes)} failure classes, {len(te['class_overlap'])} found by more than
-one tester. <b>Two testers is nowhere near saturation.</b></p>"""),
+one tester. <b>At {te['reported']} testers, still not saturated.</b></p></div>
+<div style="flex:1">{img("05-correct.png", "", width="100%")}
+<p style="font-size:.45em;color:#6f6962;margin:.2em 0 0">The correction table —
+it exists because a tester had no way to tell the app it was wrong</p></div>
+</div>"""),
 
         slide("""
 <h2>What every real bug had in common</h2>
@@ -963,7 +978,7 @@ name, or a reviewed alias.</p>
 <p style="font-size:.8em">{r['verified']} of {r['rules_total']} rules are
 source-verified; {r['reasoned']} are recorded mechanistic reasoning. Only
 verified rows are presented as settled.</p>
-<p class="fragment" style="color:#9c5f44"><b>Next: a third tester.</b>
+<p class="fragment" style="color:#9c5f44"><b>Next: a fourth tester.</b>
 The saturation curve says they find a new class, not a repeat.</p>"""),
     ]
 
