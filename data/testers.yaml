@@ -888,7 +888,7 @@ findings:
     fixed: >-
       The cell says "size first". The reason stays in the Found online cell
       beside it, which already named both sizes.
-    commit: pending
+    commit: 199d4ce
     class: invisible-to-the-user
     caught_by_tests: false
 
@@ -914,7 +914,7 @@ findings:
       routine's instead_of groups as well as the ingredient findings, with
       one function behind the figure, the tile and the sentence so they
       cannot name different sets.
-    commit: pending
+    commit: 199d4ce
     class: page-contradicts-itself
     caught_by_tests: false
 
@@ -932,7 +932,7 @@ findings:
       the routine builder and the finder, which is the real finding: unused
       is a property of the shelf-in-use and every reader of the product
       list needs to know it.
-    commit: pending
+    commit: 199d4ce
     class: declaration-ignored
     caught_by_tests: false
 
@@ -951,7 +951,7 @@ findings:
       extracted from the grid into one function that both read, rather
       than recomputed in the scene builder, which is how the four surfaces
       drifted over durations before beats_for was made the single source.
-    commit: pending
+    commit: 199d4ce
     class: surfaces-disagree
     caught_by_tests: false
 
