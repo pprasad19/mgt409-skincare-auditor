@@ -311,11 +311,12 @@ table.prices th{text-align:left;font:600 11px/1 var(--sans);text-transform:upper
   letter-spacing:.1em;color:var(--ink-faint);padding:0 0 10px}
 table.prices th.r{text-align:right;width:120px;padding-right:14px}
 table.prices th.c{text-align:center;width:96px}
+table.prices th.found,table.prices td.found{width:182px;text-align:right}
 table.prices td.r{padding-right:14px}
 table.prices td{padding:7px 0;border-top:1px solid var(--line);vertical-align:middle}
 table.prices td.r{text-align:right}
 table.prices td.c{text-align:center}
-table.prices input[type=number]{width:92px;font:inherit;font-size:14px;padding:7px 10px;
+table.prices input[type=number]{width:106px;font:inherit;font-size:14px;padding:7px 10px;
   border-radius:9px;border:1px solid var(--line);background:var(--sunk);
   color:var(--ink);text-align:right}
 table.prices input[type=number]:focus{outline:2px solid var(--clay);outline-offset:1px}
@@ -489,6 +490,10 @@ table.prices .typ{font-size:11.5px;color:var(--ink-faint);display:block}
 /* One chip per step, the current one lit. The page has room for the names,
    which the GIF does not, so here they are clickable: a ribbon you can
    steer with beats a progress bar you can only watch. */
+.film-tabs{display:flex;gap:8px;margin:0 0 14px}
+.film-tabs button{font:inherit;font-size:14px;padding:7px 18px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-dim);cursor:pointer}
+.film-tabs button:hover{background:var(--sunk)}
+.film-tabs button.on{background:var(--clay);border-color:var(--clay);color:#fff}
 .film-rib{display:flex;gap:5px;margin:16px 0 12px;flex-wrap:wrap}
 .film-rib button{flex:1 1 auto;min-width:0;font:inherit;font-size:11.5px;
   padding:5px 7px;border-radius:7px;border:1px solid var(--line);
@@ -1190,10 +1195,15 @@ def _step_row(step, spec, slot: str, total: int) -> str:
             f'<div class="name">{e(step.product_name)}'
             f'<span class="badge">not on your shelf</span></div>'
             f'<div class="meta">{e(step.form)}</div>'
-            f'<div class="alt">This is where it would go, and it takes about '
+            # "nothing here is assuming you have one" was true when
+            # the step was inert and became false the moment the
+            # walkthrough started demonstrating it. The routine does
+            # assume you will get one — that is the point of showing it.
+            f'<div class="alt"><b>You do not have one of these yet.</b> '
+            f'The routine needs it, so it is shown in place: about '
             f'{short_time(step.typical_seconds)} — {e(step.typical_how)}. '
-            f'That is how long the step takes for anyone; nothing here is '
-            f'assuming you have one.</div>'
+            f'That is how long the step takes with any product of this '
+            f'kind.</div>'
             f"</div></div>"
         )
 
@@ -1431,24 +1441,55 @@ FILM_JS = """
   var btnBack= document.getElementById('f-back');
   var btnNext= document.getElementById('f-next');
   var elRib  = document.getElementById('f-rib');
+  var elTabs = document.getElementById('f-tabs');
+  var elGet  = document.getElementById('f-get');
 
   var i = 0, playing = false, timer = null, raf = null;
 
-  /* The ribbon doubles as a way in: a viewer who wants the retinol step
-   * should not have to sit through the cleanser to reach it. */
-  var RIB = (FILM[0] && FILM[0].ribbon) || [];
-  var ribBtns = RIB.map(function(label, n){
-    var b = document.createElement('button');
-    b.type = 'button';
-    b.textContent = label;
-    b.addEventListener('click', function(){
-      for(var k = 0; k < FILM.length; k++){
-        if(FILM[k].at === n){ stop(); show(k); return; }
-      }
+  /* The morning and the evening are separate films. A tester asked for
+   * this: one routine at a time is the unit people actually follow, and
+   * a counter reading "step 7 of 9" for the third thing you do before
+   * bed is counting the wrong thing. CUR is whichever half is showing. */
+  var CUR = [], ribBtns = [], ribAt = [];
+
+  function pick(slot){
+    stop();
+    CUR = FILM.filter(function(s){ return s.slot === slot; });
+
+    /* The ribbon doubles as a way in: a viewer who wants the retinol
+     * step should not have to sit through the cleanser to reach it. It
+     * is rebuilt per half, so it lists this routine's steps only. */
+    var labels = (CUR[0] && CUR[0].ribbon) || [];
+    ribAt = [];
+    CUR.forEach(function(s){
+      if(typeof s.at === 'number' && ribAt.indexOf(s.at) < 0) ribAt.push(s.at);
     });
-    elRib.appendChild(b);
-    return b;
-  });
+    while(elRib.firstChild) elRib.removeChild(elRib.firstChild);
+    ribBtns = ribAt.map(function(n){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = labels[n] || '';
+      b.addEventListener('click', function(){
+        for(var k = 0; k < CUR.length; k++){
+          if(CUR[k].at === n){ stop(); show(k); return; }
+        }
+      });
+      elRib.appendChild(b);
+      return b;
+    });
+
+    Array.prototype.forEach.call(elTabs.children, function(t){
+      t.className = t.getAttribute('data-slot') === slot ? 'on' : '';
+    });
+    if(elGet){
+      var uri = GIFS[slot] || '';
+      elGet.href = uri;
+      elGet.download = 'routine-' + slot.toLowerCase() + '.gif';
+      elGet.textContent = 'Download ' + slot.toLowerCase() + ' GIF';
+      elGet.style.display = uri ? '' : 'none';
+    }
+    show(0);
+  }
 
   /* Drawing-units radius per dose, so the player and the GIF show the same
    * sizes. A rice grain and a dime are nearly four times apart and that
@@ -1511,8 +1552,9 @@ FILM_JS = """
   }
 
   function show(n){
-    i = (n + FILM.length) % FILM.length;
-    var s = FILM[i];
+    if(!CUR.length) return;
+    i = (n + CUR.length) % CUR.length;
+    var s = CUR[i];
     draw(s);
     elStep.textContent  = s.slot + ' step ' + s.order + ' of ' + s.of + ' — ' + s.name;
     elReal.style.display = s.real ? '' : 'none';
@@ -1524,15 +1566,16 @@ FILM_JS = """
     elReal.textContent  = s.real;
     elWhy.textContent   = s.why || '';
     elWhy.style.display = s.why ? '' : 'none';
-    elCount.textContent = (i + 1) + ' / ' + FILM.length;
+    elCount.textContent = (i + 1) + ' / ' + CUR.length;
     ribBtns.forEach(function(b, n){
-      b.className = n === s.at ? 'here' : (n < s.at ? 'done' : '');
+      b.className = ribAt[n] === s.at ? 'here'
+                  : (ribAt[n] < s.at ? 'done' : '');
     });
     runBar(s.screen);
     if(playing){
       clearTimeout(timer);
       timer = setTimeout(function(){
-        if(i === FILM.length - 1){ stop(); } else { show(i + 1); }
+        if(i === CUR.length - 1){ stop(); } else { show(i + 1); }
       }, s.screen * 1000);
     }
   }
@@ -1565,7 +1608,14 @@ FILM_JS = """
   btnBack.addEventListener('click', function(){ stop(); show(i - 1); });
   btnNext.addEventListener('click', function(){ stop(); show(i + 1); });
 
-  show(0);
+  Array.prototype.forEach.call(elTabs.children, function(t){
+    t.addEventListener('click', function(){
+      pick(t.getAttribute('data-slot'));
+    });
+  });
+
+  pick(elTabs.children.length ? elTabs.children[0].getAttribute('data-slot')
+                              : (FILM[0] && FILM[0].slot));
 })();
 """
 
@@ -1846,102 +1896,113 @@ def _film_scenes(audit, specs: dict, explain: dict) -> list[dict]:
     after a different tester said the GIF repeated itself; that fixed
     the repetition by deleting the schedule.
 
-    Both complaints survive this version. A product used twice a day is
-    played in full the first time and gets a single "same again" scene
-    the second, so nothing is missing and no beat is drawn twice. A
-    placeholder appears as a labelled gap, with no hand and no
-    countdown: it is a step in the sequence that the user does not own
-    yet, and omitting it is what made the counts disagree.
-    """
-    entries: list[tuple[str, object, bool]] = []
-    seen: set[str] = set()
-    for label, steps in (("Morning", audit.routine.am), ("Evening", audit.routine.pm)):
-        for st in steps:
-            repeat = st.product_name in seen and not st.placeholder
-            entries.append((label, st, repeat))
-            seen.add(st.product_name)
+    Both complaints survive this version, but the second one is now
+    answered by the split rather than by condensing. The player shows
+    one half of the day at a time, so a product used morning and night
+    is not drawn twice in anything anybody watches — and each half can
+    be followed on its own, which a scene reading "same again, as this
+    morning" made impossible for someone who only opened the evening.
 
-    firsts = [(st.product_name, st) for _l, st, _r in entries]
-    ribbon = [_short(name) for name, _ in firsts]
+    A placeholder is demonstrated like any other step and labelled as
+    one they do not own; omitting it is what made the counts disagree.
+
+    Steps are numbered inside their own half: "Morning step 2 of 4",
+    not step 2 of the nine that make up the whole day.
+    """
+    days = [("Morning", audit.routine.am), ("Evening", audit.routine.pm)]
+
+    # The opening act is about the shelf rather than either routine, so
+    # its ribbon is the whole day's.
+    all_ribbon = [_short(st.product_name) for _l, steps in days for st in steps]
 
     scenes: list[dict] = []
-    for index, (slot_label, st, repeat) in enumerate(entries):
-        name = st.product_name
+    for slot_label, steps in days:
+        # Where this sits in its own half of the routine, so a frame is
+        # locatable even when the action resembles the last one.
+        ribbon = [_short(st.product_name) for st in steps]
 
-        # A step the user does not own. One scene, no hand, no timer —
-        # the animation's job here is to hold its place in the order.
-        if st.placeholder:
-            # Drawn as the step it is. The caption and the ribbon say it
-            # is not on the shelf yet; the picture shows what doing it
-            # looks like, because that is what the viewer needs.
-            for sc in scenes_for(st, None, placeholder_beats(st)):
-                scenes.append({
-                    **sc,
-                    # scenes_for falls back to "as usual" with no
-                    # product to describe, which reads oddly for a
-                    # bottle the user does not own.
-                    "caption": (f"{st.form.lower()} — you do not have one yet"
-                                if sc.get("kind") == "apply"
-                                or "usual" in str(sc.get("caption", ""))
-                                else sc.get("caption", "")),
-                    "slot": slot_label, "order": index + 1, "of": len(entries),
-                    "name": name, "form": st.form, "why": "",
-                    "placeholder": True,
-                })
-            continue
-
-        # Already shown in full earlier in the day. One scene saying so,
-        # rather than replaying beats the viewer has just watched.
-        if repeat:
-            scenes.append({
-                "anim": "again", "caption": "same again, as this morning",
-                "where": "", "real": "", "screen": 1.2, "points": [],
-                "slot": slot_label, "order": index + 1, "of": len(entries),
-                "name": name, "form": st.form, "why": "", "repeat": True,
-            })
-            continue
-
-        spec = specs.get(name)
-        beats = beats_for(spec, st.dwell_seconds, st.dwell_note,
-                              st.dwell_unknown, st.dwell_source)
-        for sc in scenes_for(st, spec, beats):
-            # The rule that put this step here, in the user's words where
-            # the narrator wrote one. A picture that cannot say why it is
-            # in this order is decoration.
-            why = ""
-            for rid in st.because:
-                if rid in explain:
-                    why = f"{rid} · {explain[rid]}"
-                    break
-            else:
-                if st.because:
-                    why = " · ".join(st.because)
-            scenes.append({
-                **sc,
-                "slot": slot_label,
-                "order": index + 1, "of": len(entries),
+        for index, st in enumerate(steps):
+            name = st.product_name
+            common = {
+                "slot": slot_label, "order": index + 1, "of": len(steps),
                 "name": name, "form": st.form,
-                "why": why,
-                # Where this sits in the whole routine, so a frame is
-                # locatable even when the action resembles the last one.
                 "ribbon": ribbon, "at": index,
-            })
+            }
 
-    return _opening_scenes(audit, explain, ribbon) + scenes
+            if st.placeholder:
+                # Drawn as the step it is. The caption and the ribbon say
+                # it is not on the shelf yet; the picture shows what doing
+                # it looks like, because that is what the viewer needs.
+                for sc in scenes_for(st, None, placeholder_beats(st)):
+                    scenes.append({
+                        **sc,
+                        # scenes_for falls back to "as usual" with no
+                        # product to describe, which reads oddly for a
+                        # bottle the user does not own.
+                        "caption": (f"{st.form.lower()} — you do not have one yet"
+                                    if sc.get("kind") == "apply"
+                                    or "usual" in str(sc.get("caption", ""))
+                                    else sc.get("caption", "")),
+                        **common, "why": "", "placeholder": True,
+                    })
+                continue
+
+            spec = specs.get(name)
+            beats = beats_for(spec, st.dwell_seconds, st.dwell_note,
+                                  st.dwell_unknown, st.dwell_source)
+            for sc in scenes_for(st, spec, beats):
+                # The rule that put this step here, in the user's words
+                # where the narrator wrote one. A picture that cannot say
+                # why it is in this order is decoration.
+                why = ""
+                for rid in st.because:
+                    if rid in explain:
+                        why = f"{rid} · {explain[rid]}"
+                        break
+                else:
+                    if st.because:
+                        why = " · ".join(st.because)
+                scenes.append({**sc, **common, "why": why})
+
+    return _opening_scenes(audit, explain, all_ribbon) + scenes
 
 
-def _film_markup(scenes: list[dict], gif_uri: str = "") -> str:
-    """The player, and a link to the file if one could be built."""
+def _film_markup(scenes: list[dict], gifs: dict[str, str] | None = None) -> str:
+    """The player, with one tab per half of the day.
+
+    A tester: "there might need to be two animations - one for the
+    morning routine and one for the evening routine because right now
+    they are all combined into one." One film covering both is the
+    wrong unit — nobody does their morning and evening routine in one
+    sitting, so nobody wants to watch them that way, and the step
+    counter said "step 7 of 9" for something that is the third thing
+    you do before bed.
+
+    One player, two scene lists, rather than two players: the second
+    copy would need its own stage, its own ribbon and its own controls,
+    all of which would then be able to drift apart from the first.
+    """
     if not scenes:
         return ""
+    gifs = gifs or {}
 
+    slots: list[str] = []
+    for sc in scenes:
+        if sc["slot"] not in slots:
+            slots.append(sc["slot"])
+
+    tabs = "".join(
+        f'<button type="button" data-slot="{e(s)}">{e(s)}</button>'
+        for s in slots
+    )
+    # A file, because the player only exists while this page is open in a
+    # browser. A deck opened by double-click cannot run it, and a still
+    # of a face with dots on it says nothing. One per half of the day,
+    # so the file matches whichever routine is on screen.
     get = (
-        # A file, because the player only exists while this page is open in a
-        # browser. A deck opened by double-click cannot run it, and a still
-        # of a face with dots on it says nothing.
-        f'<a class="film-get" download="routine.gif" href="{gif_uri}">'
+        '<a class="film-get" id="f-get" download="routine.gif" href="">'
         "Download GIF</a>"
-        if gif_uri
+        if any(gifs.get(s) for s in slots)
         else ""
     )
     return (
@@ -1949,6 +2010,7 @@ def _film_markup(scenes: list[dict], gif_uri: str = "") -> str:
         '<div class="film-top"><h3>Watch the routine</h3>'
         '<span class="film-note">A preview, sped up. Each scene shows how long '
         'it actually takes.</span></div>'
+        f'<div class="film-tabs" id="f-tabs">{tabs}</div>'
         '<div class="film-body">'
         f'<div class="stage" id="stage" data-anim="dab">{FACE_SVG}</div>'
         '<div>'
@@ -2061,10 +2123,20 @@ def render(
                 # form's typical figures, and labelled as something they
                 # do not have. Skipping it described a routine that
                 # cannot actually be followed.
+                beats = placeholder_beats(s_)
+                # Say what it is before walking through it, so a
+                # listener is not told to apply something they do not
+                # own without warning.
+                beats[0] = {
+                    **beats[0],
+                    "text": ("This one is not on your shelf yet, but the "
+                             "routine needs it. When you have it: "
+                             + beats[0]["text"]),
+                }
                 seq.append({
                     "slot": slot, "order": s_.order, "of": len(steps),
                     "name": s_.product_name, "freq": "not on your shelf",
-                    "beats": placeholder_beats(s_),
+                    "beats": beats,
                 })
                 continue
             seq.append({
@@ -2076,8 +2148,17 @@ def render(
             })
 
     film_scenes = _film_scenes(audit, specs, explain)
+    opening = [sc for sc in film_scenes if sc["anim"] in OPENING_ANIMS]
     player_scenes = [sc for sc in film_scenes if sc["anim"] not in OPENING_ANIMS]
-    film_markup = _film_markup(player_scenes, _routine_gif(film_scenes))
+    # One file per half of the day, to match the player. Each opens on
+    # the shelf scenes, so a GIF that has been downloaded and sent to
+    # somebody else still says whose routine it is.
+    film_gifs = {
+        slot: _routine_gif(
+            opening + [sc for sc in player_scenes if sc["slot"] == slot])
+        for slot in dict.fromkeys(sc["slot"] for sc in player_scenes)
+    }
+    film_markup = _film_markup(player_scenes, film_gifs)
 
     grid_data = '{}'
     parts: list[str] = []
@@ -2332,9 +2413,11 @@ def render(
             "it. Figures this tool looked up are shown beside each product "
             "below, but they are estimates and are deliberately left out of "
             "these totals: a retail guess against a sample bottle was wrong by "
-            "a factor of twenty when a tester checked it. Type what you "
-            "actually paid in the table at the bottom — or write it inline "
-            "(<i>CeraVe Cleanser, $16</i>) — and these figures become yours."
+            "a factor of twenty when a tester checked it. In the table at "
+            "the bottom, check each figure and tick <b>Use it</b> where it "
+            "is right, or type what you actually paid — or write it inline "
+            "(<i>CeraVe Cleanser, $16.99</i>). Either way the figures "
+            "become yours."
             "</div>"
         )
     else:
@@ -2346,8 +2429,15 @@ def render(
                            "warn" if w.unused_value_usd else ""))
         parts.append(_stat(_money(w.redundant_value_usd), "duplicate function",
                            "warn" if w.redundant_value_usd else ""))
-        parts.append(_stat(_money(w.conflicted_value_usd), "in high-severity conflict",
-                           "bad" if w.conflicted_value_usd else ""))
+        # "$52 in high-severity conflict" was removed on 26 Oct 2026. It
+        # was the one tile whose number had no meaning: a clash does not
+        # waste the products, it wastes some of their effect, and you
+        # recover that by separating them rather than by throwing
+        # anything away. So the figure was the full value of both
+        # bottles, which overstates the loss, and it implied no action
+        # the findings had not already given in words. A number nobody
+        # can act on or check is the same fault as a guessed price, and
+        # the rest of this section had just been cleared of those.
         parts.append("</div>")
 
         # Which products each figure counted. A tester asked why a pair
@@ -2379,11 +2469,7 @@ def render(
                    "prices you have confirmed and this pair does not have "
                    "enough of them")
                 + ". Anything not listed was checked and does not overlap.")
-        if w.conflicted_value_usd:
-            clash = sorted({n for f in audit.findings
-                            if f.severity in ("critical", "high")
-                            for n in f.products})
-            counted.append(f"<b>In conflict</b> counts {e(', '.join(clash))}.")
+
         if counted:
             parts.append('<p class="lede" style="margin-top:10px">'
                          + " ".join(counted) + "</p>")
@@ -2391,7 +2477,8 @@ def render(
         # Say whose prices these are. A typical price is the right order of
         # magnitude for "what is sitting unused" and the wrong basis for any
         # claim about what this person wasted.
-        typical = [p for p in audit.products if p.price_is_typical]
+        typical = [p for p in audit.products if p.price_is_typical
+                   and not getattr(p.product, "price_confirmed", False)]
         if typical:
             # Out of products that HAVE a price, not out of every product.
             # Counting the whole shelf produced "1 of these 7 prices" on a
@@ -2408,19 +2495,25 @@ def render(
                    f"{'is a retail figure' if n == 1 else 'are retail figures'}")
                 + " we looked up — from the product's own page where you gave "
                   "a link, otherwise from a published listing. They are shown "
-                  "for recognition and are NOT in the totals above. "
+                  "for recognition and are NOT in the totals above until you "
+                  "tick <b>Use it</b> beside one. "
                 + ("It is not" if n == total == 1
                    else "None of them is" if n == total else "They are not")
                 + " what you actually paid. Good enough to see roughly what is "
-                  "sitting unused; not a quote. Type what you paid in the table "
-                  "below and the figures become yours.</p>"
+                  "sitting unused; not a quote. In the table below, tick "
+                  "<b>Use it</b> beside any figure you have checked, or type "
+                  "what you paid — either one makes it count.</p>"
             )
 
     if audit.escalations:
         parts.append("<h2>Needs a clinician</h2>")
         for esc in audit.escalations:
             parts.append(
-                f'<div class="escal"><div class="who">{e(", ".join(esc.products))} '
+                f'<div class="escal"><div class="who">'
+                # An escalation that names no product is a question, not
+                # a verdict: the prescription gate asks which product
+                # rather than picking one off the ingredient table.
+                f'{e(", ".join(esc.products)) if esc.products else "Which one?"} '
                 f'<span class="chip">{e(esc.rule_id)}</span></div>{e(esc.message)}</div>'
             )
 
@@ -2741,28 +2834,48 @@ def render(
             # looks like a bug when it is actually a limit. A brand name is
             # not a product: "Glytone" could be a $34 cleanser or a $58 cream,
             # and filling that in would be inventing a number.
-            if p.product.price_off_page:
-                typical = (f' <span class="typ">{e(p.product.price_off_page)}'
-                           f' — not counted in the totals</span>')
-            elif p.product.price_size_mismatch:
-                # Inline, because this is the one qualification that
-                # cannot live in a caption: the number beside it is for
-                # a different bottle.
-                typical = (f' <span class="typ">price is for '
-                           f'{e(p.product.price_size_mismatch)}, '
-                           f'yours is {e(p.product.size or "another size")} '
-                           f'— not counted in the totals</span>')
-            elif p.price_is_typical:
-                typical = ' <span class="typ">typical retail</span>'
+            # Three questions, three columns: what we found, whether it
+            # is right, and what they actually paid. They used to be one
+            # run of qualifier text inside the product's name, and a
+            # tester reading it could not tell which number the totals
+            # were using — nor accept a figure already on the screen
+            # without retyping it.
+            mismatch = p.product.price_size_mismatch
+            confirmed = getattr(p.product, "price_confirmed", False)
+            looked_up = p.price_is_typical and price is not None
+
+            if mismatch and price is not None:
+                # The one qualification no tick can clear: the number is
+                # for a different bottle.
+                found = (f'${price:.2f}<span class="typ">for '
+                         f'{e(mismatch)}, yours is '
+                         f'{e(p.product.size or "another size")} — fix the '
+                         f'size or type what you paid</span>')
+            elif looked_up and p.product.price_off_page:
+                found = (f'${price:.2f}<span class="typ">'
+                         f'{e(p.product.price_off_page)}</span>')
+            elif looked_up:
+                found = f'${price:.2f}<span class="typ">retail, looked up</span>'
             elif not p.actives and not p.matched_from_catalogue:
-                typical = (
-                    ' <span class="typ">only the brand was readable — '
-                    "name the product below and it can be priced</span>"
-                )
+                found = ('<span class="typ">only the brand was readable — '
+                         "name the product below and it can be priced</span>")
+            elif price is not None:
+                # She typed one, which overwrote whatever was looked up,
+                # so there is no longer a found figure to show. Saying
+                # "nothing found" here would be the page claiming a
+                # search failed when what happened is that her answer
+                # replaced it.
+                found = '<span class="typ">your figure &rarr;</span>'
             else:
-                typical = ""
+                found = '<span class="typ">nothing found</span>'
+
+            # Offered only where there is a figure to accept.
+            use = (
+                f'<input type="checkbox" name="puse" value="{e(name)}"'
+                f'{" checked" if confirmed else ""}>'
+                if looked_up and not mismatch else ""
+            )
             value = "" if (price is None or p.price_is_typical) else f"{price:.2f}"
-            placeholder = f"{price:.2f}" if p.price_is_typical and price else ""
             checked = " checked" if p.product.unused else ""
             # Size is shown because it decides the price. It was being
             # read off the label and used silently, so when the price
@@ -2771,10 +2884,17 @@ def render(
             # or the price had, and no way to correct either.
             size_val = e(p.product.size or "")
             rows.append(
-                f"<tr><td>{e(name)}{typical}</td>"
+                f"<tr><td>{e(name)}</td>"
+                f'<td class="r found">{found}</td>'
+                f'<td class="c">{use}</td>'
                 f'<td class="r"><input type="hidden" name="pname" value="{e(name)}">'
-                f'<input type="number" name="pprice" min="0" step="1" '
-                f'value="{value}" placeholder="{placeholder}"></td>'
+                # step="1" rejected $12.99 outright. The browser refuses
+                # the whole form and says nothing a tester could act on:
+                # "it only recognizes whole numbers and not decimal
+                # prices" is what that looks like from the other side.
+                f'<input type="number" name="pprice" min="0" step="0.01" '
+                f'inputmode="decimal" value="{value}" '
+                f'placeholder="e.g. 12.99"></td>'
                 f'<td class="c"><input type="text" name="psize" '
                 f'value="{size_val}" placeholder="e.g. 7 ml" size="7"></td>'
                 f'<td class="c"><input type="checkbox" name="punused" '
@@ -2812,8 +2932,13 @@ def render(
         blocks: list[str] = []
         if rows:
             blocks.append(
-                "<p>Fill these in and the money figures become yours rather "
-                "than typical retail. <b>Not mine</b> removes a product "
+                "<p><b>Found online</b> is what this tool dug up and has "
+                "not verified against your receipt — check it. If it is "
+                "right, tick <b>Use it</b> and it counts; if it is wrong or "
+                "missing, type <b>what you paid</b> instead and that wins. "
+                "Decimals are fine. Until one of those two things happens "
+                "the figure is shown but never added up. "
+                "<b>Not mine</b> removes a product "
                 "entirely — tick it for anything listed here that you do not "
                 "own, and it will stay gone on the next round even if you "
                 "send the same photograph again. The size decides which "
@@ -2823,6 +2948,8 @@ def render(
                 "that product is sent back to them rather than advised on "
                 "here, whatever its ingredients say.</p>"
                 '<table class="prices"><tr><th>Product</th>'
+                '<th class="r found">Found online</th>'
+                '<th class="c">Use it</th>'
                 '<th class="r">What you paid</th>'
                 '<th class="c">Size</th>'
                 '<th class="c">Never use it</th>'
@@ -2955,6 +3082,7 @@ def render(
     parts.append(
         f"<script>var DATA_STEPS={script_json(seq)};var MX_DATA={grid_data};"
         f"var FILM={script_json(player_scenes)};"
+        f"var GIFS={script_json(film_gifs)};"
         f"{JS}{SPEECH_JS}{GRID_JS}{LOADING_JS}{FILM_JS}"
         "document.getElementById('print').addEventListener('click',function(){window.print()});"
         "document.querySelectorAll('[data-reset]').forEach(function(a){"

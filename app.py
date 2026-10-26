@@ -86,6 +86,7 @@ async def audit(
     punused: list[str] = Form(default=[]),
     pdrop: list[str] = Form(default=[]),
     pprescribed: list[str] = Form(default=[]),
+    puse: list[str] = Form(default=[]),
     want: list[str] = Form(default=[]),
     dropped: str = Form(default=""),
 ) -> HTMLResponse:
@@ -106,13 +107,24 @@ async def audit(
     # hidden name and its price input together, in document order.
     typed_prices: dict[str, float | None] = {}
     for name, raw in zip(pname, pprice):
-        value = (raw or "").strip()
+        # A currency symbol, a comma or a stray space is what somebody
+        # copying a figure off a receipt actually types. Rejecting
+        # "$12.99" silently — which is what float() does here — looks
+        # from the outside exactly like the box not working.
+        value = (raw or "").strip().lstrip("$£€").replace(",", "").strip()
         if not value:
             continue
         try:
             typed_prices[name] = float(value)
         except ValueError:
             continue
+
+    # Looked-up figures the user has read and accepted. A tester asked
+    # for this: the page already shows what it found, and making them
+    # retype a number that is on the screen in front of them is why
+    # most rows came back empty. The tick is the confirmation, and a
+    # confirmed figure is the only kind the totals count.
+    confirmed_lookups = {n for n in puse}
     typed_sizes = {name: (raw or "").strip()
                    for name, raw in zip(pname, psize) if (raw or "").strip()}
     never_used = {n for n in punused}
@@ -148,6 +160,18 @@ async def audit(
             # had told us what it cost.
             product.price_usd = typed_prices[product.name]
             product.price_is_typical = False
+            # A typed figure beats a ticked one. Leaving both set made
+            # the row claim the user had accepted a number they had
+            # just overwritten.
+            product.price_confirmed = False
+        elif product.name in confirmed_lookups and product.price_usd:
+            # The figure stays a looked-up one and the page keeps
+            # saying so; what changed is that somebody read it.
+            product.price_confirmed = True
+        else:
+            # Unticking withdraws it. A confirmation that cannot be
+            # taken back is not a confirmation.
+            product.price_confirmed = False
         if product.name in typed_sizes:
             # The user looking at the bottle beats anything read off a
             # photograph of it.
@@ -615,12 +639,26 @@ async def audit(
         # for exactly the products the catalogue had helped with, so typed
         # prices silently failed to apply to them — two of three in testing,
         # with no error anywhere.
+        # Every field, not a hand-picked six.
+        #
+        # The include list held name, brand, form, ingredients, price and
+        # unused. Everything else was dropped on the way out and rebuilt at
+        # its default on the way back in, and the defaults are all the benign
+        # answer: price_is_typical went False, so a figure this tool had
+        # looked up came back as a price the user had stated and was added to
+        # "on the shelf"; size went empty, so a size she had typed to correct
+        # a sample-versus-full-jar price was gone by the next round;
+        # prescribed went False, so a product she had named as her
+        # clinician's stopped being treated as one.
+        #
+        # Nothing failed. The second round simply presented guesses as
+        # statements, which is the exact class of defect the confirmed-price
+        # rule exists to prevent — the rule was being undone one round later
+        # by a serialisation detail three hundred lines away. An allow-list
+        # of fields is also how this happened: price_confirmed, added today,
+        # would have been dropped the same way.
         refused_json = json.dumps(sorted(refused))
-        carry = json.dumps([
-            rp.product.model_dump(include={"name", "brand", "form",
-                                           "listed_ingredients", "price_usd", "unused"})
-            for rp in result.products
-        ])
+        carry = json.dumps([rp.product.model_dump() for rp in result.products])
         return HTMLResponse(
             render(result, narrative, annotated or None, carry, legend, skin,
                    sourced, failed_urls=failed_urls, dropped=refused_json,

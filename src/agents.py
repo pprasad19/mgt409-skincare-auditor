@@ -290,7 +290,7 @@ def _brief(audit: AuditResult) -> str:
         f"- shelf value ${w.shelf_value_usd:,.0f} across {w.products_owned} products",
         f"- unused ${w.unused_value_usd:,.0f} ({w.products_unused} products)",
         f"- duplicate function ${w.redundant_value_usd:,.0f}",
-        f"- involved in high-severity conflicts ${w.conflicted_value_usd:,.0f}",
+
     ]
     return "\n".join(lines)
 

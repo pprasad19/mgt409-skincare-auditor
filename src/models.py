@@ -103,6 +103,14 @@ class InputProduct(BaseModel):
         description="The price did not come from the user. Set when it was filled "
                     "from the catalogue or looked up online, so the page can say so.",
     )
+    price_confirmed: bool = Field(
+        default=False,
+        description="The user read the figure we looked up and said it matches "
+                    "what they paid. Totals count confirmed prices only, and a "
+                    "figure nobody looked at is not confirmed — but making them "
+                    "retype a number already on the screen was the reason most "
+                    "rows stayed empty. Ticking the box is the confirmation.",
+    )
 
 
 class ResolvedProduct(BaseModel):
@@ -323,7 +331,14 @@ class WasteSummary(BaseModel):
     )
     conflicted_value_usd: float = Field(
         default=0.0,
-        description="Value of products being degraded by something used alongside them.",
+        description="Still computed, no longer shown. A clash does not waste "
+                    "the products — it wastes some of their effect, and the "
+                    "fix is to separate them, not to discard anything — so "
+                    "the full value of both bottles overstated the loss and "
+                    "suggested no action the findings had not already given "
+                    "in words. Kept on the model because the MCP server and "
+                    "the audit trail expose the whole summary; removed from "
+                    "the page, the narrator's brief and the CLI.",
     )
 
 

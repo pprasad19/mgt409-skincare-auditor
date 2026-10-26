@@ -78,7 +78,7 @@ def main() -> None:
     print(f"  shelf value          ${w.shelf_value_usd:,.2f} across {w.products_owned} products")
     print(f"  unused               ${w.unused_value_usd:,.2f} ({w.products_unused} products)")
     print(f"  duplicate function   ${w.redundant_value_usd:,.2f}")
-    print(f"  in high-sev conflict ${w.conflicted_value_usd:,.2f}")
+
 
     unresolved = [p for p in result.products if not p.actives]
     if unresolved:

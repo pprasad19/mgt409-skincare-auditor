@@ -575,9 +575,220 @@ findings:
     class: verdict-without-reason
     caught_by_tests: false
 
+  # ---- tester 2, round 6 --------------------------------------------
+  - tester: 2
+    round: 6
+    reported: "I uploaded the costs that I paid but still the costs duplicated is not updated"
+    layer: logic
+    wrong: >-
+      The duplicate figure picks the cheaper of the two products, as the
+      avoidable spend. Since the totals had just been changed to count
+      confirmed prices only, an unpriced product scored 0 - so min() chose
+      the one with no price every time and the figure stayed at zero no
+      matter what she typed. A fix from one round had quietly broken the
+      round before it.
+    fixed: >-
+      The cheaper-of-two is now chosen among the products that actually have
+      a countable price. Verified both ways: two typed prices give $12, one
+      typed price gives $40.
+    commit: pending
+    class: fix-caused-new-bug
+    caught_by_tests: false
+
+  - tester: 2
+    round: 6
+    reported: "for the audio of the steps, it should say this is not currently in your step but is needed for this routine and then proceed"
+    layer: presentation
+    wrong: >-
+      The spoken walkthrough demonstrated a step she does not own without
+      saying so first, so a listener had no way to know the bottle being
+      described is not on her shelf.
+    fixed: >-
+      The spoken line now opens "This one is not on your shelf yet, but the
+      routine needs it. When you have it: ..." and then gives the technique.
+    commit: pending
+    class: surfaces-disagree
+    caught_by_tests: false
+
+  - tester: 2
+    round: 6
+    reported: "if I say that I do not use something, why is it included in any of the steps"
+    layer: logic
+    wrong: >-
+      A product marked never-used was kept in the routine and labelled. My
+      reasoning was that removing it hides the thing she needs to see. Hers
+      is better: she told the app she does not use it, and a routine that
+      instructs her to use it is not one she can follow.
+    fixed: >-
+      Unused products are excluded from the routine steps. They stay in the
+      product list and in the money section, which is where the observation
+      belongs.
+    commit: pending
+    class: declaration-ignored
+    caught_by_tests: false
+
+  - tester: 2
+    round: 6
+    reported: "the 'nothing here is assuming you have one' note from the written steps should be removed because the routine does assume you have it"
+    layer: presentation
+    wrong: >-
+      The note was written when a missing step was shown as an inert
+      placeholder. Once the step was demonstrated in full - which another
+      tester had asked for - the note was simply false: the routine does
+      assume she has one, and says so for a good reason.
+    fixed: >-
+      Replaced with "You do not have one of these yet. The routine needs it,
+      so it is shown in place." A note left behind by its own fix.
+    commit: pending
+    class: fix-caused-new-bug
+    caught_by_tests: false
+
+  - tester: 2
+    round: 6
+    reported: "there might need to be two animations - one for the morning routine and one for the evening routine because right now they are all combined into one"
+    layer: design
+    wrong: >-
+      One film covered the whole day. Nobody does their morning and evening
+      routine in one sitting, so nobody watches them that way, and the step
+      counter read "step 7 of 9" for the third thing you do before bed.
+    fixed: >-
+      The player has a tab per half of the day and numbers each half from
+      one; there is a downloadable GIF per half. This also retires the "same
+      again, as this morning" card that an earlier tester's complaint had
+      produced: with the halves separated nothing repeats inside anything
+      anybody watches, and the evening can be followed on its own by someone
+      who never opened the morning.
+    commit: pending
+    class: wrong-unit-of-delivery
+    caught_by_tests: false
+
+  # ---- tester 1, round 7 --------------------------------------------
+  - tester: 1
+    round: 7
+    reported: "I tried to enter prices manually but it only recognizes whole numbers and not decimal prices"
+    layer: presentation
+    wrong: >-
+      The price input carried step="1". The browser refuses the whole form
+      for $12.99 and explains nothing an ordinary reader can act on, so from
+      the outside the box simply does not work. Skincare is priced in pennies
+      and this sat in front of every tester for six rounds.
+    fixed: >-
+      step="0.01" with inputmode="decimal" and a worked placeholder. The
+      server-side parser now also strips a currency symbol and thousands
+      commas, because that is what somebody copying off a receipt types and
+      float() was discarding it in silence.
+    commit: pending
+    class: invisible-to-the-user
+    caught_by_tests: false
+
+  - tester: 1
+    round: 7
+    reported: "maybe in the bottom of the page, you should have a few columns for prices - online research price (you should verify), do you want to use this online price (if no, enter the price you paid)"
+    layer: design
+    wrong: >-
+      Totals had just been restricted to prices the user typed, which retired
+      eight findings worth of guessed figures but made the app ask her to
+      retype numbers already on her screen. Most rows came back empty and
+      most shelves read "nothing to add up yet".
+    fixed: >-
+      Her design. The table now has a Found online column showing the figure
+      with where it came from, a Use it tick, and a What you paid box; a
+      ticked figure counts, a typed figure overrides it, and an unexamined
+      figure still counts for nothing. A price for a different size cannot be
+      ticked at all, because no confirmation makes it this bottle's price.
+      Keeps the provenance discipline and removes the cost it imposed.
+    commit: pending
+    class: fix-caused-new-bug
+    caught_by_tests: false
+
+  # ---- tester 3, round 3 --------------------------------------------
+  - tester: 3
+    round: 3
+    reported: "do not assume what has been prescribed to me, let me specifically tell you"
+    layer: logic
+    wrong: >-
+      SKC-010 matched prescription:true against the ingredient table, so
+      ticking "something here was prescribed to me" made the app pick which
+      product that was and state "This product was prescribed for you" about
+      a bottle she had never named. The table knows which actives are
+      prescription-only in general; it cannot know which box on this shelf
+      came from a pharmacist. On her shelf it was wrong in both directions -
+      an over-the-counter retinol flagged, a compounded cream invisible.
+    fixed: >-
+      The gate fires only on products she ticks. With the condition declared
+      and nothing ticked it asks which one, naming no product. The selector
+      stays in the rule because it still documents the rule's scope; it no
+      longer decides anything. Her second finding on this rule: the
+      per-product tick was added last round and the inference was left
+      running beside it.
+    commit: pending
+    class: declaration-ignored
+    caught_by_tests: false
+
+# Defects found by me, not by a tester - kept apart from `findings` so
+# the tester count the report quotes stays a tester count. Both turned
+# up in the same ten minutes, in the browser, while checking that the
+# price columns a tester had asked for actually worked.
+self_found:
+  - date: 2026-10-26
+    found_while: "checking tester 1's Use it column end to end"
+    what: >-
+      The hidden field that carries products between rounds serialised six
+      of fourteen fields. Everything else came back at its default on the
+      next submission, and every default is the benign answer:
+      price_is_typical went False, so a figure the tool had looked up
+      returned as a price the user had stated and was summed into "on the
+      shelf"; size went empty, so a size she had typed to correct a
+      sample-versus-full-jar price was gone; prescribed went False, so a
+      product she had named as her clinician's stopped being treated as
+      one.
+    why_it_matters: >-
+      The confirmed-price rule was being undone one round later by a
+      serialisation detail three hundred lines away. Three testers had
+      reported symptoms of this - sizes not sticking, a prescription
+      forgotten on re-audit, "all of the prices used are retail prices" -
+      and each was fixed at the surface it appeared on.
+    fixed: "The carry dumps the whole model. An allow-list is what made it possible."
+    caught_by_tests: false
+
+  - date: 2026-10-26
+    found_while: "reading the $96 total that should have been $0"
+    what: >-
+      One fact in two places. The page read price_is_typical on the
+      resolution and printed "retail, looked up"; the money rules read
+      price_is_typical on the product. The catalogue branch set the first
+      and not the second, so six products with no price typed by anyone
+      were labelled guesses on the page and totalled $96 above them.
+    why_it_matters: >-
+      Nothing threw and both numbers were internally consistent. This is
+      the project's central pattern in one bug: code met data, and was
+      confidently wrong rather than visibly broken.
+    fixed: >-
+      The branch sets both, and the money rules now read the same flag the
+      page renders, so the label and the arithmetic cannot disagree by
+      construction. test_thesis asserts the invariant and was checked
+      against the reintroduced bug.
+    caught_by_tests: false
+
 # A design decision rather than a defect, recorded here because the
 # tester evidence is what drove it and the report argues from this row.
 decisions:
+  - date: 2026-10-26
+    question: "is the 'in high-severity conflict' money tile needed, or can it go?"
+    evidence: >-
+      The tile priced the products involved in a critical or high-severity
+      clash. Nobody asked for it and it answers no question a reader has: the
+      conflict section already says what clashes and what to do, and putting
+      a dollar figure on it implies the money is lost, which it is not - the
+      products are usable, just not together.
+    decided: >-
+      Removed from the page, the agent brief and the CLI. The field stays on
+      the model with a comment saying why, since the arithmetic is sound and
+      taking it out of the schema would be a migration for no gain.
+    cost: >-
+      One fewer number on the page. The three remaining tiles are on the
+      shelf, unused, and duplicate function.
+
   - date: 2026-10-26
     question: "does this app need to account for cost, or should it just give a good routine?"
     evidence: >-

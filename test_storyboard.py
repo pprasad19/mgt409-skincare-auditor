@@ -234,8 +234,8 @@ render_src = (Path(__file__).resolve().parent / "src" / "render.py").read_text(
     encoding="utf-8")
 check_true("render filters the opening out of the player",
            'sc["anim"] not in OPENING_ANIMS' in render_src)
-check_true("the gif still gets every scene",
-           "_routine_gif(film_scenes)" in render_src)
+check_true("the gif still gets the opening act the player drops",
+           "opening + [sc for sc in player_scenes" in render_src)
 
 # The GIF. A download button that hands over a broken file is worse than no
 # button, and a failure here must cost the button and not the audit.
@@ -349,12 +349,53 @@ _SLOT = {"am": "Morning", "pm": "Evening"}
 check("and so is the player",
       [(_SLOT[st["slot"]], st["name"]) for st in _player], _want)
 
-# A product used twice a day is not played twice at full length. That
-# was the other tester's complaint and it must not come back.
-_repeats = [sc for sc in _film if sc.get("anim") == "again"]
-check_true("a repeated product is condensed, not replayed", len(_repeats) >= 2)
-check_true("and a repeat carries no duration of its own",
-           all(not sc.get("real") for sc in _repeats))
+# Two testers pulled in opposite directions here. One counted the
+# written steps against the film and found the film short. The other
+# said the film repeated itself, and the answer at the time was to
+# collapse the second showing of a product into a "same again, as this
+# morning" card.
+#
+# Splitting the player into a morning and an evening — which a third
+# asked for — retires that card and answers both complaints properly.
+# Nothing is drawn twice in anything anybody watches in one sitting,
+# because the two halves are two films; and each half is complete, so
+# someone who opens only the evening is not told to remember a scene
+# they never saw.
+_am = [n for s_, n in _film_steps if s_ == "Morning"]
+_pm = [n for s_, n in _film_steps if s_ == "Evening"]
+check("no product is drawn twice in the morning", len(_am), len(set(_am)))
+check("nor twice in the evening", len(_pm), len(set(_pm)))
+check_true("the fixture does use a product twice a day",
+           bool(set(_am) & set(_pm)))
+check_true("and that product is played in full in both halves",
+           all(any(sc.get("slot") == slot and sc.get("name") == name
+                   and sc.get("real")
+                   for sc in _film)
+               for name in (set(_am) & set(_pm))
+               for slot in ("Morning", "Evening")))
+check_true("the condensed repeat card is gone", "again" not in
+           {sc.get("anim") for sc in _film})
+
+# Each half counts its own steps. "Morning step 7 of 9" numbered the
+# third thing you do before bed against the whole day.
+for _slot, _steps in (("Morning", _audit.routine.am),
+                      ("Evening", _audit.routine.pm)):
+    _of = {sc["of"] for sc in _film if sc.get("slot") == _slot}
+    check("the %s counts its own steps" % _slot.lower(), _of, {len(_steps)})
+    _orders = sorted({sc["order"] for sc in _film if sc.get("slot") == _slot})
+    check("and numbers them from one", _orders,
+          list(range(1, len(_steps) + 1)))
+
+# One player, one tab per half, one file per half.
+check_true("the page offers a tab per half", 'id="f-tabs"' in _page)
+for _slot in ("Morning", "Evening"):
+    check_true("a %s tab" % _slot.lower(),
+               'data-slot="%s"' % _slot in _page)
+_gifs = _json.loads(_re.search(r"var GIFS=(\{.*?\});", _page, _re.S).group(1))
+check("a gif per half", sorted(_gifs), ["Evening", "Morning"])
+check_true("and each one is a real file",
+           all(v.startswith("data:image/gif;base64,") and len(v) > 2000
+               for v in _gifs.values()))
 
 # A step the user does not own is demonstrated like any other, from
 # the form's typical figures, and labelled as one they do not have.

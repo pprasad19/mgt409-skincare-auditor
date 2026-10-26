@@ -137,6 +137,61 @@ checks += 1
 if "A Product Nobody Owns" in ghost_page:
     failures.append("a narrative step invented a product onto the page")
 
+# --- the label and the arithmetic are the same fact -------------------
+#
+# "A price counts only if the user confirmed it" is the rule the report
+# argues from, and for a week the page and the totals disagreed about
+# which prices those were. The same fact was stored twice: the renderer
+# read price_is_typical on the resolution and printed "retail, looked
+# up", while the money rules read price_is_typical on the product,
+# which the catalogue branch set on one copy and not the other. Six
+# products, no price typed by anyone, every row on the page labelled a
+# guess, and "$96 on the shelf" above them.
+#
+# Nothing threw. Both numbers were internally consistent. The defect
+# was that one fact had two homes, so the test is the invariant rather
+# than the branch: whatever the page calls a guess is not in a total.
+from rules import Rules as _Rules  # noqa: E402
+
+_CAT = _Rules()
+# Products with no ingredient list, so resolution falls through to the
+# catalogue — which is the path that supplies a price nobody typed.
+_names = [f"{row['brand']} {row['name']}"
+          for row in _CAT.catalogue.values()
+          if row.get("typical_price_usd")][:6]
+if not _names:
+    failures.append("no catalogue product carries a price to test with")
+else:
+    _res = _CAT.audit([InputProduct(name=n, listed_ingredients=[])
+                       for n in _names], concerns=[])
+    _guessed = [rp for rp in _res.products if rp.price_is_typical]
+    checks += 1
+    if not _guessed:
+        failures.append("the catalogue priced nothing, so nothing was tested")
+    checks += 1
+    if any(not rp.product.price_is_typical for rp in _guessed):
+        failures.append("a figure the page labels a guess is not labelled one "
+                        "on the product it belongs to")
+    checks += 1
+    if _res.waste.shelf_value_usd:
+        failures.append(
+            "catalogue prices nobody confirmed reached the shelf total "
+            f"(${_res.waste.shelf_value_usd})")
+
+    # And the other direction: confirming them puts them in.
+    _confirmed = []
+    for n in _names:
+        _ip = InputProduct(name=n, listed_ingredients=[])
+        _confirmed.append(_ip)
+    _res2 = _CAT.audit(_confirmed, concerns=[])
+    for rp in _res2.products:
+        rp.product.price_confirmed = True
+    _res3 = _CAT.audit([rp.product for rp in _res2.products], concerns=[])
+    checks += 1
+    if not _res3.waste.shelf_value_usd:
+        failures.append("ticking every looked-up price still totalled nothing")
+
+
 if failures:
     print(f"FAILED {len(failures)} of {checks} checks\n")
     for f in failures:

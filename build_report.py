@@ -433,7 +433,9 @@ combination this tool exists for.</p>
 
 {img("04-gaps.png", "What the shelf is missing — in three tiers, so a suggestion cannot read as a defect.")}
 
-{img("05-correct.png", "The correction table, which exists because a tester had no way to tell the app it was wrong. <b>Not mine</b> removes a product and keeps it removed; <b>Size</b> decides which price applies. Prices the user did not state are labelled as typical retail rather than presented as what they paid.")}
+{img("06-film.png", "The walkthrough, after a tester asked for two animations rather than one: a tab per half of the day, each numbered from its own step one, each with its own downloadable GIF. The ribbon is the routine, and it is clickable.")}
+
+{img("05-correct.png", "The correction table, which exists because a tester had no way to tell the app it was wrong. <b>Found online</b> shows the figure this tool dug up and where it came from; <b>Use it</b> accepts that figure, <b>What you paid</b> overrides it, and an untouched figure is never summed. <b>Not mine</b> removes a product and keeps it removed; <b>Size</b> decides which price applies; <b>Prescribed</b> is the only way a product is treated as a prescription — the app no longer infers it from the ingredient table.")}
 
 <h2>4 · Tokenomics</h2>
 
@@ -709,12 +711,26 @@ median price error is {cat.get('median_error', '—')}, and a looked-up figure i
 a different size or a different product often enough to matter.</p>
 
 <p>So on the last day the totals stopped depending on them. <b>A price is
-counted only if the user typed it.</b> Figures the tool found are still shown
-beside each product, labelled with where they came from, and never summed — and
-a shelf with no confirmed prices now says so and asks, rather than quietly
-adding up estimates. That retired the whole class rather than fixing its
-instances one at a time, and it is the clearest example in this project of the
-difference between a feature being wrong and a feature being fed badly.</p>
+counted only if the user confirmed it.</b> Figures the tool found are still
+shown beside each product, labelled with where they came from, and never summed
+on their own — and a shelf with no confirmed prices says so and asks, rather
+than quietly adding up estimates.</p>
+
+<p>The first version of that rule accepted only a figure the user typed, and a
+tester found its cost within the hour: the page was now showing her a price and
+asking her to retype it, so most rows came back empty and most shelves read
+"nothing to add up yet". Her fix was better than the rule. The table now has
+three columns — <em>found online</em> with its provenance, <em>use it</em>, and
+<em>what you paid</em> — and a figure she has read and ticked counts, because
+reading it is the confirmation. A typed figure overrides a ticked one; a price
+for a different size cannot be ticked at all, since no amount of confirmation
+makes a 200&nbsp;ml price into a 7&nbsp;ml bottle's. The discipline is
+unchanged and the work it demanded of the user is gone.</p>
+
+<p>That retired the whole class rather than fixing its instances one at a time,
+and it is the clearest example in this project of the difference between a
+feature being wrong and a feature being fed badly — and of the fact that a
+correct rule can still be the wrong thing to put in front of someone.</p>
 
 <h3>The pattern across every real bug</h3>
 
@@ -738,6 +754,30 @@ so five passes meant nothing; and <code>four_surfaces.py</code>, which exists
 specifically to prove four renderings agree about durations, contained no beat
 longer than two minutes — the only range where they all render identically no
 matter what. Each was found by accident or by a tester, not by the suite.</p>
+
+<p>The clearest demonstration of both patterns arrived on the last day, out of
+verifying a fix rather than writing one. Checking in a browser that
+tester&nbsp;1's <em>Use it</em> column worked, I submitted six products, typed
+no price, and read <b>&ldquo;$96 on the shelf&rdquo;</b> above six rows the page
+itself had labelled &ldquo;retail, looked up&rdquo;. Two defects sat behind it
+and neither threw anything. The hidden field that carries products between
+rounds serialised six of fourteen fields, so on every resubmission a looked-up
+price returned as a price the user had stated, a size she had typed to correct
+one vanished, and a prescription she had named was forgotten &mdash; three
+symptoms three different testers had reported, each previously fixed at the
+surface it appeared on. And <code>price_is_typical</code> existed twice: the
+page read the copy on the resolution, the money rules read the copy on the
+product, and the branch that takes a price from the catalogue set only the
+first. One fact with two homes, and the arithmetic reading the home the reader
+never sees.</p>
+
+<p>Both are closed &mdash; the carry now dumps the whole model, and the totals
+read the same flag the page renders, so a label and a figure cannot disagree by
+construction. {ts['total_checks']} automated checks caught neither, and the
+invariant test written afterwards was verified by putting the bug back and
+watching it fail. That is the honest summary of testing here: the suites are
+good at the properties I thought to state and close to blind where code meets
+data.</p>
 
 <h3>What I would do next, in order</h3>
 

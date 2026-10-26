@@ -273,8 +273,13 @@ def testers() -> dict:
         if re.search(r"price|retail|cost|[$]|discount|decimal",
                      f["reported"] + " " + f["wrong"], re.I)
     ]
+    # Mine, not theirs. Kept separate so the tester count the report
+    # argues from stays a count of what testers reported.
+    mine = doc.get("self_found") or []
     return {
         "people": people,
+        "self_found": mine,
+        "self_found_count": len(mine),
         "recruited": len(people),
         "money_findings": len(money),
         "reported": len(reported),

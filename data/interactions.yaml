@@ -439,10 +439,10 @@ contraindications:
     matches: prescription:true
     severity: critical
     message: >-
-      This product was prescribed for you. Any change to how it is used belongs
-      with the clinician who prescribed it, not with this tool.
+      Any change to how a prescribed product is used belongs with the clinician
+      who prescribed it, not with this tool.
     action: escalate
-    source: "A design decision, not a factual claim. A prescribed product was chosen by a clinician who knows things this tool does not, so any change to how it is used belongs with them. The alternative, letting generated advice override a prescription, is the single worst thing this system could do. Recorded as reasoning rather than sourced. Reviewed 25 Oct 2026."
+    source: "A design decision, not a factual claim. A prescribed product was chosen by a clinician who knows things this tool does not, so any change to how it is used belongs with them. The alternative, letting generated advice override a prescription, is the single worst thing this system could do. Recorded as reasoning rather than sourced. Reviewed 25 Oct 2026. Amended 26 Oct 2026: the rule no longer decides WHICH product was prescribed. `matches: prescription:true` describes which actives are prescription-only in general, and the code used it to assert that a particular bottle on a particular shelf came from a pharmacist. A tester: \"do not assume what has been prescribed to me, let me specifically tell you.\" The selector is kept because it still documents the rule's scope; the escalation now fires on the products the user ticks, and asks when she has ticked none."
     review: reasoned
 
   - rule_id: SKC-011

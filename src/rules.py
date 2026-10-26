@@ -502,6 +502,16 @@ class Rules:
                 # always wins over what a product usually costs.
                 if product.price_usd is None and hit["typical_price_usd"]:
                     updates["price_usd"] = float(hit["typical_price_usd"])
+                    # On the product too, not only on the resolution.
+                    # The same fact lived in two places: the page read
+                    # the copy on ResolvedProduct and said "retail,
+                    # looked up", while the money rules read the copy on
+                    # InputProduct, which this branch left False — so a
+                    # catalogue price was summed into "on the shelf" as
+                    # though the user had stated it. Six products, no
+                    # price typed, and a $96 total with every row
+                    # labelled as a guess.
+                    updates["price_is_typical"] = True
                     typical_price = True
                 product = product.model_copy(update=updates)
 
@@ -654,10 +664,42 @@ class Rules:
         for rule in self.contraindications:
             if rule["condition"] not in active_conditions:
                 continue
+
+            if rule["condition"] == "prescription_product":
+                # Asked, never inferred. A tester: "do not assume what
+                # has been prescribed to me, let me specifically tell
+                # you." The ingredient table knows which actives are
+                # prescription-only in general; it does not know which
+                # box on this shelf came from a pharmacist. Telling
+                # somebody "this product was prescribed for you" about
+                # a product they never named is this tool putting words
+                # in their mouth, and it was wrong on her shelf: she
+                # has an over-the-counter retinol the table flagged and
+                # a compounded cream it could not see.
+                #
+                # Named products are already escalated above. If the
+                # box is ticked and nothing is named, the honest move
+                # is to ask rather than to guess.
+                if not named:
+                    out.append(
+                        Escalation(
+                            rule_id=rule["rule_id"],
+                            condition=rule["condition"],
+                            severity="high",
+                            message=(
+                                "You told us something here was prescribed, "
+                                "but not which one, and this tool will not "
+                                "guess. Tick Prescribed beside it in the "
+                                "table at the bottom of this page and that "
+                                "product is left to the clinician who "
+                                "prescribed it."),
+                            products=[],
+                        )
+                    )
+                continue
+
             hit_products = [p.product.name for p in products
-                            if self.matches(rule["matches"], p)
-                            and not (rule["condition"] == "prescription_product"
-                                     and p.product.name in named)]
+                            if self.matches(rule["matches"], p)]
             if hit_products:
                 out.append(
                     Escalation(
@@ -791,6 +833,14 @@ class Rules:
                 p for p in products
                 if placement[p.product.name] in (slot, "both")
                 and slot in self.forms[p.form]["times"].split(",")
+                # "if I say that I do not use something, why is it
+                # included in any of the steps". I had kept them in and
+                # marked them, reasoning that "you own this and it
+                # would help" is useful. The tester's answer is
+                # simpler: she told the app she does not use it, and a
+                # routine is a list of what to do. It stays on the
+                # shelf, in the money section, and out of the steps.
+                and not p.product.unused
             ]
             steps.sort(key=lambda p: self.forms[p.form]["rank"])
 
@@ -938,9 +988,23 @@ class Rules:
             what the user said they paid, which is a number they can
             check against their own bank statement.
             """
-            if p.product.price_is_typical:
-                return 0.0
             if getattr(p.product, "price_size_mismatch", ""):
+                # For a different bottle. No tick can make it this one's.
+                return 0.0
+            if getattr(p.product, "price_confirmed", False):
+                # They read the figure beside the product and said it is
+                # right. That is the user telling us, which is what this
+                # function is for — and a tester asked for it directly,
+                # because retyping a number already on the screen is a
+                # bad way to spend somebody's attention.
+                return p.product.price_usd or 0.0
+            if p.price_is_typical:
+                # The resolution's flag, which is the one the page
+                # renders. Reading the copy on the product instead let
+                # the arithmetic and the label disagree about the same
+                # figure; whatever the page calls a guess must not be
+                # counted, by construction rather than by both copies
+                # happening to be in step.
                 return 0.0
             if getattr(p.product, "price_off_page", ""):
                 return 0.0
@@ -951,8 +1015,16 @@ class Rules:
         redundant: set[str] = set()
         for f in findings:
             if f.type == "redundancy" and len(f.products) == 2:
-                # Count the cheaper one as the avoidable spend.
-                redundant.add(min(f.products, key=price))
+                # The cheaper of the two is the avoidable spend — but
+                # only among the ones we can actually price. Since
+                # totals count confirmed prices only, an unpriced
+                # product scores 0 here, so min() picked it every time
+                # and the figure stayed at zero no matter what the user
+                # typed. A tester entered what she had paid and watched
+                # the duplicate total not move.
+                priced = [n for n in f.products if price(n) > 0]
+                if priced:
+                    redundant.add(min(priced, key=price))
 
         conflicted = {
             n for f in findings if f.type == "conflict" and f.severity in ("critical", "high")
