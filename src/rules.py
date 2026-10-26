@@ -101,6 +101,37 @@ def term_pattern(term: str) -> str:
     return re.escape(term)
 
 
+# The steps a routine is incomplete without, and what to say when one is
+# absent. Deliberately three short of the twelve forms in
+# product_forms.yaml: these are the ones the AAD order names and the only
+# rows in that file marked `verified`. Toner, essence, eye cream and the
+# rest are the industry layering convention — real, near-universal, and
+# not a need. Telling someone they are "missing" a toner would invent a
+# purchase, which is the failure this whole project is built to avoid.
+#
+# Sunscreen is handled separately below, because what to say about it
+# depends on whether anything on the shelf raises sun sensitivity.
+ESSENTIAL_STEPS: list[tuple[str, str, str, str]] = [
+    (
+        "cleanser",
+        "medium",
+        "There is nothing here to wash your face with.",
+        "Cleansing is the first step in the published order, and the one every "
+        "routine agrees on. Actives also work better on skin that has had the "
+        "day taken off it — so without a cleanser, the products you do own are "
+        "doing less than they could.",
+    ),
+    (
+        "moisturiser",
+        "medium",
+        "There is no moisturiser on this shelf.",
+        "Moisturiser is where a routine holds on to what the other steps did, "
+        "and it is the usual answer to the irritation that actives cause. "
+        "Skipping it tends to be why people conclude an active 'did not agree' "
+        "with them.",
+    ),
+]
+
 LANGUAGE_NAMES = {
     "intl:zh": "Chinese",
     "intl:ko": "Korean",
@@ -701,6 +732,69 @@ class Rules:
         """
         out: list[Gap] = []
 
+        held = {p.form for p in products}
+
+        # A shelf can be missing a whole step, not just sun protection. A
+        # tester gave us five products with no cleanser and no moisturiser
+        # and was told only that there was no sunscreen — the routine was
+        # built from what they owned and never mentioned what was absent,
+        # which is the question someone buying skincare actually has.
+        #
+        # Only these three. They are the steps the AAD order names, and the
+        # three product_forms rows marked `verified` rather than
+        # `reasoned`; every other form here is the layering convention,
+        # where "you are missing a toner" would be an invented need. Not
+        # flagging the optional ones is as much the point as flagging
+        # these, and the page says so rather than leaving the reader to
+        # wonder whether we simply did not check.
+        for form_id, severity, headline, why in ESSENTIAL_STEPS:
+            if form_id in held:
+                continue
+            out.append(
+                Gap(
+                    kind=f"no_{form_id}",
+                    severity=severity,
+                    label=self.forms[form_id]["name"],
+                    headline=headline,
+                    message=why,
+                )
+            )
+
+        # The mirror of a missing step: several products doing one job.
+        # The redundancy rules in interactions.yaml are ingredient pairs —
+        # two retinoids, two AHAs — so four cleansers produced nothing at
+        # all. The routine only ever places one product per step, so the
+        # rest are sitting unused, which is a money question rather than
+        # a safety one.
+        #
+        # Three, not two. Two cleansers is an ordinary shelf — a wash and
+        # a balm, or a gentle one for mornings — and calling that a
+        # problem would be the invented-need failure again, pointing the
+        # other way.
+        by_form: dict[str, list[str]] = {}
+        for p in products:
+            by_form.setdefault(p.form, []).append(p.product.name)
+        for form_id, names in sorted(by_form.items()):
+            if len(names) < 3 or form_id not in self.forms:
+                continue
+            label = self.forms[form_id]["name"]
+            out.append(
+                Gap(
+                    kind=f"several_{form_id}",
+                    severity="low",
+                    label=label,
+                    headline=f"You have {len(names)} products doing the job of one.",
+                    message=(
+                        f"All {len(names)} of these are filed as {label.lower()}, and a "
+                        f"routine uses one at a time — so the others are not in the "
+                        f"plan below. That is fine if you are rotating them or using "
+                        f"up old stock. If you are not, it is the clearest thing on "
+                        f"this shelf to stop re-buying."
+                    ),
+                    because=sorted(names),
+                )
+            )
+
         photo = [
             p.product.name
             for p in products
@@ -741,6 +835,28 @@ class Rules:
                         "it costs you more than it would with a gentler routine."
                     ),
                     because=photo,
+                )
+            )
+        elif not has_spf:
+            # No sunscreen and nothing that raises sun sensitivity. The
+            # branch above does not fire, so this shelf used to be told
+            # nothing about sunscreen at all — the most-recommended product
+            # in skincare, unmentioned because the user owned nothing
+            # dangerous. Lower severity than the photosensitising case,
+            # because here it is a general recommendation rather than
+            # something the rest of the shelf depends on.
+            out.append(
+                Gap(
+                    kind="no_spf",
+                    severity="medium",
+                    label="Sun protection",
+                    headline="There is no sunscreen on this shelf.",
+                    message=(
+                        "Nothing you own raises sun sensitivity, so this is not urgent "
+                        "the way it would be with a retinoid or an acid. It is still the "
+                        "step with the most evidence behind it, and the one that decides "
+                        "whether the rest of a routine compounds or just maintains."
+                    ),
                 )
             )
 

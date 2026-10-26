@@ -59,7 +59,7 @@ The model is `gpt-6-luna` throughout.
 |---|---|
 | **Photographs** | of the shelf, or of individual back labels. Up to 8. |
 | **Typed names** | one per line, ingredients underneath if you have them |
-| **Links** | paste a product's own page and the ingredient list is read from it — the most reliable input, because there is no guessing at which product you meant |
+| **Links** | paste a product page and its ingredient list is looked up — the most precise input, because there is no guessing at which product you meant. Big retailers (Amazon among them) do not publish a list this reader can reach, so the list usually comes from the brand's own site or another retailer for the same product. The page says so by name when it does, because a list for a different size or an older formula is the one thing that would quietly change every finding |
 | **A price** | yours overrides the catalogue's estimate, and the money figures become yours |
 | **A concern** | what you are trying to treat, which drives what the shelf is missing |
 | **A photo of your skin** | entirely optional. It is used to *ask* you what you are seeing, never to diagnose — the observer's output type cannot express a condition name, and its prose is scrubbed and escalated if one appears |
@@ -67,6 +67,16 @@ The model is `gpt-6-luna` throughout.
 The result page carries the findings, a morning and evening routine in
 order, the money, an interaction matrix, a printed card for the mirror, and
 a drawn animation of the routine that can be downloaded as a GIF.
+
+It also answers the question a routine built from your shelf cannot ask:
+**what is not on it.** Every other part of the page compares products you
+own against each other, so a shelf of four serums and no cleanser used to
+get an ordered routine and no comment. A missing cleanser, moisturiser or
+sunscreen is now named — those three and no others, because they are the
+steps the AAD order names and the only rows in `product_forms.yaml` marked
+`verified`. Being told you are "missing" a toner would invent a purchase.
+Several products doing one job is reported too, from three upwards, as a
+money note rather than a mistake.
 
 ## The rules as an MCP server
 
@@ -115,6 +125,7 @@ python audit_cli.py --shelf data/sample_shelf.json --explain --html output/audit
 | `python test_failure.py` | each agent failing in turn, no stack traces, no leaks |
 | `python test_validator.py` | invented rules and ghost products are dropped |
 | `python test_provenance.py` | a product found only via an unchecked translation says so |
+| `python test_gaps.py` | what the shelf is missing, and what is not worth flagging |
 | `python make_attacks.py` | regenerate the adversarial label images |
 | `python redteam.py --mode naive` | run the attacks with no defences |
 | `python redteam.py --mode defended` | run them again with defences on |

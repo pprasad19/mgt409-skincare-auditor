@@ -1770,6 +1770,7 @@ def render(
     legend: list[dict] | None = None,
     skin=None,
     sourced: dict | None = None,
+    failed_urls: list[str] | None = None,
 ) -> str:
     specs = {s.product_name: s for s in (narrative.steps if narrative else [])}
     explain = {x.rule_id: x.plain_language for x in (narrative.explanations if narrative else [])}
@@ -1949,6 +1950,31 @@ def render(
             f"depends on {'this product' if n == 1 else 'these products'} is "
             f"worth confirming against the bottle first — the ingredient may "
             f"not be in it."
+            f'<ul style="margin:10px 0 0">{rows}</ul></div>'
+        )
+
+    # Links we were given and could not turn into a product. This is the
+    # most visible failure the app has, because the user knows how many
+    # links they pasted, and it used to be invisible: the loop skipped the
+    # failure and the page said nothing. Naming the link matters more than
+    # naming a count — the user can open it, see the product and type the
+    # name instead, which is a route back. A number alone is not.
+    if failed_urls:
+        rows = "".join(
+            f'<li><a href="{e(u)}" rel="noreferrer nofollow">{e(u[:90])}'
+            f'{"…" if len(u) > 90 else ""}</a></li>'
+            for u in failed_urls
+        )
+        n = len(failed_urls)
+        parts.append(
+            f'<div class="note" style="margin-top:12px">'
+            f"<strong>{n} of the links you pasted could not be read, and "
+            f"{'it is' if n == 1 else 'they are'} not in this audit.</strong> "
+            f"Retailer pages often publish no ingredient list, or hide it behind "
+            f"a tab this tool cannot open. Nothing below accounts for "
+            f"{'this product' if n == 1 else 'these products'}. The quickest fix "
+            f"is to type the product name instead, or paste the ingredient list "
+            f"straight from the page."
             f'<ul style="margin:10px 0 0">{rows}</ul></div>'
         )
 
@@ -2255,13 +2281,27 @@ def render(
         # An empty heading reads as a failed render. No conflicts is a result,
         # and for a shelf of gentle products it is the expected one.
         checked = len(audit.products) - len(audit.unresolved)
+        # "Nothing to fix" is about the pairwise rules only, and the gaps
+        # print directly underneath it. A shelf with four cleansers and no
+        # moisturiser was being told "no duplicates" immediately above "you
+        # have 4 products doing the job of one" — two true sentences that
+        # read as one contradiction. So the headline narrows to what was
+        # actually checked when there is something below it.
+        more = "gap" if len(audit.gaps) == 1 else "gaps"
         parts.append(
-            '<div class="allclear"><span class="head">Nothing to fix.</span>'
-            f'<span class="body">No clashes, no duplicates and no ordering '
-            f"problems among the {checked} product"
-            f'{"s" if checked != 1 else ""} that could be checked. That is a '
-            "straightforward shelf — the products on it do not interact in ways "
-            "worth warning you about.</span></div>"
+            '<div class="allclear"><span class="head">'
+            + ("No clashes between your products."
+               if audit.gaps else "Nothing to fix.")
+            + '</span>'
+            f'<span class="body">Nothing among the {checked} product'
+            f'{"s" if checked != 1 else ""} that could be checked clashes, '
+            "duplicates an active or needs reordering."
+            + (f" There {'is' if len(audit.gaps) == 1 else 'are'} "
+               f"{len(audit.gaps)} {more} in what the shelf is missing, below."
+               if audit.gaps else
+               " That is a straightforward shelf — the products on it do not "
+               "interact in ways worth warning you about.")
+            + "</span></div>"
         )
     else:
         _section("first", "Fix these first",

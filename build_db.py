@@ -131,11 +131,17 @@ CREATE TABLE catalogue_terms (
 CREATE INDEX idx_cat_terms ON catalogue_terms(term);
 
 CREATE TABLE product_forms (
-    id    TEXT PRIMARY KEY,
-    name  TEXT NOT NULL,
-    rank  INTEGER NOT NULL,
-    times TEXT NOT NULL,
-    note  TEXT
+    id     TEXT PRIMARY KEY,
+    name   TEXT NOT NULL,
+    rank   INTEGER NOT NULL,
+    times  TEXT NOT NULL,
+    note   TEXT,
+    -- These twelve numbers decide the order of every routine the app
+    -- produces, so they carry provenance like the rules table. The YAML
+    -- always had it; the table did not load it, which made the claim
+    -- true of the file and not of anything that could check it.
+    source TEXT,
+    review TEXT NOT NULL
 );
 """
 
@@ -344,8 +350,9 @@ def main() -> None:
 
     for form in forms:
         con.execute(
-            "INSERT INTO product_forms VALUES (?,?,?,?,?)",
-            (form["id"], form["name"], form["rank"], ",".join(form["times"]), form.get("note")),
+            "INSERT INTO product_forms VALUES (?,?,?,?,?,?,?)",
+            (form["id"], form["name"], form["rank"], ",".join(form["times"]),
+             form.get("note"), form.get("source"), form.get("review", "pending")),
         )
 
     con.commit()

@@ -86,8 +86,13 @@ check("explain_audit: the audit survives it", r.status_code == 200,
       f"status {r.status_code} — the engine had already decided everything")
 check("explain_audit: no stack trace", "Traceback" not in r.text)
 check("explain_audit: no temp dir left behind", not (temp_dirs() - before))
+# What matters is that the engine's own output survived the narrator,
+# not which sentence it used to say so. Matching one literal broke when
+# the all-clear was reworded to stop contradicting the gaps printed
+# under it; these are the three forms the engine's verdict can take.
 check("explain_audit: the findings are still shown",
-      "SKA-" in r.text or "Nothing to fix" in r.text)
+      any(s in r.text for s in
+          ("SKA-", "Nothing to fix", "No clashes between your products")))
 check("explain_audit: the reader is told the prose is missing",
       "could not be generated" in r.text)
 

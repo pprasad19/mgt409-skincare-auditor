@@ -8181,5 +8181,249 @@
       "cache_write_tokens": 2717,
       "output_tokens": 99
     }
+  },
+  {
+    "run_id": "2cea8354",
+    "seq": 1,
+    "timestamp": "2026-10-26T00:51:10.742094+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 7,
+      "steps": 5,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 4024,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 1170,
+      "output_tokens": 591
+    }
+  },
+  {
+    "run_id": "59fe32a3",
+    "seq": 1,
+    "timestamp": "2026-10-26T01:10:21.156298+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2843,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2717,
+      "output_tokens": 99
+    }
+  },
+  {
+    "run_id": "ce5c585b",
+    "seq": 1,
+    "timestamp": "2026-10-26T01:14:19.642830+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2843,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2717,
+      "output_tokens": 99
+    }
+  },
+  {
+    "run_id": "b22673dd",
+    "seq": 1,
+    "timestamp": "2026-10-26T01:15:19.171526+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3082,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 228,
+      "output_tokens": 561
+    }
+  },
+  {
+    "run_id": "dcff0997",
+    "seq": 1,
+    "timestamp": "2026-10-26T01:17:59.790392+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2843,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2717,
+      "output_tokens": 99
+    }
+  },
+  {
+    "run_id": "bbcf5af6",
+    "seq": 1,
+    "timestamp": "2026-10-26T01:18:32.039651+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3136,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 282,
+      "output_tokens": 643
+    }
+  },
+  {
+    "run_id": "21170dd6",
+    "seq": 1,
+    "timestamp": "2026-10-26T01:20:56.126591+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2843,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2717,
+      "output_tokens": 99
+    }
+  },
+  {
+    "run_id": "1231bc1a",
+    "seq": 1,
+    "timestamp": "2026-10-26T01:21:25.183209+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3136,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 282,
+      "output_tokens": 643
+    }
+  },
+  {
+    "run_id": "f83367c6",
+    "seq": 1,
+    "timestamp": "2026-10-26T01:23:35.153537+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2843,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2717,
+      "output_tokens": 99
+    }
+  },
+  {
+    "run_id": "5d5fa042",
+    "seq": 1,
+    "timestamp": "2026-10-26T01:23:58.217595+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2843,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2717,
+      "output_tokens": 99
+    }
+  },
+  {
+    "run_id": "ec7820cc",
+    "seq": 1,
+    "timestamp": "2026-10-26T01:25:19.666987+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2843,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2717,
+      "output_tokens": 99
+    }
   }
 ]

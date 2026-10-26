@@ -90,8 +90,17 @@ check(
     # reason a page cannot quietly drop an active from one and not the
     # other. It carries text, not control: nothing reads it except
     # detect_suppression.
+    # list_on_page and price_on_page are booleans saying whether the list
+    # and the price were printed on the page we were given, rather than
+    # found elsewhere for the same product. Probing five real Amazon
+    # links, the answer was "elsewhere" every time — Amazon publishes
+    # neither to this reader — and the app had been stamping the user's
+    # own URL on both. They carry one bit each and steer nothing: the
+    # source_url written to the record is still the user's URL, never a
+    # page's claim about itself.
     {"found", "inci", "source_url", "matched_name",
-     "typical_price_usd", "price_source_url", "note", "raw_list"},
+     "typical_price_usd", "price_source_url", "note", "raw_list",
+     "list_on_page", "price_on_page"},
 )
 for forbidden in ("findings", "severity", "verdict", "safe", "skip", "rule_id",
                   "clearance", "approved", "tools"):

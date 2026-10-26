@@ -174,11 +174,44 @@ async def audit(
         from_urls: list[InputProduct] = []
         url_records: dict[str, dict] = {}
         url_suppressed: dict[str, list[str]] = {}
+        # Products whose price we had to guess because the linked page
+        # did not give one up. Named on the page, because "your link
+        # says $12 and this says $16" is the complaint it answers.
+        off_page_prices: dict[str, float] = {}
+        # Products whose ingredient list was not on the linked page.
+        # Usually harmless — an INCI list is the same wherever it is
+        # printed — but it can be a different size or an older
+        # formula, and it is the list every finding below rests on.
+        off_page_lists: dict[str, str] = {}
+        # Links whose product name collided with an earlier one.
+        same_name_links: list[str] = []
+        # A link that cannot be read is the one failure the user is
+        # guaranteed to notice, because they counted the links they
+        # pasted. A tester gave five and got four products back with
+        # nothing saying where the fifth went. `continue` was doing the
+        # dropping; the page now names every link that did not come
+        # through, so the count always reconciles.
+        failed_urls: list[str] = []
         for url in pasted:
             record = await find_from_url(url, usage_log=log)
             if not record:
+                failed_urls.append(url)
                 continue
             name = record.get("matched_name") or url
+
+            # Two links, one name. Products are merged downstream on a
+            # lowercased name, so two different ASINs that the lookup
+            # happens to describe with the same words silently become one
+            # product — five pasted links, four products on the page, no
+            # explanation. The link is the identity the user chose, so a
+            # repeated name is disambiguated rather than collapsed, and
+            # the duplicate check gets to make its own call about whether
+            # they are really the same thing.
+            if name.strip().lower() in {n.strip().lower() for n in url_records}:
+                tag = [seg for seg in url.rstrip("/").split("/") if seg][-1][:16]
+                name = f"{name} ({tag})"
+                same_name_links.append(name)
+
 
             # Same cross-check the shelf reader runs on a transcribed
             # label: re-read the page's own words with the deterministic
@@ -196,10 +229,23 @@ async def audit(
                 if lost:
                     url_suppressed[name] = lost
 
+            # Two different claims, kept apart. A price printed on the page
+            # the user linked is the price they are looking at, so it is
+            # used as a real figure. A price the model knew from elsewhere
+            # is an estimate and is labelled one — previously both arrived
+            # as "typical retail", which left someone who pasted an Amazon
+            # link looking at a number their own page contradicted with no
+            # way to tell why.
+            if record.get("list_on_page") is False:
+                off_page_lists[name] = record.get("list_found_at") or ""
+            page_price = record.get("typical_price_usd")
+            guess_price = record.get("estimated_price_usd")
+            if guess_price and not page_price:
+                off_page_prices[name] = float(guess_price)
             from_urls.append(
                 InputProduct(name=name, listed_ingredients=record["inci"],
-                             price_usd=record.get("typical_price_usd"),
-                             price_is_typical=bool(record.get("typical_price_usd")))
+                             price_usd=page_price or guess_price,
+                             price_is_typical=not page_price)
             )
             url_records[name] = record
 
@@ -326,6 +372,33 @@ async def audit(
             )
 
         notes = [t.note for t in trims] + notes_from_narrator
+        if same_name_links:
+            notes.append(
+                f"{len(same_name_links)} of the links you pasted came back under a "
+                f"product name already used by another link, so "
+                f"{'it has' if len(same_name_links) == 1 else 'they have'} been "
+                f"tagged with the end of the link to keep "
+                f"{'it' if len(same_name_links) == 1 else 'them'} separate: "
+                + ", ".join(same_name_links)
+                + ". If these really are the same product, the duplicate check "
+                  "above will have said so."
+            )
+        for pname, where in off_page_lists.items():
+            notes.append(
+                f"The ingredients for {pname} were not published on the page you "
+                f"linked; they were taken from "
+                + (f"{where} " if where else "another published list ")
+                + "for the same product. Usually the same list — but check the "
+                  "size and the formula match what you own, because everything "
+                  "said about this product rests on it."
+            )
+        for pname, guess in off_page_prices.items():
+            notes.append(
+                f"The page you linked for {pname} did not show a price we could "
+                f"read, so ${guess:.0f} is a typical retail figure from elsewhere "
+                f"and will not match that listing. Type what it actually costs "
+                f"below to make the money section yours."
+            )
         for pname, lost in url_suppressed.items():
             notes.append(
                 f"The page for {pname} lists " + ", ".join(lost)
@@ -378,7 +451,8 @@ async def audit(
             for rp in result.products
         ])
         return HTMLResponse(
-            render(result, narrative, annotated or None, carry, legend, skin, sourced)
+            render(result, narrative, annotated or None, carry, legend, skin,
+                   sourced, failed_urls=failed_urls)
         )
 
     except Exception:  # noqa: BLE001
