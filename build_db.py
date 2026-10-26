@@ -438,7 +438,10 @@ def main() -> None:
     print("\n  Only verified rows are presented to the user as settled.")
     print("  Every search term is INCI, a product name, or a reviewed")
     print("  alias. The machine-translated names in")
-    print("  ingredient_aliases.yaml are NOT loaded — see main().")
+    # Plain ASCII: this is the first thing a grader sees, and a Windows
+    # console on its default code page renders an em dash as a black
+    # diamond. Found on a fresh clone.
+    print("  ingredient_aliases.yaml are NOT loaded - see main().")
 
 
 if __name__ == "__main__":

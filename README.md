@@ -22,15 +22,30 @@ rather than guesses when an ingredient is not in the table.
 
 Requires Python 3.11+.
 
+**Windows:**
+
 ```bash
 python -m venv .venv
-.venv/Scripts/python.exe -m pip install -r requirements.txt
-python build_db.py
-python -m uvicorn app:app --port 8000
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+.venv\Scripts\python.exe build_db.py
+.venv\Scripts\python.exe -m uvicorn app:app --port 8000
 ```
 
-On macOS or Linux, `source .venv/bin/activate && pip install -r requirements.txt`
-instead of the second line.
+**macOS or Linux:**
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python build_db.py
+.venv/bin/python -m uvicorn app:app --port 8000
+```
+
+Every line uses the interpreter inside `.venv`. An earlier version of this
+README created the virtual environment and then ran the last two steps with
+plain `python`, which is the *system* interpreter and does not have the
+dependencies — following it exactly failed at the last line with
+`No module named uvicorn`. Found by cloning into an empty folder and doing
+what it said.
 
 Then open **http://localhost:8000**. Upload photographs of your products, or
 type them in, and the audit comes back as a page.
