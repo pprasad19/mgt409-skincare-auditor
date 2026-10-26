@@ -99,6 +99,57 @@ def normalise(text: str) -> str:
     return re.sub(r"\s+", " ", folded).strip()
 
 
+# Units a container is labelled in, folded to one spelling each. Only the
+# three that appear on skincare packaging; a size this cannot parse falls
+# back to string comparison rather than guessing.
+_UNITS = {
+    "ml": "ml", "mls": "ml", "millilitre": "ml", "millilitres": "ml",
+    "milliliter": "ml", "milliliters": "ml", "cc": "ml",
+    "oz": "oz", "ozs": "oz", "ounce": "oz", "ounces": "oz",
+    "g": "g", "gr": "g", "gram": "g", "grams": "g", "gm": "g",
+}
+_SIZE_RE = re.compile(r"(\d+(?:\.\d+)?)\s*(fl\.?\s*oz|[a-z]+)", re.I)
+
+
+def size_measures(text: str) -> set[tuple[float, str]]:
+    """Every (amount, unit) a size string states.
+
+    A container is routinely labelled in two units at once — "4 fl oz /
+    120 mL" is one bottle, not two — so a size is a *set* of measures
+    rather than a string.
+    """
+    out: set[tuple[float, str]] = set()
+    for amount, unit in _SIZE_RE.findall(text or ""):
+        u = re.sub(r"[^a-z]", "", unit.lower())
+        u = "oz" if u in ("floz", "fl") else u
+        if u in _UNITS:
+            try:
+                out.add((round(float(amount), 3), _UNITS[u]))
+            except ValueError:
+                continue
+    return out
+
+
+def same_size(a: str, b: str) -> bool:
+    """Do two size strings describe the same container?
+
+    Compared by measure, not by text. A lookup came back with "4 fl oz /
+    120 mL" for a bottle the user had called "4 fl oz"; string equality
+    called that a mismatch, and a correct $18 price was dropped from the
+    money section as though it belonged to a different bottle. One
+    shared measure is agreement — the dual-unit label means both refer
+    to the same thing.
+
+    Falls back to normalised text when neither side parses, so an
+    unparseable size is still compared rather than silently treated as
+    a mismatch.
+    """
+    ma, mb = size_measures(a), size_measures(b)
+    if ma and mb:
+        return bool(ma & mb)
+    return normalise(a or "") == normalise(b or "")
+
+
 def term_pattern(term: str) -> str:
     r"""Build the search pattern for one term.
 
@@ -755,7 +806,16 @@ class Rules:
 
     def waste(self, products: list[ResolvedProduct], findings: list[Finding]) -> WasteSummary:
         by_name = {p.product.name: p for p in products}
-        price = lambda n: (by_name[n].product.price_usd or 0.0) if n in by_name else 0.0
+        # A price for the wrong size is reference, not arithmetic. It is
+        # shown beside its product with the size named; adding it to
+        # "on the shelf" would put a 10 oz figure behind a 4 oz bottle
+        # and quietly make every total wrong.
+        def _countable(p) -> float:
+            if getattr(p.product, "price_size_mismatch", ""):
+                return 0.0
+            return p.product.price_usd or 0.0
+
+        price = lambda n: _countable(by_name[n]) if n in by_name else 0.0
 
         redundant: set[str] = set()
         for f in findings:
@@ -769,10 +829,10 @@ class Rules:
         }
 
         return WasteSummary(
-            shelf_value_usd=round(sum(p.product.price_usd or 0.0 for p in products), 2),
+            shelf_value_usd=round(sum(_countable(p) for p in products), 2),
             products_owned=len(products),
             products_unused=sum(1 for p in products if p.product.unused),
-            unused_value_usd=round(sum(p.product.price_usd or 0.0 for p in products if p.product.unused), 2),
+            unused_value_usd=round(sum(_countable(p) for p in products if p.product.unused), 2),
             redundant_value_usd=round(sum(price(n) for n in redundant), 2),
             conflicted_value_usd=round(sum(price(n) for n in conflicted), 2),
         )

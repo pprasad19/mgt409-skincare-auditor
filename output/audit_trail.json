@@ -9577,5 +9577,597 @@
       "cache_write_tokens": 130,
       "output_tokens": 160
     }
+  },
+  {
+    "run_id": "1b95d0f6",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:47:55.394206+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 7,
+      "identified": 7,
+      "products": [
+        "ROUND LAB 1025 DOKDO TONER",
+        "MADAGASCAR CENTELLA LIGHT CLEANSING OIL",
+        "Retinol 0.1",
+        "The Retinol 0.1 Cream",
+        "BHA Blackhead Power Liquid",
+        "ANTHELIOS UVMUNE 400",
+        "Retinol 0.1"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3768,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 0,
+      "output_tokens": 753
+    }
+  },
+  {
+    "run_id": "1b95d0f6",
+    "seq": 2,
+    "timestamp": "2026-10-26T03:48:05.146176+00:00",
+    "agent": "skin_observer",
+    "step": "observe",
+    "defended": true,
+    "detail": {
+      "observations": [
+        {
+          "concern": "breakouts",
+          "confidence": "clear"
+        },
+        {
+          "concern": "redness",
+          "confidence": "possible"
+        },
+        {
+          "concern": "texture",
+          "confidence": "possible"
+        }
+      ],
+      "needs_a_clinician": false,
+      "lighting_note": false,
+      "named_conditions_removed": []
+    },
+    "usage": {
+      "input_tokens": 1724,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 106
+    }
+  },
+  {
+    "run_id": "1b95d0f6",
+    "seq": 3,
+    "timestamp": "2026-10-26T03:49:03.214131+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 8,
+      "steps": 7,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3711,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 857,
+      "output_tokens": 702
+    }
+  },
+  {
+    "run_id": "e42a7fab",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:54:06.596138+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 3,
+      "products": [
+        "calming magnesium mist",
+        "night cream",
+        "retinol daily micro-dose serum"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3390,
+      "cache_read_tokens": 3183,
+      "cache_write_tokens": 81,
+      "output_tokens": 234
+    }
+  },
+  {
+    "run_id": "e42a7fab",
+    "seq": 2,
+    "timestamp": "2026-10-26T03:55:53.652874+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 3,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3333,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 479,
+      "output_tokens": 660
+    }
+  },
+  {
+    "run_id": "42ea56be",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:57:34.139078+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 3,
+      "steps": 10,
+      "rejected": [
+        "verification caveat stripped from summary"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3333,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 479,
+      "output_tokens": 717
+    }
+  },
+  {
+    "run_id": "bb9a5358",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:58:29.659162+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 4,
+      "products": [
+        "CeraVe Foaming Facial Cleanser",
+        "The Ordinary Retinol 0.5% in Squalane",
+        "Paula's Choice 2% BHA Liquid Exfoliant",
+        "CeraVe Moisturizing Cream"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3482,
+      "cache_read_tokens": 3183,
+      "cache_write_tokens": 173,
+      "output_tokens": 428
+    }
+  },
+  {
+    "run_id": "bb9a5358",
+    "seq": 2,
+    "timestamp": "2026-10-26T03:58:33.366472+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 4,
+      "steps": 6,
+      "rejected": [
+        "verification caveat stripped from summary"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3365,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 511,
+      "output_tokens": 546
+    }
+  },
+  {
+    "run_id": "418e2bbb",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:02:21.021962+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3012,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 158,
+      "output_tokens": 372
+    }
+  },
+  {
+    "run_id": "5150e11a",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:02:22.704667+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 4,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 130,
+      "output_tokens": 273
+    }
+  },
+  {
+    "run_id": "20f1c65f",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:04:29.815029+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3012,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 158,
+      "output_tokens": 372
+    }
+  },
+  {
+    "run_id": "191d60a7",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:04:32.557656+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 4,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 130,
+      "output_tokens": 273
+    }
+  },
+  {
+    "run_id": "bd19e1a5",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:06:46.010471+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "Cocokind Rosewater Facial Mist"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3369,
+      "cache_read_tokens": 3183,
+      "cache_write_tokens": 60,
+      "output_tokens": 100
+    }
+  },
+  {
+    "run_id": "bd19e1a5",
+    "seq": 2,
+    "timestamp": "2026-10-26T04:07:05.026798+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 2,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2944,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 90,
+      "output_tokens": 174
+    }
+  },
+  {
+    "run_id": "f038527c",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:08:55.910204+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "Cocokind Rosewater Facial Mist"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3369,
+      "cache_read_tokens": 3183,
+      "cache_write_tokens": 60,
+      "output_tokens": 100
+    }
+  },
+  {
+    "run_id": "f038527c",
+    "seq": 2,
+    "timestamp": "2026-10-26T04:08:57.713874+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 2,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2944,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 90,
+      "output_tokens": 173
+    }
+  },
+  {
+    "run_id": "851213ff",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:10:08.232248+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3012,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 158,
+      "output_tokens": 372
+    }
+  },
+  {
+    "run_id": "035c09d9",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:10:10.246621+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 4,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 130,
+      "output_tokens": 273
+    }
+  },
+  {
+    "run_id": "f1f0eed3",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:11:09.231145+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "f0b8c772",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:12:15.171477+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "6b175a3b",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:12:42.623580+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3012,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 158,
+      "output_tokens": 372
+    }
+  },
+  {
+    "run_id": "606be688",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:12:44.548341+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 4,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 130,
+      "output_tokens": 273
+    }
+  },
+  {
+    "run_id": "14a1e07a",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:13:43.077922+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 4,
+      "products": [
+        "CeraVe Foaming Facial Cleanser",
+        "The Ordinary Retinol 0.5% in Squalane",
+        "Paula's Choice 2% BHA Liquid Exfoliant",
+        "CeraVe Moisturizing Cream"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3482,
+      "cache_read_tokens": 3183,
+      "cache_write_tokens": 173,
+      "output_tokens": 428
+    }
+  },
+  {
+    "run_id": "14a1e07a",
+    "seq": 2,
+    "timestamp": "2026-10-26T04:13:43.648353+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 4,
+      "steps": 6,
+      "rejected": [
+        "verification caveat stripped from summary"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3365,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 511,
+      "output_tokens": 546
+    }
+  },
+  {
+    "run_id": "72cf2429",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:17:11.432760+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "d106447f",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:17:38.861492+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3012,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 158,
+      "output_tokens": 372
+    }
+  },
+  {
+    "run_id": "81457da8",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:17:40.684556+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 4,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 130,
+      "output_tokens": 273
+    }
   }
 ]

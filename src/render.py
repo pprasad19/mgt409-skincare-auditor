@@ -2394,7 +2394,12 @@ def render(
         # "Triggered by:" with nothing after it was printing on every gap
         # that is about the shelf as a whole rather than about particular
         # products — which is most of them now.
-        why = (f'<span class="why">Triggered by: {e(", ".join(gap.because))}</span>'
+        # "Triggered by" is right for a gap, where `because` lists the
+        # products that created the need, and wrong for a suggestion,
+        # where it lists the suggestion itself — "Triggered by: Toner,
+        # Eye cream" on a card recommending a toner and an eye cream.
+        label = "These are" if suggestion else "Triggered by"
+        why = (f'<span class="why">{label}: {e(", ".join(gap.because))}</span>'
                if gap.because else "")
         return (
             f'<div class="{cls}">'
@@ -2443,7 +2448,15 @@ def render(
             # looks like a bug when it is actually a limit. A brand name is
             # not a product: "Glytone" could be a $34 cleanser or a $58 cream,
             # and filling that in would be inventing a number.
-            if p.price_is_typical:
+            if p.product.price_size_mismatch:
+                # Inline, because this is the one qualification that
+                # cannot live in a caption: the number beside it is for
+                # a different bottle.
+                typical = (f' <span class="typ">price is for '
+                           f'{e(p.product.price_size_mismatch)}, '
+                           f'yours is {e(p.product.size or "another size")} '
+                           f'— not counted in the totals</span>')
+            elif p.price_is_typical:
                 typical = ' <span class="typ">typical retail</span>'
             elif not p.actives and not p.matched_from_catalogue:
                 typical = (

@@ -1,0 +1,264 @@
+# What real users found, and what changed because of it.
+#
+# This file is the single source for the tester evidence in report.html
+# and slides.html. Both are generated from it — add a finding here and
+# rerun `python build_report.py`, and the narrative, the counts and the
+# tables all move together. Typing a finding into the report by hand is
+# how the two documents start disagreeing with each other and with the
+# repository.
+#
+# FIELDS
+#   tester     which tester, anonymised to a number
+#   round      which sitting; a tester who comes back gets a new round
+#   reported   their words, as close to verbatim as makes sense
+#   layer      where the defect actually lived, which is often not where
+#              it appeared
+#   wrong      what the app did
+#   fixed      what changed
+#   commit     the commit that changed it
+#   class      the failure class, for the pattern argument in the report
+#   caught_by_tests  whether any existing suite would have caught it
+#
+# The last field is the uncomfortable one and the reason the file has it:
+# with ~700 automated checks passing, every single finding below was
+# missed by all of them.
+
+testers:
+  - id: 1
+    recruited: 2026-10-24
+    knows: does their own skincare daily; strong domain knowledge
+  - id: 2
+    recruited: 2026-10-24
+    knows: checked the output against the bottles physically in front of them
+  - id: 3
+    recruited: 2026-10-24
+    knows: not yet reported
+
+findings:
+  # ---- tester 1, round 1: domain knowledge --------------------------
+  - tester: 1
+    round: 1
+    reported: "how can you use a face mask only for 30s? masks are usually used for 10-20 mins"
+    layer: schema
+    wrong: >-
+      The routine told the user to apply a face mask for 30 seconds and move on.
+      StepApplication.seconds is capped at 120 and means time spent applying, so
+      a fifteen-minute mask was not expressible at all.
+    fixed: >-
+      Dwell time became a property of the form, set by the engine rather than
+      the narrator, and rendered as its own beat in all four surfaces.
+    commit: 8acfc4f
+    class: unrepresentable-in-the-schema
+    caught_by_tests: false
+
+  - tester: 1
+    round: 1
+    reported: "what happened to a normal cleanser? cleansing oil is part of a double cleansing routine and used at night"
+    layer: data
+    wrong: >-
+      "Cleansing" matched the cleanser keywords before anything noticed the
+      "balm", so an oil cleanser was filed as an ordinary cleanser, placed in
+      the morning routine, and counted as satisfying the shelf's need for a
+      cleanser. Three wrong answers from one missing distinction.
+    fixed: >-
+      oil_cleanser became its own form — evening only, ranked before cleanser
+      rather than instead of it — and the engine overrides the reader on the
+      specific phrases, as it already did for UV filters forcing spf.
+    commit: 8acfc4f
+    class: category-too-coarse
+    caught_by_tests: false
+
+  - tester: 1
+    round: 1
+    reported: "when suggesting what is missing, you should specify what part of day it should be used in"
+    layer: presentation
+    wrong: A gap named a missing step without saying when to use it.
+    fixed: >-
+      Every gap now states morning, evening or both, read from the same `times`
+      column the routine builder uses, so the two cannot disagree.
+    commit: 8acfc4f
+    class: incomplete-advice
+    caught_by_tests: false
+
+  - tester: 1
+    round: 2
+    reported: "for face masks, do not assume how long they should be used for. search it online"
+    layer: evidence
+    wrong: >-
+      The fix for the 30-second mask put 600 seconds in the forms table. That
+      number came from nowhere — exactly the unsourced figure the rest of the
+      project exists to avoid. Clay sets in ten minutes, a sheet mask comes off
+      at twenty, an overnight mask stays on all night.
+    fixed: >-
+      The time is looked up per product and cites its source; for the Aztec clay
+      mask that is 15 minutes from aztecsecret.com, not the 10 invented. When no
+      time can be found the step says to follow the packet and the guided player
+      waits rather than counting down.
+    commit: a09d7be
+    class: unsourced-number
+    caught_by_tests: false
+
+  - tester: 1
+    round: 2
+    reported: "toners and eye creams should always be listed as an optional item for both routines, and there should always be some type of serum"
+    layer: product-judgement
+    wrong: >-
+      Only cleanser, moisturiser and sunscreen were ever named as missing, on
+      the argument that naming anything else would invent a purchase.
+    fixed: >-
+      Three tiers instead of one — missing, worth considering, optional — so a
+      suggestion cannot read as a defect. The risk was never naming them; it
+      was naming them as failures.
+    commit: a09d7be
+    class: advice-too-narrow
+    caught_by_tests: false
+
+  # ---- tester 2, round 1: identity ----------------------------------
+  - tester: 2
+    round: 1
+    reported: "I never provided a goodal calming moisture, so where is that coming from"
+    layer: agent
+    wrong: >-
+      find_ingredients was handed a product name, searched, and attached
+      whatever came back. The result's ingredient list then became the basis of
+      every finding, the routine order and the money.
+    fixed: >-
+      The lookup fails closed: same_product and matched_brand come back from the
+      agent, _brand_conflict checks the brand in code rather than trusting the
+      prompt, and an unconfirmed product is reported as unidentified.
+    commit: 6807e89
+    class: confidently-wrong-identity
+    caught_by_tests: false
+
+  - tester: 2
+    round: 1
+    reported: "the centella cleansing oil is from Skin1004 so why are you saying it is from manyo"
+    layer: agent
+    wrong: >-
+      Same defect as above. A half-legible "centella cleansing oil" returns the
+      most famous centella cleansing oil there is.
+    fixed: Same fix. The catalogue matcher had refused cross-brand matches since
+      the beginning; the web lookup, far less constrained, had no equivalent.
+    commit: 6807e89
+    class: confidently-wrong-identity
+    caught_by_tests: false
+
+  - tester: 2
+    round: 1
+    reported: "why are you saying that the kiehl's retinol is an eye cream when the packaging does not say that. because of this error, you did not suggest an eye cream to me which you should have"
+    layer: agent
+    wrong: >-
+      Two wrong answers from one misread field, and the tester spotted the
+      invisible one: because the shelf appeared to hold an eye product, the
+      suggestion to get one was withheld.
+    fixed: >-
+      The engine refuses `eye` from the reader unless the name mentions the eye.
+      The first attempt reused the form keyword phrases and threw away "Youth
+      Dose Eye Treatment" and "Eye Repair Cream" — refusing a real one is worse
+      than the bug — so the check has its own broader word list.
+    commit: 6807e89
+    class: error-causing-silence
+    caught_by_tests: false
+
+  - tester: 2
+    round: 1
+    reported: "I only showed a 7ml image of the la mer moisturizer but you included the price of a full sized one"
+    layer: schema
+    wrong: >-
+      The reader transcribed the whole label but had no field for how much was
+      in the container, so the lookup was asked for the price of "the standard
+      size" and gave it. Off by a factor of twenty, and every figure in the
+      money section inherits it.
+    fixed: Size is read off the container, carried into the lookup, and shown.
+    commit: 6807e89
+    class: unrepresentable-in-the-schema
+    caught_by_tests: false
+
+  # ---- tester 2, round 2: the fixes not holding ---------------------
+  - tester: 2
+    round: 2
+    reported: "you are still identifying products that are never there like an enzyme powder wash"
+    layer: agent
+    wrong: >-
+      The previous fix was at the wrong layer. It stopped the web lookup
+      substituting a product, which was real, but this product never went near
+      the lookup — the Shelf Reader invented it while reading the photograph.
+      The prompt forbade inventing an ingredient and said nothing about
+      inventing a product.
+    fixed: >-
+      unsupported_names() checks each product's name against the text the reader
+      transcribed from that product's own label, the mirror of the check that
+      catches a dropped ingredient. It detects rather than deletes.
+    commit: 75b5110
+    class: fix-at-the-wrong-layer
+    caught_by_tests: false
+
+  - tester: 2
+    round: 2
+    reported: "you are still not using the size of the lamer to find the correct online retail price"
+    layer: presentation
+    wrong: >-
+      The size plumbing was live but invisible: size was read and used silently,
+      so when the price came back wrong there was no way to see whether the size
+      or the price was at fault, and no way to correct either.
+    fixed: >-
+      Size is shown and editable and a typed size beats the photograph. A price
+      found for a different size is now refused rather than captioned — a wrong
+      price is not a rough price.
+    commit: 75b5110
+    class: invisible-to-the-user
+    caught_by_tests: false
+
+  - tester: 2
+    round: 2
+    reported: "I tried to tell the app what is wrong and should be replaced in the what is missing section but it just added more items to the list even though I was clarifying what wrong actions it did"
+    layer: design
+    wrong: >-
+      Every input the page offered was additive. There was no way to remove
+      anything, so a correction typed into the only available box came back as
+      another product. This is why the same bug had to be reported twice.
+    fixed: >-
+      A "Not mine" control that removes a product and keeps it removed across
+      rounds. A vision model can be made to invent fewer products and cannot be
+      made to invent none, so this is a safety mechanism rather than a
+      convenience.
+    commit: 75b5110
+    class: no-way-to-correct
+    caught_by_tests: false
+
+  # ---- tester 2, round 3: the overcorrection -----------------------
+  - tester: 2
+    round: 3
+    reported: "they have a mist from cocokind and gave the quantity, but the app does not tell them the retail price"
+    layer: comparison
+    wrong: >-
+      My own previous fix, overcorrecting. The 7 ml La Mer complaint was a
+      full-jar price shown as if it were theirs, so I made a size mismatch
+      refuse the price outright — which fixed the wrong number by removing the
+      number. Worse, the mismatch was spurious: the lookup HAD found the right
+      price, $18 for the 4 fl oz from the brand's own page, and returned the
+      size as "4 fl oz / 120 mL" because that is how the bottle is labelled.
+      Comparing that to "4 fl oz" as a string called it a different size.
+    fixed: >-
+      Sizes are compared by measure rather than text — a container is a set of
+      (amount, unit) pairs, and one shared measure is agreement. A price for a
+      genuinely different size is now shown beside the product with that size
+      named inline, and excluded from the totals: visible because they asked
+      for it, never presented as theirs, never added up.
+    commit: pending
+    class: fix-caused-new-bug
+    caught_by_tests: false
+
+  - tester: 2
+    round: 3
+    reported: "this text does not have to wrap around like this"
+    layer: presentation
+    wrong: >-
+      The landing page standfirst carried max-width:46ch, a measure meant for a
+      column of body text, and broke one sentence across three lines leaving
+      "in." alone on the last.
+    fixed: 64ch, plus text-wrap:pretty so a future edit cannot orphan a word.
+    commit: pending
+    class: typography
+    caught_by_tests: false
+

@@ -35,7 +35,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 
 from lookup import _brand_conflict, source_name  # noqa: E402
 from models import InputProduct  # noqa: E402
-from rules import Rules  # noqa: E402
+from rules import Rules, same_size, size_measures  # noqa: E402
 
 R = Rules()
 failures: list[str] = []
@@ -152,6 +152,43 @@ check_true("and the retinol is in the routine as a treatment or serum",
                for s in audit.routine.am + audit.routine.pm),
            str([(s.product_name[:20], s.form_id)
                 for s in audit.routine.am + audit.routine.pm]))
+
+
+# --- two sizes are the same size --------------------------------------
+# A tester stated their product and its quantity and got no price. The
+# lookup had in fact found the right one — $18 for the 4 fl oz, from the
+# brand's own page — and returned the size as "4 fl oz / 120 mL", which
+# is how the bottle is labelled. Comparing that to the user's "4 fl oz"
+# as text called it a mismatch, and a correct price was dropped out of
+# the money section as though it belonged to a different bottle.
+#
+# The fix that caused it is worth recording too: an earlier round showed
+# a full-jar price for a 7 ml sample, I made a size mismatch refuse the
+# price outright, and that overcorrection is what produced "no price at
+# all". A container is a set of measures, not a string.
+for a, b, want in [
+    ("4 fl oz / 120 mL", "4 fl oz", True),
+    ("4 fl oz", "4 fl oz / 120 mL", True),
+    ("7 ml", "7ml", True),
+    ("1.7 fl oz", "1.7 oz", True),
+    ("50g", "50 g", True),
+    ("3.4 fl oz / 100 mL", "3.4 fl oz", True),
+    # Genuinely different bottles still have to be caught — this is the
+    # La Mer case the whole mechanism exists for.
+    ("2 oz / 60 mL", "0.24 oz / 7 mL", False),
+    ("7 ml", "60 ml", False),
+    ("1 fl oz / 30 mL", "3.4 fl oz / 100 mL", False),
+]:
+    check(f"{a!r} vs {b!r}", same_size(a, b), want)
+
+# Unparseable sizes fall back to text rather than silently mismatching.
+check("an unparseable size still compares", same_size("travel size", "travel size"),
+      True)
+check("and two different ones do not", same_size("travel size", "full size"), False)
+check("an empty size is not a mismatch against itself", same_size("", ""), True)
+
+check("a dual-unit label yields both measures",
+      size_measures("4 fl oz / 120 mL"), {(4.0, "oz"), (120.0, "ml")})
 
 
 # --- size reaches the product -----------------------------------------

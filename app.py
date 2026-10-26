@@ -43,7 +43,7 @@ from models import ReadProduct, ShelfReading, InputProduct, display_name  # noqa
 from pages import error_page, landing  # noqa: E402
 import render as render_mod  # noqa: E402
 from render import render  # noqa: E402
-from rules import normalise, Rules  # noqa: E402
+from rules import normalise, same_size, Rules  # noqa: E402
 from safety import unsupported_names, detect_suppression, trap_calls, AuditTrail  # noqa: E402
 from usage import UsageLog  # noqa: E402
 
@@ -380,16 +380,22 @@ async def audit(
                     # not a rough price. So it is refused, and the person
                     # holding the bottle is asked instead.
                     priced_size = (record.get("size") or "").strip()
+                    # Compared by measure, not by text. A container is
+                    # routinely labelled in two units — "4 fl oz / 120 mL"
+                    # is one bottle — and string equality called that a
+                    # mismatch against the user's "4 fl oz", dropping a
+                    # correct price out of the money section.
                     wrong_size = bool(
                         product.size and priced_size
-                        and normalise(priced_size) != normalise(product.size)
+                        and not same_size(priced_size, product.size)
                     )
+                    product.price_usd = float(record["typical_price_usd"])
+                    product.price_is_typical = True
                     if wrong_size:
+                        # Shown, but never as this bottle's price, and
+                        # never inside a total.
                         product.price_size_mismatch = priced_size
                         size_prices[product.name] = (product.size, priced_size)
-                    else:
-                        product.price_usd = float(record["typical_price_usd"])
-                        product.price_is_typical = True
                 sourced[product.name] = record
 
         # How long a mask stays on is a property of that mask, not of
@@ -495,12 +501,11 @@ async def audit(
             )
         for pname, (yours, priced) in size_prices.items():
             notes.append(
-                f"No price is shown for {pname}: yours is the {yours} size and "
-                f"the only published price we could find is for {priced}. Those "
-                f"differ by far more than anything else in the money section, so "
-                f"using it would make every figure here wrong rather than "
-                f"roughly right. Type what you paid — and the size box in the "
-                f"table below is there if we read the size wrong."
+                f"The only published price we could find for {pname} is for "
+                f"the {priced} size, and yours is {yours}. It is shown beside "
+                f"the product with that size named, and left out of the totals "
+                f"above — a price for a different size is worth seeing and is "
+                f"not worth adding up. Type what you paid to include it."
             )
         for pname, why in wrong_product.items():
             notes.append(

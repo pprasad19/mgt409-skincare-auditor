@@ -13,7 +13,13 @@ from render import CSS, LOADING_JS, LOADING_MARKUP, e
 EXTRA = """
 .hero{padding:72px 0 8px}
 .hero h1{margin:0 0 14px}
-.hero .tag{font:400 20px/1.5 var(--serif);color:var(--ink-dim);max-width:46ch;margin:0 0 10px}
+/* 46ch broke this sentence across three lines and left "in." alone on the
+   third. A measure that tight is for a column of body text, not for a
+   one-sentence standfirst. 64ch fits it in two, and text-wrap:pretty asks
+   the browser not to leave a single word on the last line if the sentence
+   changes again. */
+.hero .tag{font:400 20px/1.5 var(--serif);color:var(--ink-dim);max-width:64ch;
+           text-wrap:pretty;margin:0 0 10px}
 form{margin-top:36px}
 fieldset{border:1px solid var(--line);border-radius:16px;padding:26px 30px;margin:0 0 18px;
   background:var(--card);box-shadow:var(--shadow)}
