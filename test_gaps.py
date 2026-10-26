@@ -69,6 +69,8 @@ def suggestions_for(*products) -> dict[str, str]:
     return {g.kind: g.severity for g in _audit(*products).gaps if g.suggestion}
 
 
+BALM = ("Banila Co Clean It Zero Cleansing Balm", ["Water"])
+OIL = ("DHC Deep Cleansing Oil", ["Olive Oil"])
 CLEANSER = ("CeraVe Hydrating Cleanser", ["Ceramide NP", "Hyaluronic Acid"])
 MOISTURISER = ("CeraVe Moisturising Lotion", ["Ceramide NP", "Glycerin"])
 SPF = ("Daily SPF 50", ["Avobenzone", "Octocrylene"])
@@ -96,13 +98,21 @@ check("no optional step is reported as missing", invented, set())
 
 # --- a complete routine says nothing ------------------------------------
 # If this fires, the feature is noise on every well-stocked shelf.
-full = gaps_for(CLEANSER, NIACINAMIDE, MOISTURISER, SPF)
+# A complete routine now includes the first cleanse. Promoted from a
+# suggestion on 26 Oct 2026: the app tells every user to wear sunscreen
+# daily and sunscreen does not come off with water, so treating its
+# removal as optional was the page disagreeing with itself.
+full = gaps_for(OIL, CLEANSER, NIACINAMIDE, MOISTURISER, SPF)
 check("a complete routine has no gaps", full, {})
+check("and without an oil cleanse it is not complete",
+      "no_oil_cleanser" in gaps_for(CLEANSER, NIACINAMIDE, MOISTURISER, SPF), True)
 
 
 # --- one at a time -------------------------------------------------------
-check("missing only a cleanser", set(gaps_for(MOISTURISER, SPF)), {"no_cleanser"})
-check("missing only a moisturiser", set(gaps_for(CLEANSER, SPF)), {"no_moisturiser"})
+check("missing only a cleanser", set(gaps_for(OIL, MOISTURISER, SPF)),
+      {"no_cleanser"})
+check("missing only a moisturiser", set(gaps_for(OIL, CLEANSER, SPF)),
+      {"no_moisturiser"})
 
 
 # --- sunscreen, which depends on what else is there ----------------------
@@ -115,7 +125,7 @@ check("photosensitiser and no SPF is high",
 check("photosensitiser with SPF is a reminder, not a gap",
       gaps_for(CLEANSER, RETINOL, MOISTURISER, SPF).get("spf_is_load_bearing"),
       "medium")
-gentle = gaps_for(CLEANSER, MOISTURISER)
+gentle = gaps_for(OIL, CLEANSER, MOISTURISER)
 check("nothing photosensitising and no SPF still says so",
       gentle.get("no_spf"), "medium")
 check_true("and it is the only gap on that shelf", set(gentle) == {"no_spf"},
@@ -162,9 +172,6 @@ check("and names every one of them", sorted(dup.because),
 # could notice the "balm". It was also placed in the morning routine.
 # An oil cleanser is the first half of a double cleanse: evening only,
 # and the water-based wash still has to follow it.
-BALM = ("Banila Co Clean It Zero Cleansing Balm", ["Water"])
-OIL = ("DHC Deep Cleansing Oil", ["Olive Oil"])
-
 for name, ings in (BALM, OIL):
     got = R.resolve(InputProduct(name=name, listed_ingredients=list(ings)))
     check(f"{name.split()[0]} is an oil cleanser", got.form, "oil_cleanser")
@@ -283,10 +290,12 @@ check_true("a serum-less shelf is told to consider one",
            "consider_serum" in suggestions_for(CLEANSER, MOISTURISER, SPF),
            str(suggestions_for(CLEANSER, MOISTURISER, SPF)))
 check("a shelf with a serum is not", "consider_serum" in bare, False)
-check_true("an oil cleanser is suggested for the evening",
-           "consider_oil_cleanser" in bare, str(bare))
+# No longer a suggestion — it is required, and tested as one above.
+check("an oil cleanser is not offered as optional",
+      "consider_oil_cleanser" in bare, False)
+check("it is a gap instead", "no_oil_cleanser" in gaps_for(NIACINAMIDE), True)
 check("and not once you have one",
-      "consider_oil_cleanser" in suggestions_for(OIL, NIACINAMIDE), False)
+      "no_oil_cleanser" in gaps_for(OIL, NIACINAMIDE), False)
 
 # Suggestions are never urgent, and never claim something is wrong.
 for kind, sev in suggestions_for(NIACINAMIDE).items():
@@ -320,7 +329,7 @@ check_true("owning one leaves just the other",
 # feedback moved, and it should not move further without someone saying so.
 for shelf in ([NIACINAMIDE], [CLEANSER, MOISTURISER, SPF], [RETINOL], [OIL]):
     bad = {k for k in gaps_for(*shelf)
-           if k.removeprefix("no_") in {"toner", "eye", "serum", "oil_cleanser"}}
+           if k.removeprefix("no_") in {"toner", "eye", "serum"}}
     check(f"nothing optional is ever a gap ({shelf[0][0][:18]})", bad, set())
 
 
@@ -333,11 +342,19 @@ for form_id, severity, headline, why in ESSENTIAL_STEPS:
                severity in ("critical", "high", "medium", "low"), severity)
     check_true(f"{form_id} headline is a sentence", headline.endswith("."), headline)
     check_true(f"{form_id} says why, separately", len(why) > 60)
-check_true("only steps the AAD order names are treated as essential",
-           {f for f, *_ in ESSENTIAL_STEPS} == {"cleanser", "moisturiser"},
+check_true("the essentials are the AAD steps plus the first cleanse",
+           {f for f, *_ in ESSENTIAL_STEPS} == {"oil_cleanser", "cleanser",
+                                                "moisturiser"},
            str([f for f, *_ in ESSENTIAL_STEPS]))
-check_true("and those forms are the ones marked verified",
-           all(R.forms[f]["review"] == "verified" for f, *_ in ESSENTIAL_STEPS))
+# oil_cleanser is `reasoned`, not `verified` — the AAD order does not
+# cover double cleansing. It is required on this app's own internal
+# logic rather than on a published source, and that distinction is
+# recorded rather than smoothed over.
+check_true("the AAD-sourced ones are still marked verified",
+           all(R.forms[f]["review"] == "verified"
+               for f, *_ in ESSENTIAL_STEPS if f != "oil_cleanser"))
+check("and the first cleanse is honest about resting on reasoning",
+      R.forms["oil_cleanser"]["review"], "reasoned")
 
 
 # --- it reaches the page --------------------------------------------------

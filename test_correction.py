@@ -74,8 +74,20 @@ def post(**extra):
 
 
 def names_on(html: str) -> set[str]:
-    return {re.sub("<[^>]+>", "", m) for m in
-            re.findall(r'<div class="name">(.*?)</div>', html, re.S)}
+    """Every product in the audit, read from the correction table.
+
+    Read from the routine's step names until two cleansers in the
+    fixture started collapsing into a single "one of these, not both"
+    step — correct behaviour that made a product vanish from the
+    routine while remaining in the audit. The correction table is the
+    canonical list of what the audit is about, which is what these
+    checks actually mean.
+    """
+    m = re.search(r'<table class="prices">(.*?)</table>', html, re.S)
+    if not m:
+        return set()
+    cells = re.findall(r"<tr><td>(.*?)</td>", m.group(1), re.S)
+    return {re.sub("<[^>]+>", "", c).strip() for c in cells}
 
 
 # --- the shelf as it stands -------------------------------------------

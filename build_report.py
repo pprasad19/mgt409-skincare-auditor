@@ -642,19 +642,56 @@ The worst case ({cat.get('worst', '—')}) is a product sold in four sizes, wher
 
 <h2>7 · Limits, and what I would do next</h2>
 
-<h3>What is not verified</h3>
+<h3>What was withdrawn, and why</h3>
 
-<p>{r['unchecked_translations']} of the resolver's {r['terms']} search terms are
-non-English ingredient names that were machine-generated and have never been
-read by a speaker of {', '.join(r['languages'])}. This is the largest unverified
-surface in the project and it cannot be closed without four speakers.</p>
+<p>Until the final day the resolver carried 232 non-English ingredient names
+that a model had generated and no speaker of Korean, Japanese, Chinese or
+French had ever read. They were well over half of all its search terms and
+the largest unverified surface in the project.</p>
 
-<p>The risk is one-sided, which is what makes it containable: a <em>missing</em>
-translation costs a finding, which is safe; a <em>wrong</em> one invents an
-ingredient, and that warning is indistinguishable from a real one. So the
-unchecked half declares itself — when a product's actives are found only through
-a translated term, the page says so for that product, naming the ingredient and
-the language.</p>
+<p>The first answer was disclosure. The risk is one-sided — a <em>missing</em>
+translation costs a finding, which is safe, while a <em>wrong</em> one invents
+an ingredient — so the page flagged any product whose actives were found only
+through a translated term, naming the ingredient and the language.</p>
+
+<p><b>That was the wrong answer, and the file is no longer loaded.</b> A wrong
+translation does not produce a vague result; it produces a warning about a
+conflict the user does not have, and that warning is wrong whether or not a
+caveat sits beside it. The distinction that decided it is worth stating,
+because it is the same one running through the rule table: everything else
+here can be argued with. A <code>reasoned</code> row records the mechanism it
+rests on and a reader can judge it. A machine translation has no reasoning to
+inspect — it is a string a model produced. <b>The line is that we keep what we
+can show our working for.</b></p>
+
+<p>All {r['terms']} remaining search terms are INCI, a product name, or a
+reviewed alias. Little capability went with it: INCI nomenclature is
+international and EU, Korean and Japanese regulation requires it on the
+ingredient list, so a non-English label still resolves. What is gone is
+support for labels printing <em>only</em> a local name, where the failure is a
+missing finding rather than an invented one. The file stays in the repository
+for whoever has the four speakers, and <code>test_provenance.py</code> now
+asserts the stronger property — not that an unverified term declares itself,
+but that there are none.</p>
+
+<h3>What is still not verified</h3>
+
+<p>{r['reasoned']} of the {r['rules_total']} reviewed rows are
+<code>reasoned</code> rather than <code>verified</code>: the mechanism is
+recorded, no source covers that specific claim. Of the 27 pairwise rules, 17
+are in this state, and mostly cannot leave it — the literature tests
+ingredients singly, so there is no controlled study of stacking an AHA with a
+BHA. SKA-010 says so in its own source field: <em>"combined exfoliation
+exceeding repair capacity follows mechanically. Not demonstrated."</em> The
+remaining reasoned rows are single-ingredient properties where no decision
+hangs on the value, such as the pH range of a vitamin C derivative, which is a
+formulation convention rather than a finding.</p>
+
+<p>Form ordering is the same kind of claim: three of the {r['forms']} rows are
+published AAD guidance and the rest are the industry layering convention. The
+first cleanse is required on this app's own internal logic — it tells everyone
+to wear sunscreen, and sunscreen does not come off with water — rather than on
+a published source, and is marked <code>reasoned</code> accordingly.</p>
 
 <h3>The pattern across every real bug</h3>
 
@@ -685,9 +722,9 @@ matter what. Each was found by accident or by a tester, not by the suite.</p>
 <li><b>A third and fourth tester.</b> The saturation argument above says
 the next tester finds a new class, not a repeat. This is the highest-value
 remaining work and it is not close.</li>
-<li><b>Speakers for the four alias languages.</b> Converts
-{r['unchecked_translations']} machine-generated terms from contained risk into
-verified data.</li>
+<li><b>Speakers for the four alias languages.</b> The 232 withdrawn terms
+are kept in the repository; one reviewer per language makes them loadable
+again and restores support for labels printing only a local name.</li>
 <li><b>Sourcing the pairwise rules.</b> The {r['reasoned']} reasoned rows are
 mechanistic inference because the literature tests ingredients singly. A
 structured review of interaction studies would move some to verified.</li>
@@ -810,9 +847,11 @@ the exact case they were built to catch.</p>"""),
 
         slide(f"""
 <h2>Limits, honestly</h2>
-<p style="font-size:.8em">{r['unchecked_translations']} of {r['terms']} search
-terms are machine translations no speaker has read. The risk is one-sided, so
-the unchecked half <b>declares itself</b> on the page.</p>
+<p style="font-size:.8em">232 machine-translated ingredient names were
+<b>withdrawn on the last day</b>. Disclosure was not enough: a wrong
+translation invents an ingredient, and that warning is wrong whether or not a
+caveat sits beside it. All {r['terms']} remaining terms are INCI, a product
+name, or a reviewed alias.</p>
 <p style="font-size:.8em">{r['verified']} of {r['rules_total']} rules are
 source-verified; {r['reasoned']} are recorded mechanistic reasoning. Only
 verified rows are presented as settled.</p>

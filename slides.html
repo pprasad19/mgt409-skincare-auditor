@@ -118,7 +118,7 @@ prose, and anything it invents is dropped before the page is built.</p>
 <table style="font-size:.75em">
 <tr><th>Plain audit (median, n=151)</th>
     <td style="text-align:right"><b>$0.0009</b></td></tr>
-<tr><th>With product lookups (n=15)</th>
+<tr><th>With product lookups (n=17)</th>
     <td style="text-align:right"><b>$0.0059</b></td></tr>
 <tr><th>10,000 users / month, plain</th>
     <td style="text-align:right">$9</td></tr>
@@ -126,7 +126,7 @@ prose, and anything it invents is dropped before the page is built.</p>
     <td style="text-align:right">$59</td></tr>
 </table>
 <p class="fragment" style="font-size:.7em;color:#9c5f44">Caching saved
-36% of input spend — but a cache <i>write</i> costs 25%
+38% of input spend — but a cache <i>write</i> costs 25%
 <i>more</i> than not caching. It only pays with repetition.</p></section><section>
 <h2>Safety: measured, not described</h2>
 <p style="font-size:.8em">12 injection attacks · 3 arms</p>
@@ -142,13 +142,13 @@ prose, and anything it invents is dropped before the page is built.</p>
 instruction at all. Careful prompting scored identically to the naive arm —
 what stopped them was re-reading the input with a deterministic matcher that
 has no comprehension to exploit.</p></section><section>
-<h2>14 defects from 2 real testers</h2>
-<p style="font-size:.8em">828 automated checks across
+<h2>18 defects from 2 real testers</h2>
+<p style="font-size:.8em">829 automated checks across
 12 suites caught <b>none of them</b>.</p>
 <p class="fragment" style="font-size:.75em">Tester 1 knew skincare → domain
 errors.<br>Tester 2 checked against the bottles → identity errors.</p>
 <p class="fragment" style="font-size:.75em;color:#9c5f44">
-12 failure classes, 1 found by more than
+14 failure classes, 1 found by more than
 one tester. <b>Two testers is nowhere near saturation.</b></p></section><section>
 <h2>What every real bug had in common</h2>
 <p style="font-size:.85em">A shelf holding sunscreen, told it had none.<br>
@@ -160,9 +160,11 @@ All produced a clean, confident page.</b></p>
 <p class="fragment" style="font-size:.7em">And several of my own tests excluded
 the exact case they were built to catch.</p></section><section>
 <h2>Limits, honestly</h2>
-<p style="font-size:.8em">220 of 365 search
-terms are machine translations no speaker has read. The risk is one-sided, so
-the unchecked half <b>declares itself</b> on the page.</p>
+<p style="font-size:.8em">232 machine-translated ingredient names were
+<b>withdrawn on the last day</b>. Disclosure was not enough: a wrong
+translation invents an ingredient, and that warning is wrong whether or not a
+caveat sits beside it. All 145 remaining terms are INCI, a product
+name, or a reviewed alias.</p>
 <p style="font-size:.8em">33 of 75 rules are
 source-verified; 42 are recorded mechanistic reasoning. Only
 verified rows are presented as settled.</p>

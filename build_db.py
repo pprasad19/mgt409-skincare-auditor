@@ -141,6 +141,9 @@ CREATE TABLE product_forms (
     -- minute and worn for fifteen, and nothing in the schema could say so.
     -- Whether this form is worn for a while after it is applied. Not how
     -- long: that is looked up per product, because masks do not share one.
+    -- Forms you pick one of rather than layer, so two toners are offered
+    -- as a choice instead of being listed as two consecutive steps.
+    one_at_a_time  INTEGER NOT NULL DEFAULT 0,
     dwell_required INTEGER NOT NULL DEFAULT 0,
     dwell_note     TEXT,
     -- These numbers decide the order of every routine the app
@@ -195,7 +198,29 @@ def check_selector(selector: str, ids: set[str], classes: set[str], where: str, 
 
 def main() -> None:
     ingredients = load("ingredients.yaml")["ingredients"]
-    intl = (load("ingredient_aliases.yaml") or {}).get("aliases") or {}
+    # NOT LOADED. data/ingredient_aliases.yaml holds 232 non-English
+    # ingredient names that were machine-generated and never read by a
+    # speaker of Korean, Japanese, Chinese or French. The app used to load
+    # them and flag any product identified only through one.
+    #
+    # Withdrawn 26 Oct 2026. Disclosure was not enough: a wrong translation
+    # invents an ingredient the user does not own, and a warning about a
+    # conflict they do not have is wrong whether or not a caveat sits
+    # beside it. Everything else in this table can be argued with — a
+    # `reasoned` rule records the mechanism it rests on, and a reader can
+    # judge it. A machine translation has no reasoning to inspect; it is a
+    # string a model produced. That is the line: we keep what we can show
+    # our working for.
+    #
+    # Little capability is lost. INCI nomenclature is international and EU,
+    # Korean and Japanese regulation requires it on the ingredient list, so
+    # a non-English label still resolves through terms a human has checked.
+    # What goes is support for labels printing only a local name — and the
+    # failure there is a missing finding, which is the safe direction.
+    #
+    # The file stays in the repository. One speaker per language makes it
+    # loadable again by deleting this block.
+    intl: dict = {}
     rules_doc = load("interactions.yaml")
     interactions = rules_doc["interactions"]
     contraindications = rules_doc.get("contraindications", [])
@@ -357,9 +382,10 @@ def main() -> None:
 
     for form in forms:
         con.execute(
-            "INSERT INTO product_forms VALUES (?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO product_forms VALUES (?,?,?,?,?,?,?,?,?,?)",
             (form["id"], form["name"], form["rank"], ",".join(form["times"]),
-             form.get("note"), int(bool(form.get("dwell_required"))),
+             form.get("note"), int(bool(form.get("one_at_a_time"))),
+             int(bool(form.get("dwell_required"))),
              form.get("dwell_note"),
              form.get("source"), form.get("review", "pending")),
         )
@@ -410,7 +436,9 @@ def main() -> None:
     if states["pending"]:
         print(f"    {states['pending']:>4}  pending    nobody has looked yet")
     print("\n  Only verified rows are presented to the user as settled.")
-    print("  Translations in ingredient_aliases.yaml remain unchecked.")
+    print("  Every search term is INCI, a product name, or a reviewed")
+    print("  alias. The machine-translated names in")
+    print("  ingredient_aliases.yaml are NOT loaded — see main().")
 
 
 if __name__ == "__main__":

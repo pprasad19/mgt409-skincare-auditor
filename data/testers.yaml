@@ -262,3 +262,80 @@ findings:
     class: typography
     caught_by_tests: false
 
+  # ---- tester 2, round 4 --------------------------------------------
+  - tester: 2
+    round: 4
+    reported: "I provided 2 toners so why are you telling me to use both of them instead of telling me to just choose 1"
+    layer: model
+    wrong: >-
+      build_routine put every product into the slot its form allowed and ordered
+      them by rank, so two toners became step 2 and step 3. A routine step was
+      always something you do and never something you choose between, so the
+      page read as an instruction to apply both.
+    fixed: >-
+      product_forms.yaml gains one_at_a_time, and the forms flagged collapse to
+      a single step naming the alternatives. Not a blanket rule — layering two
+      serums is ordinary practice, so serum, treatment, mask, exfoliant and oil
+      are deliberately unflagged.
+    commit: pending
+    class: unrepresentable-in-the-schema
+    caught_by_tests: false
+
+  - tester: 2
+    round: 4
+    reported: "the routine sections only reflect my products, but later you tell me a gentle cleanser should be part of my routine and never incorporate it. for optional items like eye cream, give me the option to include it and then modify the routine"
+    layer: design
+    wrong: >-
+      The routine was built strictly from owned products, so the page asserted
+      "you need a cleanser" in one section and showed a routine without one two
+      sections above — leaving the reader to work out where it would go, which
+      is the question the routine exists to answer.
+    fixed: >-
+      A placeholder step, placed where the forms table says the step belongs.
+      Automatic for a missing essential, opt-in for an optional one. It is
+      visibly not a product: no price, no application spec, excluded from the
+      animation, the guided player and the printed card, because a timer
+      counting down for a product you do not own is an instruction to use it.
+    commit: pending
+    class: page-contradicts-itself
+    caught_by_tests: false
+
+  # ---- tester 1, round 3 --------------------------------------------
+  - tester: 1
+    round: 3
+    reported: "cleansing oil or balm should not be considered optional, it should definitely be included"
+    layer: product-judgement
+    wrong: >-
+      The oil cleanser sat in the "worth considering" tier. Internally
+      inconsistent: this app tells every user to wear sunscreen daily, and
+      sunscreen is formulated not to come off with water, so recommending it
+      and then treating its removal as optional was the page disagreeing with
+      itself.
+    fixed: >-
+      Promoted to an essential, which also gives it a placeholder step in the
+      evening routine. Recorded as `reasoned` rather than `verified` — the AAD
+      order does not cover double cleansing, so this rests on the app's own
+      logic rather than a published source, and the table says so.
+    commit: pending
+    class: advice-too-narrow
+    caught_by_tests: false
+
+  - tester: 1
+    round: 3
+    reported: "you are not reporting the prices that are directly in the urls that I am giving you"
+    layer: agent
+    wrong: >-
+      The lookup agent has a web search tool rather than a fetcher, so it never
+      opens the page the user pasted — it answers from search results about it.
+      price_on_page was false on every URL anyone had ever submitted, and the
+      money section fell back to a remembered figure or to nothing.
+    fixed: >-
+      The page is fetched once, with a User-Agent naming this project, and the
+      price is read from the schema.org Product block sites publish for exactly
+      this purpose. A published price outranks anything the agent inferred.
+      Sites that publish none are unchanged. Verified end to end: two pasted
+      links now report $18 and $6.
+    commit: pending
+    class: agent-cannot-do-what-it-claims
+    caught_by_tests: false
+

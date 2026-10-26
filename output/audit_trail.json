@@ -10169,5 +10169,727 @@
       "cache_write_tokens": 130,
       "output_tokens": 273
     }
+  },
+  {
+    "run_id": "f77a6586",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:28:21.642686+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 7,
+      "identified": 7,
+      "products": [
+        "ROUND LAB 1025 DOKDO TONER",
+        "MADAGASCAR CENTELLA LIGHT CLEANSING OIL",
+        "Retinol 0.1",
+        "The Retinol 0.1 Cream",
+        "BHA Blackhead Power Liquid",
+        "ANTHELIOS UVMUNE 400",
+        "Retinol 0.1"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3768,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 0,
+      "output_tokens": 753
+    }
+  },
+  {
+    "run_id": "f77a6586",
+    "seq": 2,
+    "timestamp": "2026-10-26T04:28:23.332253+00:00",
+    "agent": "skin_observer",
+    "step": "observe",
+    "defended": true,
+    "detail": {
+      "observations": [
+        {
+          "concern": "breakouts",
+          "confidence": "clear"
+        },
+        {
+          "concern": "redness",
+          "confidence": "possible"
+        },
+        {
+          "concern": "texture",
+          "confidence": "possible"
+        }
+      ],
+      "needs_a_clinician": false,
+      "lighting_note": false,
+      "named_conditions_removed": []
+    },
+    "usage": {
+      "input_tokens": 1724,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 106
+    }
+  },
+  {
+    "run_id": "f77a6586",
+    "seq": 3,
+    "timestamp": "2026-10-26T04:28:23.682196+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 8,
+      "steps": 7,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3711,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 857,
+      "output_tokens": 702
+    }
+  },
+  {
+    "run_id": "377f42ab",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:29:50.789343+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3012,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 158,
+      "output_tokens": 372
+    }
+  },
+  {
+    "run_id": "f0d729f9",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:29:52.538761+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 4,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 130,
+      "output_tokens": 273
+    }
+  },
+  {
+    "run_id": "6cc0ea3a",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:30:23.154116+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "ad25f724",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:31:40.474659+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 3,
+      "products": [
+        "magnesium mist",
+        "retinol daily micro-dose serum",
+        "Rejuvenating Night Cream"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3393,
+      "cache_read_tokens": 3183,
+      "cache_write_tokens": 84,
+      "output_tokens": 170
+    }
+  },
+  {
+    "run_id": "ad25f724",
+    "seq": 2,
+    "timestamp": "2026-10-26T04:32:18.208380+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 3,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3340,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 486,
+      "output_tokens": 698
+    }
+  },
+  {
+    "run_id": "d5cda93a",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:34:07.851755+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3012,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 158,
+      "output_tokens": 372
+    }
+  },
+  {
+    "run_id": "6c1805eb",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:34:09.432524+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 4,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 130,
+      "output_tokens": 273
+    }
+  },
+  {
+    "run_id": "b9ed5e36",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:34:42.772466+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "4defece0",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:38:21.548311+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 4,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 130,
+      "output_tokens": 279
+    }
+  },
+  {
+    "run_id": "ae0514ce",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:38:23.105229+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 4,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 130,
+      "output_tokens": 273
+    }
+  },
+  {
+    "run_id": "239d66ee",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:38:55.457736+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "d52a1437",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:39:13.495842+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 8,
+      "steps": 5,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3756,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 902,
+      "output_tokens": 610
+    }
+  },
+  {
+    "run_id": "0bebc0a8",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:39:57.402962+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 4,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 130,
+      "output_tokens": 279
+    }
+  },
+  {
+    "run_id": "413b2450",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:39:59.115610+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 4,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2984,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 130,
+      "output_tokens": 273
+    }
+  },
+  {
+    "run_id": "43122039",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:42:22.354723+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 5,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2997,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 143,
+      "output_tokens": 335
+    }
+  },
+  {
+    "run_id": "c21d4f03",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:42:26.520411+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 5,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 2997,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 143,
+      "output_tokens": 320
+    }
+  },
+  {
+    "run_id": "3cb486bc",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:47:29.732542+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3066,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 212,
+      "output_tokens": 576
+    }
+  },
+  {
+    "run_id": "90ad3254",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:48:07.700630+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 358
+    }
+  },
+  {
+    "run_id": "19e4383d",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:48:11.415989+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "88d6a888",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:48:43.931987+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "ce617893",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:50:28.137785+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 358
+    }
+  },
+  {
+    "run_id": "c7c69866",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:50:29.636893+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "84bf015a",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:51:10.401500+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "f97c220e",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:51:58.335721+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 5,
+      "identified": 5,
+      "products": [
+        "haruharu wonder",
+        "CENTELLA",
+        "Sulwhasoo",
+        "Double Serum",
+        "GREEN TEA SEED HYALURONIC CREAM"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3599,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 0,
+      "output_tokens": 474
+    }
+  },
+  {
+    "run_id": "e696568b",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:52:45.297544+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "a25a6a6a",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:53:13.087902+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 358
+    }
+  },
+  {
+    "run_id": "848de02a",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:53:15.040704+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "f97c220e",
+    "seq": 2,
+    "timestamp": "2026-10-26T04:54:35.691545+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 1,
+      "steps": 11,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3234,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 380,
+      "output_tokens": 634
+    }
+  },
+  {
+    "run_id": "34f57c3f",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:56:34.036808+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "72a56e79",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:56:59.474134+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 358
+    }
+  },
+  {
+    "run_id": "b52a215e",
+    "seq": 1,
+    "timestamp": "2026-10-26T04:57:01.029111+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
   }
 ]

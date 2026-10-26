@@ -188,6 +188,26 @@ class RoutineStep(BaseModel):
         description="Rule ids that placed this step here. Makes the ordering auditable "
                     "rather than something the user has to take on faith.",
     )
+    placeholder: bool = Field(
+        default=False,
+        description="This step is a product the user does not own — a missing "
+                    "essential, or an optional step they asked to include. It "
+                    "shows WHERE the step belongs rather than asserting they "
+                    "have one. Carries no price and no application spec, and "
+                    "takes no part in interaction checking: there is no "
+                    "formulation to reason about, and inventing one would put "
+                    "a finding on the page about a product that does not exist.",
+    )
+    instead_of: list[str] = Field(
+        default_factory=list,
+        description="Other products that do this same job, which the user should "
+                    "pick between rather than layer. A step was always something "
+                    "you do and never something you choose, so two toners became "
+                    "two consecutive steps and the routine told someone to apply "
+                    "both. Which forms behave this way is a per-form judgement in "
+                    "product_forms.yaml — layering two serums is ordinary and "
+                    "layering two toners is not.",
+    )
     dwell_seconds: int = Field(
         default=0,
         description="How long the product stays on after it is applied, before "

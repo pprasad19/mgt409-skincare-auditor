@@ -62,10 +62,10 @@ li{margin:.3rem 0}
 <p class="meta">
   Purnima Prasad · MGT 409 — AI Foundations for Managers · final project<br>
   Repository: <a href="https://github.com/pprasad19/mgt409-skincare-auditor">https://github.com/pprasad19/mgt409-skincare-auditor</a>
-  (commit <code>75b5110</code>)<br>
+  (commit <code>b86ea9a</code>)<br>
   App: runs locally — <code>python -m uvicorn app:app --port 8000</code>,
   then <code>http://localhost:8000</code>. Full instructions in the README.<br>
-  Generated 26 October 2026, 00:16 by <code>build_report.py</code>.
+  Generated 26 October 2026, 00:55 by <code>build_report.py</code>.
 </p>
 
 <h2>1 · Motivation</h2>
@@ -261,14 +261,14 @@ combination this tool exists for.</p>
 <h2>4 · Tokenomics</h2>
 
 <p>All figures below are measured from <code>output/usage_log.json</code>,
-which records every call this project has ever made — 614 calls across
-267 runs, including failed experiments and red-team runs. Regenerate
+which records every call this project has ever made — 658 calls across
+297 runs, including failed experiments and red-team runs. Regenerate
 with <code>python tools/tokenomics.py</code>.</p>
 
 <h3>Per call</h3>
 <table>
 <tr><th>Step</th><th class="n">Mean cost</th><th class="n">Calls</th></tr>
-<tr><td>routine_auditor</td><td class='n'>$0.00084</td><td class='n'>225</td></tr><tr><td>shelf_reader</td><td class='n'>$0.00056</td><td class='n'>205</td></tr><tr><td>lookup</td><td class='n'>$0.00093</td><td class='n'>128</td></tr><tr><td>skin_observer</td><td class='n'>$0.00041</td><td class='n'>23</td></tr><tr><td>url</td><td class='n'>$0.00114</td><td class='n'>21</td></tr>
+<tr><td>routine_auditor</td><td class='n'>$0.00082</td><td class='n'>248</td></tr><tr><td>shelf_reader</td><td class='n'>$0.00058</td><td class='n'>215</td></tr><tr><td>lookup</td><td class='n'>$0.00094</td><td class='n'>135</td></tr><tr><td>skin_observer</td><td class='n'>$0.00042</td><td class='n'>24</td></tr><tr><td>url</td><td class='n'>$0.00108</td><td class='n'>24</td></tr>
 </table>
 
 <h3>Per run, which is what a user pays for</h3>
@@ -279,7 +279,7 @@ with <code>python tools/tokenomics.py</code>.</p>
     <td class="n"><b>$0.0009</b></td>
     <td class="n">$0.0005</td>
     <td class="n">$0.0036</td></tr>
-<tr><td>With product lookups</td><td class="n">15</td>
+<tr><td>With product lookups</td><td class="n">17</td>
     <td class="n"><b>$0.0059</b></td>
     <td class="n">$0.0010</td>
     <td class="n">$0.0097</td></tr>
@@ -312,15 +312,15 @@ input</b> — writing is 25% <em>more</em> expensive than not caching. A read
 costs $0.01, a tenth. So caching only pays once enough reads have happened to
 cover the writes that created them.</p>
 
-<pre><code>input tokens          1,384,532
-  cache reads         669,849   (48% of input)
-  cache writes        429,742
-billed input          $0.08891
-same input, uncached  $0.13845
-saved                 $0.04954   (36% of input spend)</code></pre>
+<pre><code>input tokens          1,538,341
+  cache reads         775,647   (50% of input)
+  cache writes        466,726
+billed input          $0.09569
+same input, uncached  $0.15383
+saved                 $0.05814   (38% of input spend)</code></pre>
 
-<p>Caching landed on 267 of 523 enabled calls
-(51%). The margin depends entirely on that rate: a workload
+<p>Caching landed on 303 of 567 enabled calls
+(53%). The margin depends entirely on that rate: a workload
 with less repetition — users who run one audit and never return — would pay the
 write premium without earning it back.</p>
 
@@ -328,7 +328,7 @@ write premium without earning it back.</p>
 <p style="margin:0"><b>A trap worth recording.</b> The log's
 <code>input_tokens</code> is the <em>total</em>, with reads and writes counted
 inside it. Treating the three as separate pools and summing them reports a 60%
-saving where the truth is 36%. That error nearly reached
+saving where the truth is 38%. That error nearly reached
 this report; <code>tools/tokenomics.py</code> now asserts the identity before
 computing anything on top of it.</p>
 </div>
@@ -343,7 +343,7 @@ computing anything on top of it.</p>
     <td>A product is fetched once, ever</td>
     <td>A reformulation is not noticed until the cache is cleared</td></tr>
 <tr><td>Prompt caching</td>
-    <td>36% of input spend</td>
+    <td>38% of input spend</td>
     <td>Negative for one-shot users — the write premium is real</td></tr>
 <tr><td>Rules in code, not prompts</td>
     <td>No tokens at all for the decisions</td>
@@ -414,12 +414,12 @@ this system can send, buy or approve anything.</p>
 <h2>6 · Impact</h2>
 
 <p>3 testers were recruited; 2 have reported so
-far. They produced <b>14 distinct defects</b>, every one of which was
+far. They produced <b>18 distinct defects</b>, every one of which was
 missed by the automated suites.</p>
 
 <table>
 <tr><th class="n">T.R</th><th>What they said</th><th>Layer</th><th>Class</th></tr>
-<tr><td class='n'>1.1</td><td>how can you use a face mask only for 30s? masks are usually used for 10-20 mins</td><td>schema</td><td><code>unrepresentable-in-the-schema</code></td></tr><tr><td class='n'>1.1</td><td>what happened to a normal cleanser? cleansing oil is part of a double cleansing routine and used at night</td><td>data</td><td><code>category-too-coarse</code></td></tr><tr><td class='n'>1.1</td><td>when suggesting what is missing, you should specify what part of day it should be used in</td><td>presentation</td><td><code>incomplete-advice</code></td></tr><tr><td class='n'>1.2</td><td>for face masks, do not assume how long they should be used for. search it online</td><td>evidence</td><td><code>unsourced-number</code></td></tr><tr><td class='n'>1.2</td><td>toners and eye creams should always be listed as an optional item for both routines, and there should always be some type of serum</td><td>product-judgement</td><td><code>advice-too-narrow</code></td></tr><tr><td class='n'>2.1</td><td>I never provided a goodal calming moisture, so where is that coming from</td><td>agent</td><td><code>confidently-wrong-identity</code></td></tr><tr><td class='n'>2.1</td><td>the centella cleansing oil is from Skin1004 so why are you saying it is from manyo</td><td>agent</td><td><code>confidently-wrong-identity</code></td></tr><tr><td class='n'>2.1</td><td>why are you saying that the kiehl&#x27;s retinol is an eye cream when the packaging does not say that. because of this error, you did not suggest an eye cream to me which you should have</td><td>agent</td><td><code>error-causing-silence</code></td></tr><tr><td class='n'>2.1</td><td>I only showed a 7ml image of the la mer moisturizer but you included the price of a full sized one</td><td>schema</td><td><code>unrepresentable-in-the-schema</code></td></tr><tr><td class='n'>2.2</td><td>you are still identifying products that are never there like an enzyme powder wash</td><td>agent</td><td><code>fix-at-the-wrong-layer</code></td></tr><tr><td class='n'>2.2</td><td>you are still not using the size of the lamer to find the correct online retail price</td><td>presentation</td><td><code>invisible-to-the-user</code></td></tr><tr><td class='n'>2.2</td><td>I tried to tell the app what is wrong and should be replaced in the what is missing section but it just added more items to the list even though I was clarifying what wrong actions it did</td><td>design</td><td><code>no-way-to-correct</code></td></tr><tr><td class='n'>2.3</td><td>they have a mist from cocokind and gave the quantity, but the app does not tell them the retail price</td><td>comparison</td><td><code>fix-caused-new-bug</code></td></tr><tr><td class='n'>2.3</td><td>this text does not have to wrap around like this</td><td>presentation</td><td><code>typography</code></td></tr>
+<tr><td class='n'>1.1</td><td>how can you use a face mask only for 30s? masks are usually used for 10-20 mins</td><td>schema</td><td><code>unrepresentable-in-the-schema</code></td></tr><tr><td class='n'>1.1</td><td>what happened to a normal cleanser? cleansing oil is part of a double cleansing routine and used at night</td><td>data</td><td><code>category-too-coarse</code></td></tr><tr><td class='n'>1.1</td><td>when suggesting what is missing, you should specify what part of day it should be used in</td><td>presentation</td><td><code>incomplete-advice</code></td></tr><tr><td class='n'>1.2</td><td>for face masks, do not assume how long they should be used for. search it online</td><td>evidence</td><td><code>unsourced-number</code></td></tr><tr><td class='n'>1.2</td><td>toners and eye creams should always be listed as an optional item for both routines, and there should always be some type of serum</td><td>product-judgement</td><td><code>advice-too-narrow</code></td></tr><tr><td class='n'>2.1</td><td>I never provided a goodal calming moisture, so where is that coming from</td><td>agent</td><td><code>confidently-wrong-identity</code></td></tr><tr><td class='n'>2.1</td><td>the centella cleansing oil is from Skin1004 so why are you saying it is from manyo</td><td>agent</td><td><code>confidently-wrong-identity</code></td></tr><tr><td class='n'>2.1</td><td>why are you saying that the kiehl&#x27;s retinol is an eye cream when the packaging does not say that. because of this error, you did not suggest an eye cream to me which you should have</td><td>agent</td><td><code>error-causing-silence</code></td></tr><tr><td class='n'>2.1</td><td>I only showed a 7ml image of the la mer moisturizer but you included the price of a full sized one</td><td>schema</td><td><code>unrepresentable-in-the-schema</code></td></tr><tr><td class='n'>2.2</td><td>you are still identifying products that are never there like an enzyme powder wash</td><td>agent</td><td><code>fix-at-the-wrong-layer</code></td></tr><tr><td class='n'>2.2</td><td>you are still not using the size of the lamer to find the correct online retail price</td><td>presentation</td><td><code>invisible-to-the-user</code></td></tr><tr><td class='n'>2.2</td><td>I tried to tell the app what is wrong and should be replaced in the what is missing section but it just added more items to the list even though I was clarifying what wrong actions it did</td><td>design</td><td><code>no-way-to-correct</code></td></tr><tr><td class='n'>2.3</td><td>they have a mist from cocokind and gave the quantity, but the app does not tell them the retail price</td><td>comparison</td><td><code>fix-caused-new-bug</code></td></tr><tr><td class='n'>2.3</td><td>this text does not have to wrap around like this</td><td>presentation</td><td><code>typography</code></td></tr><tr><td class='n'>2.4</td><td>I provided 2 toners so why are you telling me to use both of them instead of telling me to just choose 1</td><td>model</td><td><code>unrepresentable-in-the-schema</code></td></tr><tr><td class='n'>2.4</td><td>the routine sections only reflect my products, but later you tell me a gentle cleanser should be part of my routine and never incorporate it. for optional items like eye cream, give me the option to include it and then modify the routine</td><td>design</td><td><code>page-contradicts-itself</code></td></tr><tr><td class='n'>1.3</td><td>cleansing oil or balm should not be considered optional, it should definitely be included</td><td>product-judgement</td><td><code>advice-too-narrow</code></td></tr><tr><td class='n'>1.3</td><td>you are not reporting the prices that are directly in the urls that I am giving you</td><td>agent</td><td><code>agent-cannot-do-what-it-claims</code></td></tr>
 </table>
 
 <h3>The finding that matters most</h3>
@@ -433,10 +433,10 @@ brand attributed to the wrong company, a 7 ml sample priced as a full jar.</p>
 
 <table>
 <tr><th>Failure class</th><th class="n">Findings</th></tr>
-<tr><td><code>unrepresentable-in-the-schema</code></td><td class='n'>2</td></tr><tr><td><code>confidently-wrong-identity</code></td><td class='n'>2</td></tr><tr><td><code>category-too-coarse</code></td><td class='n'>1</td></tr><tr><td><code>incomplete-advice</code></td><td class='n'>1</td></tr><tr><td><code>unsourced-number</code></td><td class='n'>1</td></tr><tr><td><code>advice-too-narrow</code></td><td class='n'>1</td></tr><tr><td><code>error-causing-silence</code></td><td class='n'>1</td></tr><tr><td><code>fix-at-the-wrong-layer</code></td><td class='n'>1</td></tr><tr><td><code>invisible-to-the-user</code></td><td class='n'>1</td></tr><tr><td><code>no-way-to-correct</code></td><td class='n'>1</td></tr><tr><td><code>fix-caused-new-bug</code></td><td class='n'>1</td></tr><tr><td><code>typography</code></td><td class='n'>1</td></tr>
+<tr><td><code>unrepresentable-in-the-schema</code></td><td class='n'>3</td></tr><tr><td><code>advice-too-narrow</code></td><td class='n'>2</td></tr><tr><td><code>confidently-wrong-identity</code></td><td class='n'>2</td></tr><tr><td><code>category-too-coarse</code></td><td class='n'>1</td></tr><tr><td><code>incomplete-advice</code></td><td class='n'>1</td></tr><tr><td><code>unsourced-number</code></td><td class='n'>1</td></tr><tr><td><code>error-causing-silence</code></td><td class='n'>1</td></tr><tr><td><code>fix-at-the-wrong-layer</code></td><td class='n'>1</td></tr><tr><td><code>invisible-to-the-user</code></td><td class='n'>1</td></tr><tr><td><code>no-way-to-correct</code></td><td class='n'>1</td></tr><tr><td><code>fix-caused-new-bug</code></td><td class='n'>1</td></tr><tr><td><code>typography</code></td><td class='n'>1</td></tr><tr><td><code>page-contradicts-itself</code></td><td class='n'>1</td></tr><tr><td><code>agent-cannot-do-what-it-claims</code></td><td class='n'>1</td></tr>
 </table>
 
-<p>Of 12 distinct failure classes,
+<p>Of 14 distinct failure classes,
 1 was found by more than one tester. That is the
 practical result: <b>at two testers this was nowhere near saturation</b>, and
 the marginal tester was still returning entirely new categories of defect rather
@@ -444,15 +444,15 @@ than confirming the first one's.</p>
 
 <h3>Against the automated suites</h3>
 
-<p>The project has 12 suites and 828 checks,
+<p>The project has 12 suites and 829 checks,
 all passing.</p>
 
 <table>
 <tr><th>Suite</th><th>What it is for</th><th class="n">Checks</th></tr>
-<tr><td><code>test_robustness.py</code></td><td>malformed and hostile input</td><td class='n'>16</td></tr><tr><td><code>test_i18n.py</code></td><td>Korean, French, Japanese, Chinese labels</td><td class='n'>281</td></tr><tr><td><code>test_storyboard.py</code></td><td>the routine animation and its GIF export</td><td class='n'>244</td></tr><tr><td><code>test_urls.py</code></td><td>pasted product pages, and what a hostile one cannot reach</td><td class='n'>35</td></tr><tr><td><code>test_mcp.py</code></td><td>the MCP server agrees with the app</td><td class='n'>21</td></tr><tr><td><code>test_thesis.py</code></td><td>a narrative contradicting every finding changes nothing</td><td class='n'>16</td></tr><tr><td><code>test_failure.py</code></td><td>each agent failing in turn</td><td class='n'>31</td></tr><tr><td><code>test_validator.py</code></td><td>invented rules and ghost products are dropped</td><td class='n'>18</td></tr><tr><td><code>test_provenance.py</code></td><td>unchecked translations declare themselves</td><td class='n'>29</td></tr><tr><td><code>test_gaps.py</code></td><td>what the shelf is missing, and what is not worth flagging</td><td class='n'>80</td></tr><tr><td><code>test_identity.py</code></td><td>the product on the page is the product in the bathroom</td><td class='n'>39</td></tr><tr><td><code>test_correction.py</code></td><td>the user can overrule the app, and it stays overruled</td><td class='n'>18</td></tr>
+<tr><td><code>test_robustness.py</code></td><td>malformed and hostile input</td><td class='n'>16</td></tr><tr><td><code>test_i18n.py</code></td><td>Korean, French, Japanese, Chinese labels</td><td class='n'>281</td></tr><tr><td><code>test_storyboard.py</code></td><td>the routine animation and its GIF export</td><td class='n'>244</td></tr><tr><td><code>test_urls.py</code></td><td>pasted product pages, and what a hostile one cannot reach</td><td class='n'>35</td></tr><tr><td><code>test_mcp.py</code></td><td>the MCP server agrees with the app</td><td class='n'>21</td></tr><tr><td><code>test_thesis.py</code></td><td>a narrative contradicting every finding changes nothing</td><td class='n'>16</td></tr><tr><td><code>test_failure.py</code></td><td>each agent failing in turn</td><td class='n'>31</td></tr><tr><td><code>test_validator.py</code></td><td>invented rules and ghost products are dropped</td><td class='n'>18</td></tr><tr><td><code>test_provenance.py</code></td><td>unchecked translations declare themselves</td><td class='n'>24</td></tr><tr><td><code>test_gaps.py</code></td><td>what the shelf is missing, and what is not worth flagging</td><td class='n'>86</td></tr><tr><td><code>test_identity.py</code></td><td>the product on the page is the product in the bathroom</td><td class='n'>39</td></tr><tr><td><code>test_correction.py</code></td><td>the user can overrule the app, and it stays overruled</td><td class='n'>18</td></tr>
 </table>
 
-<p><b>They caught none of the 14 defects above.</b> That is not an
+<p><b>They caught none of the 18 defects above.</b> That is not an
 argument against the tests — they catch regressions reliably, and three times
 this weekend a test caught me breaking something while fixing something else.
 It is an argument about what tests are <em>for</em>: they encode what I already
@@ -470,19 +470,56 @@ The worst case (SK-II Facial Treatment Essence, 147%) is a product sold in four 
 
 <h2>7 · Limits, and what I would do next</h2>
 
-<h3>What is not verified</h3>
+<h3>What was withdrawn, and why</h3>
 
-<p>220 of the resolver's 365 search terms are
-non-English ingredient names that were machine-generated and have never been
-read by a speaker of fr, ja, ko, zh. This is the largest unverified
-surface in the project and it cannot be closed without four speakers.</p>
+<p>Until the final day the resolver carried 232 non-English ingredient names
+that a model had generated and no speaker of Korean, Japanese, Chinese or
+French had ever read. They were well over half of all its search terms and
+the largest unverified surface in the project.</p>
 
-<p>The risk is one-sided, which is what makes it containable: a <em>missing</em>
-translation costs a finding, which is safe; a <em>wrong</em> one invents an
-ingredient, and that warning is indistinguishable from a real one. So the
-unchecked half declares itself — when a product's actives are found only through
-a translated term, the page says so for that product, naming the ingredient and
-the language.</p>
+<p>The first answer was disclosure. The risk is one-sided — a <em>missing</em>
+translation costs a finding, which is safe, while a <em>wrong</em> one invents
+an ingredient — so the page flagged any product whose actives were found only
+through a translated term, naming the ingredient and the language.</p>
+
+<p><b>That was the wrong answer, and the file is no longer loaded.</b> A wrong
+translation does not produce a vague result; it produces a warning about a
+conflict the user does not have, and that warning is wrong whether or not a
+caveat sits beside it. The distinction that decided it is worth stating,
+because it is the same one running through the rule table: everything else
+here can be argued with. A <code>reasoned</code> row records the mechanism it
+rests on and a reader can judge it. A machine translation has no reasoning to
+inspect — it is a string a model produced. <b>The line is that we keep what we
+can show our working for.</b></p>
+
+<p>All 145 remaining search terms are INCI, a product name, or a
+reviewed alias. Little capability went with it: INCI nomenclature is
+international and EU, Korean and Japanese regulation requires it on the
+ingredient list, so a non-English label still resolves. What is gone is
+support for labels printing <em>only</em> a local name, where the failure is a
+missing finding rather than an invented one. The file stays in the repository
+for whoever has the four speakers, and <code>test_provenance.py</code> now
+asserts the stronger property — not that an unverified term declares itself,
+but that there are none.</p>
+
+<h3>What is still not verified</h3>
+
+<p>42 of the 75 reviewed rows are
+<code>reasoned</code> rather than <code>verified</code>: the mechanism is
+recorded, no source covers that specific claim. Of the 27 pairwise rules, 17
+are in this state, and mostly cannot leave it — the literature tests
+ingredients singly, so there is no controlled study of stacking an AHA with a
+BHA. SKA-010 says so in its own source field: <em>"combined exfoliation
+exceeding repair capacity follows mechanically. Not demonstrated."</em> The
+remaining reasoned rows are single-ingredient properties where no decision
+hangs on the value, such as the pH range of a vitamin C derivative, which is a
+formulation convention rather than a finding.</p>
+
+<p>Form ordering is the same kind of claim: three of the 13 rows are
+published AAD guidance and the rest are the industry layering convention. The
+first cleanse is required on this app's own internal logic — it tells everyone
+to wear sunscreen, and sunscreen does not come off with water — rather than on
+a published source, and is marked <code>reasoned</code> accordingly.</p>
 
 <h3>The pattern across every real bug</h3>
 
@@ -513,9 +550,9 @@ matter what. Each was found by accident or by a tester, not by the suite.</p>
 <li><b>A third and fourth tester.</b> The saturation argument above says
 the next tester finds a new class, not a repeat. This is the highest-value
 remaining work and it is not close.</li>
-<li><b>Speakers for the four alias languages.</b> Converts
-220 machine-generated terms from contained risk into
-verified data.</li>
+<li><b>Speakers for the four alias languages.</b> The 232 withdrawn terms
+are kept in the repository; one reviewer per language makes them loadable
+again and restores support for labels printing only a local name.</li>
 <li><b>Sourcing the pairwise rules.</b> The 42 reasoned rows are
 mechanistic inference because the literature tests ingredients singly. A
 structured review of interaction studies would move some to verified.</li>
@@ -527,7 +564,7 @@ hand-written ground truth would turn "a tester found this" into a measurable
 accuracy figure.</li>
 </ol>
 
-<p class="foot">Generated 26 October 2026, 00:16 from
+<p class="foot">Generated 26 October 2026, 00:55 from
 <code>report_data.py</code>, which derives every figure above from the database,
 the usage log, the attack results and the test suites. No number in this
 document was typed by hand.</p>

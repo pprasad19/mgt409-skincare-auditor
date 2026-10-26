@@ -143,6 +143,10 @@ details.mech .body{font-size:14.5px;color:var(--ink-dim);padding:10px 0 0 16px;
 .slot h3{margin:0 0 16px;font:500 17px/1 var(--serif);display:flex;align-items:center;gap:9px}
 .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
 .dot.am{background:var(--sand)} .dot.pm{background:var(--sage)}
+.step.ghost{opacity:.85}
+.step.ghost .num{background:none;border:1px dashed var(--sand);color:var(--sand)}
+.step.ghost .name{color:var(--ink-dim)}
+.alt{font-size:13px;color:var(--clay);background:#fdf7ea;border-radius:5px;padding:5px 9px;margin:5px 0 2px}
 .step{display:flex;gap:14px;padding:13px 14px;border-radius:12px;
   border:1px solid transparent;transition:background .25s,border-color .25s}
 .step .num{width:25px;height:25px;flex:0 0 25px;border-radius:50%;background:var(--sunk);
@@ -1081,11 +1085,38 @@ def _step_row(step, spec, slot: str, total: int) -> str:
                                step.dwell_unknown, step.dwell_source)
         ]
         how = f'<div class="how">{e(" → ".join(bits))}</div>'
+    # Products that do this same job. Named on the step rather than left
+    # to the money section, because the question "do I use both of
+    # these?" is asked while reading the routine.
+    # A step for something you do not own. Visibly different from a
+    # product, because the page is telling you where a gap sits in the
+    # order rather than what to do with a bottle you have.
+    if step.placeholder:
+        return (
+            f'<div class="step ghost" data-step="{e(key)}">'
+            f'<div class="num">·</div><div>'
+            f'<div class="name">{e(step.product_name)}'
+            f'<span class="badge">not on your shelf</span></div>'
+            f'<div class="meta">{e(step.form)}</div>'
+            f'<div class="alt">This is where it would go. Nothing here is '
+            f'assuming you have one — it is in the order so you can see the '
+            f'shape of the routine, and the step above and below are what '
+            f'you actually own.</div>'
+            f"</div></div>"
+        )
+
+    alt = ""
+    if step.instead_of:
+        others = ", ".join(e(n) for n in step.instead_of)
+        alt = (f'<div class="alt">or <b>{others}</b> — one of these, '
+               f'not both. They do the same job, so pick whichever you '
+               f'prefer and keep the other for when it runs out.</div>')
+
     return (
         f'<div class="step" data-step="{e(key)}">'
         f'<div class="num">{step.order}</div><div>'
         f'<div class="name">{e(step.product_name)}{badge}</div>'
-        f'<div class="meta">{e(step.form)}</div>{how}'
+        f'<div class="meta">{e(step.form)}</div>{alt}{how}'
         f'<div style="margin-top:6px">{because}</div>'
         f"</div></div>"
     )
@@ -1682,6 +1713,10 @@ def _film_scenes(audit, specs: dict, explain: dict) -> list[dict]:
     firsts: list[tuple[str, object]] = []
     for label, steps in (("Morning", audit.routine.am), ("Evening", audit.routine.pm)):
         for st in steps:
+            # Nothing to draw: there is no bottle, no container shape and
+            # no amount. The animation is a depiction of doing something.
+            if st.placeholder:
+                continue
             if st.product_name not in slots:
                 slots[st.product_name] = set()
                 firsts.append((st.product_name, st))
@@ -1772,6 +1807,14 @@ def _print_card(audit: AuditResult, specs: dict) -> str:
     def column(label: str, steps: list) -> str:
         rows = []
         for s in steps:
+                # A placeholder is a gap in the order, not something to
+                # do. The written routine shows it because the shape is
+                # the point there; a timer counting fifteen seconds for
+                # a cleanser you do not own, a drawn hand applying it,
+                # or a line on a card taped inside a cabinet are all
+                # instructions to use a product that does not exist.
+            if s.placeholder:
+                continue
             spec = specs.get(s.product_name)
             detail = ""
             if spec:
@@ -1836,6 +1879,8 @@ def render(
     seq = []
     for slot, steps in (("am", audit.routine.am), ("pm", audit.routine.pm)):
         for s_ in steps:
+            if s_.placeholder:
+                continue
             seq.append({
                 "slot": slot, "order": s_.order, "of": len(steps),
                 "name": s_.product_name, "freq": s_.frequency,

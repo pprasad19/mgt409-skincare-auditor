@@ -418,6 +418,87 @@ def strip_urls(text: str) -> str:
     return "\n".join(line for line in lines if line.strip(" ,;-")).strip()
 
 
+# Named honestly. This fetches one page the user pasted, to read the
+# price that page publishes for machines; it is not a crawler and does
+# not pretend to be a browser.
+PAGE_UA = ("mgt409-skincare-auditor/1.0 "
+           "(Yale MGT 409 course project; reads published product metadata)")
+
+
+def _prices_in_jsonld(blob) -> list[float]:
+    """Every offers.price in a schema.org block, however it is nested."""
+    out: list[float] = []
+
+    def walk(node):
+        if isinstance(node, dict):
+            for key, value in node.items():
+                if key.lower() == "price" and isinstance(value, (str, int, float)):
+                    try:
+                        out.append(float(value))
+                    except (TypeError, ValueError):
+                        pass
+                else:
+                    walk(value)
+        elif isinstance(node, list):
+            for item in node:
+                walk(item)
+
+    walk(blob)
+    return out
+
+
+def price_from_page(url: str, timeout: float = 12.0) -> float | None:
+    """The price this page states in its own structured metadata.
+
+    Returns None for anything it cannot read cleanly — a site that
+    publishes no schema.org block, a page that declines the request, a
+    figure outside the range a skincare product occupies. None is a
+    normal answer and the caller already handles it.
+    """
+    if not url.lower().startswith(("http://", "https://")):
+        return None
+    try:
+        import httpx
+
+        response = httpx.get(
+            url,
+            headers={"User-Agent": PAGE_UA, "Accept": "text/html"},
+            follow_redirects=True,
+            timeout=timeout,
+        )
+        if response.status_code != 200:
+            return None
+        body = response.text
+    except Exception:  # noqa: BLE001
+        return None
+
+    found: list[float] = []
+    for block in re.findall(
+        r'<script[^>]+type=["\']application/ld\+json["\'][^>]*>(.*?)</script>',
+        body, re.S | re.I,
+    ):
+        try:
+            found += _prices_in_jsonld(json.loads(block.strip()))
+        except Exception:  # noqa: BLE001
+            continue
+
+    for match in re.finditer(
+        r'property=["\']product:price:amount["\']\s+content=["\']([0-9.]+)["\']',
+        body, re.I,
+    ):
+        try:
+            found.append(float(match.group(1)))
+        except ValueError:
+            continue
+
+    # A skincare product is not 4 cents and not sixteen hundred dollars.
+    # Shopify pages publish the price in cents alongside the dollar
+    # figure, so the bound is doing real work rather than guarding a
+    # hypothetical.
+    plausible = sorted({p for p in found if 1.0 <= p <= 1000.0})
+    return plausible[0] if plausible else None
+
+
 async def find_from_url(url: str, usage_log=None) -> dict | None:
     """Read one product page. Returns a record, or None if nothing credible.
 
@@ -443,14 +524,23 @@ async def find_from_url(url: str, usage_log=None) -> dict | None:
     if usage_log is not None:
         usage_log.record(f"url:{url[:40]}", result.usage)
 
+    # The page's own published price, read from its schema.org block.
+    # The agent has search rather than a fetcher, so price_on_page has
+    # been false on every URL anyone pasted and a tester noticed that
+    # the price printed on their link never appeared. This is the page
+    # speaking for itself, so it outranks anything the agent inferred.
+    published = price_from_page(url)
+
     ok = bool(out.found and out.inci)
     # A price only counts as this page's price if the model says it read
     # it here. Probing five real Amazon links, the one price that came
     # back was from the brand's own site — the model said so in its note
     # and the record stamped the Amazon URL on it anyway, so the page
     # showed a figure the user's own link contradicted.
-    priced = bool(out.typical_price_usd and out.price_on_page)
-    off_page_price = bool(out.typical_price_usd and not out.price_on_page)
+    priced = bool(published or (out.typical_price_usd and out.price_on_page))
+    off_page_price = bool(
+        not published and out.typical_price_usd and not out.price_on_page
+    )
     record = {
         "found": ok,
         "inci": out.inci if ok else [],
@@ -464,8 +554,9 @@ async def find_from_url(url: str, usage_log=None) -> dict | None:
         "list_found_at": out.source_url if not out.list_on_page else url,
         "matched_name": out.matched_name,
         "note": out.note,
-        "typical_price_usd": out.typical_price_usd if priced else None,
+        "typical_price_usd": (published or out.typical_price_usd) if priced else None,
         "price_source_url": url if priced else "",
+        "price_read_from_page": bool(published),
         "mask_minutes": out.mask_minutes,
         # Kept, but not as this page's price. The money section can still
         # use it as an estimate; what it must not do is attribute it to a

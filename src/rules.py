@@ -188,15 +188,6 @@ RECOMMENDED_STEPS: list[tuple[str, str, str, str]] = [
         "ingredient, at a concentration the other steps are not formulated "
         "for. Without one this shelf maintains rather than treats.",
     ),
-    (
-        "oil_cleanser",
-        "low",
-        "Nothing here breaks down sunscreen or makeup.",
-        "An oil or balm cleanser is the first of two evening steps: it lifts "
-        "sunscreen and makeup, which are designed not to rinse off, and the "
-        "water-based cleanser then takes it and the day's oil away. If you "
-        "wear either, one wash is usually doing half the job.",
-    ),
 ]
 
 # Offered, never missing. A toner and an eye cream are reasonable things
@@ -228,6 +219,18 @@ EYE_WORDS = ("eye", "yeux", "ojos", "augen", "occhi", "olhos",
              "아이", "눈", "目", "眼")
 
 ESSENTIAL_STEPS: list[tuple[str, str, str, str]] = [
+    (
+        "oil_cleanser",
+        "medium",
+        "Nothing here breaks down sunscreen or makeup.",
+        "Promoted from a suggestion to a requirement on 26 Oct 2026, after a "
+        "tester pointed out the inconsistency: this app tells every user to "
+        "wear sunscreen daily, and sunscreen is formulated not to come off "
+        "with water. Recommending it and then treating its removal as "
+        "optional was the page disagreeing with itself. An oil or balm "
+        "cleanser lifts sunscreen and makeup; the water-based cleanser then "
+        "takes it and the day's oil away.",
+    ),
     (
         "cleanser",
         "medium",
@@ -634,7 +637,8 @@ class Rules:
 
     # -- routine -----------------------------------------------------------
 
-    def build_routine(self, products: list[ResolvedProduct], findings: list[Finding]) -> Routine:
+    def build_routine(self, products: list[ResolvedProduct], findings: list[Finding],
+        wanted: set[str] | None = None) -> Routine:
         placement: dict[str, str] = {}
         because: dict[str, list[str]] = {p.product.name: [] for p in products}
 
@@ -741,6 +745,12 @@ class Rules:
                     because[name].append(f.rule_id)
 
         routine = Routine()
+        held_forms = {p.form for p in products}
+        # Essentials are never optional; the rest only if asked for.
+        include_missing = {f for f, *_ in ESSENTIAL_STEPS} | {"spf"}
+        include_missing |= set(wanted or ())
+        include_missing = {f for f in include_missing if f in self.forms}
+
         for slot in ("am", "pm"):
             steps = [
                 p for p in products
@@ -748,8 +758,72 @@ class Rules:
                 and slot in self.forms[p.form]["times"].split(",")
             ]
             steps.sort(key=lambda p: self.forms[p.form]["rank"])
+
+            # Collapse the forms you pick one of. Two toners are a choice
+            # between two products, not two things to put on your face,
+            # and the routine had no way to say so — it listed them as
+            # consecutive steps and a tester reasonably read that as an
+            # instruction to use both.
+            #
+            # The first of each such form keeps the step and names the
+            # others; the others leave the routine. Which one is "first"
+            # is arbitrary, so the step presents them as equals rather
+            # than recommending one.
+            alternatives: dict[str, list[str]] = {}
+            collapsed = []
+            for product in steps:
+                form = product.form
+                if not self.forms[form].get("one_at_a_time"):
+                    collapsed.append(product)
+                    continue
+                if form in alternatives:
+                    alternatives[form].append(product.product.name)
+                    continue
+                alternatives[form] = []
+                collapsed.append(product)
+            steps = collapsed
             target = routine.am if slot == "am" else routine.pm
-            for order, product in enumerate(steps, start=1):
+            # Steps for what is not on the shelf. A missing essential is
+            # always shown — the page already says you need one, and
+            # leaving it out of the routine was the page disagreeing
+            # with itself. An optional form appears only if asked for.
+            ghosts = []
+            for form_id in sorted(include_missing,
+                                  key=lambda f: self.forms[f]["rank"]):
+                if form_id in held_forms:
+                    continue
+                if slot not in self.forms[form_id]["times"].split(","):
+                    continue
+                ghosts.append(form_id)
+
+            # The list holds both resolved products and bare form ids, so
+            # the rank lookup has to cope with either — inserting a
+            # placeholder made the next insertion trip over it.
+            def _rank(entry) -> int:
+                form_id = entry if isinstance(entry, str) else entry.form
+                return self.forms[form_id]["rank"]
+
+            ordered: list = list(steps)
+            for form_id in ghosts:
+                rank = self.forms[form_id]["rank"]
+                at = next((n for n, entry in enumerate(ordered)
+                           if _rank(entry) > rank), len(ordered))
+                ordered.insert(at, form_id)
+
+            for order, product in enumerate(ordered, start=1):
+                if isinstance(product, str):
+                    form = self.forms[product]
+                    target.append(
+                        RoutineStep(
+                            product_name=f"a {form['name'].lower()}",
+                            form=form["name"],
+                            form_id=product,
+                            order=order,
+                            placeholder=True,
+                            because=[],
+                        )
+                    )
+                    continue
                 name = product.product.name
                 target.append(
                     RoutineStep(
@@ -763,6 +837,7 @@ class Rules:
                         # never a figure for "this kind of mask". If the
                         # form is worn and no time was found, the step
                         # says so rather than counting down a guess.
+                        instead_of=alternatives.get(product.form) or [],
                         dwell_seconds=product.dwell_seconds,
                         dwell_unknown=bool(
                             self.forms[product.form].get("dwell_required")

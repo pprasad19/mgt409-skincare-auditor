@@ -2,18 +2,31 @@
 
     python test_i18n.py
 
-Covers the two things that broke silently before:
+What the app claims about non-English labels, since 26 Oct 2026:
 
-  1. Ingredient resolution from local-language labels. The original
-     normalise() deleted every non-ASCII character, so a Korean or Japanese
-     label matched nothing and the audit came back clean and empty — a
-     confident wrong answer, which is worse than an error.
-  2. Form inference from non-English product names. An English-only keyword
-     list classified everything else as a serum, which then placed it wrongly
-     in the routine.
+  1. A label printing INCI resolves normally. This is the common case —
+     EU, Korean and Japanese regulation requires INCI on the ingredient
+     list, so a Korean product prints "Niacinamide" exactly as an
+     American one does.
+  2. A label printing ONLY a local name resolves to nothing. The 232
+     machine-translated ingredient names that used to cover this were
+     withdrawn: a wrong translation invents an ingredient the user does
+     not own, and a warning about a conflict they do not have is wrong
+     whether or not a caveat sits beside it. Finding nothing is the safe
+     direction.
+  3. Form inference from non-English product names still works.
 
-Neither failure raises anything. Both produce plausible output. That is the
-argument for checking them here rather than by eye.
+Point 3 is deliberate and worth stating, because the form keywords are
+also unverified translations. They are kept because getting a form wrong
+moves a product within the routine, where the user can see it, and
+cannot invent an ingredient. One table can produce a false warning; the
+other cannot. That asymmetry is the whole reason they were treated
+differently.
+
+normalise() once deleted every non-ASCII character, so a Korean label
+matched nothing and the audit came back clean and empty. That is still
+checked below — resolving to nothing must be a decision, not an
+encoding bug, which is why the INCI cases have to keep passing.
 """
 
 from __future__ import annotations
@@ -72,6 +85,21 @@ INGREDIENTS = [
 
 # Things that must NOT resolve. A false positive invents a conflict, which is
 # worse than missing one, so the absence cases are worth asserting too.
+# The real-world non-English case: a local label that prints INCI, which
+# EU, Korean and Japanese regulation requires on the ingredient list.
+# (language, as printed, expected actives)
+INCI_LABELS = [
+    ("ko", ["정제수", "Niacinamide", "부틸렌글라이콜"], {"niacinamide"}),
+    ("ko", ["정제수", "Retinol", "Squalane"], {"retinol", "squalane"}),
+    ("ja", ["水", "Niacinamide", "グリセリン"], {"niacinamide"}),
+    ("ja", ["水", "Ascorbic Acid"], {"l_ascorbic_acid"}),
+    ("zh", ["水", "Salicylic Acid"], {"salicylic_acid"}),
+    ("zh", ["水", "Niacinamide", "Hyaluronic Acid"],
+     {"niacinamide", "hyaluronic_acid"}),
+    ("fr", ["Aqua", "Rétinol", "Niacinamide"], {"niacinamide"}),
+    ("fr", ["Aqua", "Acide Salicylique", "Glycerin"], {"glycerin"}),
+]
+
 NEGATIVES = [
     ("ko", ["정제수", "향료", "부틸렌글라이콜"], {"retinol", "niacinamide", "salicylic_acid"}),
     ("ja", ["水", "香料", "エタノール"], {"retinol", "l_ascorbic_acid"}),
@@ -128,18 +156,44 @@ def main() -> int:
         if got != want:
             failures.append(f"form  {lang}  {name!r} -> {got}, expected {want}")
 
+    # A local-name-only label must now resolve to NOTHING. These are the
+    # same fixtures that used to assert the opposite; keeping them and
+    # flipping the expectation is what makes the withdrawal visible
+    # rather than a silent loss of coverage.
     for lang, terms, want in INGREDIENTS:
+        # Only the labels that print no INCI at all. Several fixtures mix
+        # a local name with an INCI one — "Aqua, Niacinamide, Acide
+        # salicylique" — and those must still resolve the INCI half, which
+        # is exactly the behaviour the withdrawal was chosen to preserve.
+        if any(t.isascii() for t in terms):
+            continue
         got = set(rules.resolve(InputProduct(name="x", listed_ingredients=terms)).actives)
-        missing = want - got
-        if missing:
-            failures.append(f"match {lang}  {terms} missed {sorted(missing)}")
+        if got:
+            failures.append(
+                f"match {lang}  {terms} resolved to {sorted(got)} — the "
+                f"machine-translated names are withdrawn and must not resolve"
+            )
 
     for lang, term, want in EXACT:
         got = set(rules.resolve_text(term))
-        if got != want:
+        if got:
             failures.append(
-                f"exact {lang}  {term!r} -> {sorted(got)}, expected {sorted(want)}"
+                f"exact {lang}  {term!r} resolved to {sorted(got)} — withdrawn"
             )
+
+    # And the case that actually matters: the same products, labelled the
+    # way regulation requires. If these ever fail, resolving nothing above
+    # has stopped being a decision and become an encoding bug again.
+    for lang, terms, want in INCI_LABELS:
+        got = set(rules.resolve(InputProduct(name="x", listed_ingredients=terms)).actives)
+        missing = want - got
+        if missing:
+            failures.append(f"inci  {lang}  {terms} missed {sorted(missing)}")
+
+    # No term in the live table may be a machine translation.
+    unverified = sorted({k for _t, _i, k in rules.terms if k.startswith("intl:")})
+    if unverified:
+        failures.append(f"unverified translation kinds are loaded: {unverified}")
 
     # No two ingredients may claim the same alias. A collision means the
     # matcher picks one arbitrarily and the other is unreachable.
