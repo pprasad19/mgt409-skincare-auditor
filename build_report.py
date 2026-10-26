@@ -930,15 +930,13 @@ money and naming a product nobody owns changes <b>nothing</b>.</p>
 
         slide(f"""
 <p class="kicker">What it produces</p>
-<div class="grid4">
+<div class="grid2">
 <figure>{img("02-findings.png", "", width="100%")}
-<figcaption>Findings, each citing its rule</figcaption></figure>
+<figcaption><b>Findings</b> — each citing the rule that produced it, with the
+engine's own count inside the summary</figcaption></figure>
 <figure>{img("03-routine.png", "", width="100%")}
-<figcaption>A morning and evening order</figcaption></figure>
-<figure>{img("04-gaps.png", "", width="100%")}
-<figcaption>What is <i>not</i> on the shelf</figcaption></figure>
-<figure>{img("06-film.png", "", width="100%")}
-<figcaption>A drawn walkthrough, per half-day</figcaption></figure>
+<figcaption><b>A morning and evening order</b> — steps you do not own shown in
+place, alternating nights marked</figcaption></figure>
 </div>"""),
 
         slide(f"""
@@ -1023,7 +1021,7 @@ saturation curve says they find a new class, not a repeat.</p>
 <title>{e(TITLE)} — slides</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
 <style>
-:root{{--ink:#1b1a18;--dim:#6f6962;--clay:#9c5f44;--sand:#c8a77f;
+:root{{--ink:#1b1a18;--dim:#5a554e;--clay:#9c5f44;--sand:#c8a77f;
   --line:#e3ded5;--bg:#faf7f2;--card:#fff;--good:#5c7a5e}}
 .reveal{{font-family:Charter,"Iowan Old Style",Georgia,serif;color:var(--ink);
   font-size:30px}}
@@ -1059,17 +1057,17 @@ saturation curve says they find a new class, not a repeat.</p>
   margin-top:.5em}}
 .cols3.small .pt{{font-size:.6em}}
 .pt{{background:var(--card);border:1px solid var(--line);border-left:4px solid
-  var(--sand);border-radius:7px;padding:.7em .8em;font-size:.62em;
-  line-height:1.4}}
+  var(--sand);border-radius:7px;padding:.75em .85em;font-size:.68em;
+  line-height:1.45}}
 .pt b{{color:var(--clay)}}
 
 .split{{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  gap:1.2em;align-items:start;font-size:.66em}}
+  gap:1.2em;align-items:start;font-size:.74em}}
 .proof{{background:var(--card);border:1px solid var(--line);border-radius:8px;
   padding:.9em 1em}}
 .proof.warn{{border-color:var(--sand);background:#fdf9f3}}
 .proofhead{{font-weight:700;color:var(--clay);margin:0 0 .4em}}
-.mono{{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.78em;
+.mono{{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.86em;
   color:var(--dim)}}
 
 .tiles{{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.6em;
@@ -1078,12 +1076,12 @@ saturation curve says they find a new class, not a repeat.</p>
   padding:.7em .65em;text-align:left;min-width:0}}
 .tile .fig{{font-size:.92em;font-weight:700;letter-spacing:-.02em;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
-.tile .lab{{font-size:.44em;color:var(--dim);margin-top:.35em;line-height:1.3}}
+.tile .lab{{font-size:.5em;color:var(--dim);margin-top:.35em;line-height:1.3}}
 .tile.warn .fig{{color:var(--clay)}}
 
 .bars{{margin:.4em 0 .7em}}
-.barrow{{display:grid;grid-template-columns:7.2em 1fr 3.4em;align-items:center;
-  gap:.7em;margin-bottom:.55em;font-size:.6em}}
+.barrow{{display:grid;grid-template-columns:8em 1fr 3.6em;align-items:center;
+  gap:.7em;margin-bottom:.6em;font-size:.68em}}
 .bartrack{{background:#efeae1;border-radius:999px;height:1.5em;overflow:hidden}}
 .barfill{{background:var(--sand);height:100%;border-radius:999px}}
 .barfill.good{{background:var(--good)}}
@@ -1093,30 +1091,31 @@ saturation curve says they find a new class, not a repeat.</p>
   letter-spacing:-.03em}}
 .hero.sub{{font-size:1.7em;color:var(--ink);margin-top:.35em}}
 .hero .of{{font-size:.5em;color:var(--dim);font-weight:400}}
-.herolab{{font-size:.56em;color:var(--dim);line-height:1.35;margin:.15em 0 0}}
+.herolab{{font-size:.68em;color:var(--dim);line-height:1.35;margin:.15em 0 0}}
 
 .hl{{color:var(--clay)}}
-.foot{{font-size:.52em;color:var(--dim);line-height:1.4;margin-top:.5em}}
+.foot{{font-size:.62em;color:var(--dim);line-height:1.4;margin-top:.5em}}
 .foot b{{color:var(--ink)}}
 
 /* Four screenshots at natural size are 1680px of content in a 760px
    box. Each cell is capped and the image fits inside it, so the grid
    cannot push the slide off the bottom of the screen. */
-/* Fixed rows, and the image is told its height rather than its width.
-   img() writes an inline style="width:100%", which beats any width
-   rule here — so the cap is on height, with !important to win against
-   the inline declaration, and the aspect ratio follows. */
-.grid4{{display:grid;grid-template-columns:1fr 1fr;
-  grid-template-rows:252px 252px;gap:.3em .9em;margin-top:.1em}}
-.grid4 > figure{{margin:0;min-height:0;display:flex;flex-direction:column;
+/* The image is told its height, not its width: img() writes an inline
+   style="width:100%" that beats any width rule here, so the cap is on
+   height with !important and the aspect ratio follows. */
+.grid2{{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  grid-template-rows:minmax(0,1fr);gap:.8em;margin-top:.2em;flex:1;
+  min-height:0;padding-bottom:.2em}}
+.grid2 > figure{{margin:0;min-height:0;display:flex;flex-direction:column;
   overflow:hidden}}
-.grid4 .shot{{margin:0;min-height:0;flex:1;display:flex;
+.grid2 .shot{{margin:0;min-height:0;flex:1;display:flex;
   flex-direction:column;overflow:hidden}}
-.grid4 .shot img{{height:100%;width:auto !important;object-fit:contain;
+.grid2 .shot img{{height:100%;width:auto !important;object-fit:contain;
   object-position:left top}}
-.grid4 .shot figcaption{{display:none}}
-.grid4 > figure > figcaption{{font-size:.38em;color:var(--dim);
-  margin-top:.18em;display:block;flex:none}}
+.grid2 .shot figcaption{{display:none}}
+.grid2 > figure > figcaption{{font-size:.44em;color:var(--dim);
+  margin-top:.35em;display:block;flex:none;line-height:1.35}}
+.grid2 > figure > figcaption b{{color:var(--ink)}}
 .reveal img{{border:1px solid var(--line);border-radius:5px;margin:0}}
 .dia{{text-align:center}}
 .dia svg{{max-height:60vh;width:auto}}
