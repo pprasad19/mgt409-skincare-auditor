@@ -466,6 +466,8 @@ combination this tool exists for.</p>
 
 {img("04-gaps.png", "What the shelf is missing — in three tiers, so a suggestion cannot read as a defect.")}
 
+{img("06-film.png", "The drawn walkthrough, with a tab per half of the day. Every duration here is the same figure the written step shows, because both render from <code>beats_for</code>; <code>tools/four_surfaces.py</code> checks that the four renderings agree. Downloadable as a GIF per half-day, so it survives being sent to someone.")}
+
 
 
 {img("05-correct.png", "The correction table, which exists because a tester had no way to tell the app it was wrong. <b>Found online</b> shows the figure this tool dug up and where it came from; <b>Use retail price</b> accepts that figure, <b>What you paid</b> overrides it, and an untouched figure is never summed. <b>Not mine</b> removes a product and keeps it removed; <b>Size</b> decides which price applies; <b>Prescribed</b> is the only way a product is treated as a prescription — the app no longer infers it from the ingredient table.")}
@@ -893,7 +895,8 @@ def build_slides(d: dict) -> str:
 <p class="lede">{e(TAGLINE)}</p>
 <p class="byline">{e(AUTHOR)}<br>
 <a href="{d['repo']['url']}">{d['repo']['url'].replace('https://', '')}</a><br>
-<span class="mono">git clone {d['repo']['url']}.git</span></p>
+<span class="mono">git clone {d['repo']['url']}.git</span><br>
+<a href="{d['repo']['url']}/blob/main/demo.mp4">▶ three-minute demo of one audit</a></p>
 </div>""", "cover"),
 
         slide(f"""
