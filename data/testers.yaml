@@ -817,6 +817,63 @@ findings:
     class: verdict-without-reason
     caught_by_tests: false
 
+  # ---- tester 2, round 8 --------------------------------------------
+  - tester: 2
+    round: 8
+    reported: "when I say that I dont use something, it is still being reflected in the what clashes what section"
+    layer: logic
+    wrong: >-
+      find() walked every product on the shelf, including the ones she had
+      ticked as never used. The routine builder had been taught to skip
+      those a round earlier and the finder had not, so the page excluded a
+      product from what to do and included it in what was wrong. A clash is
+      between two things you put on your face; something in a drawer cannot
+      clash with anything.
+    fixed: >-
+      find() excludes unused products. They stay in the product list, in the
+      correction table and in the unused tile, which is where an observation
+      about a product you do not use belongs.
+    commit: pending
+    class: declaration-ignored
+    caught_by_tests: false
+
+  - tester: 2
+    round: 8
+    reported: "the nothing duplicated item does not get updated"
+    layer: logic
+    wrong: >-
+      The same omission, seen from the money section. Marking one of a
+      duplicated pair as never used left the redundancy finding in place, so
+      the duplicate figure did not move - the tile answered a question she
+      had just changed the terms of. Two reports, one line of code.
+    fixed: >-
+      Follows from the finder fix. Marking one of a pair unused retires the
+      duplicate and moves the money to the unused tile, where it is counted
+      once rather than twice.
+    commit: pending
+    class: declaration-ignored
+    caught_by_tests: false
+
+  - tester: 2
+    round: 8
+    reported: "when I add an item, the use retail price checkbox does not immediately appear"
+    layer: logic
+    wrong: >-
+      The catalogue was consulted only when a label could not be read, because
+      its job there is to supply actives. It can also supply a price, and that
+      is a separate question - so a product whose ingredients we could read
+      came back with an empty Found online cell and no tick, however well
+      known it was.
+    fixed: >-
+      The catalogue is consulted for a price whichever way the actives were
+      found. Price only: no renaming, no actives, no catalogue attribution,
+      because a printed ingredient list is better evidence than a name match
+      and should keep winning those. A product the catalogue has never heard
+      of still says nothing found, honestly.
+    commit: pending
+    class: advice-too-narrow
+    caught_by_tests: false
+
 # Defects found by me, not by a tester - kept apart from `findings` so
 # the tester count the report quotes stays a tester count. Both turned
 # up in the same ten minutes, in the browser, while checking that the

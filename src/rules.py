@@ -523,6 +523,23 @@ class Rules:
                         typical_price = True
                 product = product.model_copy(update=updates)
 
+        elif product.price_found_usd is None:
+            # A readable label answers the question this branch exists
+            # for, so the catalogue is not consulted for actives. It was
+            # not consulted for a PRICE either, which is a separate
+            # question it can often answer — so a product whose
+            # ingredients we could read came back with nothing in Found
+            # online and no tick beside it: "when I add an item, the use
+            # retail price checkbox does not immediately appear".
+            #
+            # Price only. No renaming, no actives, no catalogue
+            # attribution: the label won those on merit and a name match
+            # is weaker evidence than a printed ingredient list.
+            hit = self.match_catalogue(product)
+            if hit and hit["typical_price_usd"]:
+                product = product.model_copy(update={
+                    "price_found_usd": float(hit["typical_price_usd"])})
+
         classes = sorted({self.ingredients[a]["class"] for a in actives})
 
         # Confidence is about actives, not about recognising every INCI line.
@@ -595,6 +612,23 @@ class Rules:
         return not allowed or product.form in allowed.split(",")
 
     def find(self, products: list[ResolvedProduct]) -> list[Finding]:
+        """Every interaction the table fires on, for the shelf in use.
+
+        Products the user has said she never uses are excluded. Two
+        tester reports turned out to be this one omission: "when I say
+        that I dont use something, it is still being reflected in the
+        what clashes what section", and a duplicate-function figure
+        that did not move when she marked one of the pair unused.
+
+        Both are the same mistake. A clash is between two things you
+        put on your face; a product sitting in a drawer cannot clash
+        with anything, and calling it a duplicate as well as unused is
+        two findings for one fact — the unused tile already says you
+        own it and do not use it. The routine builder had already been
+        taught to skip these; the finder had not, so the page excluded
+        them from what to do and included them in what was wrong.
+        """
+        products = [p for p in products if not p.product.unused]
         findings: list[Finding] = []
         seen: set[tuple[str, frozenset[str]]] = set()
 
