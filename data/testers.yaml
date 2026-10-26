@@ -974,7 +974,7 @@ findings:
       filter. The copy follows: once anything is set aside the section says
       "Nothing you use addresses this" rather than "nothing on your shelf",
       which would deny owning something the page lists two sections above.
-    commit: pending
+    commit: 4d9ddb2
     class: declaration-ignored
     caught_by_tests: false
 
@@ -990,7 +990,7 @@ findings:
     fixed: >-
       Named as groups with what each one shares: "3 moisturisers: A, B and
       C; 2 toners: D and E."
-    commit: pending
+    commit: 4d9ddb2
     class: verdict-without-reason
     caught_by_tests: false
 
@@ -1010,7 +1010,7 @@ findings:
       hedge that made three feel safer - "fine if you are rotating them or
       using up old stock" - is in the wording, where it belongs, rather
       than in a threshold that made the page disagree with itself.
-    commit: pending
+    commit: 4d9ddb2
     class: page-contradicts-itself
     caught_by_tests: false
 
@@ -1032,7 +1032,7 @@ findings:
       no rule citation, and a line saying to use it exactly as her clinician
       said. It is dropped from the film, the guided player and the printed
       card, which exist only to say how and for how long.
-    commit: pending
+    commit: 4d9ddb2
     class: page-contradicts-itself
     caught_by_tests: false
 
