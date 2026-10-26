@@ -27042,5 +27042,571 @@
       "cache_write_tokens": 224,
       "output_tokens": 472
     }
+  },
+  {
+    "run_id": "46b8c56e",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:02:29.232286+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 3,
+      "steps": 11,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3503,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 649,
+      "output_tokens": 698
+    }
+  },
+  {
+    "run_id": "4c38d491",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:04:31.412248+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 3,
+      "steps": 11,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3410,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 556,
+      "output_tokens": 684
+    }
+  },
+  {
+    "run_id": "b6e838e9",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:06:12.505270+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "49560aab",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:06:52.386498+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3006,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 152,
+      "output_tokens": 347
+    }
+  },
+  {
+    "run_id": "941cca46",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:06:57.528544+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3006,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 152,
+      "output_tokens": 383
+    }
+  },
+  {
+    "run_id": "20ddfb09",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:07:04.247945+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3006,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 152,
+      "output_tokens": 383
+    }
+  },
+  {
+    "run_id": "15402b6c",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:07:10.421213+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3030,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 176,
+      "output_tokens": 448
+    }
+  },
+  {
+    "run_id": "4a43adca",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:07:16.060281+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3056,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 202,
+      "output_tokens": 525
+    }
+  },
+  {
+    "run_id": "bdfaa50d",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:07:22.541413+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 1,
+      "steps": 1,
+      "rejected": [
+        "verification caveat stripped from summary",
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'",
+        "application spec for unknown product 'Sunscreen'",
+        "application spec for unknown product 'Cleansing oil or balm'",
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3104,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 250,
+      "output_tokens": 416
+    }
+  },
+  {
+    "run_id": "346af7fc",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:07:29.211976+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 1,
+      "steps": 1,
+      "rejected": [
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'",
+        "application spec for unknown product 'Sunscreen'",
+        "application spec for unknown product 'Cleansing oil or balm'",
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3053,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 199,
+      "output_tokens": 389
+    }
+  },
+  {
+    "run_id": "486747c5",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:07:37.168792+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3078,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 224,
+      "output_tokens": 472
+    }
+  },
+  {
+    "run_id": "8ddae131",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:08:34.202094+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 5,
+      "identified": 5,
+      "products": [
+        "Green Tea Seed Hyaluronic Cream",
+        "Double Serum",
+        "Wonder",
+        "BHA Blackhead Power Liquid",
+        "Gentle Foaming Moisturizing Wash"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3635,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 603
+    }
+  },
+  {
+    "run_id": "8ddae131",
+    "seq": 2,
+    "timestamp": "2026-10-26T15:08:35.381111+00:00",
+    "agent": "skin_observer",
+    "step": "observe",
+    "defended": true,
+    "detail": {
+      "observations": [
+        {
+          "concern": "breakouts",
+          "confidence": "clear"
+        },
+        {
+          "concern": "redness",
+          "confidence": "possible"
+        },
+        {
+          "concern": "texture",
+          "confidence": "possible"
+        }
+      ],
+      "needs_a_clinician": false,
+      "lighting_note": false,
+      "named_conditions_removed": []
+    },
+    "usage": {
+      "input_tokens": 1724,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 106
+    }
+  },
+  {
+    "run_id": "8ddae131",
+    "seq": 3,
+    "timestamp": "2026-10-26T15:08:41.985448+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 3,
+      "steps": 11,
+      "rejected": [
+        "verification caveat stripped from summary"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3491,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 637,
+      "output_tokens": 702
+    }
+  },
+  {
+    "run_id": "bf2185a6",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:10:27.597170+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "bbe94a9d",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:10:40.006755+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "black rice hyaluronic acid toner"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 3183,
+      "cache_write_tokens": 61,
+      "output_tokens": 102
+    }
+  },
+  {
+    "run_id": "bbe94a9d",
+    "seq": 2,
+    "timestamp": "2026-10-26T15:10:46.238697+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 3,
+      "steps": 11,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3503,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 649,
+      "output_tokens": 706
+    }
+  },
+  {
+    "run_id": "d608c3df",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:11:29.968995+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 3,
+      "steps": 11,
+      "rejected": [
+        "verification caveat stripped from summary"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3503,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 649,
+      "output_tokens": 676
+    }
+  },
+  {
+    "run_id": "8bcbf0b9",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:13:05.142845+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3006,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 152,
+      "output_tokens": 347
+    }
+  },
+  {
+    "run_id": "c84021cd",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:13:12.866549+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3006,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 152,
+      "output_tokens": 383
+    }
+  },
+  {
+    "run_id": "5c5b0a6b",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:13:24.324098+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3006,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 152,
+      "output_tokens": 383
+    }
+  },
+  {
+    "run_id": "94b214d8",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:13:32.977211+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3030,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 176,
+      "output_tokens": 448
+    }
+  },
+  {
+    "run_id": "9f6326d9",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:13:40.154761+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3056,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 202,
+      "output_tokens": 525
+    }
+  },
+  {
+    "run_id": "152f9547",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:13:47.142391+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 1,
+      "steps": 1,
+      "rejected": [
+        "verification caveat stripped from summary",
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'",
+        "application spec for unknown product 'Sunscreen'",
+        "application spec for unknown product 'Cleansing oil or balm'",
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3104,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 250,
+      "output_tokens": 416
+    }
+  },
+  {
+    "run_id": "579ba1a7",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:13:52.539728+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 1,
+      "steps": 1,
+      "rejected": [
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'",
+        "application spec for unknown product 'Sunscreen'",
+        "application spec for unknown product 'Cleansing oil or balm'",
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3053,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 199,
+      "output_tokens": 389
+    }
+  },
+  {
+    "run_id": "761130b1",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:13:57.900566+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3078,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 224,
+      "output_tokens": 472
+    }
   }
 ]

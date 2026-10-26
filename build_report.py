@@ -923,35 +923,36 @@ money and naming a product nobody owns changes <b>nothing</b>.</p>
               .replace("</figcaption>", "</p>")),
 
         slide(f"""
-<p class="kicker">What it produces</p>
-<div class="grid2">
-<figure>{img("02-findings.png", "", width="100%")}
-<figcaption><b>Findings</b> — each citing the rule that produced it, with the
-engine's own count inside the summary</figcaption></figure>
-<figure>{img("03-routine.png", "", width="100%")}
-<figcaption><b>A morning and evening order</b> — steps you do not own shown in
-place, alternating nights marked</figcaption></figure>
-</div>"""),
-
-        slide(f"""
-<p class="kicker">…and what the shelf is missing</p>
-<div class="grid2">
-<figure>{img("04-gaps.png", "", width="100%")}
-<figcaption><b>What to do</b> — missing steps in three tiers, each naming the
-products that triggered it, so a suggestion cannot read as a defect</figcaption>
-</figure>
-<figure>{img("06-film.png", "", width="100%")}
-<figcaption><b>A drawn walkthrough</b> — a tab per half of the day, each step
-timed from the same table the written routine uses</figcaption></figure>
-</div>"""),
-
-        slide(f"""
-<p class="kicker">You tell it what you have — and when it is wrong</p>
+<p class="kicker">What you give it</p>
 <div class="grid2">
 <figure>{img("01-input.png", "", width="100%")}
 <figcaption><b>Four ways in</b> — photograph the bottles, type them, paste a
 product link, and a face photo if you want the concerns read</figcaption>
 </figure>
+<figure>{img("02-findings.png", "", width="100%")}
+<figcaption><b>What comes back first</b> — the findings, each citing the rule
+that produced it, with the engine's own count inside the summary</figcaption>
+</figure>
+</div>"""),
+
+        slide(f"""
+<p class="kicker">What comes back</p>
+<div class="grid2">
+<figure>{img("03-routine.png", "", width="100%")}
+<figcaption><b>A morning and evening order</b> — steps you do not own shown in
+place, alternating nights marked</figcaption></figure>
+<figure>{img("04-gaps.png", "", width="100%")}
+<figcaption><b>What to do</b> — missing steps in three tiers, each naming the
+products that triggered it, so a suggestion cannot read as a defect</figcaption>
+</figure>
+</div>"""),
+
+        slide(f"""
+<p class="kicker">…and how you correct it</p>
+<div class="grid2">
+<figure>{img("06-film.png", "", width="100%")}
+<figcaption><b>A drawn walkthrough</b> — a tab per half of the day, each step
+timed from the same table the written routine uses</figcaption></figure>
 <figure>{img("05-correct.png", "", width="100%")}
 <figcaption><b>The correction table</b> — it exists because a tester had no way
 to say the app was wrong. Remove a product and it stays gone; a looked-up price
@@ -1124,10 +1125,13 @@ saturation curve says they find a new class, not a repeat.</p>
   min-height:0;padding-bottom:.2em}}
 .grid2 > figure{{margin:0;min-height:0;display:flex;flex-direction:column;
   overflow:hidden}}
-.grid2 .shot{{margin:0;min-height:0;flex:1;display:flex;
+/* flex:1 made the picture box fill the row, so a short screenshot left
+   its caption stranded at the bottom of the slide. */
+.grid2 .shot{{margin:0;min-height:0;flex:0 1 auto;display:flex;
   flex-direction:column;overflow:hidden}}
-.grid2 .shot img{{height:100%;width:auto !important;object-fit:contain;
-  object-position:left top}}
+.grid2 .shot img{{max-height:100%;max-width:100%;height:auto !important;
+  width:auto !important;object-fit:contain;object-position:left top;
+  align-self:flex-start}}
 .grid2 .shot figcaption{{display:none}}
 .grid2 > figure > figcaption{{font-size:.44em;color:var(--dim);
   margin-top:.35em;display:block;flex:none;line-height:1.35}}
