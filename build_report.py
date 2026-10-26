@@ -338,7 +338,7 @@ def build_report(d: dict) -> str:
 <p class="meta">
   {e(AUTHOR)} · {e(COURSE)} · final project<br>
   Repository: <a href="{repo['url']}">{repo['url']}</a>
-  (commit <code>{e(repo['commit'])}</code>)<br>
+  (branch <code>main</code>)<br>
   <code>git clone {repo['url']}.git</code><br>
   App: runs locally — <code>python -m uvicorn app:app --port 8000</code>,
   then <code>http://localhost:8000</code>. Full instructions in the README.<br>

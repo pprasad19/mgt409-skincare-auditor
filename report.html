@@ -66,13 +66,13 @@ li{margin:.3rem 0}
 <p class="meta">
   Purnima Prasad · MGT 409 — AI Foundations for Managers · final project<br>
   Repository: <a href="https://github.com/pprasad19/mgt409-skincare-auditor">https://github.com/pprasad19/mgt409-skincare-auditor</a>
-  (commit <code>a0372e1</code>)<br>
+  (branch <code>main</code>)<br>
   <code>git clone https://github.com/pprasad19/mgt409-skincare-auditor.git</code><br>
   App: runs locally — <code>python -m uvicorn app:app --port 8000</code>,
   then <code>http://localhost:8000</code>. Full instructions in the README.<br>
   Demo: <a href="https://github.com/pprasad19/mgt409-skincare-auditor/blob/main/demo.mp4">a three-minute screen
   recording</a> of one audit, start to finish.<br>
-  Generated 26 October 2026, 17:09 by <code>build_report.py</code>.
+  Generated 26 October 2026, 17:13 by <code>build_report.py</code>.
 </p>
 
 <h2>1 · Motivation</h2>
@@ -273,14 +273,14 @@ combination this tool exists for.</p>
 <h2>4 · Tokenomics</h2>
 
 <p>All figures below are measured from <code>output/usage_log.json</code>,
-which records every call this project has ever made — 1572 calls across
-1086 runs, including failed experiments and red-team runs. Regenerate
+which records every call this project has ever made — 1581 calls across
+1095 runs, including failed experiments and red-team runs. Regenerate
 with <code>python tools/tokenomics.py</code>.</p>
 
 <h3>Per call</h3>
 <table>
 <tr><th>Step</th><th class="n">Mean cost</th><th class="n">Calls</th></tr>
-<tr><td>routine_auditor</td><td class='n'>$0.00069</td><td class='n'>966</td></tr><tr><td>shelf_reader</td><td class='n'>$0.00067</td><td class='n'>348</td></tr><tr><td>lookup</td><td class='n'>$0.00100</td><td class='n'>171</td></tr><tr><td>skin_observer</td><td class='n'>$0.00043</td><td class='n'>45</td></tr><tr><td>url</td><td class='n'>$0.00111</td><td class='n'>30</td></tr>
+<tr><td>routine_auditor</td><td class='n'>$0.00069</td><td class='n'>974</td></tr><tr><td>shelf_reader</td><td class='n'>$0.00067</td><td class='n'>349</td></tr><tr><td>lookup</td><td class='n'>$0.00100</td><td class='n'>171</td></tr><tr><td>skin_observer</td><td class='n'>$0.00043</td><td class='n'>45</td></tr><tr><td>url</td><td class='n'>$0.00111</td><td class='n'>30</td></tr>
 </table>
 
 <h3>Per run, which is what a user pays for</h3>
@@ -324,14 +324,14 @@ input</b> — writing is 25% <em>more</em> expensive than not caching. A read
 costs $0.01, a tenth. So caching only pays once enough reads have happened to
 cover the writes that created them.</p>
 
-<pre><code>input tokens          4,519,821
-  cache reads         3,018,569   (67% of input)
-  cache writes        1,001,068
-billed input          $0.20534
-same input, uncached  $0.45198
-saved                 $0.24664   (55% of input spend)</code></pre>
+<pre><code>input tokens          4,547,530
+  cache reads         3,040,393   (67% of input)
+  cache writes        1,005,819
+billed input          $0.20626
+same input, uncached  $0.45475
+saved                 $0.24849   (55% of input spend)</code></pre>
 
-<p>Caching landed on 1110 of 1481 enabled calls
+<p>Caching landed on 1118 of 1490 enabled calls
 (75%). The margin depends entirely on that rate: a workload
 with less repetition — users who run one audit and never return — would pay the
 write premium without earning it back.</p>
@@ -651,7 +651,7 @@ hand-written ground truth would turn "a tester found this" into a measurable
 accuracy figure.</li>
 </ol>
 
-<p class="foot">Generated 26 October 2026, 17:09 from
+<p class="foot">Generated 26 October 2026, 17:13 from
 <code>report_data.py</code>, which derives every figure above from the database,
 the usage log, the attack results and the test suites. No number in this
 document was typed by hand.</p>
