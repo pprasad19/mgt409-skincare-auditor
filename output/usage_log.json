@@ -36173,5 +36173,330 @@
       "output": 0.0003355,
       "total": 0.00044338
     }
+  },
+  {
+    "run_id": "f8352b29",
+    "run_label": "web-5da0a9be",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-26T14:58:40.176136+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "3,183 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 3183,
+      "cache_write_tokens": 61,
+      "output_tokens": 99,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 3.183e-05,
+      "cache_write": 7.62e-06,
+      "output": 4.95e-05,
+      "total": 0.00010155
+    }
+  },
+  {
+    "run_id": "f8352b29",
+    "run_label": "web-5da0a9be",
+    "step": "lookup:Haruharu wonder black rice hya",
+    "timestamp": "2026-10-26T14:58:55.033029+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,693 tokens read from cache",
+    "tokens": {
+      "input_tokens": 4115,
+      "cache_read_tokens": 2693,
+      "cache_write_tokens": 1170,
+      "output_tokens": 652,
+      "requests": 2,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 2.52e-05,
+      "cached_input": 2.693e-05,
+      "cache_write": 0.00014625,
+      "output": 0.000326,
+      "total": 0.00052438
+    }
+  },
+  {
+    "run_id": "f8352b29",
+    "run_label": "web-5da0a9be",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-26T14:59:01.442599+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,728 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3410,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 556,
+      "output_tokens": 685,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.728e-05,
+      "cache_write": 6.95e-05,
+      "output": 0.0003425,
+      "total": 0.00045188
+    }
+  },
+  {
+    "run_id": "196edc3e",
+    "run_label": "web-a5eee0ee",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-26T14:59:34.097591+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 3,244 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.0004055,
+      "output": 5.6e-05,
+      "total": 0.0004741
+    }
+  },
+  {
+    "run_id": "5726f343",
+    "run_label": "web-c8a060da",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-26T15:00:05.960187+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,728 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3410,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 556,
+      "output_tokens": 684,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.728e-05,
+      "cache_write": 6.95e-05,
+      "output": 0.000342,
+      "total": 0.00045138
+    }
+  },
+  {
+    "run_id": "34bf86cc",
+    "run_label": "web-b922574a",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-26T15:00:15.393173+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,728 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3006,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 152,
+      "output_tokens": 347,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.728e-05,
+      "cache_write": 1.9e-05,
+      "output": 0.0001735,
+      "total": 0.00023238
+    }
+  },
+  {
+    "run_id": "49e73de6",
+    "run_label": "web-19d499d3",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-26T15:00:20.103221+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,728 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3006,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 152,
+      "output_tokens": 383,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.728e-05,
+      "cache_write": 1.9e-05,
+      "output": 0.0001915,
+      "total": 0.00025038
+    }
+  },
+  {
+    "run_id": "74cfb76e",
+    "run_label": "web-b64c4951",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-26T15:00:25.219399+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,728 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3006,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 152,
+      "output_tokens": 383,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.728e-05,
+      "cache_write": 1.9e-05,
+      "output": 0.0001915,
+      "total": 0.00025038
+    }
+  },
+  {
+    "run_id": "ea0e3fb0",
+    "run_label": "web-1ccbe3bf",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-26T15:00:30.966705+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,728 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3030,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 176,
+      "output_tokens": 448,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.728e-05,
+      "cache_write": 2.2e-05,
+      "output": 0.000224,
+      "total": 0.00028588
+    }
+  },
+  {
+    "run_id": "fa7857ba",
+    "run_label": "web-727f19ad",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-26T15:00:37.421055+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,728 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3056,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 202,
+      "output_tokens": 525,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.728e-05,
+      "cache_write": 2.525e-05,
+      "output": 0.0002625,
+      "total": 0.00032763
+    }
+  },
+  {
+    "run_id": "6383a0f9",
+    "run_label": "web-39f66f14",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-26T15:00:43.811956+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,728 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3104,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 250,
+      "output_tokens": 416,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.728e-05,
+      "cache_write": 3.125e-05,
+      "output": 0.000208,
+      "total": 0.00027913
+    }
+  },
+  {
+    "run_id": "f81f891f",
+    "run_label": "web-2ba35c48",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-26T15:00:49.743699+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,728 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3053,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 199,
+      "output_tokens": 389,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.728e-05,
+      "cache_write": 2.488e-05,
+      "output": 0.0001945,
+      "total": 0.00025926
+    }
+  },
+  {
+    "run_id": "e300ae66",
+    "run_label": "web-9170a946",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-26T15:00:55.713453+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,728 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3078,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 224,
+      "output_tokens": 472,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.728e-05,
+      "cache_write": 2.8e-05,
+      "output": 0.000236,
+      "total": 0.00030388
+    }
   }
 ]

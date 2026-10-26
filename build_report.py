@@ -893,32 +893,26 @@ def build_slides(d: dict) -> str:
 </div>""", "cover"),
 
         slide(f"""
-<p class="kicker">The problem</p>
-<h2>People buy skincare one product at a time<br>and use it all at once.</h2>
-<div class="cols3">
+<p class="kicker">The problem, and what is different</p>
+<h2>People buy skincare one product at a time
+and use it all at once.</h2>
+<div class="split">
+<div class="cols1">
 <div class="pt"><b>Nothing in the purchase path</b> looks at the
 combination.</div>
 <div class="pt"><b>A clash does not announce itself.</b> It looks like
 irritation you blame on one product, replace, and do not fix.</div>
-<div class="pt"><b>Nobody is positioned to say so.</b> Retailers are selling.
-Chatbots cite nothing. Ingredient databases know one product at a time.</div>
-</div>"""),
-
-        slide(f"""
-<p class="kicker">What is new</p>
-<h2>The rules table decides.<br>The model explains.</h2>
-<div class="split">
-<div>
-<p>Every finding, severity, routine position and dollar figure is computed by
-deterministic code from a reviewed table.</p>
-<p>The model reads labels and writes prose. It <b>cannot</b> introduce a
-finding or change a severity.</p>
+<div class="pt"><b>Nobody is positioned to say so.</b> Retailers are selling,
+chatbots cite nothing, ingredient databases know one product at a time.</div>
 </div>
 <div class="proof">
-<p class="proofhead">Enforced, not requested</p>
+<p class="proofhead">The rules table decides. The model explains.</p>
+<p>Every finding, severity, routine position and dollar figure is computed by
+deterministic code from a reviewed table. The model reads labels and writes
+prose — it <b>cannot</b> introduce a finding or change a severity.</p>
 <p>A narrative contradicting every finding, inventing a rule, rewriting the
 money and naming a product nobody owns changes <b>nothing</b>.</p>
-<p class="mono">test_thesis.py · {ts['total_checks']} checks</p>
+<p class="mono">enforced by test_thesis.py · {ts['total_checks']} checks</p>
 </div>
 </div>"""),
 
@@ -949,6 +943,19 @@ products that triggered it, so a suggestion cannot read as a defect</figcaption>
 <figure>{img("06-film.png", "", width="100%")}
 <figcaption><b>A drawn walkthrough</b> — a tab per half of the day, each step
 timed from the same table the written routine uses</figcaption></figure>
+</div>"""),
+
+        slide(f"""
+<p class="kicker">You tell it what you have — and when it is wrong</p>
+<div class="grid2">
+<figure>{img("01-input.png", "", width="100%")}
+<figcaption><b>Four ways in</b> — photograph the bottles, type them, paste a
+product link, and a face photo if you want the concerns read</figcaption>
+</figure>
+<figure>{img("05-correct.png", "", width="100%")}
+<figcaption><b>The correction table</b> — it exists because a tester had no way
+to say the app was wrong. Remove a product and it stays gone; a looked-up price
+counts only once you tick it</figcaption></figure>
 </div>"""),
 
         slide(f"""

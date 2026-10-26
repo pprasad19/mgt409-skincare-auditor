@@ -26789,5 +26789,258 @@
       "cache_write_tokens": 544,
       "output_tokens": 671
     }
+  },
+  {
+    "run_id": "5da0a9be",
+    "seq": 1,
+    "timestamp": "2026-10-26T14:58:40.176776+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "Haruharu wonder black rice hyaluronic acid toner"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 3183,
+      "cache_write_tokens": 61,
+      "output_tokens": 99
+    }
+  },
+  {
+    "run_id": "5da0a9be",
+    "seq": 2,
+    "timestamp": "2026-10-26T14:59:01.443066+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 3,
+      "steps": 11,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3410,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 556,
+      "output_tokens": 685
+    }
+  },
+  {
+    "run_id": "a5eee0ee",
+    "seq": 1,
+    "timestamp": "2026-10-26T14:59:34.098212+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "c8a060da",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:00:05.960647+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 3,
+      "steps": 11,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3410,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 556,
+      "output_tokens": 684
+    }
+  },
+  {
+    "run_id": "b922574a",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:00:15.393531+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3006,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 152,
+      "output_tokens": 347
+    }
+  },
+  {
+    "run_id": "19d499d3",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:00:20.103599+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3006,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 152,
+      "output_tokens": 383
+    }
+  },
+  {
+    "run_id": "b64c4951",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:00:25.219788+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3006,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 152,
+      "output_tokens": 383
+    }
+  },
+  {
+    "run_id": "1ccbe3bf",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:00:30.967159+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3030,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 176,
+      "output_tokens": 448
+    }
+  },
+  {
+    "run_id": "727f19ad",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:00:37.421864+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3056,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 202,
+      "output_tokens": 525
+    }
+  },
+  {
+    "run_id": "39f66f14",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:00:43.812369+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 1,
+      "steps": 1,
+      "rejected": [
+        "verification caveat stripped from summary",
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'",
+        "application spec for unknown product 'Sunscreen'",
+        "application spec for unknown product 'Cleansing oil or balm'",
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3104,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 250,
+      "output_tokens": 416
+    }
+  },
+  {
+    "run_id": "2ba35c48",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:00:49.744180+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 1,
+      "steps": 1,
+      "rejected": [
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'",
+        "application spec for unknown product 'Sunscreen'",
+        "application spec for unknown product 'Cleansing oil or balm'",
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3053,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 199,
+      "output_tokens": 389
+    }
+  },
+  {
+    "run_id": "9170a946",
+    "seq": 1,
+    "timestamp": "2026-10-26T15:00:55.713873+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3078,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 224,
+      "output_tokens": 472
+    }
   }
 ]
