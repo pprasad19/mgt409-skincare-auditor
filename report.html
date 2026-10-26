@@ -66,10 +66,10 @@ li{margin:.3rem 0}
 <p class="meta">
   Purnima Prasad · MGT 409 — AI Foundations for Managers · final project<br>
   Repository: <a href="https://github.com/pprasad19/mgt409-skincare-auditor">https://github.com/pprasad19/mgt409-skincare-auditor</a>
-  (commit <code>e58ff5c</code>)<br>
+  (commit <code>a2e2859</code>)<br>
   App: runs locally — <code>python -m uvicorn app:app --port 8000</code>,
   then <code>http://localhost:8000</code>. Full instructions in the README.<br>
-  Generated 26 October 2026, 11:20 by <code>build_report.py</code>.
+  Generated 26 October 2026, 11:29 by <code>build_report.py</code>.
 </p>
 
 <h2>1 · Motivation</h2>
@@ -268,14 +268,14 @@ combination this tool exists for.</p>
 <h2>4 · Tokenomics</h2>
 
 <p>All figures below are measured from <code>output/usage_log.json</code>,
-which records every call this project has ever made — 1501 calls across
-1024 runs, including failed experiments and red-team runs. Regenerate
+which records every call this project has ever made — 1510 calls across
+1033 runs, including failed experiments and red-team runs. Regenerate
 with <code>python tools/tokenomics.py</code>.</p>
 
 <h3>Per call</h3>
 <table>
 <tr><th>Step</th><th class="n">Mean cost</th><th class="n">Calls</th></tr>
-<tr><td>routine_auditor</td><td class='n'>$0.00069</td><td class='n'>910</td></tr><tr><td>shelf_reader</td><td class='n'>$0.00066</td><td class='n'>336</td></tr><tr><td>lookup</td><td class='n'>$0.00100</td><td class='n'>171</td></tr><tr><td>skin_observer</td><td class='n'>$0.00043</td><td class='n'>42</td></tr><tr><td>url</td><td class='n'>$0.00111</td><td class='n'>30</td></tr>
+<tr><td>routine_auditor</td><td class='n'>$0.00069</td><td class='n'>918</td></tr><tr><td>shelf_reader</td><td class='n'>$0.00067</td><td class='n'>337</td></tr><tr><td>lookup</td><td class='n'>$0.00100</td><td class='n'>171</td></tr><tr><td>skin_observer</td><td class='n'>$0.00043</td><td class='n'>42</td></tr><tr><td>url</td><td class='n'>$0.00111</td><td class='n'>30</td></tr>
 </table>
 
 <h3>Per run, which is what a user pays for</h3>
@@ -319,14 +319,14 @@ input</b> — writing is 25% <em>more</em> expensive than not caching. A read
 costs $0.01, a tenth. So caching only pays once enough reads have happened to
 cover the writes that created them.</p>
 
-<pre><code>input tokens          4,299,300
-  cache reads         2,862,163   (67% of input)
-  cache writes        961,220
-billed input          $0.19637
-same input, uncached  $0.42993
-saved                 $0.23356   (54% of input spend)</code></pre>
+<pre><code>input tokens          4,327,009
+  cache reads         2,883,987   (67% of input)
+  cache writes        965,971
+billed input          $0.19729
+same input, uncached  $0.43270
+saved                 $0.23541   (54% of input spend)</code></pre>
 
-<p>Caching landed on 1053 of 1410 enabled calls
+<p>Caching landed on 1061 of 1419 enabled calls
 (75%). The margin depends entirely on that rate: a workload
 with less repetition — users who run one audit and never return — would pay the
 write premium without earning it back.</p>
@@ -646,7 +646,7 @@ hand-written ground truth would turn "a tester found this" into a measurable
 accuracy figure.</li>
 </ol>
 
-<p class="foot">Generated 26 October 2026, 11:20 from
+<p class="foot">Generated 26 October 2026, 11:29 from
 <code>report_data.py</code>, which derives every figure above from the database,
 the usage log, the attack results and the test suites. No number in this
 document was typed by hand.</p>

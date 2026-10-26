@@ -954,9 +954,9 @@ products that triggered it, so a suggestion cannot read as a defect</figcaption>
 <figcaption><b>A drawn walkthrough</b> — a tab per half of the day, each step
 timed from the same table the written routine uses</figcaption></figure>
 <figure>{img("07-correct-detail.png", "", width="100%")}
-<figcaption><b>The correction table</b> — it exists because a tester had no way
-to say the app was wrong. A looked-up price counts only once you tick it, and a
-typed one overrides it. Four more columns off to the right: size, never use it,
+<figcaption><b>The correction table</b>, first four columns — it exists because
+a tester had no way to say the app was wrong. A looked-up price counts only
+once you tick it; a typed one overrides it. Not shown: size, never use it,
 prescribed, not mine</figcaption></figure>
 </div>"""),
 
