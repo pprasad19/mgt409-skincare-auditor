@@ -87,3 +87,50 @@ nobody — including us — starts treating the second kind as the first.
 An API key. `PORTKEY_API_KEY` is read from a `.env` file and
 `.env.example` lists the variable with no value. The app boots and serves
 the upload page without one; only running an audit needs it.
+
+---
+
+## Third run — 26 October 2026, the morning of submission
+
+Cloned `01a0f37` into an empty folder, put a `.env` one level above it, and
+followed the README literally. **It failed.**
+
+```
+python -m uvicorn app:app --port 8000
+C:\...\Python314\python.exe: No module named uvicorn
+```
+
+Lines 3 and 4 of the instructions used plain `python` — the *system*
+interpreter — after line 2 had installed everything into `.venv`.
+`build_db.py` survived by luck, because the system Python on this machine
+happens to have pyyaml; uvicorn was never there at all. Anyone following the
+README on a clean machine would have hit a dead end at the last line, and the
+requirements give that an automatic zero for "teaching staff can run it".
+
+Two days of testing the app found nothing this expensive. The instructions had
+simply never been run as written.
+
+Also found: `build_db.py` printed an em dash, which a Windows console on its
+default code page renders as a black diamond. First thing a grader sees.
+
+### After the fix, timed from an empty folder
+
+| | |
+|---|---|
+| `git clone` | 2s |
+| `python -m venv .venv` | 14s |
+| `pip install -r requirements.txt` | **4m 26s** — by far the slowest step |
+| `build_db.py` | 1s |
+| server up, `GET /` returns 200 | 15s |
+| **Total** | **4m 54s** |
+
+Then, with a real key one level above the clone:
+
+- `.env` discovery found it at the second search path, as the course expects
+- a two-product audit returned in **7s** — 2 findings citing SKA-050 and
+  SKA-083, the money section, and the routine GIF embedded
+
+Comfortably inside the ten-minute rule, with five minutes of headroom. The
+headroom is almost entirely `pip install`, so a slower network is the only
+realistic way to exceed it.
+
