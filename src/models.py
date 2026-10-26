@@ -64,6 +64,17 @@ class InputProduct(BaseModel):
         description="The size on the container, as printed. Decides which price "
                     "is the right one to look up.",
     )
+    price_off_page: str = Field(
+        default="",
+        description="Set when the user gave a link and the price shown did NOT "
+                    "come from that page. Amazon serves this reader a stub with "
+                    "no structured data, so a pasted Amazon link yields an "
+                    "estimate from elsewhere — which is a different number from "
+                    "the one on the screen the user is looking at. Shown, "
+                    "labelled, and kept out of the totals, like a wrong-size "
+                    "price: a figure that contradicts their own link must not "
+                    "be silently added up.",
+    )
     price_size_mismatch: str = Field(
         default="",
         description="Set when the price we found is for a different size from the "
@@ -118,6 +129,11 @@ class ResolvedProduct(BaseModel):
         description="The price came from the catalogue, not the user. Shown on the "
                     "page and kept out of anything the report cites as measured — "
                     "a typical price is not what this person paid.",
+    )
+    price_off_page: str = Field(
+        default="",
+        description="Where a price came from, when not from the link the user "
+                    "gave. Kept out of the money totals.",
     )
     dwell_seconds: int = Field(
         default=0,

@@ -481,3 +481,97 @@ findings:
     class: verdict-without-reason
     caught_by_tests: false
 
+  # ---- tester 1, round 6 --------------------------------------------
+  - tester: 1
+    round: 6
+    reported: "the prices you are taking from the Amazon sites are incorrect"
+    layer: correctness
+    wrong: >-
+      Amazon serves this reader a 3.7 KB stub with no structured data, so
+      price_from_page correctly returns nothing and the page falls back to the
+      agent's figure from elsewhere. That figure then went into the money
+      totals, so "on the shelf" contradicted the number on the screen the user
+      was looking at.
+    fixed: >-
+      Same treatment as a wrong-size price: shown beside the product, labelled
+      "a published listing, not your link", and excluded from the totals. A
+      price that contradicts their own link must not be silently added up.
+    commit: pending
+    class: confidently-wrong-provenance
+    caught_by_tests: false
+
+  - tester: 1
+    round: 6
+    reported: "the audio for all the words is not the best - words are mispronounced and s is not being read as seconds"
+    layer: presentation
+    wrong: >-
+      The "s" was mine. The placeholder beats I had added carried text like
+      "it takes about 50s", which a speech engine reads as "fifty ess" — the
+      written surfaces want the compact form and the spoken one does not, and
+      the two were sharing a string. Middle dots and em dashes used as visual
+      separators were read out or run through without a pause.
+    fixed: >-
+      A forSpeech() normaliser applied at the point of speech rather than at
+      each call site, so a line added later cannot miss it: units expanded,
+      SPF/AHA/BHA/UV spelled as letters, separators turned into commas. The
+      placeholder line now spells its duration out at source too.
+    commit: pending
+    class: written-for-the-eye-not-the-ear
+    caught_by_tests: false
+
+  - tester: 1
+    round: 6
+    reported: "for items that I do not have yet, I still think you should walk through the routine (audio and video) as if I had that item because I should not be able to do a routine without them"
+    layer: design
+    wrong: >-
+      A missing step was shown as an untimed placeholder with nothing to do,
+      on my reasoning that counting down for a product someone does not own
+      instructs them to use a thing that does not exist.
+    fixed: >-
+      Reversed. The reasoning reads well and mistakes what a walkthrough is
+      for — a guided routine that skips its own cleanser demonstrates
+      something nobody should follow. The step is now demonstrated in full
+      from the form's typical figures, in the written routine, the film and
+      the audio, and the honesty is carried by the label on every surface
+      rather than by the omission. This assertion has now been inverted twice
+      by two testers pulling in opposite directions.
+    commit: pending
+    class: fix-caused-new-bug
+    caught_by_tests: false
+
+  # ---- tester 3, round 2 --------------------------------------------
+  - tester: 3
+    round: 2
+    reported: "when talking about the cleansing oil/balm, I do not need a history lesson on why you are suggesting it to me, you can just start from the sentence this app tells every user..."
+    layer: presentation
+    wrong: >-
+      The user-facing message opened "Promoted from a suggestion to a
+      requirement on 26 Oct 2026, after a tester pointed out the
+      inconsistency" — a changelog entry written into advice. How the advice
+      came to exist is the project's business, not the reader's.
+    fixed: >-
+      Rewritten as advice; the provenance moved into the code comment where it
+      belongs. Every other string in the gap tables was scanned for the same
+      fault and this was the only one.
+    commit: pending
+    class: changelog-in-the-advice
+    caught_by_tests: false
+
+  - tester: 3
+    round: 2
+    reported: "why are the serums and items that do the same job (retin-a and the moisturizer) not covered in the duplicate function part of the app"
+    layer: presentation
+    wrong: >-
+      Reproducing her shelf, the duplicate IS found - SKA-006 fires on the
+      Retin-A and the retinol serum and the tile reads $12. What the tile never
+      said is WHICH products it counted, so there is no way to tell whether the
+      pair she has in mind is inside that figure. An unexplained number reads
+      as the app holding a private opinion it will not defend.
+    fixed: >-
+      Every non-zero money figure now names its products, and says that
+      anything unlisted was checked and does not overlap - so when the app IS
+      wrong about a pair, that is visible rather than inferred.
+    commit: pending
+    class: verdict-without-reason
+    caught_by_tests: false
+

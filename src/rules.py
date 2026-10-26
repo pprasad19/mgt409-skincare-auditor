@@ -228,13 +228,18 @@ ESSENTIAL_STEPS: list[tuple[str, str, str, str]] = [
         "oil_cleanser",
         "medium",
         "Nothing here breaks down sunscreen or makeup.",
-        "Promoted from a suggestion to a requirement on 26 Oct 2026, after a "
-        "tester pointed out the inconsistency: this app tells every user to "
-        "wear sunscreen daily, and sunscreen is formulated not to come off "
-        "with water. Recommending it and then treating its removal as "
-        "optional was the page disagreeing with itself. An oil or balm "
-        "cleanser lifts sunscreen and makeup; the water-based cleanser then "
-        "takes it and the day's oil away.",
+        # The reason this is a requirement rather than a suggestion —
+        # the app recommends daily sunscreen, and sunscreen is built not
+        # to rinse off — belongs in the comment, not on the page. The
+        # first version opened with "Promoted from a suggestion to a
+        # requirement on 26 Oct 2026, after a tester pointed out...",
+        # which is a changelog entry. A tester read it and said she did
+        # not need a history lesson. She was right: the user wants the
+        # advice, and how the advice came to exist is our business.
+        "This app recommends sunscreen every morning, and sunscreen is built "
+        "not to come off with water alone. An oil or balm cleanser lifts it, "
+        "along with makeup; the water-based cleanser then takes that and the "
+        "day's oil away. One wash on its own tends to leave a film.",
     ),
     (
         "cleanser",
@@ -518,6 +523,7 @@ class Rules:
             confidence=confidence,
             matched_from_catalogue=from_catalogue,
             price_is_typical=typical_price,
+            price_off_page=product.price_off_page or "",
             dwell_seconds=int(product.dwell_seconds or 0),
             dwell_source=product.dwell_source or "",
             # Actives found only through a machine-translated term. INCI is
@@ -919,7 +925,13 @@ class Rules:
         # "on the shelf" would put a 10 oz figure behind a 4 oz bottle
         # and quietly make every total wrong.
         def _countable(p) -> float:
+            # A price for a different size, or one we could not read from
+            # the page the user linked. Both are shown beside the product
+            # and neither belongs in a total: "on the shelf" has to be a
+            # number they can reconcile with what they are looking at.
             if getattr(p.product, "price_size_mismatch", ""):
+                return 0.0
+            if getattr(p.product, "price_off_page", ""):
                 return 0.0
             return p.product.price_usd or 0.0
 

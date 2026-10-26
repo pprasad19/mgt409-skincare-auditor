@@ -291,6 +291,10 @@ async def audit(
                 off_page_prices[name] = float(guess_price)
             from_urls.append(
                 InputProduct(name=name, listed_ingredients=record["inci"],
+                             # Named so the page can say where it came
+                             # from instead of implying the link.
+                             price_off_page=("" if page_price else
+                                             "a published listing, not your link"),
                              price_usd=page_price or guess_price,
                              # Every price this app finds is a retail
                              # price, including one read off the page the
@@ -558,10 +562,12 @@ async def audit(
             )
         for pname, guess in off_page_prices.items():
             notes.append(
-                f"The page you linked for {pname} did not show a price we could "
-                f"read, so ${guess:.0f} is a typical retail figure from elsewhere "
-                f"and will not match that listing. Type what it actually costs "
-                f"below to make the money section yours."
+                f"We could not read a price from the page you linked for "
+                f"{pname} — some large retailers serve this tool a stub with no "
+                f"price in it. ${guess:,.2f} is a published figure from "
+                f"elsewhere, shown beside the product and left out of the totals "
+                f"because it will not match the number on your screen. Type what "
+                f"you paid to include it."
             )
         for pname, lost in url_suppressed.items():
             notes.append(

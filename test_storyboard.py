@@ -356,24 +356,40 @@ check_true("a repeated product is condensed, not replayed", len(_repeats) >= 2)
 check_true("and a repeat carries no duration of its own",
            all(not sc.get("real") for sc in _repeats))
 
-# A step the user does not own holds its place, with nothing to do.
-_gaps = [sc for sc in _film if sc.get("anim") == "gap"]
-check_true("a missing step holds its place in the film", len(_gaps) >= 1)
-# It used to carry no duration. A tester saw "0s" against a missing
-# cleanser and said it should show the real time, which is right: the
-# step takes fifty seconds for anyone, and that figure belongs to the
-# technique rather than to a bottle they do not own. The mask's WEARING
-# time is the opposite case and is still looked up per product.
-check_true("and states how long the step takes",
-           all(sc.get("real") for sc in _gaps))
-check_true("as a real number of seconds, not zero",
-           all(_re.search(r"[1-9]", sc.get("real", "")) for sc in _gaps))
+# A step the user does not own is demonstrated like any other, from
+# the form's typical figures, and labelled as one they do not have.
+#
+# This assertion has been inverted twice, which is worth recording.
+# First the step was skipped; a tester counted the written steps
+# against the film and found it missing. Then it was shown untimed,
+# with nothing to do, on my reasoning that counting down for a product
+# someone does not own instructs them to use a thing that does not
+# exist. A tester answered that directly — "I should not be able to do
+# a routine without them" — and they are right: a guided routine that
+# skips its own cleanser demonstrates something nobody should follow.
+# The honesty belongs in the label, which every surface carries.
+_gaps = [sc for sc in _film if sc.get("placeholder")]
+check_true("a missing step is in the film", len(_gaps) >= 1)
+check_true("drawn as a step rather than a hole",
+           all(sc.get("anim") not in (None, "gap") for sc in _gaps))
+check_true("and labelled as one they do not have",
+           any("do not have" in sc.get("caption", "") for sc in _gaps))
+
 _pgaps = [st for st in _player if st["freq"] == "not on your shelf"]
-check_true("the player keeps it too", len(_pgaps) >= 1)
-check_true("and never counts down for it",
-           all(b.get("untimed") for st in _pgaps for b in st["beats"]))
-check_true("while still saying how long it takes",
-           all(_re.search(r"[1-9]", b["text"]) for st in _pgaps for b in st["beats"]))
+check_true("the player walks through it too", len(_pgaps) >= 1)
+check_true("with real durations, not zero",
+           all(b["secs"] > 0 for st in _pgaps for b in st["beats"]))
+check_true("and a technique to follow",
+           all(len(b["text"]) > 10 for st in _pgaps for b in st["beats"]))
+check_true("nothing is left untimed now",
+           not any(b.get("untimed") for st in _pgaps for b in st["beats"]))
+
+# The spoken line must not contain the compact units the table uses:
+# "50s" is read aloud as "fifty ess".
+for _st in _pgaps:
+    for _b in _st["beats"]:
+        check_true("no abbreviated unit in a spoken beat",
+                   not _re.search(r"\d\s*s", _b["text"]))
 
 
 print("ok  %d checks passed" % ok)

@@ -34,7 +34,7 @@ forms:
     rank: 5
     times: [pm]
     typical_seconds: 45
-    typical_how: massage onto dry skin, emulsify with water, rinse
+    typical_how: massage onto dry skin, then emulsify with a little water
     one_at_a_time: true  # You use one first-cleanse product, not two.
     note: The first half of a double cleanse. Dissolves sunscreen and makeup; a water-based cleanser still follows it.
     source: "Not in the AAD order, which does not treat double cleansing. Added 25 Oct 2026 after a tester pointed out that a cleansing oil was being handled as an ordinary cleanser: placed in the morning routine, and counted as satisfying the shelf's need for a cleanser. It is neither. An oil or balm cleanser emulsifies sunscreen and makeup and is rinsed away by the water-based cleanser that follows, which is why it is evening-only and ranked before `cleanser` rather than instead of it. The two-step sequence is a Korean-routine convention rather than a clinical finding, so this is `reasoned`; what is NOT a judgement call is that an oil cleanser does not replace a face wash."
@@ -46,7 +46,7 @@ forms:
     rank: 10
     times: [am, pm]
     typical_seconds: 50
-    typical_how: lather, 25 seconds on the face, rinse thoroughly
+    typical_how: lather and work over the face for about 25 seconds
     one_at_a_time: true  # Two water-based cleansers in one wash is one wash too many. A double cleanse is an oil cleanser followed by this, which is two different forms.
     source: "AAD 'Should I apply my skin care products in a certain order?': cleanse, then treatments, then moisturiser and/or sunscreen, then makeup. AAD also states sunscreen goes after other skincare and beneath makeup. Cleanser first is the one step every published order agrees on. Reviewed 25 Oct 2026."
     review: verified
@@ -57,7 +57,7 @@ forms:
     rank: 15
     times: [pm]
     typical_seconds: 60
-    typical_how: work in gently, then rinse
+    typical_how: work in gently, without pressing
     note: Leave-on acids are treatments, not this form. This is the rinse-off kind.
     source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Placed immediately after cleansing because a rinse-off exfoliant is a cleansing-stage product; the evening restriction follows from the photosensitivity rules SKA-082 and SKA-083, which are themselves sourced. Reviewed 25 Oct 2026."
     review: reasoned
@@ -166,7 +166,7 @@ forms:
     rank: 35
     times: [am, pm]
     typical_seconds: 75
-    typical_how: apply a layer, then rinse - the wearing time is the product's own
+    typical_how: spread a thin, even layer, avoiding the eyes
     note: Used occasionally rather than daily; slots after cleansing.
     # A mask is applied in half a minute and then left on. Without this the
     # routine told people to use a face mask for 30 seconds, because the

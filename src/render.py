@@ -715,7 +715,7 @@ JS = """
 """
 
 
-SPEECH_JS = """
+SPEECH_JS = r"""
 /* Spoken walkthrough, with the gaps made legible.
  *
  * Two problems with the first version. It said "25 seconds" and then went
@@ -871,8 +871,39 @@ SPEECH_JS = """
     return out;
   }
 
+
+  /* Written for the eye, spoken for the ear. The page uses "25s" and
+   * middle dots because they are compact in a table; read aloud they
+   * become "twenty five ess" and a missing pause. Normalising here
+   * rather than at each call site means a line added later cannot
+   * forget to do it. */
+  function forSpeech(text){
+    return String(text)
+      .replace(/(\d+)\s*min\b/gi, '$1 minutes')
+      .replace(/(\d+)\s*s\b/g, '$1 seconds')
+      .replace(/(\d+)\s*ml\b/gi, '$1 millilitres')
+      .replace(/(\d+(?:\.\d+)?)\s*fl\.?\s*oz\b/gi, '$1 fluid ounces')
+      .replace(/(\d+(?:\.\d+)?)\s*oz\b/gi, '$1 ounces')
+      .replace(/(\d+(?:\.\d+)?)\s*g\b/gi, '$1 grams')
+      .replace(/(\d+(?:\.\d+)?)\s*%/g, '$1 percent')
+      .replace(/\bSPF\b/g, 'S P F')
+      .replace(/\bAHA\b/g, 'A H A').replace(/\bBHA\b/g, 'B H A')
+      .replace(/\bPHA\b/g, 'P H A').replace(/\bUV\b/g, 'U V')
+      .replace(/\bAM\b/g, 'morning').replace(/\bPM\b/g, 'evening')
+      /* Visual separators: a comma makes the synthesiser pause where a
+       * reader's eye would. */
+      .replace(/\s*[·•]\s*/g, ', ')
+      .replace(/\s*[—–]\s*/g, ', ')
+      .replace(/\s*→\s*/g, ', then ')
+      .replace(/&/g, ' and ')
+      /* Two commas in a row read as a stumble. */
+      .replace(/,\s*,/g, ',')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+  }
+
   function say(text, done){
-    var u = new SpeechSynthesisUtterance(text);
+    var u = new SpeechSynthesisUtterance(forSpeech(text));
     u.rate = 0.95;
     u.onend = u.onerror = done;
     speechSynthesis.speak(u);
@@ -1539,6 +1570,34 @@ FILM_JS = """
 """
 
 
+def placeholder_beats(step) -> list[dict]:
+    """The beats for a step the user does not own yet.
+
+    Built from the form's typical figures rather than a product's. A
+    tester asked for this directly — "I should not be able to do a
+    routine without them" — and they are right: a guided routine that
+    skips its own cleanser demonstrates something nobody should follow.
+
+    It reverses my earlier reasoning, which was that counting down for
+    a product someone does not own is an instruction to use a thing
+    that does not exist. That reads well and mistakes what the
+    walkthrough is for. The honesty belongs in the label, which every
+    surface carries, not in refusing to show the step.
+    """
+    secs = step.typical_seconds or 20
+    apply_secs = max(10, round(secs * 0.6))
+    rinses = step.form_id in ("cleanser", "oil_cleanser", "exfoliant", "mask")
+    return [
+        {"kind": "apply",
+         "text": step.typical_how or f"use {step.product_name}",
+         "secs": apply_secs},
+        {"kind": "rinse off" if rinses else "let it absorb",
+         "text": ("rinse thoroughly with lukewarm water, then pat dry" if rinses
+                  else "let it sink in before the next product"),
+         "secs": max(10, secs - apply_secs)},
+    ]
+
+
 def _dwell_beat(dwell: int, note: str, unknown: bool, source: str) -> dict | None:
     """The 'leave it on' beat, or None when the product is not worn.
 
@@ -1812,16 +1871,23 @@ def _film_scenes(audit, specs: dict, explain: dict) -> list[dict]:
         # A step the user does not own. One scene, no hand, no timer —
         # the animation's job here is to hold its place in the order.
         if st.placeholder:
-            scenes.append({
-                "anim": "gap",
-                "caption": f"no {st.form.lower()} yet — about "
-                           f"{short_time(st.typical_seconds)}",
-                "where": "", "real": _real_time(st.typical_seconds),
-                "screen": 1.2, "points": [],
-                "slot": slot_label, "order": index + 1, "of": len(entries),
-                "name": name, "form": st.form, "why": "",
-                "placeholder": True,
-            })
+            # Drawn as the step it is. The caption and the ribbon say it
+            # is not on the shelf yet; the picture shows what doing it
+            # looks like, because that is what the viewer needs.
+            for sc in scenes_for(st, None, placeholder_beats(st)):
+                scenes.append({
+                    **sc,
+                    # scenes_for falls back to "as usual" with no
+                    # product to describe, which reads oddly for a
+                    # bottle the user does not own.
+                    "caption": (f"{st.form.lower()} — you do not have one yet"
+                                if sc.get("kind") == "apply"
+                                or "usual" in str(sc.get("caption", ""))
+                                else sc.get("caption", "")),
+                    "slot": slot_label, "order": index + 1, "of": len(entries),
+                    "name": name, "form": st.form, "why": "",
+                    "placeholder": True,
+                })
             continue
 
         # Already shown in full earlier in the day. One scene saying so,
@@ -1991,22 +2057,14 @@ def render(
     for slot, steps in (("am", audit.routine.am), ("pm", audit.routine.pm)):
         for s_ in steps:
             if s_.placeholder:
-                # In the sequence, because the written routine has it and
-                # a walkthrough that silently skips a step disagrees with
-                # the page beside it. Untimed and with nothing to do: the
-                # player waits for Next rather than counting down for a
-                # product the user does not own.
+                # Walked through like any other step, timed from the
+                # form's typical figures, and labelled as something they
+                # do not have. Skipping it described a routine that
+                # cannot actually be followed.
                 seq.append({
                     "slot": slot, "order": s_.order, "of": len(steps),
                     "name": s_.product_name, "freq": "not on your shelf",
-                    "beats": [{
-                        "kind": "nothing to do",
-                        "text": (f"You do not have {s_.product_name} yet. "
-                                 f"This is where it would go, and it takes "
-                                 f"about {short_time(s_.typical_seconds)} — "
-                                 f"{s_.typical_how}."),
-                        "secs": 0, "untimed": True,
-                    }],
+                    "beats": placeholder_beats(s_),
                 })
                 continue
             seq.append({
@@ -2286,6 +2344,32 @@ def render(
         parts.append(_stat(_money(w.conflicted_value_usd), "in high-severity conflict",
                            "bad" if w.conflicted_value_usd else ""))
         parts.append("</div>")
+
+        # Which products each figure counted. A tester asked why a pair
+        # she had in mind was "not covered in the duplicate function
+        # part" — on her shelf it was, and the tile had no way to show
+        # it. An unexplained number reads as the app having a private
+        # opinion it will not defend.
+        counted: list[str] = []
+        if w.unused_value_usd:
+            names = sorted(p.product.name for p in audit.products
+                           if p.product.unused and p.product.price_usd)
+            counted.append(f"<b>Unused</b> counts {e(', '.join(names))}.")
+        if w.redundant_value_usd:
+            dupes = sorted({n for f in audit.findings
+                            if f.type == "redundancy" for n in f.products})
+            counted.append(
+                f"<b>Duplicate function</b> counts {e(', '.join(dupes))} — "
+                f"products that do a job something else here already does. "
+                f"Anything not listed was checked and does not overlap.")
+        if w.conflicted_value_usd:
+            clash = sorted({n for f in audit.findings
+                            if f.severity in ("critical", "high")
+                            for n in f.products})
+            counted.append(f"<b>In conflict</b> counts {e(', '.join(clash))}.")
+        if counted:
+            parts.append('<p class="lede" style="margin-top:10px">'
+                         + " ".join(counted) + "</p>")
 
         # Say whose prices these are. A typical price is the right order of
         # magnitude for "what is sitting unused" and the wrong basis for any
@@ -2639,7 +2723,10 @@ def render(
             # looks like a bug when it is actually a limit. A brand name is
             # not a product: "Glytone" could be a $34 cleanser or a $58 cream,
             # and filling that in would be inventing a number.
-            if p.product.price_size_mismatch:
+            if p.product.price_off_page:
+                typical = (f' <span class="typ">{e(p.product.price_off_page)}'
+                           f' — not counted in the totals</span>')
+            elif p.product.price_size_mismatch:
                 # Inline, because this is the one qualification that
                 # cannot live in a caption: the number beside it is for
                 # a different bottle.
