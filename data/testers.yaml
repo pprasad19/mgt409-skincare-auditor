@@ -376,3 +376,46 @@ findings:
     class: not-a-defect
     caught_by_tests: true
 
+  # ---- tester 2, round 5 --------------------------------------------
+  - tester: 2
+    round: 5
+    reported: "the audio and animated video do not reflect all the written steps of the routine but it should"
+    layer: design
+    wrong: >-
+      They counted. The written routine had nine steps and the animation showed
+      five, because the film walked unique products rather than the routine —
+      and both the film and the guided player skipped placeholder steps.
+    fixed: >-
+      Both walk the routine in full. This reverses a decision made for tester 1,
+      who said the GIF repeated itself; the docstring defending it argued the
+      film is "a demonstration of a technique, and a technique does not change
+      between breakfast and bedtime", which is my argument rather than a user's.
+      Both complaints are satisfied at once because they are about different
+      things: a product used twice a day plays in full the first time and gets
+      one "same again" scene the second, so nothing is missing and no beat is
+      drawn twice. Nine written steps, nine player steps, nine film steps.
+    commit: pending
+    class: surfaces-disagree
+    caught_by_tests: false
+
+  - tester: 1
+    round: 5
+    reported: "this note is not accurate because all of the prices used are retail prices"
+    layer: correctness
+    wrong: >-
+      Two bugs pointing opposite ways, both mine from the same night. A price
+      read off the page the user linked was flagged as "what you paid", because
+      the page-price fix set price_is_typical = not page_price — but a price on
+      a retailer's page is a retail price. And a price the user actually typed
+      never cleared the flag, so a carried-over product kept being described as
+      typical retail after they had said what it cost. The note also counted its
+      denominator over every product rather than over the ones with a price,
+      producing "1 of these 7 prices" on a shelf with two prices on it.
+    fixed: >-
+      The flag now means "we looked this up" and is cleared only by a figure the
+      user types. The note counts priced products, and says where the figures
+      came from rather than asserting the user failed to supply them.
+    commit: pending
+    class: confidently-wrong-provenance
+    caught_by_tests: false
+

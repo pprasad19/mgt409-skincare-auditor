@@ -909,6 +909,41 @@
     "source_url": "https://www.clarinsusa.com/en/double-serum-anti-aging-serum/CS00928365.html",
     "typical_price_usd": 142.0
   },
+  "cocokind calming magnesium mist|30 ml": {
+    "found": true,
+    "inci": [
+      "Water/Eau",
+      "Sea Silt Extract",
+      "Leuconostoc/Radish Root Ferment Filtrate",
+      "Glycerin",
+      "Magnesium PCA",
+      "Zinc PCA",
+      "Sodium PCA",
+      "Manganese PCA",
+      "Polylysine",
+      "Nelumbo Nucifera Flower Water",
+      "Nymphaea Caerulea Flower Water",
+      "Biosaccharide Gum-2",
+      "Maltodextrin",
+      "Ethylhexylglycerin",
+      "Citric Acid",
+      "Potassium Sorbate",
+      "Sodium Gluconate",
+      "Sodium Benzoate",
+      "1,2-Hexanediol",
+      "Sodium Hydroxide"
+    ],
+    "looked_up": "2026-10-26T05:29:40.311026+00:00",
+    "mask_minutes": null,
+    "matched_brand": "Cocokind",
+    "matched_name": "Calming Magnesium Mist",
+    "mismatch": "",
+    "note": "The brand's page lists the standard 4 fl oz (118 mL) size, not the requested 30 mL. I could not find a published price for a 30 mL size; the $18 price is for 4 fl oz.",
+    "price_source_url": "https://www.cocokind.com/products/calming-magnesium-mist",
+    "size": "4 fl oz (118 mL)",
+    "source_url": "https://www.cocokind.com/products/calming-magnesium-mist",
+    "typical_price_usd": 18.0
+  },
   "cosrx advanced snail 96 mucin power essence": {
     "found": true,
     "inci": [

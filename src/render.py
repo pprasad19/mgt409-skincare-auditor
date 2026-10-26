@@ -1705,37 +1705,61 @@ def _merge_slots(slots: set[str]) -> str:
 def _film_scenes(audit, specs: dict, explain: dict) -> list[dict]:
     """One scene per beat, for the player and the GIF alike.
 
-    Built from the same `beats_for` the written steps and the audio use, so
-    a duration can never say one thing in the text and another in the
+    Built from the same `beats_for` the written steps and the audio use,
+    so a duration can never say one thing in the text and another in the
     picture.
 
-    Each product appears once. Walking the morning and then the evening
-    showed the cleanser, the niacinamide and the moisturiser twice each,
-    which was a third of the running time spent repeating itself. The
-    written routine below still lists both halves of the day in full --
-    that is a schedule, and a schedule has to repeat. This is a
-    demonstration of a technique, and a technique does not change between
-    breakfast and bedtime.
+    Walks the routine in full — morning, then evening — because a tester
+    counted nine written steps against five in the film and was right to
+    call that a mismatch. An earlier version showed each product once,
+    after a different tester said the GIF repeated itself; that fixed
+    the repetition by deleting the schedule.
+
+    Both complaints survive this version. A product used twice a day is
+    played in full the first time and gets a single "same again" scene
+    the second, so nothing is missing and no beat is drawn twice. A
+    placeholder appears as a labelled gap, with no hand and no
+    countdown: it is a step in the sequence that the user does not own
+    yet, and omitting it is what made the counts disagree.
     """
-    # Which halves of the day each product is used in, and the first step
-    # it appears as. Morning order first, then anything evening-only.
-    slots: dict[str, set[str]] = {}
-    firsts: list[tuple[str, object]] = []
+    entries: list[tuple[str, object, bool]] = []
+    seen: set[str] = set()
     for label, steps in (("Morning", audit.routine.am), ("Evening", audit.routine.pm)):
         for st in steps:
-            # Nothing to draw: there is no bottle, no container shape and
-            # no amount. The animation is a depiction of doing something.
-            if st.placeholder:
-                continue
-            if st.product_name not in slots:
-                slots[st.product_name] = set()
-                firsts.append((st.product_name, st))
-            slots[st.product_name].add(label)
+            repeat = st.product_name in seen and not st.placeholder
+            entries.append((label, st, repeat))
+            seen.add(st.product_name)
 
+    firsts = [(st.product_name, st) for _l, st, _r in entries]
     ribbon = [_short(name) for name, _ in firsts]
 
     scenes: list[dict] = []
-    for index, (name, st) in enumerate(firsts):
+    for index, (slot_label, st, repeat) in enumerate(entries):
+        name = st.product_name
+
+        # A step the user does not own. One scene, no hand, no timer —
+        # the animation's job here is to hold its place in the order.
+        if st.placeholder:
+            scenes.append({
+                "anim": "gap", "caption": f"no {st.form.lower()} yet",
+                "where": "", "real": "", "screen": 1.2, "points": [],
+                "slot": slot_label, "order": index + 1, "of": len(entries),
+                "name": name, "form": st.form, "why": "",
+                "placeholder": True,
+            })
+            continue
+
+        # Already shown in full earlier in the day. One scene saying so,
+        # rather than replaying beats the viewer has just watched.
+        if repeat:
+            scenes.append({
+                "anim": "again", "caption": "same again, as this morning",
+                "where": "", "real": "", "screen": 1.2, "points": [],
+                "slot": slot_label, "order": index + 1, "of": len(entries),
+                "name": name, "form": st.form, "why": "", "repeat": True,
+            })
+            continue
+
         spec = specs.get(name)
         beats = beats_for(spec, st.dwell_seconds, st.dwell_note,
                               st.dwell_unknown, st.dwell_source)
@@ -1753,8 +1777,8 @@ def _film_scenes(audit, specs: dict, explain: dict) -> list[dict]:
                     why = " · ".join(st.because)
             scenes.append({
                 **sc,
-                "slot": _merge_slots(slots[name]),
-                "order": index + 1, "of": len(firsts),
+                "slot": slot_label,
+                "order": index + 1, "of": len(entries),
                 "name": name, "form": st.form,
                 "why": why,
                 # Where this sits in the whole routine, so a frame is
@@ -1891,6 +1915,21 @@ def render(
     for slot, steps in (("am", audit.routine.am), ("pm", audit.routine.pm)):
         for s_ in steps:
             if s_.placeholder:
+                # In the sequence, because the written routine has it and
+                # a walkthrough that silently skips a step disagrees with
+                # the page beside it. Untimed and with nothing to do: the
+                # player waits for Next rather than counting down for a
+                # product the user does not own.
+                seq.append({
+                    "slot": slot, "order": s_.order, "of": len(steps),
+                    "name": s_.product_name, "freq": "not on your shelf",
+                    "beats": [{
+                        "kind": "nothing to do",
+                        "text": (f"You do not have {s_.product_name} yet. "
+                                 f"This is where it would go."),
+                        "secs": 0, "untimed": True,
+                    }],
+                })
                 continue
             seq.append({
                 "slot": slot, "order": s_.order, "of": len(steps),
@@ -2175,13 +2214,26 @@ def render(
         # claim about what this person wasted.
         typical = [p for p in audit.products if p.price_is_typical]
         if typical:
-            n, total = len(typical), len(audit.products)
+            # Out of products that HAVE a price, not out of every product.
+            # Counting the whole shelf produced "1 of these 7 prices" on a
+            # shelf with two prices on it.
+            n = len(typical)
+            total = len([p for p in audit.products
+                         if p.product.price_usd is not None])
             parts.append(
                 f'<p class="lede" style="margin-top:14px">'
-                f"{n} of these {total} prices {'is' if n == 1 else 'are'} a typical "
-                f"retail figure rather than what you paid, because you did not say. "
-                f"Good enough to see roughly what is sitting unused; not a quote. "
-                f"Add your own prices to make these numbers yours.</p>"
+                + ("The one price here is a retail figure" if n == total == 1
+                   else f"All {n} of these prices are retail figures"
+                   if n == total else
+                   f"{n} of these {total} prices "
+                   f"{'is a retail figure' if n == 1 else 'are retail figures'}")
+                + " we looked up — from the product's own page where you gave "
+                  "a link, otherwise from a published listing. "
+                + ("It is not" if n == total == 1
+                   else "None of them is" if n == total else "They are not")
+                + " what you actually paid. Good enough to see roughly what is "
+                  "sitting unused; not a quote. Type what you paid in the table "
+                  "below and the figures become yours.</p>"
             )
 
     if audit.escalations:

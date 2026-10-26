@@ -138,7 +138,12 @@ async def audit(
     previous = [p for p in previous if normalise(p.name) not in refused]
     for product in previous:
         if product.name in typed_prices:
+            # The one case where a price is not a retail figure: the
+            # user typed it. Without clearing the flag, a carried-over
+            # product kept being described as typical retail after they
+            # had told us what it cost.
             product.price_usd = typed_prices[product.name]
+            product.price_is_typical = False
         if product.name in typed_sizes:
             # The user looking at the bottle beats anything read off a
             # photograph of it.
@@ -282,7 +287,14 @@ async def audit(
             from_urls.append(
                 InputProduct(name=name, listed_ingredients=record["inci"],
                              price_usd=page_price or guess_price,
-                             price_is_typical=not page_price)
+                             # Every price this app finds is a retail
+                             # price, including one read off the page the
+                             # user linked. Marking a page price as "what
+                             # you paid" made the money section claim the
+                             # user had told it something they had not —
+                             # the flag means "we looked this up", and it
+                             # is cleared only by someone typing a figure.
+                             price_is_typical=True)
             )
             url_records[name] = record
 

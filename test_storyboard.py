@@ -299,6 +299,73 @@ for spec_secs in range(1, 120):
         str(spec_secs) in shown,
     )
 
+# --- every surface shows every step -----------------------------------
+# A tester counted: "the audio and animated video do not reflect all the
+# written steps of the routine but it should." They were right. The film
+# walked unique products rather than the routine, so a nine-step routine
+# became five scenes, and both the film and the guided player skipped
+# the placeholder steps entirely.
+#
+# A count, not a sample, because counting is how the tester found it.
+import json as _json
+import re as _re
+
+from models import AuditNarrative as _AN, InputProduct as _IP  # noqa: E402
+from render import render as _render  # noqa: E402
+from rules import Rules as _Rules  # noqa: E402
+
+_R = _Rules()
+_SHELF = [
+    ("CeraVe Foaming Cleanser", ["Ceramide NP"]),
+    ("The Ordinary Niacinamide", ["Niacinamide"]),
+    ("The Ordinary Retinol", ["Retinol"]),
+    ("CeraVe Moisturizing Cream", ["Glycerin"]),
+    ("Daily SPF 50", ["Avobenzone"]),
+]
+_audit = _R.audit([_IP(name=n, listed_ingredients=i) for n, i in _SHELF], concerns=[])
+_page = _render(_audit, _AN(summary="x", explanations=[], steps=[]), carry="[]")
+
+_written = ([("Morning", st) for st in _audit.routine.am]
+            + [("Evening", st) for st in _audit.routine.pm])
+_player = _json.loads(
+    _re.search(r"var DATA_STEPS=(\[.*?\]);var MX_DATA", _page, _re.S).group(1))
+_film = _json.loads(_re.search(r"var FILM=(\[.*?\]);", _page, _re.S).group(1))
+
+_film_steps = []
+for _sc in _film:
+    _k = (_sc.get("slot", ""), _sc.get("name", ""))
+    if _sc.get("name") and _k not in _film_steps:
+        _film_steps.append(_k)
+
+_want = [(slot, st.product_name) for slot, st in _written]
+
+check_true("the fixture produces a routine worth comparing", len(_written) >= 8)
+check("the guided player has every written step", len(_player), len(_written))
+check("so does the animation", len(_film_steps), len(_written))
+check("the animation is the routine, in order", _film_steps, _want)
+# The player keys slots as am/pm and the film as Morning/Evening; the
+# comparison is about the sequence, not the spelling.
+_SLOT = {"am": "Morning", "pm": "Evening"}
+check("and so is the player",
+      [(_SLOT[st["slot"]], st["name"]) for st in _player], _want)
+
+# A product used twice a day is not played twice at full length. That
+# was the other tester's complaint and it must not come back.
+_repeats = [sc for sc in _film if sc.get("anim") == "again"]
+check_true("a repeated product is condensed, not replayed", len(_repeats) >= 2)
+check_true("and a repeat carries no duration of its own",
+           all(not sc.get("real") for sc in _repeats))
+
+# A step the user does not own holds its place, with nothing to do.
+_gaps = [sc for sc in _film if sc.get("anim") == "gap"]
+check_true("a missing step holds its place in the film", len(_gaps) >= 1)
+check_true("without a duration", all(not sc.get("real") for sc in _gaps))
+_pgaps = [st for st in _player if st["freq"] == "not on your shelf"]
+check_true("the player keeps it too", len(_pgaps) >= 1)
+check_true("and never counts down for it",
+           all(b.get("untimed") for st in _pgaps for b in st["beats"]))
+
+
 print("ok  %d checks passed" % ok)
 print("    face regions, exclusions, fallbacks, time compression,")
 print("    every scene animation actually animating,")
