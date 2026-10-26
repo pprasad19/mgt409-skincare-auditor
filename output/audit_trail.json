@@ -8425,5 +8425,212 @@
       "cache_write_tokens": 2717,
       "output_tokens": 99
     }
+  },
+  {
+    "run_id": "eb28ad9e",
+    "seq": 1,
+    "timestamp": "2026-10-26T01:33:27.962502+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 6,
+      "steps": 5,
+      "rejected": [
+        "verification caveat stripped from summary"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3804,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 950,
+      "output_tokens": 582
+    }
+  },
+  {
+    "run_id": "c16a1fb5",
+    "seq": 1,
+    "timestamp": "2026-10-26T01:45:20.159215+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2843,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2717,
+      "output_tokens": 99
+    }
+  },
+  {
+    "run_id": "04ec3d07",
+    "seq": 1,
+    "timestamp": "2026-10-26T01:47:15.594278+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2843,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2717,
+      "output_tokens": 99
+    }
+  },
+  {
+    "run_id": "e4719127",
+    "seq": 1,
+    "timestamp": "2026-10-26T01:47:55.750242+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 3,
+      "products": [
+        "Banila Co Clean It Zero Cleansing Balm",
+        "Aztec Secret Indian Healing Clay Mask",
+        "The Ordinary Niacinamide 10% + Zinc 1%"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2897,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2771,
+      "output_tokens": 281
+    }
+  },
+  {
+    "run_id": "e4719127",
+    "seq": 2,
+    "timestamp": "2026-10-26T01:47:58.674839+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3028,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 174,
+      "output_tokens": 380
+    }
+  },
+  {
+    "run_id": "7450b847",
+    "seq": 1,
+    "timestamp": "2026-10-26T01:49:59.850696+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2843,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2717,
+      "output_tokens": 99
+    }
+  },
+  {
+    "run_id": "2c4e007c",
+    "seq": 1,
+    "timestamp": "2026-10-26T01:50:47.219709+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 3,
+      "products": [
+        "Banila Co Clean It Zero Cleansing Balm",
+        "Aztec Secret Indian Healing Clay Mask",
+        "The Ordinary Niacinamide 10% + Zinc 1%"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2897,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2771,
+      "output_tokens": 281
+    }
+  },
+  {
+    "run_id": "2c4e007c",
+    "seq": 2,
+    "timestamp": "2026-10-26T01:50:50.380787+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 5,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3013,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 159,
+      "output_tokens": 349
+    }
+  },
+  {
+    "run_id": "de8815db",
+    "seq": 1,
+    "timestamp": "2026-10-26T01:54:02.296731+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2843,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2717,
+      "output_tokens": 99
+    }
   }
 ]

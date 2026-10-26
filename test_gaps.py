@@ -119,27 +119,107 @@ for shelf in ([NIACINAMIDE], [RETINOL], [CLEANSER, MOISTURISER], [SPF]):
 # because the redundancy rules in interactions.yaml are ingredient pairs
 # (two retinoids, two AHAs) and have no opinion about four of one form.
 WASH = ("CeraVe Foaming Cleanser", ["Ceramide NP"])
-BALM = ("Cleansing Balm", ["Ceramide NP"])
+FOAM = ("Gentle Face Wash", ["Ceramide NP"])
 GEL = ("Gel Wash", ["Ceramide NP"])
 CREAM_WASH = ("Cream Wash", ["Ceramide NP"])
 
-four = gaps_for(WASH, BALM, GEL, CREAM_WASH)
+four = gaps_for(WASH, FOAM, GEL, CREAM_WASH)
 check("four of one form is reported", "several_cleanser" in four, True)
 check("as a money note, not a safety one", four.get("several_cleanser"), "low")
 
 # Two is an ordinary shelf. Flagging it would be the invented-need
 # failure pointing the other way.
 check("two of one form is not reported",
-      "several_cleanser" in gaps_for(WASH, BALM, MOISTURISER, SPF), False)
+      "several_cleanser" in gaps_for(WASH, FOAM, MOISTURISER, SPF), False)
 check("three is where it starts",
-      "several_cleanser" in gaps_for(WASH, BALM, GEL, MOISTURISER, SPF), True)
+      "several_cleanser" in gaps_for(WASH, FOAM, GEL, MOISTURISER, SPF), True)
 
 # It names them, so the user can see which four it means.
 audit_four = R.audit([InputProduct(name=n, listed_ingredients=list(i))
-                      for n, i in (WASH, BALM, GEL, CREAM_WASH)], concerns=[])
+                      for n, i in (WASH, FOAM, GEL, CREAM_WASH)], concerns=[])
 dup = next(g for g in audit_four.gaps if g.kind == "several_cleanser")
 check("and names every one of them", sorted(dup.because),
-      sorted([WASH[0], BALM[0], GEL[0], CREAM_WASH[0]]))
+      sorted([WASH[0], FOAM[0], GEL[0], CREAM_WASH[0]]))
+
+
+# --- a cleansing oil is not a cleanser ------------------------------------
+# A tester's shelf had a cleansing balm and was treated as having a
+# cleanser — "cleansing" matched the cleanser keywords before anything
+# could notice the "balm". It was also placed in the morning routine.
+# An oil cleanser is the first half of a double cleanse: evening only,
+# and the water-based wash still has to follow it.
+BALM = ("Banila Co Clean It Zero Cleansing Balm", ["Water"])
+OIL = ("DHC Deep Cleansing Oil", ["Olive Oil"])
+
+for name, ings in (BALM, OIL):
+    got = R.resolve(InputProduct(name=name, listed_ingredients=list(ings)))
+    check(f"{name.split()[0]} is an oil cleanser", got.form, "oil_cleanser")
+
+# The keyword list is not enough on its own: the Shelf Reader sets the
+# form itself from packaging, and it called the tester's balm a
+# "cleanser" — a category that cannot express the difference. The engine
+# overrides it on these specific phrases, the same way a label listing
+# UV filters forces `spf` whatever the reader said.
+for name, ings in (BALM, OIL):
+    told = R.resolve(InputProduct(name=name, listed_ingredients=list(ings),
+                                  form="cleanser"))
+    check(f"{name.split()[0]}: the engine overrides the reader", told.form,
+          "oil_cleanser")
+# And it does not reach past them: an ordinary cleanser stays one.
+plain_told = R.resolve(InputProduct(name="CeraVe Hydrating Facial Cleanser",
+                                    listed_ingredients=["Ceramide NP"],
+                                    form="cleanser"))
+check("an ordinary cleanser is left alone", plain_told.form, "cleanser")
+
+check_true("an oil cleanser is evening-only",
+           R.forms["oil_cleanser"]["times"] == "pm",
+           R.forms["oil_cleanser"]["times"])
+check_true("and goes before the water-based cleanser",
+           R.forms["oil_cleanser"]["rank"] < R.forms["cleanser"]["rank"])
+
+balm_only = gaps_for(BALM)
+check("a balm alone still leaves a cleanser missing",
+      "no_cleanser" in balm_only, True)
+balm_audit = R.audit([InputProduct(name=BALM[0], listed_ingredients=["Water"])],
+                     concerns=[])
+msg = next(g for g in balm_audit.gaps if g.kind == "no_cleanser")
+check_true("and says why, rather than claiming there is nothing to wash with",
+           "half of a cleanse" in msg.headline, msg.headline)
+
+# With both, nothing to report — that is a complete cleansing routine.
+check("a balm plus a wash is not a gap",
+      "no_cleanser" in gaps_for(BALM, WASH, MOISTURISER, SPF), False)
+# And the balm is never placed in the morning.
+both = R.audit([InputProduct(name=n, listed_ingredients=list(i))
+                for n, i in (BALM, WASH, MOISTURISER, SPF)], concerns=[])
+check("the balm is not in the morning routine",
+      [s.product_name for s in both.routine.am if "Banila" in s.product_name], [])
+pm_order = [s.product_name for s in both.routine.pm]
+check_true("and comes first in the evening",
+           pm_order and "Banila" in pm_order[0], str(pm_order))
+
+
+# --- a mask is worn, not rubbed in ----------------------------------------
+# StepApplication.seconds is capped at 120 and means time spent applying,
+# so a 15-minute mask was not expressible and the routine said 30
+# seconds. The dwell is the engine's, from product_forms.yaml.
+mask_audit = R.audit([InputProduct(name="Aztec Clay Mask", listed_ingredients=["Kaolin"]),
+                      InputProduct(name=WASH[0], listed_ingredients=["Ceramide NP"])],
+                     concerns=[])
+mask_step = next(s for s in mask_audit.routine.pm if "Mask" in s.product_name)
+check_true("a mask carries a dwell of at least ten minutes",
+           mask_step.dwell_seconds >= 600, str(mask_step.dwell_seconds))
+check_true("and says the packet decides", "packet" in mask_step.dwell_note,
+           mask_step.dwell_note)
+cleanse_step = next(s for s in mask_audit.routine.pm if "Mask" not in s.product_name)
+check("a cleanser has no dwell", cleanse_step.dwell_seconds, 0)
+
+from render import beats_for  # noqa: E402
+kinds = [b["kind"] for b in beats_for(None, mask_step.dwell_seconds, mask_step.dwell_note)]
+check_true("the dwell becomes a beat of its own", "leave it on" in kinds, str(kinds))
+secs = {b["kind"]: b["secs"]
+        for b in beats_for(None, mask_step.dwell_seconds, mask_step.dwell_note)}
+check_true("and carries the real duration", secs["leave it on"] >= 600, str(secs))
 
 
 # --- the table it is driven by -------------------------------------------

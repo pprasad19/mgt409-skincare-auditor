@@ -136,7 +136,12 @@ CREATE TABLE product_forms (
     rank   INTEGER NOT NULL,
     times  TEXT NOT NULL,
     note   TEXT,
-    -- These twelve numbers decide the order of every routine the app
+    -- How long the product stays on the face after it is applied, for the
+    -- forms where that is most of the step. A mask is applied in half a
+    -- minute and worn for fifteen, and nothing in the schema could say so.
+    dwell_seconds INTEGER NOT NULL DEFAULT 0,
+    dwell_note    TEXT,
+    -- These numbers decide the order of every routine the app
     -- produces, so they carry provenance like the rules table. The YAML
     -- always had it; the table did not load it, which made the claim
     -- true of the file and not of anything that could check it.
@@ -350,9 +355,11 @@ def main() -> None:
 
     for form in forms:
         con.execute(
-            "INSERT INTO product_forms VALUES (?,?,?,?,?,?,?)",
+            "INSERT INTO product_forms VALUES (?,?,?,?,?,?,?,?,?)",
             (form["id"], form["name"], form["rank"], ",".join(form["times"]),
-             form.get("note"), form.get("source"), form.get("review", "pending")),
+             form.get("note"), int(form.get("dwell_seconds") or 0),
+             form.get("dwell_note"),
+             form.get("source"), form.get("review", "pending")),
         )
 
     con.commit()

@@ -76,7 +76,18 @@ sunscreen is now named — those three and no others, because they are the
 steps the AAD order names and the only rows in `product_forms.yaml` marked
 `verified`. Being told you are "missing" a toner would invent a purchase.
 Several products doing one job is reported too, from three upwards, as a
-money note rather than a mistake.
+money note rather than a mistake. Every one of these says **when** the
+step belongs — morning, evening or both — read from the same `times`
+column the routine builder uses, so a gap cannot name a different time of
+day from the routine beside it.
+
+A cleansing oil or balm is its own form, evening-only, ranked before the
+cleanser rather than instead of it: it is the first half of a double
+cleanse, and a shelf holding one is still told it needs a face wash. The
+engine overrides the Shelf Reader on this, the same way a label listing UV
+filters forces `spf` — "cleanser" is a category that cannot express the
+difference, and the difference decides both the time of day and whether a
+second product is needed.
 
 ## The rules as an MCP server
 

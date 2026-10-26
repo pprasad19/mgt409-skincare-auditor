@@ -31,20 +31,38 @@ SPEC2 = StepApplication(
     seconds=15, finish="let it absorb", finish_seconds=20, wait_after_seconds=90,
 )
 
+# A mask, because the long durations are the ones worth comparing. Every
+# beat the agent writes is under two minutes, so until a mask was in this
+# fixture the four surfaces were only ever checked on numbers that render
+# identically whatever you do — and the step list was printing "600s"
+# while the animation said "10 minutes".
+SPEC3 = StepApplication(
+    product_name="Test Mask",
+    motion="smooth", area="whole face", amount="a thin layer",
+    seconds=30, finish="rinse off", finish_seconds=45, wait_after_seconds=0,
+)
+
 audit = R.audit([
     InputProduct(name="Test Cleanser", listed_ingredients=["Cocamidopropyl Betaine"]),
     InputProduct(name="Test Serum", listed_ingredients=["Niacinamide"]),
+    InputProduct(name="Test Mask", listed_ingredients=["Kaolin"], form="mask"),
 ], concerns=[])
 
-narrative = AuditNarrative(summary="t", explanations=[], steps=[SPEC, SPEC2])
+# What the engine attached to each step, so the comparison uses the same
+# dwell the page does rather than assuming zero.
+DWELL = {s.product_name: (s.dwell_seconds, s.dwell_note)
+         for s in audit.routine.am + audit.routine.pm}
+
+narrative = AuditNarrative(summary="t", explanations=[], steps=[SPEC, SPEC2, SPEC3])
 html = render(audit, narrative)
 
 print("  what beats_for says, per product:\n")
 truth = {}
-for spec in (SPEC, SPEC2):
-    secs = [b["secs"] for b in beats_for(spec)]
+for spec in (SPEC, SPEC2, SPEC3):
+    dwell, note = DWELL.get(spec.product_name, (0, ""))
+    secs = [b["secs"] for b in beats_for(spec, dwell, note)]
     truth[spec.product_name] = secs
-    kinds = [b["kind"] for b in beats_for(spec)]
+    kinds = [b["kind"] for b in beats_for(spec, dwell, note)]
     print(f"    {spec.product_name:16} {list(zip(kinds, secs))}")
 
 print("\n  what each surface renders:\n")
@@ -81,7 +99,16 @@ print("\n  comparing the numbers:\n")
 
 
 def nums(text: str) -> list[int]:
-    return [int(n) for n in re.findall(r"(\d+)\s*s\b", text)]
+    """Durations a compact surface printed, in seconds.
+
+    Both "25s" and "10 min" appear, and a ten-minute mask only reads
+    sensibly as the second — so minutes are converted back here
+    rather than forcing the surfaces to print raw seconds at the
+    reader.
+    """
+    out = [int(n) for n in re.findall(r"(\d+)\s*s\b", text)]
+    out += [int(n) * 60 for n in re.findall(r"(\d+)\s*min\b", text)]
+    return out
 
 
 problems = []
@@ -90,8 +117,13 @@ for name, expected in truth.items():
     for label, blocks in (("written steps", how), ("printed card", pcd)):
         hit = [b for b in blocks if name in re.sub("<[^>]+>", "", b)] or blocks
         got = nums(re.sub("<[^>]+>", "", " ".join(hit)))
-        shown = [n for n in got if n in expected]
-        missing = [n for n in expected if n not in got]
+        def near(n: int, got=got) -> bool:
+            # "10 min" is exactly 600 here, but half-up rounding means a
+            # 610-second dwell prints as 10 min too. Allow the rounding;
+            # anything further apart is a real disagreement.
+            return any(abs(n - g) <= 30 for g in got)
+
+        missing = [n for n in expected if not near(n)]
         if missing:
             problems.append(f"{label}: {name} missing {missing} from {got}")
 

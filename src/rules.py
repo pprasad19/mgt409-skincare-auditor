@@ -48,10 +48,23 @@ FORM_KEYWORDS = [
              "protection solaire", "crème solaire", "fluide solaire", "sonnenschutz",
              "protezione solare", "선크림", "선스틱", "선쿠션", "자외선 차단", "무기자차",
              "유기자차", "日焼け止め", "サンスクリーン", "防曬", "防晒", "防晒霜"]),
+    # Before `cleanser`, because "cleansing oil" and "cleansing balm" both
+    # contain "cleansing" and first match wins. They were being filed as
+    # ordinary cleansers, which put an oil cleanser in the morning routine
+    # and let it stand in for a face wash. It is the first half of a double
+    # cleanse: evening only, and the water-based cleanser still follows.
+    ("oil_cleanser", ["cleansing oil", "cleanse oil", "oil cleanser", "oil to foam",
+                      "oil-to-foam", "cleansing balm", "balm cleanser", "cleansing sherbet",
+                      "makeup melting", "melting cleanser", "huile démaquillante",
+                      "huile nettoyante", "baume démaquillant", "baume nettoyant",
+                      "aceite limpiador", "bálsamo limpiador", "reinigungsöl",
+                      "클렌징오일", "클렌징 오일", "클렌징밤", "클렌징 밤", "오일클렌저",
+                      "クレンジングオイル", "クレンジングバーム", "オイルクレンジング",
+                      "卸妆油", "卸妝油", "卸妆膏", "卸妝膏", "潔顏油", "洁颜油"]),
     ("cleanser", ["cleanser", "face wash", "cleansing", "wash", "nettoyant", "limpiador",
                   "limpeza", "reinigung", "detergente", "eau micellaire", "démaquillant",
                   "lait démaquillant", "gel moussant", "mousse nettoyante",
-                  "클렌저", "클렌징", "폼클렌징", "세안", "클렌징폼", "클렌징오일",
+                  "클렌저", "클렌징", "폼클렌징", "세안", "클렌징폼",
                   "洗顔", "クレンジング", "洗顔料", "洁面", "潔面", "洗面奶", "卸妆"]),
     ("exfoliant", ["scrub", "peel", "exfoliat", "gommage", "exfoliante", "peeling",
                    "스크럽", "필링", "角質", "スクラブ", "去角质", "去角質"]),
@@ -192,6 +205,19 @@ class Rules:
         told it had no sunscreen on it while its sunscreen sat in the routine,
         ordered as a serum rather than last in the morning.
         """
+        # "Cleansing oil" and "cleansing balm" in the name beat whatever the
+        # reader called it. Sits above product.form for the same reason the
+        # UV-filter check below does: the reader's category is "cleanser",
+        # which cannot express the difference, and the difference decides
+        # both the time of day and whether a face wash is still needed.
+        # A tester's cleansing balm was read as a cleanser, placed in the
+        # morning routine, and counted as satisfying the shelf's need for
+        # one — three wrong answers from a single missing distinction.
+        # These phrases are specific enough to be safe: a product named
+        # "cleansing oil" is one.
+        name = normalise(product.name or "")
+        if any(k in name for k in dict(FORM_KEYWORDS)["oil_cleanser"]):
+            return "oil_cleanser"
         if product.form and product.form in self.forms:
             return product.form
         # A product whose label lists UV filters is a sunscreen, whatever it
@@ -615,6 +641,8 @@ class Rules:
                         order=order,
                         frequency="alternate nights" if (slot == "pm" and name in alternating) else "daily",
                         because=sorted(set(because[name])),
+                        dwell_seconds=int(self.forms[product.form].get("dwell_seconds") or 0),
+                        dwell_note=self.forms[product.form].get("dwell_note") or "",
                         application=ApplicationSpec(),
                     )
                 )
@@ -722,6 +750,21 @@ class Rules:
             )
         return out
 
+    def _when_phrase(self, form_id: str) -> str:
+        """When this step belongs, in words, from the form's own `times`.
+
+        Derived rather than written out beside each message, so a gap can
+        never tell the user a different time of day from the one the
+        routine builder would place the product in — both read this
+        column.
+        """
+        times = (self.forms[form_id]["times"] or "").split(",")
+        if "am" in times and "pm" in times:
+            return "It belongs in both routines, morning and evening."
+        if "am" in times:
+            return "It belongs in the morning routine."
+        return "It belongs in the evening routine."
+
     def gaps(self, products: list[ResolvedProduct]) -> list[Gap]:
         """What this shelf needs and does not have.
 
@@ -750,6 +793,24 @@ class Rules:
         for form_id, severity, headline, why in ESSENTIAL_STEPS:
             if form_id in held:
                 continue
+            # Telling someone a step is missing without saying when to use
+            # it leaves them to guess the one thing the routine would have
+            # told them. Taken from the form's own `times`, so it cannot
+            # drift from where the routine would actually place it.
+            why = f"{why} {self._when_phrase(form_id)}"
+            # An oil cleanser is the first half of a double cleanse, not a
+            # face wash, so a shelf holding one still needs a cleanser —
+            # but saying "there is nothing here to wash your face with" to
+            # someone looking at their cleansing balm reads as a bug.
+            if form_id == "cleanser" and "oil_cleanser" in held:
+                headline = "A cleansing balm or oil is only half of a cleanse."
+                why = (
+                    "An oil cleanser dissolves sunscreen and makeup, and is then "
+                    "rinsed away by a water-based cleanser — that second step is "
+                    "the one missing here. On its own it tends to leave a film, "
+                    "which is usually what people mean when they say a balm broke "
+                    "them out. " + self._when_phrase("cleanser")
+                )
             out.append(
                 Gap(
                     kind=f"no_{form_id}",
@@ -789,7 +850,7 @@ class Rules:
                         f"routine uses one at a time — so the others are not in the "
                         f"plan below. That is fine if you are rotating them or using "
                         f"up old stock. If you are not, it is the clearest thing on "
-                        f"this shelf to stop re-buying."
+                        f"this shelf to stop re-buying. {self._when_phrase(form_id)}"
                     ),
                     because=sorted(names),
                 )
@@ -817,7 +878,8 @@ class Rules:
                     message=(
                         f"{len(photo)} of your products increase sun sensitivity. Without "
                         "daily SPF they work against the thing most of them were bought "
-                        "to fix."
+                        "to fix. It belongs in the morning routine, as the last step "
+                        "before makeup — and on overcast days too."
                     ),
                     because=photo,
                 )
@@ -832,7 +894,8 @@ class Rules:
                     message=(
                         f"{len(photo)} of your products increase sun sensitivity. Sunscreen "
                         "is the step that makes the rest of them safe to use, so skipping "
-                        "it costs you more than it would with a gentler routine."
+                        "it costs you more than it would with a gentler routine. Every "
+                        "morning, as the last step — not only on sunny ones."
                     ),
                     because=photo,
                 )
@@ -855,7 +918,8 @@ class Rules:
                         "Nothing you own raises sun sensitivity, so this is not urgent "
                         "the way it would be with a retinoid or an acid. It is still the "
                         "step with the most evidence behind it, and the one that decides "
-                        "whether the rest of a routine compounds or just maintains."
+                        "whether the rest of a routine compounds or just maintains. It "
+                        "belongs in the morning routine, as the last step."
                     ),
                 )
             )

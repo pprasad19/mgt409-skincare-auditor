@@ -36,7 +36,7 @@ MAX_SHELF = 8
 # keeps finding. The split is deliberate and test_storyboard checks it.
 OPENING_ANIMS = frozenset({"shelf", "sort", "clash", "week"})
 
-from storyboard import container_for, scenes_for
+from storyboard import container_for, scenes_for, short_time
 from models import AuditNarrative, AuditResult
 
 SEVERITY_LABEL = {
@@ -1068,8 +1068,8 @@ def _step_row(step, spec, slot: str, total: int) -> str:
     how = ""
     if spec is not None:
         bits = [
-            f"{b['text'] if b['kind'] == 'apply' else b['kind']} · {b['secs']}s"
-            for b in beats_for(spec)
+            f"{b['text'] if b['kind'] == 'apply' else b['kind']} · {short_time(b['secs'])}"
+            for b in beats_for(spec, step.dwell_seconds, step.dwell_note)
         ]
         how = f'<div class="how">{e(" → ".join(bits))}</div>'
     return (
@@ -1417,7 +1417,7 @@ FILM_JS = """
 """
 
 
-def beats_for(spec) -> list[dict]:
+def beats_for(spec, dwell: int = 0, dwell_note: str = "") -> list[dict]:
     """The physical sequence for one step: apply, then finish, then any wait.
 
     Single source of truth. The step list, the guided player, the spoken
@@ -1427,13 +1427,31 @@ def beats_for(spec) -> list[dict]:
     absorb", because the duration existed in one path and not the others.
     """
     if spec is None:
-        return [{"kind": "apply", "text": "apply as usual", "secs": 15}]
+        out = [{"kind": "apply", "text": "apply as usual", "secs": 15}]
+        if dwell:
+            out.append({
+                "kind": "leave it on",
+                "text": "leave it on" + (f" ({dwell_note})" if dwell_note else ""),
+                "secs": dwell,
+            })
+        return out
 
     out = [{
         "kind": "apply",
         "text": f"{spec.amount}, {spec.motion} on {spec.area}",
         "secs": spec.seconds,
     }]
+
+    # Leaving it on is the step, for anything that has one. Comes between
+    # applying and the finish: apply for thirty seconds, wear it for
+    # fifteen minutes, then rinse. The duration is the engine's, from
+    # product_forms.yaml, so the narrator cannot talk it down.
+    if dwell:
+        out.append({
+            "kind": "leave it on",
+            "text": "leave it on" + (f" ({dwell_note})" if dwell_note else ""),
+            "secs": dwell,
+        })
 
     if spec.finish == "rinse off":
         out.append({
@@ -1643,7 +1661,7 @@ def _film_scenes(audit, specs: dict, explain: dict) -> list[dict]:
     scenes: list[dict] = []
     for index, (name, st) in enumerate(firsts):
         spec = specs.get(name)
-        beats = beats_for(spec)
+        beats = beats_for(spec, st.dwell_seconds, st.dwell_note)
         for sc in scenes_for(st, spec, beats):
             # The rule that put this step here, in the user's words where
             # the narrator wrote one. A picture that cannot say why it is
@@ -1726,9 +1744,10 @@ def _print_card(audit: AuditResult, specs: dict) -> str:
             detail = ""
             if spec:
                 bits = [
-                    f"{spec.amount}, {spec.motion} {b['secs']}s" if b["kind"] == "apply"
-                    else f"{b['kind']} {b['secs']}s"
-                    for b in beats_for(spec)
+                    f"{spec.amount}, {spec.motion} {short_time(b['secs'])}"
+                    if b["kind"] == "apply"
+                    else f"{b['kind']} {short_time(b['secs'])}"
+                    for b in beats_for(spec, s.dwell_seconds, s.dwell_note)
                 ]
                 detail = f'<div class="pcd">{e(" → ".join(bits))}</div>'
             freq = "" if s.frequency == "daily" else f' <em>({e(s.frequency)})</em>'
@@ -1785,7 +1804,8 @@ def render(
             seq.append({
                 "slot": slot, "order": s_.order, "of": len(steps),
                 "name": s_.product_name, "freq": s_.frequency,
-                "beats": beats_for(specs.get(s_.product_name)),
+                "beats": beats_for(specs.get(s_.product_name),
+                                   s_.dwell_seconds, s_.dwell_note),
             })
 
     film_scenes = _film_scenes(audit, specs, explain)

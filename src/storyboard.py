@@ -312,6 +312,21 @@ def _real_time(secs: int) -> str:
     return f"{(secs + 30) // 60} minutes"
 
 
+def short_time(secs: int) -> str:
+    """The same duration, compact, for the step list and the printed card.
+
+    Those two print "· 25s", which is fine until a mask arrives and they
+    print "· 600s" — a number the reader has to divide. Minutes are
+    computed the same way _real_time does, half-up on the same
+    threshold, so the compact form and the spoken form cannot disagree
+    about how long to stand there.
+    """
+    secs = int(secs or 0)
+    if secs < 120:
+        return f"{secs}s"
+    return f"{(secs + 30) // 60} min"
+
+
 def scenes_for(step, spec, beats: list[dict]) -> list[dict]:
     """One step becomes a list of scenes: get it out, put it on, finish.
 

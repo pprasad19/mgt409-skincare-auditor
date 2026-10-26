@@ -7,7 +7,7 @@
 #
 # `times` limits a form to part of the day. Everything else may appear in both.
 #
-# PROVENANCE — these twelve numbers decide the order of every routine this
+# PROVENANCE — these thirteen numbers decide the order of every routine this
 # app produces, so they carry the same review field as the rules table.
 # Three are published AAD guidance. The other nine are the industry
 # layering convention — thinnest to thickest, water before oil — which is a
@@ -15,6 +15,15 @@
 # marked `reasoned` rather than dressed up as evidence.
 
 forms:
+  - id: oil_cleanser
+    name: Cleansing oil or balm
+    rank: 5
+    times: [pm]
+    note: The first half of a double cleanse. Dissolves sunscreen and makeup; a water-based cleanser still follows it.
+    source: "Not in the AAD order, which does not treat double cleansing. Added 25 Oct 2026 after a tester pointed out that a cleansing oil was being handled as an ordinary cleanser: placed in the morning routine, and counted as satisfying the shelf's need for a cleanser. It is neither. An oil or balm cleanser emulsifies sunscreen and makeup and is rinsed away by the water-based cleanser that follows, which is why it is evening-only and ranked before `cleanser` rather than instead of it. The two-step sequence is a Korean-routine convention rather than a clinical finding, so this is `reasoned`; what is NOT a judgement call is that an oil cleanser does not replace a face wash."
+    review: reasoned
+
+
   - id: cleanser
     name: Cleanser
     rank: 10
@@ -112,6 +121,15 @@ forms:
     rank: 35
     times: [am, pm]
     note: Used occasionally rather than daily; slots after cleansing.
+    # A mask is applied in half a minute and then left on. Without this the
+    # routine told people to use a face mask for 30 seconds, because the
+    # only duration a step could carry was how long you spend applying it
+    # — and StepApplication.seconds is capped at 120, so a 15-minute mask
+    # was not expressible at all. Ten minutes is the bottom of the usual
+    # range and the packet wins; the page says so rather than implying
+    # this number came from somewhere it did not.
+    dwell_seconds: 600
+    dwell_note: usually 10–20 minutes — follow the packet, and do not sleep in a clay mask
     source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Ranked before serums because a treatment mask is applied to cleansed skin and removed before the rest of the routine. Reviewed 25 Oct 2026."
     review: reasoned
 

@@ -156,6 +156,21 @@ class RoutineStep(BaseModel):
         description="Rule ids that placed this step here. Makes the ordering auditable "
                     "rather than something the user has to take on faith.",
     )
+    dwell_seconds: int = Field(
+        default=0,
+        description="How long the product stays on after it is applied, before "
+                    "the finish. Set by the engine from product_forms.yaml, not "
+                    "by the narrator: StepApplication.seconds is capped at 120 "
+                    "and means time spent applying, so a fifteen-minute mask "
+                    "could not be expressed at all and came out as a 30-second "
+                    "step. The model is not asked for this and cannot shorten it.",
+    )
+    dwell_note: str = Field(
+        default="",
+        description="What qualifies the dwell — the usual range, and that the "
+                    "packet wins. Carried so the page does not present a single "
+                    "number as more settled than it is.",
+    )
     application: "ApplicationSpec | None" = None
 
 
