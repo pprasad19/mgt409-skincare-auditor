@@ -10891,5 +10891,634 @@
       "cache_write_tokens": 162,
       "output_tokens": 336
     }
+  },
+  {
+    "run_id": "8f614fa7",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:05:17.536181+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "bd42eccd",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:05:19.061204+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "22c8a91b",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:05:57.974342+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 358
+    }
+  },
+  {
+    "run_id": "c6afa251",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:05:59.358474+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "0c982559",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:06:36.125225+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "e38e69a5",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:07:19.888544+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "b587199b",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:07:25.021777+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3066,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 212,
+      "output_tokens": 555
+    }
+  },
+  {
+    "run_id": "821983db",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:08:13.492472+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 358
+    }
+  },
+  {
+    "run_id": "44d09f64",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:08:15.231356+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "4c7c1f44",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:08:16.955731+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "86f3d92c",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:08:21.623626+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3040,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 186,
+      "output_tokens": 475
+    }
+  },
+  {
+    "run_id": "a981cec3",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:08:23.317424+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3066,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 212,
+      "output_tokens": 555
+    }
+  },
+  {
+    "run_id": "82483e0e",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:08:51.591756+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 358
+    }
+  },
+  {
+    "run_id": "9c2302c5",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:08:53.006577+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "db2d4108",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:08:54.430674+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "38d425cf",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:08:55.836144+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3040,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 186,
+      "output_tokens": 475
+    }
+  },
+  {
+    "run_id": "414ae673",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:08:57.277841+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3066,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 212,
+      "output_tokens": 555
+    }
+  },
+  {
+    "run_id": "6ac72add",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:09:28.546965+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 358
+    }
+  },
+  {
+    "run_id": "0ba28527",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:09:30.382269+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "b4290256",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:09:32.116995+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "f5179645",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:09:34.272881+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3040,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 186,
+      "output_tokens": 475
+    }
+  },
+  {
+    "run_id": "b055338e",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:09:35.966960+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3066,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 212,
+      "output_tokens": 555
+    }
+  },
+  {
+    "run_id": "80b52eee",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:10:09.817548+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "a2947d12",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:11:06.685556+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 2,
+      "products": [
+        "CeraVe Hydrating Facial Cleanser",
+        "CeraVe Moisturizing Cream"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3400,
+      "cache_read_tokens": 3183,
+      "cache_write_tokens": 91,
+      "output_tokens": 199
+    }
+  },
+  {
+    "run_id": "a2947d12",
+    "seq": 2,
+    "timestamp": "2026-10-26T05:11:09.561604+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 390
+    }
+  },
+  {
+    "run_id": "3d290522",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:11:27.287696+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3066,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 212,
+      "output_tokens": 540
+    }
+  },
+  {
+    "run_id": "a22a552a",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:12:38.524495+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "8c3e2c99",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:13:02.833165+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 358
+    }
+  },
+  {
+    "run_id": "f9ee25fe",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:13:04.362824+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "4486bc69",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:13:05.754482+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3016,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 162,
+      "output_tokens": 336
+    }
+  },
+  {
+    "run_id": "ae314d5a",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:13:07.237076+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3040,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 186,
+      "output_tokens": 475
+    }
+  },
+  {
+    "run_id": "686f8b15",
+    "seq": 1,
+    "timestamp": "2026-10-26T05:13:08.630538+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3066,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 212,
+      "output_tokens": 555
+    }
   }
 ]

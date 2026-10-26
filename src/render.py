@@ -37,6 +37,16 @@ MAX_SHELF = 8
 OPENING_ANIMS = frozenset({"shelf", "sort", "clash", "week"})
 
 from storyboard import container_for, scenes_for, short_time
+from rules import (ESSENTIAL_STEPS, OPTIONAL_STEPS, RECOMMENDED_STEPS,
+                   Rules as _Rules)
+
+# Read once. render() is called per request and the forms table is
+# three rows of constants; re-opening the database for it would be
+# a query per page to learn something that cannot change at runtime.
+RULES_FORMS = _Rules().forms
+ESSENTIAL_IDS = {f for f, *_ in ESSENTIAL_STEPS} | {"spf"}
+RECOMMENDED_IDS = {f for f, *_ in RECOMMENDED_STEPS}
+OPTIONAL_IDS = {f for f, _ in OPTIONAL_STEPS}
 from models import AuditNarrative, AuditResult
 
 SEVERITY_LABEL = {
@@ -1868,6 +1878,7 @@ def render(
     sourced: dict | None = None,
     failed_urls: list[str] | None = None,
     dropped: str = "",
+    wanted: list[str] | None = None,
 ) -> str:
     specs = {s.product_name: s for s in (narrative.steps if narrative else [])}
     explain = {x.rule_id: x.plain_language for x in (narrative.explanations if narrative else [])}
@@ -2457,6 +2468,11 @@ def render(
     for gap in [g for g in audit.gaps if not g.suggestion]:
         parts.append(_gap_card(gap, False))
 
+    # Which forms are still only offered, so the page can ask about them.
+    # A suggestion names its forms in `because`; the labels map back to
+    # ids through the forms table.
+    by_label = {f["name"]: fid for fid, f in RULES_FORMS.items()}
+
     suggestions = [g for g in audit.gaps if g.suggestion]
     if suggestions:
         parts.append(
@@ -2572,6 +2588,34 @@ def render(
             blocks.append(
                 f'<div class="checks" style="margin-bottom:16px">{concern_boxes}</div>'
             )
+
+        # The other half of "worth considering". Offering a step and then
+        # having no way to accept the offer was the gap a tester found:
+        # they could read that an eye cream might help and could not ask
+        # for one. Ticking a box puts it in the routine, in position,
+        # marked as something they do not own yet.
+        want_ids: list[tuple[str, str]] = []
+        held_forms = {p.form for p in audit.products}
+        for fid, form in sorted(RULES_FORMS.items(), key=lambda kv: kv[1]["rank"]):
+            if fid in held_forms or fid in ESSENTIAL_IDS:
+                continue
+            if fid in OPTIONAL_IDS or fid in RECOMMENDED_IDS:
+                want_ids.append((fid, form["name"]))
+        if want_ids:
+            boxes = "".join(
+                f'<label><input type="checkbox" name="want" value="{e(fid)}"'
+                f'{" checked" if fid in (wanted or []) else ""}>'
+                f"<span>{e(name)}</span></label>"
+                for fid, name in want_ids
+            )
+            blocks.append(
+                "<p>Tick anything you want the routine to include. These are "
+                "steps you do not own — they will appear in the morning and "
+                "evening lists in the right position, marked as something to "
+                "buy rather than something you have, so you can see where they "
+                "would go before deciding.</p>"
+                f'<div class="checks" style="margin-bottom:16px">{boxes}</div>'
+            )
         blocks.append(
             "<p>Photograph the back labels of anything amber or red above. "
             "What is already identified is kept, and a real label replaces a "
@@ -2588,6 +2632,8 @@ def render(
             titles.append("What you paid")
         if concern_boxes:
             titles.append("What you are treating")
+        if want_ids:
+            titles.append("Steps to add")
         titles.append("Anything missed or unreadable")
 
         body = "".join(
@@ -2604,7 +2650,9 @@ def render(
             # same photograph invents the same product again and they
             # have to dismiss it every time.
             f'<input type="hidden" name="dropped" value="{e(dropped)}">'
-            f'<button type="submit">Audit again</button>'
+            + "".join(f'<input type="hidden" name="want" value="{e(w)}">'
+                      for w in (wanted or []) if w not in dict(want_ids))
+            + f'<button type="submit">Audit again</button>'
             f"</form>"
             f'<div class="startover">'
             f'<a class="reset" href="/" data-reset>Start over with a new shelf</a>'

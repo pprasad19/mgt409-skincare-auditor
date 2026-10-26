@@ -93,6 +93,11 @@ FORM_KEYWORDS = [
 ]
 
 
+def _a(noun: str) -> str:
+    """"a cleanser", but "an eye cream" and "an exfoliant"."""
+    return f"{'an' if noun[:1] in 'aeiou' else 'a'} {noun}"
+
+
 def normalise(text: str) -> str:
     """Must stay identical to build_db.normalise — see the note there."""
     folded = re.sub(r"[^\w\s]", " ", text.lower(), flags=re.UNICODE)
@@ -815,7 +820,7 @@ class Rules:
                     form = self.forms[product]
                     target.append(
                         RoutineStep(
-                            product_name=f"a {form['name'].lower()}",
+                            product_name=_a(form["name"].lower()),
                             form=form["name"],
                             form_id=product,
                             order=order,
@@ -976,7 +981,8 @@ class Rules:
             return "It belongs in the morning routine."
         return "It belongs in the evening routine."
 
-    def gaps(self, products: list[ResolvedProduct]) -> list[Gap]:
+    def gaps(self, products: list[ResolvedProduct],
+             wanted: set[str] | None = None) -> list[Gap]:
         """What this shelf needs and does not have.
 
         Pairwise rules can only compare things the user owns, so they are blind
@@ -1085,7 +1091,10 @@ class Rules:
 
         # And the ones that are purely a matter of taste. One entry, so a
         # list of optional extras cannot read as a list of failures.
-        absent = [(f, why) for f, why in OPTIONAL_STEPS if f not in held]
+        # A form the user has asked for is no longer something to offer
+        # them; it is in the routine as a step they intend to buy.
+        absent = [(f, why) for f, why in OPTIONAL_STEPS
+                  if f not in held and f not in (wanted or ())]
         if absent:
             out.append(
                 Gap(
@@ -1180,6 +1189,7 @@ class Rules:
         conditions: list[str] | None = None,
         trims: list[Trim] | None = None,
         concerns: list[str] | None = None,
+        wanted: set[str] | None = None,
     ) -> AuditResult:
         # The findings pass is O(n^2) in products, so the cap is a cost control
         # as much as a sanity one. Truncate and say so; never drop silently.
@@ -1202,9 +1212,9 @@ class Rules:
             unresolved=unresolved,
             findings=findings,
             escalations=self.escalate(products, conditions or []),
-            routine=self.build_routine(products, findings),
+            routine=self.build_routine(products, findings, wanted),
             waste=self.waste(products, findings),
-            gaps=self.gaps(products),
+            gaps=self.gaps(products, wanted),
             suggestions=self.suggest(products, concerns or []),
             rules_verified=self.rules_verified,
             rules_total=self.rules_total,

@@ -85,6 +85,7 @@ async def audit(
     psize: list[str] = Form(default=[]),
     punused: list[str] = Form(default=[]),
     pdrop: list[str] = Form(default=[]),
+    want: list[str] = Form(default=[]),
     dropped: str = Form(default=""),
 ) -> HTMLResponse:
     typed = (typed or "").strip()
@@ -425,7 +426,13 @@ async def audit(
                 product.dwell_seconds = int(minutes) * 60
                 product.dwell_source = source
 
-        result = RULES.audit(products, gate_ids, trims=trims, concerns=concern_ids)
+        # Optional steps the user has asked to include. Validated against
+        # the forms table, because this arrives from a form post and
+        # anything unrecognised would otherwise reach build_routine.
+        wanted = {w for w in want if w in RULES.forms}
+
+        result = RULES.audit(products, gate_ids, trims=trims,
+                             concerns=concern_ids, wanted=wanted)
         if reading is not None:
             result.unreadable = list(reading.unreadable)
             result.visible_count = reading.visible_count
@@ -584,7 +591,8 @@ async def audit(
         ])
         return HTMLResponse(
             render(result, narrative, annotated or None, carry, legend, skin,
-                   sourced, failed_urls=failed_urls, dropped=refused_json)
+                   sourced, failed_urls=failed_urls, dropped=refused_json,
+                   wanted=sorted(wanted))
         )
 
     except Exception:  # noqa: BLE001

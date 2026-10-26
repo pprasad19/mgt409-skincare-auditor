@@ -168,6 +168,82 @@ check("no transcription means no accusation",
           ReadProduct(name="Unknown Jar", label_text="")])), [])
 
 
+# --- asking for an optional step, and getting it ----------------------
+# "for optional items such as eye cream, you should give me an option
+# for me to tell you if I want to incorporate it. If I tell you I want
+# to incorporate it, then you should modify the routine you suggest."
+#
+# Driven by the tiers table rather than named forms, and tested that way
+# on purpose: the follow-up to that request was "toners are also
+# optional so the changes you are making to eye cream should also be
+# made for toners". Every form in the optional or recommended tier gets
+# the same treatment, and a loop is the only way to keep that true when
+# a tier gains a row.
+from rules import OPTIONAL_STEPS, RECOMMENDED_STEPS, Rules  # noqa: E402
+
+R = Rules()
+BASIC = [
+    {"name": "CeraVe Hydrating Facial Cleanser", "listed_ingredients": ["Ceramide NP"]},
+    {"name": "CeraVe Moisturising Lotion", "listed_ingredients": ["Glycerin"]},
+]
+offerable = [f for f, *_ in RECOMMENDED_STEPS] + [f for f, _ in OPTIONAL_STEPS]
+check_true("there are optional steps to offer", len(offerable) >= 2, str(offerable))
+
+def routine_steps(html: str) -> list[str]:
+    """The routine's step names, with the badge text stripped.
+
+    Searching the whole page for the word "toner" does not work: it
+    appears in the suggestion card's own prose and in the checkbox
+    label, so a form is "present" before anyone has asked for it. Only
+    the step names answer the question being asked here.
+    """
+    out = []
+    for m in re.findall(r'<div class="name">(.*?)</div>', html, re.S):
+        text = re.sub("<[^>]+>", " ", m)
+        out.append(" ".join(text.split()).replace(" not on your shelf", "").lower())
+    return out
+
+
+base = client.post("/audit", data={"carried": json.dumps(BASIC)})
+for form_id in offerable:
+    label = R.forms[form_id]["name"].lower()
+
+    # Offered, and not forced on anyone who did not ask.
+    check_true(f"{form_id}: a box is offered",
+               f'name="want" value="{form_id}"' in base.text)
+    check_true(f"{form_id}: absent until asked for",
+               not any(label in n for n in routine_steps(base.text)),
+               str(routine_steps(base.text)))
+
+    r = client.post("/audit", data={"carried": json.dumps(BASIC), "want": form_id})
+    page = r.text.lower()
+    check(f"{form_id}: the request is accepted", r.status_code, 200)
+    check_true(f"{form_id}: it reaches the routine",
+               any(label in n for n in routine_steps(r.text)),
+               str(routine_steps(r.text)))
+    check_true(f"{form_id}: marked as not owned",
+               "not on your shelf" in page)
+    check_true(f"{form_id}: the box stays ticked",
+               f'value="{form_id}" checked' in r.text)
+
+# Position matters: an eye cream belongs before the moisturiser, not
+# appended to the end. The forms table already knows the order and the
+# placeholder has to respect it.
+r = client.post("/audit", data={"carried": json.dumps(BASIC), "want": ["toner", "eye"]})
+seq = [n for n in routine_steps(r.text)
+       if "toner" in n or "eye cream" in n or "moisturising" in n]
+check_true("optional steps land in rank order, not at the end",
+           seq[:3] == ["a toner", "an eye cream", "cerave moisturising lotion"],
+           str(seq[:3]))
+
+# And nothing invented: a form id that is not in the table is ignored
+# rather than reaching build_routine.
+junk = client.post("/audit", data={"carried": json.dumps(BASIC),
+                                   "want": "'; DROP TABLE--"})
+check("a junk form id is refused", junk.status_code, 200)
+check_true("and does not reach the page", "DROP TABLE" not in junk.text)
+
+
 if failures:
     print(f"FAILED {len(failures)} of {checks} checks\n")
     for f in failures:

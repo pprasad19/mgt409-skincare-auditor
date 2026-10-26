@@ -339,3 +339,40 @@ findings:
     class: agent-cannot-do-what-it-claims
     caught_by_tests: false
 
+  - tester: 2
+    round: 4
+    reported: "for optional items such as eye cream, give me an option to tell you if I want to incorporate it, and then modify the routine"
+    layer: design
+    wrong: >-
+      The page offered a step and gave no way to accept the offer. A reader
+      could learn that an eye cream might suit them and had no means of saying
+      yes, so the suggestion was the end of the conversation rather than the
+      start of one.
+    fixed: >-
+      A tick box per offered step. Ticking one puts it in the routine in rank
+      order, marked as something to buy rather than something owned, and the
+      answer survives the round trip. Opt-in rather than shown by default:
+      adding an eye cream nobody asked for is the invented-purchase failure
+      the three tiers exist to prevent.
+    commit: pending
+    class: offer-with-no-way-to-accept
+    caught_by_tests: false
+
+  - tester: 1
+    round: 4
+    reported: "toners are also optional so the changes you are making to eye cream should also be made for toners"
+    layer: design
+    wrong: >-
+      Nothing — the opt-in was driven by the tiers table from the start, so
+      toner and serum already behaved identically to eye cream. Logged because
+      the question was reasonable and the answer was not visible from outside:
+      a feature described in terms of one example looks like it was built for
+      that example.
+    fixed: >-
+      Verified rather than asserted, and test_correction now loops over every
+      row in the optional and recommended tiers instead of naming forms, so a
+      tier that gains a row cannot quietly miss out.
+    commit: pending
+    class: not-a-defect
+    caught_by_tests: true
+
