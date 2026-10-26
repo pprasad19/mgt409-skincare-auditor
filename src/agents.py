@@ -114,9 +114,17 @@ def build_shelf_reader(cache_enabled: bool = True, arm: str = "defended") -> Age
                   contributes on its own.
       defended    hardened prompt, full output type, validator downstream.
 
-    Measuring only defended against undefended understated the attacks: a model
-    handed a field named `suspicious_text` reports odd label text whether or
-    not the prompt mentions injection.
+    The arms exist because measuring only defended against undefended could
+    understate the attacks if the schema were doing the work on its own — a
+    model handed a field named `suspicious_text` might report odd label text
+    whether or not the prompt mentions injection.
+
+    Measured on 25 Oct 2026 against all three arms, it does not. Naive and
+    undefended both held 10 of 12 and failed on the same two, A9 and A11, so
+    the field contributed nothing detectable here. What closed both was the
+    hardened prompt together with the validator. That is a narrower claim
+    than the one this docstring used to make, and it is the one the run
+    supports.
 
     The trap tools stay attached in every arm. Removing them would make a run
     look clean for the wrong reason.
