@@ -103,9 +103,18 @@ check(
     # invented ten minutes. It is a number, bounds-checked to 1..480 in
     # find_mask_time, and reaches a countdown timer — not a finding, a
     # severity or a routine position.
+    # matched_brand / same_product / size are the identity and quantity
+    # checks. A second tester asked where a Goodal moisturiser they never
+    # owned had come from, and why their Skin1004 cleansing oil was
+    # attributed to Manyo: the lookup was substituting the nearest famous
+    # product and attaching its ingredient list. These let the lookup
+    # fail closed instead. They are read by app.py to REFUSE a record —
+    # the only fields here that can subtract from what reaches the page
+    # rather than add to it, which is the safe direction.
     {"found", "inci", "source_url", "matched_name",
      "typical_price_usd", "price_source_url", "note", "raw_list",
-     "list_on_page", "price_on_page", "mask_minutes"},
+     "list_on_page", "price_on_page", "mask_minutes",
+     "matched_brand", "same_product", "size"},
 )
 for forbidden in ("findings", "severity", "verdict", "safe", "skip", "rule_id",
                   "clearance", "approved", "tools"):

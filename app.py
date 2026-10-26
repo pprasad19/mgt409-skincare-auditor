@@ -43,7 +43,7 @@ from models import ReadProduct, ShelfReading, InputProduct, display_name  # noqa
 from pages import error_page, landing  # noqa: E402
 import render as render_mod  # noqa: E402
 from render import render  # noqa: E402
-from rules import Rules  # noqa: E402
+from rules import normalise, Rules  # noqa: E402
 from safety import detect_suppression, trap_calls, AuditTrail  # noqa: E402
 from usage import UsageLog  # noqa: E402
 
@@ -185,6 +185,10 @@ async def audit(
         # printed — but it can be a different size or an older
         # formula, and it is the list every finding below rests on.
         off_page_lists: dict[str, str] = {}
+        # Products the web lookup refused to identify, and why.
+        wrong_product: dict[str, str] = {}
+        # Products priced at a size other than the one photographed.
+        size_prices: dict[str, tuple[str, str]] = {}
         # Links whose product name collided with an earlier one.
         same_name_links: list[str] = []
         # A link that cannot be read is the one failure the user is
@@ -280,6 +284,7 @@ async def audit(
         fresh = [
             InputProduct(
                 name=display_name(p.brand, p.name), brand=p.brand, form=p.form,
+                size=p.size,
                 listed_ingredients=p.listed_ingredients,
                 price_usd=p.price_usd, unused=p.unused,
             )
@@ -320,14 +325,33 @@ async def audit(
                 continue
             if RULES.match_catalogue(product):
                 continue
-            record = await find_ingredients(product.name, usage_log=log)
+            record = await find_ingredients(product.name, usage_log=log,
+                                            size=product.size)
             budget -= 1
+            if record and record.get("mismatch"):
+                # Looked for, not found. Named here because the user is
+                # the only one who can resolve it, and because quietly
+                # swapping in a similar product is the worst thing this
+                # app can do: every finding would be computed from a
+                # bottle they do not own.
+                wrong_product[product.name] = record["mismatch"]
+                record = None
             if record:
                 product.listed_ingredients = record["inci"]
                 # What someone actually paid always wins; this fills a gap.
                 if product.price_usd is None and record.get("typical_price_usd"):
                     product.price_usd = float(record["typical_price_usd"])
                     product.price_is_typical = True
+                    # A 7 ml sample priced as a full jar is wrong by a
+                    # factor of twenty, and the money section is built
+                    # entirely from this number. Still shown — a
+                    # wrong-size price still ranks what is going to
+                    # waste — but never silently.
+                    priced_size = (record.get("size") or "").strip()
+                    if product.size and priced_size and \
+                            normalise(priced_size) != normalise(product.size):
+                        product.price_size_mismatch = priced_size
+                        size_prices[product.name] = (product.size, priced_size)
                 sourced[product.name] = record
 
         # How long a mask stays on is a property of that mask, not of
@@ -411,6 +435,20 @@ async def audit(
                 + ", ".join(same_name_links)
                 + ". If these really are the same product, the duplicate check "
                   "above will have said so."
+            )
+        for pname, (yours, priced) in size_prices.items():
+            notes.append(
+                f"The price shown for {pname} is for the {priced} size, but the "
+                f"one in your photograph is {yours}. Everything in the money "
+                f"section that depends on it is wrong by that ratio — type what "
+                f"you actually paid to fix it."
+            )
+        for pname, why in wrong_product.items():
+            notes.append(
+                f"We could not confirm an ingredient list for {pname}: {why}. "
+                f"Rather than use a similar product's list, it has been left out "
+                f"of the checks — type its ingredients in, or paste a link to its "
+                f"page, and it will be included."
             )
         for pname, where in off_page_lists.items():
             notes.append(

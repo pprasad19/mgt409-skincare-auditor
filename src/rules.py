@@ -166,6 +166,16 @@ OPTIONAL_STEPS: list[tuple[str, str]] = [
      "whether it is needed at all."),
 ]
 
+# Any mention of the eye at all, in the languages the form keywords
+# cover. Deliberately looser than FORM_KEYWORDS["eye"], which lists whole
+# phrases like "eye cream": this is only used to decide whether to
+# believe the reader when it says a product is an eye product, and the
+# first version — reusing those phrases — threw away "Youth Dose Eye
+# Treatment" and "Eye Repair Cream", which are plainly eye products.
+# Refusing a real one is worse than the bug this guards against.
+EYE_WORDS = ("eye", "yeux", "ojos", "augen", "occhi", "olhos",
+             "아이", "눈", "目", "眼")
+
 ESSENTIAL_STEPS: list[tuple[str, str, str, str]] = [
     (
         "cleanser",
@@ -260,6 +270,19 @@ class Rules:
         name = normalise(product.name or "")
         if any(k in name for k in dict(FORM_KEYWORDS)["oil_cleanser"]):
             return "oil_cleanser"
+        # An eye cream says so on the box. The reader called a Kiehl's
+        # retinol serum an eye cream, which moved it to the eye step and
+        # — because the shelf then appeared to have one — withheld the
+        # suggestion that the user get an eye cream at all. One misread
+        # word, two wrong answers, and the second invisible.
+        #
+        # Narrower than it looks: this only refuses `eye`, only when the
+        # name carries no eye word in any of the languages the keyword
+        # table covers, and then falls through to the ordinary inference
+        # rather than asserting a form of its own.
+        if product.form == "eye" and not any(w in name for w in EYE_WORDS):
+            product = product.model_copy(update={"form": None})
+
         if product.form and product.form in self.forms:
             return product.form
         # A product whose label lists UV filters is a sunscreen, whatever it

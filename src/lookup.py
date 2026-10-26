@@ -40,6 +40,8 @@ from openai import AsyncOpenAI
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent
 
+from rules import normalise
+
 from env_file import require
 from llm import MODEL_SETTINGS, PORTKEY_BASE_URL, build_model
 from usage import MODEL
@@ -85,6 +87,28 @@ class ProductLookup(BaseModel):
     price_source_url: str = Field(
         default="",
         description="Where the price came from. Required for the price to be used.",
+    )
+    matched_brand: str = Field(
+        default="",
+        description="The brand of the product you actually found. Required when "
+                    "found is true. This is checked against the brand asked for: "
+                    "a different brand's ingredient list is not a worse answer "
+                    "than none, it is a wrong one that looks authoritative.",
+    )
+    same_product: bool = Field(
+        default=False,
+        description="True ONLY if what you found is the product you were asked "
+                    "about. False for a similar product, another brand's version "
+                    "of the same idea, a different size with a different formula, "
+                    "or a reformulation you are unsure about. A famous product "
+                    "that matches the words is not the same as the product in "
+                    "someone's bathroom.",
+    )
+    size: str = Field(
+        default="",
+        description="The size this ingredient list and price refer to, as printed "
+                    "— '30 ml', '1.7 oz'. The price of a full-size jar attached to "
+                    "a 7 ml sample is wrong by a factor of ten.",
     )
     mask_minutes: int | None = Field(
         default=None,
@@ -149,6 +173,16 @@ happens to have a similar name, that is a not-found.
 
 If the product is a mask, return mask_minutes: how long the maker says to leave it on. Only if that page or the packet states it. Leave it empty otherwise — a typical figure for this kind of mask is exactly what must not be returned here.
 
+Set matched_brand to the brand of what you found, and same_product true
+only if it is really the product you were asked about. If you were asked
+about a brand you cannot find and a different brand makes something
+similar, that is NOT the same product — say so with same_product false
+and name what you found anyway, so the reader can see the near miss.
+A famous product matching the words is the trap here: "centella cleansing
+oil" is made by a dozen brands.
+
+If you were told a size, price that size and set `size` to it.
+
 Also return the **typical US retail price** for the standard size, with the
 URL you took it from. The brand's own store or a large retailer is fine. If
 you cannot find a published price, leave it empty — a guessed price ends up
@@ -208,12 +242,46 @@ def _searcher():
     return web_search
 
 
-async def find_ingredients(product_name: str, usage_log=None) -> dict | None:
+
+
+def _brand_conflict(asked: str, found_brand: str, found_name: str) -> bool:
+    """Did we ask about one brand and come back with another?
+
+    Checked here rather than left to the model, for the same reason the
+    catalogue matcher checks it: this is the failure that produces a
+    confident wrong answer, and a prompt is a request while this is a
+    rule. Only fires when the question actually named a brand — a
+    half-read bottle naming none is handled by same_product instead.
+    """
+    asked_n = normalise(asked)
+    found = normalise(f"{found_brand} {found_name}")
+    if not asked_n or not found:
+        return False
+    # The first meaningful word of a product name is almost always the
+    # brand, or failing that the thing that makes it distinctive. Two
+    # words was too lenient: "Centella Cleansing Oil" against Manyo's
+    # "Herb Green Cleansing Oil" matched on "cleansing" and passed.
+    head = next((w for w in asked_n.split() if len(w) > 2), "")
+    if not head:
+        return False
+    # If it does not survive into what came back, the lookup has
+    # answered a different question from the one it was asked.
+    #
+    # Compared with spaces removed as well, because normalise() turns
+    # punctuation into spaces: "Kiehl's" becomes "kiehl s", so a user
+    # typing "Kiehls" failed to match the retailer's own spelling of the
+    # brand and a correct lookup was thrown away. A false conflict is
+    # not the safe direction here — it silently drops a product the user
+    # does own.
+    return head not in found and head not in found.replace(" ", "")
+
+async def find_ingredients(product_name: str, usage_log=None,
+                           size: str = "") -> dict | None:
     """Look one product up. Returns a record, or None if nothing credible.
 
     Cached results come back without a network call.
     """
-    hit = cached(product_name)
+    hit = cached(f"{product_name}|{size}" if size else product_name)
     if hit is not None:
         return hit if hit.get("found") else None
 
@@ -225,7 +293,14 @@ async def find_ingredients(product_name: str, usage_log=None) -> dict | None:
         model_settings=MODEL_SETTINGS,
     )
     try:
-        result = await agent.run(f"Find the ingredient list for: {product_name}")
+        asked = f"Find the ingredient list for: {product_name}"
+        if size:
+            # The size is the difference between a sample and a jar, and
+            # between a right and a wrong price by a factor of twenty.
+            asked += (f"\nThe container is {size}. Price THAT size. If you "
+                      f"cannot find a price for it, say so in the note and "
+                      f"give the size you did price in `size`.")
+        result = await agent.run(asked)
     except Exception:
         return None
 
@@ -233,8 +308,27 @@ async def find_ingredients(product_name: str, usage_log=None) -> dict | None:
     if usage_log is not None:
         usage_log.record(f"lookup:{product_name[:30]}", result.usage)
 
+    # Fail closed on identity. A product we cannot confirm is reported as
+    # not found rather than handed someone else's ingredient list — which
+    # is what put a Goodal moisturiser on a shelf that had none, and
+    # attributed a Skin1004 cleansing oil to Manyo. Everything downstream
+    # reads `inci` as this bottle's contents: the findings, the routine,
+    # the interaction matrix, the money. Identifying the wrong product is
+    # not a smaller error than finding nothing; it is a larger one,
+    # wearing a citation.
+    #
+    # The catalogue matcher has refused cross-brand matches from the
+    # start. The web lookup, which is far less constrained, had nothing.
+    mismatch = ""
+    if out.found and not out.same_product:
+        mismatch = "the search could not confirm this exact product"
+    elif out.found and _brand_conflict(product_name, out.matched_brand,
+                                       out.matched_name):
+        found_as = out.matched_brand or out.matched_name
+        mismatch = f"the closest match was {found_as}, which is a different product"
+
     # A list without a source is not evidence, whatever the model says.
-    ok = bool(out.found and out.inci and out.source_url)
+    ok = bool(out.found and out.inci and out.source_url) and not mismatch
     # A price without a source is not usable, by the same rule as the list.
     priced = bool(out.typical_price_usd and out.price_source_url)
     record = {
@@ -242,13 +336,20 @@ async def find_ingredients(product_name: str, usage_log=None) -> dict | None:
         "inci": out.inci if ok else [],
         "source_url": out.source_url,
         "matched_name": out.matched_name,
+        # Kept even when the match was refused, so the page can say what
+        # was looked for and what turned up instead. Saying nothing is
+        # how someone ends up asking where a product they never owned
+        # came from.
+        "mismatch": mismatch,
+        "matched_brand": out.matched_brand,
+        "size": out.size,
         "note": out.note,
         "typical_price_usd": out.typical_price_usd if priced else None,
         "price_source_url": out.price_source_url if priced else "",
         "mask_minutes": out.mask_minutes,
         "looked_up": datetime.now(timezone.utc).isoformat(),
     }
-    remember(product_name, record)
+    remember(f"{product_name}|{size}" if size else product_name, record)
     return record if ok else None
 
 

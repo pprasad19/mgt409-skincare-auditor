@@ -59,6 +59,19 @@ class InputProduct(BaseModel):
         description="User says they own it but do not use it. A product that is both "
                     "unused and redundant is the clearest waste signal we have.",
     )
+    size: str = Field(
+        default="",
+        description="The size on the container, as printed. Decides which price "
+                    "is the right one to look up.",
+    )
+    price_size_mismatch: str = Field(
+        default="",
+        description="Set when the price we found is for a different size from the "
+                    "one in the photograph. The figure is still shown, because a "
+                    "wrong-size price is better than no price for ranking what is "
+                    "going to waste — but it is labelled, because it is not what "
+                    "this bottle cost.",
+    )
     dwell_seconds: int = Field(
         default=0,
         description="How long this product says to leave it on, in seconds, for the "
@@ -388,6 +401,16 @@ class ReadProduct(BaseModel):
     brand: str | None = None
     form: str | None = None
     listed_ingredients: list[str] = Field(default_factory=list)
+    size: str = Field(
+        default="",
+        description="How much is in the container, exactly as printed — '7 ml', "
+                    "'1.7 fl oz', '50g'. Read it off the photograph; sizes are "
+                    "printed small and usually on the front. Empty if you cannot "
+                    "see one, never a typical size for this product. A sample "
+                    "and a full jar look alike in a photograph and differ in "
+                    "price by a factor of twenty, and that number is what the "
+                    "money section is built from.",
+    )
     legibility: Literal["clear", "partial", "name_only"] = "clear"
     price_usd: float | None = Field(
         default=None,

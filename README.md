@@ -89,6 +89,25 @@ step belongs — morning, evening or both — read from the same `times`
 column the routine builder uses, so a gap cannot name a different time of
 day from the routine beside it.
 
+**A lookup that cannot confirm the product reports nothing.** Handed a
+half-legible "centella cleansing oil", the web lookup used to return the
+most famous one there is and attach *its* ingredient list — which then
+became the basis of every finding, the routine order and the money. A
+second tester asked where a Goodal moisturiser they had never owned came
+from, and why their SKIN1004 cleansing oil was being credited to Manyo.
+Both were the same bug. The lookup now fails closed: a product whose
+identity cannot be confirmed is reported as unidentified and left out of
+the checks, because losing one product costs a row while substituting one
+corrupts everything computed from it. The catalogue matcher has refused
+cross-brand matches from the start; the web lookup, far less constrained,
+had no equivalent.
+
+**Sizes are read off the container.** A 7 ml sample and a full jar are the
+same photograph at different scales, and the difference is a factor of
+twenty in a money section built entirely from price. The reader records
+the printed size, the lookup is asked to price *that* size, and a price
+found for a different one is labelled rather than quietly used.
+
 **How long a mask stays on is looked up, not assumed.** Clay sets in ten
 minutes, a sheet mask comes off at twenty, an overnight mask stays on all
 night, so there is no number for "a mask" — the time is found for that
@@ -155,6 +174,7 @@ python audit_cli.py --shelf data/sample_shelf.json --explain --html output/audit
 | `python test_validator.py` | invented rules and ghost products are dropped |
 | `python test_provenance.py` | a product found only via an unchecked translation says so |
 | `python test_gaps.py` | what the shelf is missing, and what is not worth flagging |
+| `python test_identity.py` | the product on the page is the product in the bathroom |
 | `python make_attacks.py` | regenerate the adversarial label images |
 | `python redteam.py --mode naive` | run the attacks with no defences |
 | `python redteam.py --mode defended` | run them again with defences on |

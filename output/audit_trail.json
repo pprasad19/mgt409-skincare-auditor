@@ -8814,5 +8814,231 @@
       "cache_write_tokens": 247,
       "output_tokens": 471
     }
+  },
+  {
+    "run_id": "c6f6bd89",
+    "seq": 1,
+    "timestamp": "2026-10-26T02:33:45.137376+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 7,
+      "identified": 7,
+      "products": [
+        "1025 Dokdo Toner",
+        "Light Cleansing Oil",
+        "Calming Moisture",
+        "BHA Blackhead Power Liquid",
+        "The Rejuvenating Night Cream",
+        "Anthelios UVmune 400",
+        "Retinol Eye Cream"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3356,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 0,
+      "output_tokens": 715
+    }
+  },
+  {
+    "run_id": "c6f6bd89",
+    "seq": 2,
+    "timestamp": "2026-10-26T02:33:49.280035+00:00",
+    "agent": "skin_observer",
+    "step": "observe",
+    "defended": true,
+    "detail": {
+      "observations": [
+        {
+          "concern": "breakouts",
+          "confidence": "clear"
+        },
+        {
+          "concern": "redness",
+          "confidence": "possible"
+        },
+        {
+          "concern": "texture",
+          "confidence": "possible"
+        }
+      ],
+      "needs_a_clinician": false,
+      "lighting_note": false,
+      "named_conditions_removed": []
+    },
+    "usage": {
+      "input_tokens": 1724,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 106
+    }
+  },
+  {
+    "run_id": "c6f6bd89",
+    "seq": 3,
+    "timestamp": "2026-10-26T02:36:11.525057+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 4,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3392,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 538,
+      "output_tokens": 740
+    }
+  },
+  {
+    "run_id": "2dfbb407",
+    "seq": 1,
+    "timestamp": "2026-10-26T02:54:51.200386+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3213,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3087,
+      "output_tokens": 107
+    }
+  },
+  {
+    "run_id": "37380a50",
+    "seq": 1,
+    "timestamp": "2026-10-26T02:57:33.413760+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3213,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3087,
+      "output_tokens": 107
+    }
+  },
+  {
+    "run_id": "b5ec9e76",
+    "seq": 1,
+    "timestamp": "2026-10-26T02:58:15.825111+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 4,
+      "products": [
+        "SKIN1004 Centella Light Cleansing Oil",
+        "Kiehl's Retinol Skin-Renewing Daily Micro-Dose Serum",
+        "CeraVe Hydrating Facial Cleanser",
+        "CeraVe Moisturizing Cream"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": [
+        "Ceramides"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3265,
+      "cache_read_tokens": 3026,
+      "cache_write_tokens": 113,
+      "output_tokens": 247
+    }
+  },
+  {
+    "run_id": "b5ec9e76",
+    "seq": 2,
+    "timestamp": "2026-10-26T02:59:50.812080+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 3,
+      "steps": 5,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3193,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 339,
+      "output_tokens": 398
+    }
+  },
+  {
+    "run_id": "78128458",
+    "seq": 1,
+    "timestamp": "2026-10-26T03:00:16.324710+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 4,
+      "products": [
+        "SKIN1004 Centella Light Cleansing Oil",
+        "Kiehl's Retinol Skin-Renewing Daily Micro-Dose Serum",
+        "CeraVe Hydrating Facial Cleanser",
+        "CeraVe Moisturizing Cream"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": [
+        "Ceramides"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3265,
+      "cache_read_tokens": 3026,
+      "cache_write_tokens": 113,
+      "output_tokens": 247
+    }
+  },
+  {
+    "run_id": "78128458",
+    "seq": 2,
+    "timestamp": "2026-10-26T03:00:16.532626+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 3,
+      "steps": 5,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3193,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 339,
+      "output_tokens": 398
+    }
   }
 ]

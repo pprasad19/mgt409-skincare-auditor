@@ -24,8 +24,10 @@ For every distinct product you can see, one record with:
 
 - **name** — the product name as printed
 - **brand** — the brand, or null
-- **form** — one of: cleanser, exfoliant, toner, essence, mask, serum,
-  treatment, eye, moisturiser, oil, spf, occlusive
+- **form** — one of: oil_cleanser, cleanser, exfoliant, toner, essence,
+  mask, serum, treatment, eye, moisturiser, oil, spf, occlusive
+- **size** — how much is in the container, as printed ("7 ml", "1.7 fl
+  oz"), or empty if you cannot see it
 - **listed_ingredients** — the INCI terms on the label
 - **legibility** — "clear", "partial", or "name_only"
 

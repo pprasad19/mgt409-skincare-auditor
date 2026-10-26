@@ -13273,5 +13273,405 @@
       "output": 0.0002355,
       "total": 0.00030626
     }
+  },
+  {
+    "run_id": "384fed1e",
+    "run_label": "web-c6f6bd89",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-26T02:33:45.136344+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,560 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3356,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 0,
+      "output_tokens": 715,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 7.96e-05,
+      "cached_input": 2.56e-05,
+      "cache_write": 0.0,
+      "output": 0.0003575,
+      "total": 0.0004627
+    }
+  },
+  {
+    "run_id": "384fed1e",
+    "run_label": "web-c6f6bd89",
+    "step": "skin_observer",
+    "timestamp": "2026-10-26T02:33:49.279181+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": false,
+    "cache_mode_note": "cache requested but neither read nor written (prompt below the floor?)",
+    "tokens": {
+      "input_tokens": 1724,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 106,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001724,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 5.3e-05,
+      "total": 0.0002254
+    }
+  },
+  {
+    "run_id": "384fed1e",
+    "run_label": "web-c6f6bd89",
+    "step": "lookup:MA:NYO FACTORY\nCENTELLA Light ",
+    "timestamp": "2026-10-26T02:34:11.936322+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "1,035 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3088,
+      "cache_read_tokens": 1035,
+      "cache_write_tokens": 1801,
+      "output_tokens": 119,
+      "requests": 2,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 2.52e-05,
+      "cached_input": 1.035e-05,
+      "cache_write": 0.00022513,
+      "output": 5.95e-05,
+      "total": 0.00032018
+    }
+  },
+  {
+    "run_id": "384fed1e",
+    "run_label": "web-c6f6bd89",
+    "step": "lookup:goodal Calming Moisture",
+    "timestamp": "2026-10-26T02:34:35.435714+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "1,027 tokens read from cache",
+    "tokens": {
+      "input_tokens": 2981,
+      "cache_read_tokens": 1027,
+      "cache_write_tokens": 1702,
+      "output_tokens": 841,
+      "requests": 2,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 2.52e-05,
+      "cached_input": 1.027e-05,
+      "cache_write": 0.00021275,
+      "output": 0.0004205,
+      "total": 0.00066872
+    }
+  },
+  {
+    "run_id": "384fed1e",
+    "run_label": "web-c6f6bd89",
+    "step": "lookup:LA MER The Rejuvenating Night ",
+    "timestamp": "2026-10-26T02:35:20.409082+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,745 tokens read from cache",
+    "tokens": {
+      "input_tokens": 5598,
+      "cache_read_tokens": 2745,
+      "cache_write_tokens": 2475,
+      "output_tokens": 1531,
+      "requests": 3,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 3.78e-05,
+      "cached_input": 2.745e-05,
+      "cache_write": 0.00030938,
+      "output": 0.0007655,
+      "total": 0.00114013
+    }
+  },
+  {
+    "run_id": "384fed1e",
+    "run_label": "web-c6f6bd89",
+    "step": "lookup:Kiehl's Retinol Eye Cream",
+    "timestamp": "2026-10-26T02:36:06.085143+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "5,388 tokens read from cache",
+    "tokens": {
+      "input_tokens": 8560,
+      "cache_read_tokens": 5388,
+      "cache_write_tokens": 2668,
+      "output_tokens": 819,
+      "requests": 4,
+      "tool_calls": 5
+    },
+    "cost_usd": {
+      "uncached_input": 5.04e-05,
+      "cached_input": 5.388e-05,
+      "cache_write": 0.0003335,
+      "output": 0.0004095,
+      "total": 0.00084728
+    }
+  },
+  {
+    "run_id": "384fed1e",
+    "run_label": "web-c6f6bd89",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-26T02:36:11.524748+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,728 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3392,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 538,
+      "output_tokens": 740,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.728e-05,
+      "cache_write": 6.725e-05,
+      "output": 0.00037,
+      "total": 0.00047713
+    }
+  },
+  {
+    "run_id": "08e4b90f",
+    "run_label": "web-2dfbb407",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-26T02:54:51.199924+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 3,087 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 3213,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3087,
+      "output_tokens": 107,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00038587,
+      "output": 5.35e-05,
+      "total": 0.00045197
+    }
+  },
+  {
+    "run_id": "793c8a67",
+    "run_label": "web-37380a50",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-26T02:57:33.413257+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 3,087 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 3213,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3087,
+      "output_tokens": 107,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00038587,
+      "output": 5.35e-05,
+      "total": 0.00045197
+    }
+  },
+  {
+    "run_id": "8e87bdc5",
+    "run_label": "web-b5ec9e76",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-26T02:58:15.824666+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "3,026 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3265,
+      "cache_read_tokens": 3026,
+      "cache_write_tokens": 113,
+      "output_tokens": 247,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 3.026e-05,
+      "cache_write": 1.412e-05,
+      "output": 0.0001235,
+      "total": 0.00018049
+    }
+  },
+  {
+    "run_id": "8e87bdc5",
+    "run_label": "web-b5ec9e76",
+    "step": "lookup:SKIN1004 Centella Light Cleans",
+    "timestamp": "2026-10-26T02:58:46.695796+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,892 tokens read from cache",
+    "tokens": {
+      "input_tokens": 5259,
+      "cache_read_tokens": 2892,
+      "cache_write_tokens": 1989,
+      "output_tokens": 551,
+      "requests": 3,
+      "tool_calls": 3
+    },
+    "cost_usd": {
+      "uncached_input": 3.78e-05,
+      "cached_input": 2.892e-05,
+      "cache_write": 0.00024862,
+      "output": 0.0002755,
+      "total": 0.00059084
+    }
+  },
+  {
+    "run_id": "8e87bdc5",
+    "run_label": "web-b5ec9e76",
+    "step": "lookup:Kiehl's Retinol Skin-Renewing ",
+    "timestamp": "2026-10-26T02:59:30.084786+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "4,550 tokens read from cache",
+    "tokens": {
+      "input_tokens": 6560,
+      "cache_read_tokens": 4550,
+      "cache_write_tokens": 1632,
+      "output_tokens": 986,
+      "requests": 3,
+      "tool_calls": 4
+    },
+    "cost_usd": {
+      "uncached_input": 3.78e-05,
+      "cached_input": 4.55e-05,
+      "cache_write": 0.000204,
+      "output": 0.000493,
+      "total": 0.0007803
+    }
+  },
+  {
+    "run_id": "8e87bdc5",
+    "run_label": "web-b5ec9e76",
+    "step": "lookup:CeraVe Moisturizing Cream",
+    "timestamp": "2026-10-26T02:59:47.583436+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,653 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3538,
+      "cache_read_tokens": 2653,
+      "cache_write_tokens": 633,
+      "output_tokens": 498,
+      "requests": 2,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 2.52e-05,
+      "cached_input": 2.653e-05,
+      "cache_write": 7.912e-05,
+      "output": 0.000249,
+      "total": 0.00037985
+    }
+  },
+  {
+    "run_id": "8e87bdc5",
+    "run_label": "web-b5ec9e76",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-26T02:59:50.811628+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,728 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3193,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 339,
+      "output_tokens": 398,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.728e-05,
+      "cache_write": 4.238e-05,
+      "output": 0.000199,
+      "total": 0.00028126
+    }
+  },
+  {
+    "run_id": "1e32a251",
+    "run_label": "web-78128458",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-26T03:00:16.324133+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "3,026 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3265,
+      "cache_read_tokens": 3026,
+      "cache_write_tokens": 113,
+      "output_tokens": 247,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 3.026e-05,
+      "cache_write": 1.412e-05,
+      "output": 0.0001235,
+      "total": 0.00018049
+    }
+  },
+  {
+    "run_id": "1e32a251",
+    "run_label": "web-78128458",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-26T03:00:16.532209+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,728 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3193,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 339,
+      "output_tokens": 398,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.728e-05,
+      "cache_write": 4.238e-05,
+      "output": 0.000199,
+      "total": 0.00028126
+    }
   }
 ]

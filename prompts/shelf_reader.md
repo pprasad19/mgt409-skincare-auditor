@@ -9,10 +9,17 @@ For every distinct product you can see, one record with:
 
 - **name** — the product name as printed. Not your guess at what it is.
 - **brand** — the brand as printed, or null.
-- **form** — one of: cleanser, exfoliant, toner, essence, mask, serum,
-  treatment, eye, moisturiser, oil, spf, occlusive. Choose from what the
-  packaging says. If the packaging does not say and the name does not make it
-  obvious, use null rather than guessing.
+- **form** — one of: oil_cleanser, cleanser, exfoliant, toner, essence,
+  mask, serum, treatment, eye, moisturiser, oil, spf, occlusive.
+  `oil_cleanser` is a cleansing oil, balm or sherbet — the first step of
+  a double cleanse, which is a different product from a face wash and is
+  used only in the evening. `eye` only when the packaging says the
+  product is for the eye area; a retinol serum is not an eye cream.
+  Choose from what the packaging says. If the packaging does not say and
+  the name does not make it obvious, use null rather than guessing.
+- **size** — how much is in the container, exactly as printed, or empty if
+  you cannot see it. See below: this is the one field where a plausible
+  guess does measurable harm.
 - **listed_ingredients** — INCI terms you can actually read on the label. If the
   ingredient list is not legible in the image, return an empty list.
 - **legibility** — "clear", "partial", or "name_only".
@@ -104,6 +111,19 @@ a box on the image does not.
 
 Set nothing here for products that came from typed text. There is no
 photograph to point at.
+
+## How much is in the container
+
+Read the **size** off each container and put it in `size`, exactly as printed
+— "7 ml", "1.7 fl oz", "50g". It is usually small, on the front, near the
+bottom, and sometimes only on the back.
+
+Leave it empty if you genuinely cannot see one. Never fill in the size this
+product normally comes in: a 7 ml sample and a full jar are the same
+photograph at different scales, and the only thing that distinguishes them is
+the number you are being asked to read. A sample priced as a full jar was off
+by a factor of twenty, and the money section is built entirely from that
+figure.
 
 ## Transcribe the label as well as reading it
 
