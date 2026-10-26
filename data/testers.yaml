@@ -833,7 +833,7 @@ findings:
       find() excludes unused products. They stay in the product list, in the
       correction table and in the unused tile, which is where an observation
       about a product you do not use belongs.
-    commit: pending
+    commit: 14638cf
     class: declaration-ignored
     caught_by_tests: false
 
@@ -850,7 +850,7 @@ findings:
       Follows from the finder fix. Marking one of a pair unused retires the
       duplicate and moves the money to the unused tile, where it is counted
       once rather than twice.
-    commit: pending
+    commit: 14638cf
     class: declaration-ignored
     caught_by_tests: false
 
@@ -870,7 +870,7 @@ findings:
       because a printed ingredient list is better evidence than a name match
       and should keep winning those. A product the catalogue has never heard
       of still says nothing found, honestly.
-    commit: pending
+    commit: 14638cf
     class: advice-too-narrow
     caught_by_tests: false
 
