@@ -22560,5 +22560,511 @@
       "cache_write_tokens": 224,
       "output_tokens": 472
     }
+  },
+  {
+    "run_id": "471ae29c",
+    "seq": 1,
+    "timestamp": "2026-10-26T13:05:30.536251+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 7,
+      "identified": 7,
+      "products": [
+        "ROUND LAB 1025 DOKDO TONER",
+        "MADAGASCAR CENTELLA LIGHT CLEANSING OIL",
+        "Retinol 0.1",
+        "The Retinol 0.1 Cream",
+        "BHA Blackhead Power Liquid",
+        "ANTHELIOS UVMUNE 400",
+        "Retinol 0.1"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3768,
+      "cache_read_tokens": 2560,
+      "cache_write_tokens": 0,
+      "output_tokens": 753
+    }
+  },
+  {
+    "run_id": "471ae29c",
+    "seq": 2,
+    "timestamp": "2026-10-26T13:05:31.425032+00:00",
+    "agent": "skin_observer",
+    "step": "observe",
+    "defended": true,
+    "detail": {
+      "observations": [
+        {
+          "concern": "breakouts",
+          "confidence": "clear"
+        },
+        {
+          "concern": "redness",
+          "confidence": "possible"
+        },
+        {
+          "concern": "texture",
+          "confidence": "possible"
+        }
+      ],
+      "needs_a_clinician": false,
+      "lighting_note": false,
+      "named_conditions_removed": []
+    },
+    "usage": {
+      "input_tokens": 1724,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 106
+    }
+  },
+  {
+    "run_id": "471ae29c",
+    "seq": 3,
+    "timestamp": "2026-10-26T13:05:39.413901+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 21,
+      "steps": 11,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 4941,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 2087,
+      "output_tokens": 1358
+    }
+  },
+  {
+    "run_id": "80527d31",
+    "seq": 1,
+    "timestamp": "2026-10-26T13:07:30.106538+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 3,
+      "products": [
+        "Cocokind calming magnesium mist",
+        "La mer rejuvenating night cream",
+        "Kiehl's retinol daily serum"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3391,
+      "cache_read_tokens": 3183,
+      "cache_write_tokens": 82,
+      "output_tokens": 222
+    }
+  },
+  {
+    "run_id": "80527d31",
+    "seq": 2,
+    "timestamp": "2026-10-26T13:07:36.528753+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 11,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 4038,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 1184,
+      "output_tokens": 953
+    }
+  },
+  {
+    "run_id": "dc83e3ee",
+    "seq": 1,
+    "timestamp": "2026-10-26T13:08:57.990354+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 11,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 4038,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 1184,
+      "output_tokens": 974
+    }
+  },
+  {
+    "run_id": "af2f0214",
+    "seq": 1,
+    "timestamp": "2026-10-26T13:09:30.673240+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 11,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 4038,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 1184,
+      "output_tokens": 1022
+    }
+  },
+  {
+    "run_id": "5d4c2422",
+    "seq": 1,
+    "timestamp": "2026-10-26T13:10:38.021742+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 11,
+      "steps": 12,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 4147,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 1293,
+      "output_tokens": 1234
+    }
+  },
+  {
+    "run_id": "3bd27aab",
+    "seq": 1,
+    "timestamp": "2026-10-26T13:11:59.062341+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 9,
+      "steps": 7,
+      "rejected": [
+        "application spec for unknown product 'a cleanser (Cleanser, daily)'",
+        "application spec for unknown product 'a cleanser (Cleanser, daily)'"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3874,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 1020,
+      "output_tokens": 900
+    }
+  },
+  {
+    "run_id": "c6e284b3",
+    "seq": 1,
+    "timestamp": "2026-10-26T13:12:17.991407+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 9,
+      "steps": 9,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3808,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 954,
+      "output_tokens": 813
+    }
+  },
+  {
+    "run_id": "53438968",
+    "seq": 1,
+    "timestamp": "2026-10-26T13:13:52.148180+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 9,
+      "steps": 9,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3939,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 1085,
+      "output_tokens": 877
+    }
+  },
+  {
+    "run_id": "00f2cf57",
+    "seq": 1,
+    "timestamp": "2026-10-26T13:14:23.568661+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 9,
+      "steps": 9,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3939,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 1085,
+      "output_tokens": 877
+    }
+  },
+  {
+    "run_id": "a801159d",
+    "seq": 1,
+    "timestamp": "2026-10-26T13:14:56.343702+00:00",
+    "agent": "skin_observer",
+    "step": "observe",
+    "defended": true,
+    "detail": {
+      "observations": [
+        {
+          "concern": "breakouts",
+          "confidence": "clear"
+        },
+        {
+          "concern": "redness",
+          "confidence": "possible"
+        },
+        {
+          "concern": "texture",
+          "confidence": "possible"
+        }
+      ],
+      "needs_a_clinician": false,
+      "lighting_note": false,
+      "named_conditions_removed": []
+    },
+    "usage": {
+      "input_tokens": 1724,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 106
+    }
+  },
+  {
+    "run_id": "a801159d",
+    "seq": 2,
+    "timestamp": "2026-10-26T13:14:57.880184+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 9,
+      "steps": 9,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3808,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 954,
+      "output_tokens": 813
+    }
+  },
+  {
+    "run_id": "341fc3e8",
+    "seq": 1,
+    "timestamp": "2026-10-26T13:18:26.504835+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 3244,
+      "output_tokens": 112
+    }
+  },
+  {
+    "run_id": "c64f3681",
+    "seq": 1,
+    "timestamp": "2026-10-26T13:18:55.912168+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3006,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 152,
+      "output_tokens": 347
+    }
+  },
+  {
+    "run_id": "5e70950e",
+    "seq": 1,
+    "timestamp": "2026-10-26T13:18:59.318804+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3006,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 152,
+      "output_tokens": 383
+    }
+  },
+  {
+    "run_id": "0eab092a",
+    "seq": 1,
+    "timestamp": "2026-10-26T13:19:02.405900+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3006,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 152,
+      "output_tokens": 383
+    }
+  },
+  {
+    "run_id": "418cbec8",
+    "seq": 1,
+    "timestamp": "2026-10-26T13:19:05.930184+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3030,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 176,
+      "output_tokens": 448
+    }
+  },
+  {
+    "run_id": "9b62f52d",
+    "seq": 1,
+    "timestamp": "2026-10-26T13:19:09.538278+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 10,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3056,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 202,
+      "output_tokens": 525
+    }
+  },
+  {
+    "run_id": "66022f6e",
+    "seq": 1,
+    "timestamp": "2026-10-26T13:19:12.974555+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 1,
+      "steps": 1,
+      "rejected": [
+        "verification caveat stripped from summary",
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'",
+        "application spec for unknown product 'Sunscreen'",
+        "application spec for unknown product 'Cleansing oil or balm'",
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3104,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 250,
+      "output_tokens": 416
+    }
+  },
+  {
+    "run_id": "2bda5996",
+    "seq": 1,
+    "timestamp": "2026-10-26T13:19:16.518464+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 1,
+      "steps": 1,
+      "rejected": [
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'",
+        "application spec for unknown product 'Sunscreen'",
+        "application spec for unknown product 'Cleansing oil or balm'",
+        "application spec for unknown product 'Cleanser'",
+        "application spec for unknown product 'Moisturiser'"
+      ]
+    },
+    "usage": {
+      "input_tokens": 3053,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 199,
+      "output_tokens": 389
+    }
+  },
+  {
+    "run_id": "6279ae65",
+    "seq": 1,
+    "timestamp": "2026-10-26T13:19:20.108394+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 8,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3078,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 224,
+      "output_tokens": 472
+    }
   }
 ]

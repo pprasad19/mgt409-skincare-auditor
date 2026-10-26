@@ -783,8 +783,8 @@ matter what. Each was found by accident or by a tester, not by the suite.</p>
 verifying a fix rather than writing one. Checking in a browser that
 tester&nbsp;1's <em>Use retail price</em> column worked, I submitted six products, typed
 no price, and read <b>&ldquo;$96 on the shelf&rdquo;</b> above six rows the page
-itself had labelled &ldquo;retail, looked up&rdquo;. Two defects sat behind it
-and neither threw anything. The hidden field that carries products between
+itself had labelled &ldquo;retail, looked up&rdquo;. Two defects sat behind
+that one page and neither threw anything. The hidden field that carries products between
 rounds serialised six of fourteen fields, so on every resubmission a looked-up
 price returned as a price the user had stated, a size she had typed to correct
 one vanished, and a prescription she had named was forgotten &mdash; three
@@ -802,6 +802,23 @@ invariant test written afterwards was verified by putting the bug back and
 watching it fail. That is the honest summary of testing here: the suites are
 good at the properties I thought to state and close to blind where code meets
 data.</p>
+
+<p>{te['self_found_count']} defects in this project were found this way —
+by me, while checking a fix a tester had asked for, rather than by the
+suite or by the tester. They are kept apart from the {te['count']} tester
+findings above so that number stays a count of what testers reported, and
+they are listed here because each one is the same lesson from a different
+angle: the code was asking the wrong source for something another part of
+it already knew.</p>
+
+<table>
+<tr><th style="width:30%">Found while</th><th>What it was</th></tr>
+{"".join(
+    f"<tr><td>{e(m['found_while'])}</td>"
+    f"<td>{e(m['what'])}<br><em>{e(m['fixed'])}</em></td></tr>"
+    for m in te.get("self_found", [])
+)}
+</table>
 
 <h3>What I would do next, in order</h3>
 

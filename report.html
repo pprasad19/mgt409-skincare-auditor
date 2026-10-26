@@ -62,10 +62,10 @@ li{margin:.3rem 0}
 <p class="meta">
   Purnima Prasad · MGT 409 — AI Foundations for Managers · final project<br>
   Repository: <a href="https://github.com/pprasad19/mgt409-skincare-auditor">https://github.com/pprasad19/mgt409-skincare-auditor</a>
-  (commit <code>e8ab1a8</code>)<br>
+  (commit <code>2ff4404</code>)<br>
   App: runs locally — <code>python -m uvicorn app:app --port 8000</code>,
   then <code>http://localhost:8000</code>. Full instructions in the README.<br>
-  Generated 26 October 2026, 08:58 by <code>build_report.py</code>.
+  Generated 26 October 2026, 09:17 by <code>build_report.py</code>.
 </p>
 
 <h2>1 · Motivation</h2>
@@ -263,21 +263,21 @@ combination this tool exists for.</p>
 <h2>4 · Tokenomics</h2>
 
 <p>All figures below are measured from <code>output/usage_log.json</code>,
-which records every call this project has ever made — 1231 calls across
-791 runs, including failed experiments and red-team runs. Regenerate
+which records every call this project has ever made — 1254 calls across
+810 runs, including failed experiments and red-team runs. Regenerate
 with <code>python tools/tokenomics.py</code>.</p>
 
 <h3>Per call</h3>
 <table>
 <tr><th>Step</th><th class="n">Mean cost</th><th class="n">Calls</th></tr>
-<tr><td>routine_auditor</td><td class='n'>$0.00070</td><td class='n'>699</td></tr><tr><td>shelf_reader</td><td class='n'>$0.00064</td><td class='n'>298</td></tr><tr><td>lookup</td><td class='n'>$0.00098</td><td class='n'>160</td></tr><tr><td>skin_observer</td><td class='n'>$0.00042</td><td class='n'>34</td></tr><tr><td>url</td><td class='n'>$0.00111</td><td class='n'>28</td></tr>
+<tr><td>routine_auditor</td><td class='n'>$0.00071</td><td class='n'>717</td></tr><tr><td>shelf_reader</td><td class='n'>$0.00064</td><td class='n'>301</td></tr><tr><td>lookup</td><td class='n'>$0.00098</td><td class='n'>160</td></tr><tr><td>skin_observer</td><td class='n'>$0.00042</td><td class='n'>36</td></tr><tr><td>url</td><td class='n'>$0.00111</td><td class='n'>28</td></tr>
 </table>
 
 <h3>Per run, which is what a user pays for</h3>
 <table>
 <tr><th>Shape</th><th class="n">n</th><th class="n">Median</th>
     <th class="n">Cheapest</th><th class="n">Dearest</th></tr>
-<tr><td>Plain audit (read + audit)</td><td class="n">170</td>
+<tr><td>Plain audit (read + audit)</td><td class="n">171</td>
     <td class="n"><b>$0.0009</b></td>
     <td class="n">$0.0005</td>
     <td class="n">$0.0036</td></tr>
@@ -314,14 +314,14 @@ input</b> — writing is 25% <em>more</em> expensive than not caching. A read
 costs $0.01, a tenth. So caching only pays once enough reads have happened to
 cover the writes that created them.</p>
 
-<pre><code>input tokens          3,407,490
-  cache reads         2,205,444   (65% of input)
-  cache writes        793,010
-billed input          $0.16208
-same input, uncached  $0.34075
-saved                 $0.17866   (52% of input spend)</code></pre>
+<pre><code>input tokens          3,486,376
+  cache reads         2,260,291   (65% of input)
+  cache writes        809,873
+billed input          $0.16546
+same input, uncached  $0.34864
+saved                 $0.18318   (53% of input spend)</code></pre>
 
-<p>Caching landed on 820 of 1140 enabled calls
+<p>Caching landed on 840 of 1163 enabled calls
 (72%). The margin depends entirely on that rate: a workload
 with less repetition — users who run one audit and never return — would pay the
 write premium without earning it back.</p>
@@ -330,7 +330,7 @@ write premium without earning it back.</p>
 <p style="margin:0"><b>A trap worth recording.</b> The log's
 <code>input_tokens</code> is the <em>total</em>, with reads and writes counted
 inside it. Treating the three as separate pools and summing them reports a 60%
-saving where the truth is 52%. That error nearly reached
+saving where the truth is 53%. That error nearly reached
 this report; <code>tools/tokenomics.py</code> now asserts the identity before
 computing anything on top of it.</p>
 </div>
@@ -345,7 +345,7 @@ computing anything on top of it.</p>
     <td>A product is fetched once, ever</td>
     <td>A reformulation is not noticed until the cache is cleared</td></tr>
 <tr><td>Prompt caching</td>
-    <td>52% of input spend</td>
+    <td>53% of input spend</td>
     <td>Negative for one-shot users — the write premium is real</td></tr>
 <tr><td>Rules in code, not prompts</td>
     <td>No tokens at all for the decisions</td>
@@ -611,8 +611,8 @@ matter what. Each was found by accident or by a tester, not by the suite.</p>
 verifying a fix rather than writing one. Checking in a browser that
 tester&nbsp;1's <em>Use retail price</em> column worked, I submitted six products, typed
 no price, and read <b>&ldquo;$96 on the shelf&rdquo;</b> above six rows the page
-itself had labelled &ldquo;retail, looked up&rdquo;. Two defects sat behind it
-and neither threw anything. The hidden field that carries products between
+itself had labelled &ldquo;retail, looked up&rdquo;. Two defects sat behind
+that one page and neither threw anything. The hidden field that carries products between
 rounds serialised six of fourteen fields, so on every resubmission a looked-up
 price returned as a price the user had stated, a size she had typed to correct
 one vanished, and a prescription she had named was forgotten &mdash; three
@@ -630,6 +630,19 @@ invariant test written afterwards was verified by putting the bug back and
 watching it fail. That is the honest summary of testing here: the suites are
 good at the properties I thought to state and close to blind where code meets
 data.</p>
+
+<p>3 defects in this project were found this way —
+by me, while checking a fix a tester had asked for, rather than by the
+suite or by the tester. They are kept apart from the 58 tester
+findings above so that number stays a count of what testers reported, and
+they are listed here because each one is the same lesson from a different
+angle: the code was asking the wrong source for something another part of
+it already knew.</p>
+
+<table>
+<tr><th style="width:30%">Found while</th><th>What it was</th></tr>
+<tr><td>checking that a prescription leaves the duplicate figure</td><td>&quot;Tretinoin 0.05% cream&quot; was filed as a MOISTURISER. It matches no keyword in the form table and its name ends in &quot;cream&quot;, so it fell past every rule to the name guess - and was then placed at the moisturiser&#x27;s position in the routine and, once two of a form began to count, named as a duplicate of the user&#x27;s actual face cream.<br><em>A label listing a prescription-only active is a treatment, whatever the tub is called - read off the bottle, so it outranks a guess from the name. Covers tretinoin and hydroquinone, both leave-on.</em></td></tr><tr><td>checking tester 1&#x27;s Use it column end to end</td><td>The hidden field that carries products between rounds serialised six of fourteen fields. Everything else came back at its default on the next submission, and every default is the benign answer: price_is_typical went False, so a figure the tool had looked up returned as a price the user had stated and was summed into &quot;on the shelf&quot;; size went empty, so a size she had typed to correct a sample-versus-full-jar price was gone; prescribed went False, so a product she had named as her clinician&#x27;s stopped being treated as one.<br><em>The carry dumps the whole model. An allow-list is what made it possible.</em></td></tr><tr><td>reading the $96 total that should have been $0</td><td>One fact in two places. The page read price_is_typical on the resolution and printed &quot;retail, looked up&quot;; the money rules read price_is_typical on the product. The catalogue branch set the first and not the second, so six products with no price typed by anyone were labelled guesses on the page and totalled $96 above them.<br><em>The branch sets both, and the money rules now read the same flag the page renders, so the label and the arithmetic cannot disagree by construction. test_thesis asserts the invariant and was checked against the reintroduced bug.</em></td></tr>
+</table>
 
 <h3>What I would do next, in order</h3>
 
@@ -651,7 +664,7 @@ hand-written ground truth would turn "a tester found this" into a measurable
 accuracy figure.</li>
 </ol>
 
-<p class="foot">Generated 26 October 2026, 08:58 from
+<p class="foot">Generated 26 October 2026, 09:17 from
 <code>report_data.py</code>, which derives every figure above from the database,
 the usage log, the attack results and the test suites. No number in this
 document was typed by hand.</p>

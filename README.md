@@ -80,8 +80,9 @@ The model is `gpt-6-luna` throughout.
 | **A photo of your skin** | entirely optional. It is used to *ask* you what you are seeing, never to diagnose — the observer's output type cannot express a condition name, and its prose is scrubbed and escalated if one appears |
 
 The result page carries the findings, a morning and evening routine in
-order, the money, an interaction matrix, a printed card for the mirror, and
-a drawn animation of the routine that can be downloaded as a GIF.
+order, the money, an interaction matrix, a printed card for the mirror, an
+on-screen walkthrough for standing at a sink, and a drawn animation with a
+tab per half of the day, each downloadable as its own GIF.
 
 It also answers the question a routine built from your shelf cannot ask:
 **what is not on it.** Every other part of the page compares products you
