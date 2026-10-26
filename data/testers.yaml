@@ -774,6 +774,30 @@ self_found:
 # tester evidence is what drove it and the report argues from this row.
 decisions:
   - date: 2026-10-26
+    question: "should the 40-product cap come down to 15, to avoid errors?"
+    evidence: >-
+      MAX_PRODUCTS is an abuse ceiling in limits.py - a page that calls a
+      vision model needs a bound on how much work a stranger can hand it.
+      It truncates after the read, with a visible note. Lowering it would
+      not have prevented any of the 38 tester findings: every round was a
+      handful of products, and the error-prone paths are bounded
+      separately at 8 photographs and 6 web lookups per audit, which is
+      where the wrong-product and wrong-price findings came from. A
+      40-product shelf gets 6 lookups, the same as a 6-product one.
+    decided: >-
+      Keep the cap; fix the claim. The landing page was printing the
+      ceiling as a promise - "Up to 40 products" - and no shelf near forty
+      has ever been run through this tool, so the accuracy of a reader
+      asked for forty products across eight photographs is unmeasured. A
+      number nobody has tested, stated as a capability, is the defect this
+      report spends a section on. The copy now reads "built for a bathroom
+      cabinet's worth; it has only been tried on small shelves", and
+      limits.py names the number in the truncation note, which is where a
+      limit belongs: in what happens, not in what is promised.
+    cost: >-
+      Someone with a very large shelf gets less warning up front, and
+      learns the bound from the note if they hit it.
+  - date: 2026-10-26
     question: "is the 'in high-severity conflict' money tile needed, or can it go?"
     evidence: >-
       The tile priced the products involved in a critical or high-severity

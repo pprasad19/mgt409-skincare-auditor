@@ -7,7 +7,10 @@ are asked — what is this, what do I give it, and what happens to what I give i
 
 from __future__ import annotations
 
-from limits import MAX_IMAGES, MAX_PRODUCTS
+# MAX_PRODUCTS is deliberately absent: it is a ceiling against abuse,
+# not a capability, and limits.py names it in the truncation note on
+# the one occasion a reader needs to know it.
+from limits import MAX_IMAGES
 from render import CSS, CONDITION_CHOICES, LOADING_JS, LOADING_MARKUP, e
 
 EXTRA = """
@@ -144,7 +147,8 @@ def landing(concerns: list[tuple[str, str]] | None = None) -> str:
   <div class="go">
     <button type="submit">Audit my shelf</button>
     <span style="font-size:13.5px;color:var(--ink-faint)">
-      Takes about half a minute. Up to {MAX_PRODUCTS} products.</span>
+      Takes about half a minute. Built for a bathroom cabinet's worth;
+      it has only been tried on small shelves.</span>
   </div>
 </form>
 
