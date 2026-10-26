@@ -55,6 +55,11 @@ counts on every run precisely so a gap is visible rather than inferred,
 that caught it. Coverage is back to 36/36 and the two new substring cases
 are pinned in `test_i18n.py`.
 
+Those counts are this run's, not today's: six more ingredients have been
+added since and coverage currently reads **42/42** in all four languages.
+`python build_db.py` prints the live figure, which is the point of
+printing it.
+
 That is the argument for re-running this against the actual submitted
 commit rather than trusting an earlier run.
 

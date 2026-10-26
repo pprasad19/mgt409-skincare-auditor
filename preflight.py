@@ -56,6 +56,30 @@ PADDING = (
 SYSTEM = PADDING + "\nAnswer in one short sentence."
 
 
+def _cache_rate_from_log() -> str:
+    """How often caching actually lands, read from the accumulated log.
+
+    Phrased as a sentence because the caller is printing prose, and
+    degrades to an honest shrug if the log is missing or unreadable —
+    this is a footnote on a diagnostic, not worth an exception.
+    """
+    import json
+
+    path = Path(__file__).resolve().parent / "output" / "usage_log.json"
+    try:
+        log = json.loads(path.read_text(encoding="utf-8"))
+        enabled = [r for r in log if r.get("cache_enabled")]
+        hits = [r for r in enabled if r["tokens"].get("cache_read_tokens", 0) > 0]
+        if not enabled:
+            raise ValueError("no cache-enabled calls logged yet")
+    except Exception:  # noqa: BLE001
+        return ("The accumulated log in output/usage_log.json is the\n"
+                "  evidence to use here,")
+    return (f"Across the {len(enabled)} cache-enabled calls\n"
+            f"  logged so far, {len(hits)} read from cache "
+            f"({100 * len(hits) / len(enabled):.0f}%),")
+
+
 def tokens_estimate(text: str) -> int:
     try:
         import tiktoken
@@ -122,14 +146,19 @@ async def main() -> None:
 
     second = log.calls[1]["tokens"]["cache_read_tokens"]
     if second == 0:
+        # Read the rate out of the log rather than printing a number
+        # someone typed here. The first version of this note quoted "310
+        # enabled calls, 43%"; the log passed 388 the same day and the
+        # note was wrong by the evening.
+        rate = _cache_rate_from_log()
         print(
             "\nNOTE: the second identical call read no cached tokens.\n"
-            "  That is two calls, and two calls cannot settle it. Measured\n"
-            "  across the 310 enabled calls in output/usage_log.json, 43%\n"
-            "  of them do read from cache, so a miss here is the ordinary\n"
-            "  outcome rather than evidence the deployment lacks caching.\n"
-            "  Take the figure for the report from the log, not from this\n"
-            "  probe. See docs/tokenomics-measured.md."
+            "  That is two calls, and two calls cannot settle it. "
+            f"{rate}\n"
+            "  so a miss here is the ordinary outcome rather than evidence\n"
+            "  the deployment lacks caching. Take the figure for the report\n"
+            "  from the log, not from this probe — `python\n"
+            "  tools/tokenomics.py`. See docs/tokenomics-measured.md."
         )
     else:
         print(f"\nCaching confirmed: {second:,} tokens read from cache on the repeat call.")

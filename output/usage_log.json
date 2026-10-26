@@ -11973,5 +11973,205 @@
       "output": 4.95e-05,
       "total": 0.00040172
     }
+  },
+  {
+    "run_id": "6cbc48db",
+    "run_label": "web-0e55039f",
+    "step": "url:https://www.amazon.com/Amazon-Basics-Hyd",
+    "timestamp": "2026-10-26T00:45:14.726779+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 1,288 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 2494,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1288,
+      "output_tokens": 659,
+      "requests": 2,
+      "tool_calls": 1
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001206,
+      "cached_input": 0.0,
+      "cache_write": 0.000161,
+      "output": 0.0003295,
+      "total": 0.0006111
+    }
+  },
+  {
+    "run_id": "6cbc48db",
+    "run_label": "web-0e55039f",
+    "step": "url:https://www.amazon.com/Organic-Vitamin-F",
+    "timestamp": "2026-10-26T00:45:32.038796+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 1,307 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 2506,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1307,
+      "output_tokens": 514,
+      "requests": 2,
+      "tool_calls": 1
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001199,
+      "cached_input": 0.0,
+      "cache_write": 0.00016338,
+      "output": 0.000257,
+      "total": 0.00054028
+    }
+  },
+  {
+    "run_id": "6cbc48db",
+    "run_label": "web-0e55039f",
+    "step": "url:https://www.amazon.com/Clear-Beauty-Reti",
+    "timestamp": "2026-10-26T00:45:44.048179+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 1,156 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 2347,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1156,
+      "output_tokens": 482,
+      "requests": 2,
+      "tool_calls": 1
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001191,
+      "cached_input": 0.0,
+      "cache_write": 0.0001445,
+      "output": 0.000241,
+      "total": 0.0005046
+    }
+  },
+  {
+    "run_id": "6cbc48db",
+    "run_label": "web-0e55039f",
+    "step": "url:https://www.amazon.com/Tree-Life-Hyaluro",
+    "timestamp": "2026-10-26T00:46:01.150184+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 1,255 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 2454,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1255,
+      "output_tokens": 645,
+      "requests": 2,
+      "tool_calls": 1
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001199,
+      "cached_input": 0.0,
+      "cache_write": 0.00015688,
+      "output": 0.0003225,
+      "total": 0.00059928
+    }
+  },
+  {
+    "run_id": "6cbc48db",
+    "run_label": "web-0e55039f",
+    "step": "url:https://www.amazon.com/Minimalist-Salicy",
+    "timestamp": "2026-10-26T00:46:21.625147+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "1,322 tokens read from cache",
+    "tokens": {
+      "input_tokens": 4106,
+      "cache_read_tokens": 1322,
+      "cache_write_tokens": 1466,
+      "output_tokens": 847,
+      "requests": 3,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001318,
+      "cached_input": 1.322e-05,
+      "cache_write": 0.00018325,
+      "output": 0.0004235,
+      "total": 0.00075177
+    }
+  },
+  {
+    "run_id": "6cbc48db",
+    "run_label": "web-0e55039f",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-26T00:46:24.306790+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 2,937 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 3063,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2937,
+      "output_tokens": 302,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00036712,
+      "output": 0.000151,
+      "total": 0.00053073
+    }
+  },
+  {
+    "run_id": "30f56c71",
+    "run_label": "web-3bf8911a",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-26T00:48:33.160829+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 2,717 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 2843,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2717,
+      "output_tokens": 99,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00033962,
+      "output": 4.95e-05,
+      "total": 0.00040172
+    }
+  },
+  {
+    "run_id": "ed4ac8ed",
+    "run_label": "web-b591a6c6",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-26T00:50:12.167881+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 2,717 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 2843,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2717,
+      "output_tokens": 99,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00033962,
+      "output": 4.95e-05,
+      "total": 0.00040172
+    }
   }
 ]

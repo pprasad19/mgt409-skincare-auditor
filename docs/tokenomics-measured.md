@@ -1,7 +1,19 @@
 # Tokenomics, measured
 
-Checked 25 October 2026 against `output/usage_log.json` — 336 recorded
-calls across 153 runs, every one of them real.
+Checked 25 October 2026 against `output/usage_log.json` — 479 recorded
+calls across 203 runs, every one of them real.
+
+**Regenerate these figures rather than trusting them:**
+
+```bash
+python tools/tokenomics.py
+```
+
+Every number below was first typed in by hand, and by the evening of the
+same day the log had grown from 336 calls to 479 and two of the headline
+figures had moved. The tool derives them, so a write-up quoting it is
+current on the day it is run. The reasoning in this file does not change
+with the counts; the counts do.
 
 ## The arithmetic is right
 
@@ -20,20 +32,28 @@ cache reads and writes from the input total.
 
 ## What a run costs
 
-| | |
-|---|---|
-| Shelf Reader | $0.00026 per call |
-| Routine Auditor | $0.00049 per call |
-| Product / page lookup | $0.00043 per call |
-| Skin Observer | $0.00018 per call |
+| | per call | calls |
+|---|---|---|
+| Routine Auditor | $0.00088 | 183 |
+| Product / page lookup | $0.00085 | 102 |
+| Shelf Reader | $0.00052 | 164 |
+| Skin Observer | $0.00041 | 19 |
 
-A plain audit is one Shelf Reader plus one Routine Auditor: **about
-$0.0008**. With the lookup budget fully spent — six unknown products —
-it reaches roughly **$0.0033**. The most expensive single audit in the
-log was **$0.0048**.
+Per *run*, which is what a user actually pays for, split by what the run
+did — averaging these together produces a "typical audit" of $0.0024
+that nobody runs:
 
-Two days of building this, 336 calls including every failed experiment
-and redteam run, came to **$0.128 in total**.
+| | n | median | cheapest | dearest |
+|---|---|---|---|---|
+| plain audit (read + audit) | 143 | **$0.0009** | $0.0006 | $0.0036 |
+| with product lookups | 6 | **$0.0073** | $0.0028 | $0.0097 |
+| with a skin photo | 11 | $0.0024 | $0.0010 | $0.0059 |
+
+The lookup budget is the only thing that moves the cost by an order of
+magnitude, which is the whole reason `MAX_LOOKUPS` is 6.
+
+Two days of building this, 479 calls including every failed experiment
+and redteam run, came to **$0.345 in total**.
 
 ## Caching: it works, and it nearly does not
 
@@ -48,18 +68,25 @@ enough reads have happened to cover the writes that created them.
 Measured across the log:
 
 ```
-input tokens          780,553
-  cache reads         302,419   (39%)
-  cache writes        254,846
-billed input cost     $0.05721
-same input, uncached  $0.07806
-saved                 $0.02085   (27% of input spend)
+input tokens          883,385
+  cache reads         378,651   (43%)
+  cache writes        271,656
+  plain               233,078
+billed input cost     $0.06105
+same input, uncached  $0.08834
+saved                 $0.02729   (31% of input spend)
 ```
 
-The writes cost an extra $0.0064 over plain input; the reads saved
-$0.0272. Net positive, but the margin depends entirely on that 39% read
+The writes cost an extra $0.0068 over plain input; the reads saved
+$0.0341. Net positive, but the margin depends entirely on that 43% read
 ratio. A workload with less repetition — users who run one audit and
 never return — would pay the write premium without earning it back.
+
+One trap worth recording, because it nearly reached the write-up: the
+log's `input_tokens` is the *total*, with reads and writes counted
+inside it. Treating them as three separate pools and adding them up
+reports a 60% saving where the truth is 31%. `tools/tokenomics.py`
+asserts the identity before computing anything on top of it.
 
 ## The controlled experiment did not work, and the log says so
 
@@ -85,7 +112,7 @@ measured.
 **So the report should quote the production figures above, not the A/B.**
 
 The probe and the log looked contradictory — one said caching might not
-exist, the other showed 302,419 tokens read from it — so the difference
+exist, the other showed 378,651 tokens read from it — so the difference
 was worth chasing rather than waving at.
 
 It is not a size floor: the largest prompt that never cached (5,898
@@ -97,30 +124,33 @@ It is simply the hit rate. Cross-tabulating against the `cache_enabled`
 flag the log already records:
 
 ```
-cache_enabled=False   2 of 91 read from cache
-cache_enabled=True  134 of 310 read from cache     43%
+cache_enabled=False     2 of 91  read from cache
+cache_enabled=True    172 of 388 read from cache     44%
 ```
 
-The flag works, caching is real, and it lands on about two calls in
-five. preflight makes two calls, so a run of it seeing nothing is the
+The flag works, caching is real, and it lands on a little under half
+the calls. preflight makes two calls, so a run of it seeing nothing is the
 ordinary outcome, not a finding. Its note used to instruct the report to
 record the comparison as unavailable; it now points at the log instead.
 
 The lesson is worth the paragraph: a two-sample probe concluded a
-capability was absent, and a 310-sample log shows it present 43% of the
+capability was absent, and a 388-sample log shows it present 44% of the
 time. The probe was not wrong about what it saw.
 
 ## Scaling
 
-At the measured $0.0008 for a plain audit:
+At the measured median of $0.0009 for a plain audit:
 
 | | per month |
 |---|---|
-| 1 user, one audit a month | $0.0008 |
-| 100 users | $0.08 |
-| 10,000 users | $8 |
-| 10,000 users, every audit hitting the full lookup budget | $33 |
+| 1 user, one audit a month | $0.0009 |
+| 100 users | $0.09 |
+| 10,000 users | $9 |
+| 10,000 users, every audit hitting the full lookup budget | $73 |
 
 The lookup budget is the only thing that moves this materially, which is
 why `MAX_LOOKUPS` is 6 and why a looked-up product is cached to
-`data/learned_products.json` and never fetched twice.
+`data/learned_products.json` and never fetched twice. The bottom row is
+the one to watch: at the measured $0.0073 for a lookup-heavy run it is
+eight times the plain figure, and it is reached by new users, who are
+exactly the ones a launch brings.

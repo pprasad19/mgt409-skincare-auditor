@@ -124,6 +124,7 @@ python audit_cli.py --shelf data/sample_shelf.json --explain --html output/audit
 | `python tools/inci_coverage.py` | label terms the resolver does not recognise |
 | `python tools/consistency.py` | dead rules, unreachable ingredients, contradictions |
 | `python tools/four_surfaces.py` | do the four renderings agree on durations |
+| `python tools/tokenomics.py` | cost and cache figures, derived from the log |
 | `python preflight.py` | check the key, token accounting and caching |
 
 ## Non-English products
@@ -142,7 +143,7 @@ Three things make the rest work:
 - The Shelf Reader records both the printed term and its INCI equivalent, so a
   translated match stays auditable against what was actually on the label.
 
-Alias coverage is **32/32 actives in Korean, French, Japanese and Chinese**.
+Alias coverage is **42/42 actives in Korean, French, Japanese and Chinese**.
 `build_db.py` prints the per-language breakdown on every build, so a gap shows
 up rather than being assumed.
 
@@ -152,7 +153,7 @@ Try it:
 python audit_cli.py --shelf data/sample_shelf_intl.json
 ```
 
-And the regression check — 37 assertions, no API key needed:
+And the regression check — 281 assertions, no API key needed:
 
 ```bash
 python test_i18n.py
