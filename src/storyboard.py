@@ -14,7 +14,7 @@ asks to be taken on faith.
 
 So the animation is drawn, from data we already have. `beats_for` in render.py
 already produces the physical sequence — apply, finish, wait — and the text
-list, the printed card and the spoken walkthrough all render from it. This
+list and the printed card render from it too. This
 module adds the two things a picture needs that a sentence does not: WHERE on
 the face, and HOW the hands move. Timing still comes from the beats, so the
 animation cannot drift from what the page says in words.
@@ -318,8 +318,8 @@ def short_time(secs: int) -> str:
     Those two print "· 25s", which is fine until a mask arrives and they
     print "· 600s" — a number the reader has to divide. Minutes are
     computed the same way _real_time does, half-up on the same
-    threshold, so the compact form and the spoken form cannot disagree
-    about how long to stand there.
+    threshold, so the compact form and the spelled-out form cannot
+    disagree about how long to stand there.
     """
     secs = int(secs or 0)
     if secs < 120:

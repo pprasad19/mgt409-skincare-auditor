@@ -725,6 +725,98 @@ findings:
     class: declaration-ignored
     caught_by_tests: false
 
+  # ---- tester 2, round 7 --------------------------------------------
+  - tester: 2
+    round: 7
+    reported: "instead of use it, say use retail price"
+    layer: presentation
+    wrong: >-
+      "Use it" needs the column beside it to say what "it" is. Read on its
+      own - which is how a checkbox column is read - it could mean the
+      product, the row, or the size.
+    fixed: "The column is Use retail price, in the header and in every sentence that refers to it."
+    commit: pending
+    class: typography
+    caught_by_tests: false
+
+  - tester: 2
+    round: 7
+    reported: "for any new products that I add to the audit, I am not getting an option of using the retail price even though you have found it in the first time the app relaunches"
+    layer: logic
+    wrong: >-
+      The web lookup recorded a price only when the product had none, so a
+      product that arrived carrying a figure never got a Found online entry
+      and was never offered the tick. Worse, the figure it arrived with was
+      usually one the shelf reader had produced rather than one she typed -
+      the prompt tells it to take a price only from the user's words, and
+      asked to read six product names with no prices anywhere it returned a
+      retail figure for five of them. Those were summed as what she paid.
+    fixed: >-
+      The lookup records what it found whatever else is true of the product,
+      so the tick is always offered. And a reader price is treated as hers
+      only if the figure actually appears in her text; otherwise it is a
+      found price, labelled and offered like any other. An instruction in a
+      prompt is not an invariant.
+    commit: pending
+    class: confidently-wrong-provenance
+    caught_by_tests: false
+
+  - tester: 2
+    round: 7
+    reported: "if I enter my own figure, the retail price disappears from the table"
+    layer: logic
+    wrong: >-
+      One field held both numbers, so typing what she paid overwrote what we
+      had found and the Found online cell went blank. She then had nothing to
+      check her own figure against, and unticking could not hand the retail
+      price back because it no longer existed.
+    fixed: >-
+      price_found_usd is separate from price_usd and is never overwritten.
+      Both are shown, the tick stays available beside a figure she has
+      overridden, and the totals prefer hers.
+    commit: pending
+    class: unrepresentable-in-the-schema
+    caught_by_tests: false
+
+  - tester: 2
+    round: 7
+    reported: "if something only needs to be used on alternate nights, there should be a way to skip that step when the audio speaks if that step wont be used that day"
+    layer: design
+    wrong: >-
+      The spoken walkthrough read every evening step regardless of whether
+      tonight was one of its nights, so an alternating acid was announced on
+      the night it should be skipped.
+    fixed: >-
+      Overtaken by the decision to withdraw the audio entirely, recorded
+      below. The alternation itself is shown in the which-nights grid and in
+      the written step, neither of which had the defect.
+    commit: pending
+    class: not-a-defect
+    caught_by_tests: false
+
+  # ---- tester 1, round 8 --------------------------------------------
+  - tester: 1
+    round: 8
+    reported: "I am not sure when the cost duplicate function ever gets used"
+    layer: design
+    wrong: >-
+      Almost never, and she is right to have noticed. The figure is the
+      cheaper of a duplicated pair and counts confirmed prices only, so it
+      needed a duplicate AND a confirmed price on the cheaper one. Short of
+      that it read $0, which says "nothing is duplicated here" - the opposite
+      of what the engine had found. On a shelf with no prices at all the
+      tiles do not render, so the duplicate never reached the money section
+      in any form.
+    fixed: >-
+      The tile reports what is known rather than what can be priced: the
+      money when there is money, otherwise the number of products doing a
+      duplicated job, which is a real finding that needs no price. On an
+      unpriced shelf the section now names the duplicate in words and says
+      what confirming a price would buy.
+    commit: pending
+    class: verdict-without-reason
+    caught_by_tests: false
+
 # Defects found by me, not by a tester - kept apart from `findings` so
 # the tester count the report quotes stays a tester count. Both turned
 # up in the same ten minutes, in the browser, while checking that the
@@ -773,6 +865,29 @@ self_found:
 # A design decision rather than a defect, recorded here because the
 # tester evidence is what drove it and the report argues from this row.
 decisions:
+  - date: 2026-10-26
+    question: "should the spoken walkthrough stay?"
+    evidence: >-
+      "I think the whole audio aspect should be removed, creates more
+      confusion than usefulness." Four tester findings landed on it across
+      three rounds and each fix produced the next: durations read as "fifty
+      ess", a step the user does not own demonstrated without saying so, a
+      line that announced an alternating acid on the night it should be
+      skipped. It is also the one surface this project cannot test - voice,
+      pacing and pronunciation differ per browser and none of it is
+      inspectable from Python.
+    decided: >-
+      Removed: the speech module, its four controls and its status line. Kept:
+      DATA_STEPS and guided mode, which is the on-screen walkthrough for
+      standing at a sink and never spoke; the film; the printed card. The
+      durations still come from beats_for, so the surfaces that remain cannot
+      disagree, and tools/four_surfaces.py still compares four renderings
+      because DATA_STEPS fed both the guided player and the speech.
+    cost: >-
+      No hands-free option. The honest accounting is that it was never
+      hands-free in practice - it needed the page open and a browser whose
+      voice engine behaved - and three testers spent four findings telling me
+      so.
   - date: 2026-10-26
     question: "should the 40-product cap come down to 15, to avoid errors?"
     evidence: >-

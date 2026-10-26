@@ -425,11 +425,15 @@ check_true("and a technique to follow",
 check_true("nothing is left untimed now",
            not any(b.get("untimed") for st in _pgaps for b in st["beats"]))
 
-# The spoken line must not contain the compact units the table uses:
-# "50s" is read aloud as "fifty ess".
+# Beat text spells its units out. This began as a speech rule — "50s"
+# was read aloud as "fifty ess" — and the spoken walkthrough was
+# withdrawn on 26 October 2026. The rule is kept because the text is
+# not only spoken: it is a sentence in the guided player and in the
+# written step, where "50s" mid-sentence reads as a typo. The compact
+# form belongs in the table column that has no room for words.
 for _st in _pgaps:
     for _b in _st["beats"]:
-        check_true("no abbreviated unit in a spoken beat",
+        check_true("no abbreviated unit in beat text",
                    not _re.search(r"\d\s*s", _b["text"]))
 
 

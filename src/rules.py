@@ -500,19 +500,27 @@ class Rules:
                 updates = {"name": f"{hit['brand']} {hit['name']}"}
                 # Only when the user said nothing. What someone actually paid
                 # always wins over what a product usually costs.
-                if product.price_usd is None and hit["typical_price_usd"]:
-                    updates["price_usd"] = float(hit["typical_price_usd"])
-                    # On the product too, not only on the resolution.
-                    # The same fact lived in two places: the page read
-                    # the copy on ResolvedProduct and said "retail,
-                    # looked up", while the money rules read the copy on
-                    # InputProduct, which this branch left False — so a
-                    # catalogue price was summed into "on the shelf" as
-                    # though the user had stated it. Six products, no
-                    # price typed, and a $96 total with every row
-                    # labelled as a guess.
-                    updates["price_is_typical"] = True
-                    typical_price = True
+                if hit["typical_price_usd"]:
+                    found = float(hit["typical_price_usd"])
+                    # Recorded whether or not she has given us a figure,
+                    # so the Found online column still has something to
+                    # show beside a price she typed herself.
+                    updates["price_found_usd"] = (
+                        product.price_found_usd or found)
+                    if product.price_usd is None:
+                        updates["price_usd"] = found
+                        # On the product too, not only on the
+                        # resolution. The same fact lived in two places:
+                        # the page read the copy on ResolvedProduct and
+                        # said "retail, looked up", while the money
+                        # rules read the copy on InputProduct, which
+                        # this branch left False — so a catalogue price
+                        # was summed into "on the shelf" as though the
+                        # user had stated it. Six products, no price
+                        # typed, and a $96 total with every row labelled
+                        # as a guess.
+                        updates["price_is_typical"] = True
+                        typical_price = True
                 product = product.model_copy(update=updates)
 
         classes = sorted({self.ingredients[a]["class"] for a in actives})
@@ -975,40 +983,40 @@ class Rules:
         # "on the shelf" would put a 10 oz figure behind a 4 oz bottle
         # and quietly make every total wrong.
         def _countable(p) -> float:
-            """A price only counts if the user told us it.
+            """A price counts only if the user confirmed it.
 
             Every money complaint from three testers was a figure this
             app had guessed — a full-size price against a sample, an
             Amazon listing it cannot read, an original where the page
             showed a sale. The inputs are structurally weak and will
-            stay weak, so the totals no longer rest on them.
+            stay weak, so the totals do not rest on them.
 
-            A looked-up figure is still shown beside its product and
-            labelled; it is simply never added up. "On the shelf" means
-            what the user said they paid, which is a number they can
-            check against their own bank statement.
+            Two things count. A figure she typed, and a figure we found
+            that she read and ticked. Everything else is shown beside
+            its product, labelled with where it came from, and left out
+            of the arithmetic.
+
+            Written as three questions in order rather than a chain of
+            exclusions, because the chain is what let a catalogue price
+            through: each clause was individually right and the one
+            that mattered was reading the wrong copy of a flag.
             """
-            if getattr(p.product, "price_size_mismatch", ""):
-                # For a different bottle. No tick can make it this one's.
+            prod = p.product
+            if getattr(prod, "price_size_mismatch", ""):
+                # For a different bottle. No tick makes it this one's.
                 return 0.0
-            if getattr(p.product, "price_confirmed", False):
-                # They read the figure beside the product and said it is
-                # right. That is the user telling us, which is what this
-                # function is for — and a tester asked for it directly,
-                # because retyping a number already on the screen is a
+            if not p.price_is_typical and prod.price_usd:
+                # Hers. p.price_is_typical is the flag the page renders,
+                # so the label and the total cannot disagree about which
+                # figures these are.
+                return float(prod.price_usd)
+            if getattr(prod, "price_confirmed", False):
+                # Ours, read and accepted. A tester asked for this
+                # directly: retyping a number already on the screen is a
                 # bad way to spend somebody's attention.
-                return p.product.price_usd or 0.0
-            if p.price_is_typical:
-                # The resolution's flag, which is the one the page
-                # renders. Reading the copy on the product instead let
-                # the arithmetic and the label disagree about the same
-                # figure; whatever the page calls a guess must not be
-                # counted, by construction rather than by both copies
-                # happening to be in step.
-                return 0.0
-            if getattr(p.product, "price_off_page", ""):
-                return 0.0
-            return p.product.price_usd or 0.0
+                return float(getattr(prod, "price_found_usd", None)
+                             or prod.price_usd or 0.0)
+            return 0.0
 
         price = lambda n: _countable(by_name[n]) if n in by_name else 0.0
 

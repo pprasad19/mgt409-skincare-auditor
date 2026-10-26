@@ -15,6 +15,7 @@ landing page promises that; this is where the promise is kept.
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import sys
 import tempfile
@@ -70,6 +71,28 @@ IMAGE_SUFFIX = {
 @app.get("/", response_class=HTMLResponse)
 def home() -> str:
     return landing(render_mod.CONCERN_CHOICES)
+
+
+def _figure_is_the_users(value: float | None, text: str) -> bool:
+    """Did this number come out of the user's own words?
+
+    The shelf reader is told to take a price only from what the user
+    wrote. It does not always comply — asked to read six product names
+    with no prices anywhere, it returned a retail figure for five of
+    them, and because a reader price lands in price_usd with no
+    "typical" flag, the money section added all five up and called the
+    total what she had spent.
+
+    An instruction in a prompt is not an invariant. This is: the figure
+    is treated as hers only if it actually appears in her text.
+    """
+    if not value or not text:
+        return False
+    forms = {f"{value:g}", f"{value:.2f}"}
+    if value == int(value):
+        forms.add(str(int(value)))
+    return any(re.search(rf"(?<![\d.]){re.escape(f)}(?![\d])", text)
+               for f in forms)
 
 
 @app.post("/audit", response_class=HTMLResponse)
@@ -320,6 +343,11 @@ async def audit(
                              price_off_page=("" if page_price else
                                              "a published listing, not your link"),
                              price_usd=page_price or guess_price,
+                             # Kept whole. price_usd is the operative
+                             # figure and the user may overwrite it;
+                             # this is what we found, and the Found
+                             # online column reads it.
+                             price_found_usd=page_price or guess_price,
                              # Every price this app finds is a retail
                              # price, including one read off the page the
                              # user linked. Marking a page price as "what
@@ -357,15 +385,21 @@ async def audit(
                 status_code=422,
             )
 
-        fresh = [
-            InputProduct(
+        fresh = []
+        for p in (reading.products if reading else []):
+            # A figure the reader produced that is not in the user's
+            # text is something it knew, not something she said, so it
+            # is a found price and is labelled and offered like any
+            # other. Left unflagged it was summed as what she paid.
+            hers = _figure_is_the_users(p.price_usd, typed or "")
+            fresh.append(InputProduct(
                 name=display_name(p.brand, p.name), brand=p.brand, form=p.form,
                 size=p.size,
                 listed_ingredients=p.listed_ingredients,
                 price_usd=p.price_usd, unused=p.unused,
-            )
-            for p in (reading.products if reading else [])
-        ]
+                price_is_typical=bool(p.price_usd) and not hers,
+                price_found_usd=None if hers else p.price_usd,
+            ))
 
         # A real label beats what we carried forward. Someone who went back
         # and photographed the ingredient panel did it to replace a name
@@ -417,6 +451,15 @@ async def audit(
                 record = None
             if record:
                 product.listed_ingredients = record["inci"]
+                # Recorded whatever else is true of this product. It used
+                # to be set only when price_usd was empty, so a product
+                # that already carried a figure never got a Found online
+                # entry and was never offered the tick: "for any new
+                # products that I add to the audit, I am not getting an
+                # option of using the retail price even though you have
+                # found it".
+                if record.get("typical_price_usd"):
+                    product.price_found_usd = float(record["typical_price_usd"])
                 # What someone actually paid always wins; this fills a gap.
                 if product.price_usd is None and record.get("typical_price_usd"):
                     # A 7 ml sample priced as a full jar is wrong by a factor

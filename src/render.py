@@ -312,6 +312,7 @@ table.prices th{text-align:left;font:600 11px/1 var(--sans);text-transform:upper
 table.prices th.r{text-align:right;width:120px;padding-right:14px}
 table.prices th.c{text-align:center;width:96px}
 table.prices th.found,table.prices td.found{width:182px;text-align:right}
+table.prices th.use,table.prices td.use{width:86px}
 table.prices td.r{padding-right:14px}
 table.prices td{padding:7px 0;border-top:1px solid var(--line);vertical-align:middle}
 table.prices td.r{text-align:right}
@@ -391,7 +392,7 @@ table.prices .typ{font-size:11.5px;color:var(--ink-faint);display:block}
    show the user's own products, and every other screen here can. */
 .film{margin:34px 0 10px;background:var(--card);border:1px solid var(--line);
   border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
-.film-top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+.film-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
   padding:18px 22px 0}
 .film-top h3{margin:0;font:600 18px/1.3 var(--serif)}
 .film-note{font-size:12.5px;color:var(--ink-faint)}
@@ -490,8 +491,8 @@ table.prices .typ{font-size:11.5px;color:var(--ink-faint);display:block}
 /* One chip per step, the current one lit. The page has room for the names,
    which the GIF does not, so here they are clickable: a ribbon you can
    steer with beats a progress bar you can only watch. */
-.film-tabs{display:flex;gap:8px;margin:0 0 14px}
-.film-tabs button{font:inherit;font-size:14px;padding:7px 18px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-dim);cursor:pointer}
+.film-tabs{display:flex;gap:7px;margin-left:auto}
+.film-tabs button{font:inherit;font-size:13px;padding:5px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-dim);cursor:pointer}
 .film-tabs button:hover{background:var(--sunk)}
 .film-tabs button.on{background:var(--clay);border-color:var(--clay);color:#fff}
 .film-rib{display:flex;gap:5px;margin:16px 0 12px;flex-wrap:wrap}
@@ -716,252 +717,6 @@ JS = """
     if(ev.key === 'ArrowRight') advance(1);
     if(ev.key === 'ArrowLeft') advance(-1);
   });
-})();
-"""
-
-
-SPEECH_JS = r"""
-/* Spoken walkthrough, with the gaps made legible.
- *
- * Two problems with the first version. It said "25 seconds" and then went
- * silent, so you could not tell whether it was counting or had crashed. And
- * the silence itself was unpleasant: a minute of nothing while you stand at a
- * sink feels a great deal longer than a minute.
- *
- * So every pause is announced before it starts, long ones get a spoken warning
- * near the end, and a quiet generated tone fills the gap with a soft tick every
- * ten seconds. The ticks are the useful part -- they tell you time is passing
- * without opening your eyes.
- *
- * The sound is synthesised with Web Audio rather than embedded. A minute of
- * audio as base64 would add megabytes to a page that must open by double-click,
- * and a CDN link is not allowed. Oscillators cost nothing.
- */
-(function(){
-  var ALL = DATA_STEPS;
-  var queue = [], qi = 0, timer = null, warnTimer = null, running = false;
-  var btnAm = document.getElementById('say-am'),
-      btnPm = document.getElementById('say-pm'),
-      stopB = document.getElementById('say-stop'),
-      muteB = document.getElementById('say-mute'),
-      statusEl = document.getElementById('say-status');
-
-  if(!('speechSynthesis' in window)){
-    [btnAm, btnPm].forEach(function(b){ b.disabled = true; });
-    statusEl.textContent = 'this browser cannot read aloud';
-    return;
-  }
-
-  /* ---- generated music ------------------------------------------------
-   *
-   * An arpeggio over a four-chord loop, synthesised note by note. Started as a
-   * low drone, which was calm but read as dead air -- you could not tell it
-   * from the page having crashed. A pulse does the same job as the old ten-
-   * second tick (you know time is passing without looking) and is pleasanter
-   * to stand in.
-   *
-   * Notes are scheduled 0.4s ahead on a repeating timer rather than all at
-   * once: a ten-minute wait would otherwise mean thousands of live
-   * oscillators.
-   */
-  var actx = null, muted = false, sched = null, nextNote = 0, step = 0, endAt = 0;
-
-  var BPM = 104, EIGHTH = 30 / BPM;
-  /* I - V - vi - IV, the most cheerful progression in common use. */
-  var CHORDS = [
-    [261.63, 329.63, 392.00],
-    [196.00, 246.94, 392.00],
-    [220.00, 261.63, 329.63],
-    [174.61, 220.00, 261.63]
-  ];
-  var BASS = [130.81, 98.00, 110.00, 87.31];
-  var PATTERN = [0, 1, 2, 1];
-
-  function ctx(){
-    if(!actx){
-      var C = window.AudioContext || window.webkitAudioContext;
-      if(!C) return null;
-      actx = new C();
-    }
-    if(actx.state === 'suspended'){ actx.resume(); }
-    return actx;
-  }
-
-  function note(freq, when, dur, type, level){
-    var a = actx;
-    var o = a.createOscillator(), g = a.createGain();
-    o.type = type;
-    o.frequency.value = freq;
-    g.gain.setValueAtTime(0.0001, when);
-    g.gain.exponentialRampToValueAtTime(level, when + 0.012);
-    g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
-    o.connect(g); g.connect(a.destination);
-    o.start(when);
-    o.stop(when + dur + 0.03);
-  }
-
-  function pump(){
-    var a = actx;
-    if(!a) return;
-    while(nextNote < a.currentTime + 0.4){
-      if(nextNote >= endAt){ stopSound(); return; }
-      var bar = Math.floor(step / 8) % 4;
-      var chord = CHORDS[bar];
-      var pitch = chord[PATTERN[step % 4]] * (step % 8 >= 4 ? 2 : 1);
-      note(pitch, nextNote, EIGHTH * 0.85, 'triangle', 0.045);
-      if(step % 8 === 0){
-        note(BASS[bar], nextNote, EIGHTH * 3.2, 'sine', 0.07);
-      }
-      if(step % 4 === 2){
-        note(chord[2] * 2, nextNote, EIGHTH * 0.5, 'triangle', 0.02);
-      }
-      nextNote += EIGHTH;
-      step++;
-    }
-  }
-
-  function soundFor(seconds){
-    stopSound();
-    if(seconds < 4 || muted) return;
-    var a = ctx();
-    if(!a) return;
-    nextNote = a.currentTime + 0.08;
-    endAt = a.currentTime + seconds - 0.3;
-    step = 0;
-    pump();
-    sched = setInterval(pump, 150);
-  }
-
-  function stopSound(){
-    clearInterval(sched);
-    sched = null;
-  }
-
-  /* ---- script --------------------------------------------------------- */
-  /* The beat text is written for a page, where it follows a product name in
-   * lower case. Spoken, it follows a full stop, and a voice reads "Step one.
-   * one pump" with a stumble. */
-  function cap(t){ return t ? t.charAt(0).toUpperCase() + t.slice(1) : t; }
-
-  function howLong(secs){
-    if(secs >= 60 && secs % 60 === 0){
-      var m = secs / 60;
-      return m === 1 ? 'a minute' : m + ' minutes';
-    }
-    return secs + ' seconds';
-  }
-
-  function build(slot){
-    var steps = ALL.filter(function(s){ return s.slot === slot; });
-    var out = [{say: (slot === 'am' ? 'Morning' : 'Evening') + ' routine, '
-                     + steps.length + ' steps. I will tell you how long to spend on '
-                     + 'each one, so you can put this down.', hold: 1}];
-    steps.forEach(function(s, n){
-      s.beats.forEach(function(bt){
-        var text;
-        if(bt.kind === 'apply'){
-          text = 'Step ' + (n + 1) + '. ' + s.name + '. ' + cap(bt.text) + '.';
-          if(s.freq !== 'daily'){ text += ' Only on ' + s.freq + '.'; }
-          text += " I'll give you " + howLong(bt.secs) + '.';
-        } else if(bt.kind === 'wait'){
-          text = 'Now leave it to settle for ' + howLong(bt.secs)
-               + ". I'll tell you when that is up.";
-        } else {
-          text = cap(bt.text) + '. ' + howLong(bt.secs) + '.';
-        }
-        out.push({say: text, hold: bt.secs});
-      });
-    });
-    out.push({say: 'That is the whole routine. You are done.', hold: 0});
-    return out;
-  }
-
-
-  /* Written for the eye, spoken for the ear. The page uses "25s" and
-   * middle dots because they are compact in a table; read aloud they
-   * become "twenty five ess" and a missing pause. Normalising here
-   * rather than at each call site means a line added later cannot
-   * forget to do it. */
-  function forSpeech(text){
-    return String(text)
-      .replace(/(\d+)\s*min\b/gi, '$1 minutes')
-      .replace(/(\d+)\s*s\b/g, '$1 seconds')
-      .replace(/(\d+)\s*ml\b/gi, '$1 millilitres')
-      .replace(/(\d+(?:\.\d+)?)\s*fl\.?\s*oz\b/gi, '$1 fluid ounces')
-      .replace(/(\d+(?:\.\d+)?)\s*oz\b/gi, '$1 ounces')
-      .replace(/(\d+(?:\.\d+)?)\s*g\b/gi, '$1 grams')
-      .replace(/(\d+(?:\.\d+)?)\s*%/g, '$1 percent')
-      .replace(/\bSPF\b/g, 'S P F')
-      .replace(/\bAHA\b/g, 'A H A').replace(/\bBHA\b/g, 'B H A')
-      .replace(/\bPHA\b/g, 'P H A').replace(/\bUV\b/g, 'U V')
-      .replace(/\bAM\b/g, 'morning').replace(/\bPM\b/g, 'evening')
-      /* Visual separators: a comma makes the synthesiser pause where a
-       * reader's eye would. */
-      .replace(/\s*[·•]\s*/g, ', ')
-      .replace(/\s*[—–]\s*/g, ', ')
-      .replace(/\s*→\s*/g, ', then ')
-      .replace(/&/g, ' and ')
-      /* Two commas in a row read as a stumble. */
-      .replace(/,\s*,/g, ',')
-      .replace(/\s{2,}/g, ' ')
-      .trim();
-  }
-
-  function say(text, done){
-    var u = new SpeechSynthesisUtterance(forSpeech(text));
-    u.rate = 0.95;
-    u.onend = u.onerror = done;
-    speechSynthesis.speak(u);
-  }
-
-  function run(){
-    if(!running) return;
-    if(qi >= queue.length){ finish('done'); return; }
-    var item = queue[qi++];
-    statusEl.textContent = item.say;
-    /* The hold starts when the sentence ends, not when it begins, or a long
-     * instruction eats the time it just promised you. */
-    say(item.say, function(){
-      if(!running) return;
-      soundFor(item.hold);
-      if(item.hold >= 30){
-        warnTimer = setTimeout(function(){
-          if(running) say('Ten seconds left.', function(){});
-        }, (item.hold - 10) * 1000);
-      }
-      timer = setTimeout(function(){ stopSound(); run(); }, item.hold * 1000);
-    });
-  }
-
-  function start(slot){
-    stop();
-    ctx();
-    running = true; queue = build(slot); qi = 0;
-    btnAm.disabled = btnPm.disabled = true;
-    stopB.disabled = false;
-    run();
-  }
-
-  function finish(msg){
-    running = false;
-    clearTimeout(timer); clearTimeout(warnTimer);
-    stopSound();
-    speechSynthesis.cancel();
-    btnAm.disabled = btnPm.disabled = false;
-    stopB.disabled = true;
-    statusEl.textContent = msg || '';
-  }
-  function stop(){ finish(''); }
-
-  btnAm.addEventListener('click', function(){ start('am'); });
-  btnPm.addEventListener('click', function(){ start('pm'); });
-  stopB.addEventListener('click', stop);
-  muteB.addEventListener('click', function(){
-    muted = !muted;
-    if(muted) stopSound();
-    muteB.textContent = muted ? 'Sound off' : 'Sound on';
-  });
-  window.addEventListener('beforeunload', function(){ speechSynthesis.cancel(); });
 })();
 """
 
@@ -1679,11 +1434,17 @@ def beats_for(spec, dwell: int = 0, dwell_note: str = "",
               dwell_unknown: bool = False, dwell_source: str = "") -> list[dict]:
     """The physical sequence for one step: apply, then finish, then any wait.
 
-    Single source of truth. The step list, the guided player, the spoken
-    walkthrough and the printed card all render from this. They were each
-    assembling it separately and promptly drifted: the audio announced
-    "let it absorb, 30 seconds" while the written step said only "let it
-    absorb", because the duration existed in one path and not the others.
+    Single source of truth. The step list, the guided player, the film
+    and the printed card all render from this. They were each assembling
+    it separately and promptly drifted: one surface announced "let it
+    absorb, 30 seconds" while the written step said only "let it
+    absorb", because the duration existed in one path and not the
+    others.
+
+    There were four consumers until 26 October 2026, when the spoken
+    walkthrough was withdrawn. It is named in the commit rather than
+    here; what matters to this function is that the number is computed
+    once and read, never recomputed.
     """
     if spec is None:
         out = [{"kind": "apply", "text": "apply as usual", "secs": 15}]
@@ -2007,10 +1768,14 @@ def _film_markup(scenes: list[dict], gifs: dict[str, str] | None = None) -> str:
     )
     return (
         '<section class="film" id="film">'
+        # The tabs sit in the header row, pushed to the right, rather
+        # than on a line of their own underneath. On their own line they
+        # crowded the heading and read as the first thing in the body
+        # instead of as a control for the section.
         '<div class="film-top"><h3>Watch the routine</h3>'
         '<span class="film-note">A preview, sped up. Each scene shows how long '
-        'it actually takes.</span></div>'
-        f'<div class="film-tabs" id="f-tabs">{tabs}</div>'
+        'it actually takes.</span>'
+        f'<div class="film-tabs" id="f-tabs">{tabs}</div></div>'
         '<div class="film-body">'
         f'<div class="stage" id="stage" data-anim="dab">{FACE_SVG}</div>'
         '<div>'
@@ -2414,12 +2179,39 @@ def render(
             "below, but they are estimates and are deliberately left out of "
             "these totals: a retail guess against a sample bottle was wrong by "
             "a factor of twenty when a tester checked it. In the table at "
-            "the bottom, check each figure and tick <b>Use it</b> where it "
+            "the bottom, check each figure and tick <b>Use retail price</b> where it "
             "is right, or type what you actually paid — or write it inline "
             "(<i>CeraVe Cleanser, $16.99</i>). Either way the figures "
             "become yours."
             "</div>"
         )
+        # What this section WOULD tell them, named rather than implied.
+        #
+        # A tester: "I am not sure when the cost duplicate function ever
+        # gets used." On an unpriced shelf the tiles do not render at
+        # all, so a duplicate the engine had found never appeared here —
+        # the section asked for prices without saying what it already
+        # knew or what the prices would buy. Both facts are true with no
+        # money attached, so both are stated.
+        waiting: list[str] = []
+        _dupes = sorted({n for f in audit.findings
+                         if f.type == "redundancy" for n in f.products})
+        if _dupes:
+            waiting.append(
+                f"<b>{len(_dupes)} products here do a job another one already "
+                f"does</b> — {e(', '.join(_dupes))}. Confirm what the "
+                f"cheaper of a pair cost and this section can say what the "
+                f"overlap is worth.")
+        _unused = sorted(rp.product.name for rp in audit.products
+                         if rp.product.unused)
+        if _unused:
+            waiting.append(
+                f"<b>{len(_unused)} you have said you never use</b> — "
+                f"{e(', '.join(_unused))}. Confirm those prices and this "
+                f"section can say what is sitting idle.")
+        if waiting:
+            parts.append('<p class="lede" style="margin-top:10px">'
+                         + " ".join(waiting) + "</p>")
     else:
         parts.append('<div class="stats">')
         parts.append(_stat(_money(w.shelf_value_usd), "on the shelf"))
@@ -2427,8 +2219,26 @@ def render(
                            f"unused ({w.products_unused} "
                            f"product{'s' if w.products_unused != 1 else ''})",
                            "warn" if w.unused_value_usd else ""))
-        parts.append(_stat(_money(w.redundant_value_usd), "duplicate function",
-                           "warn" if w.redundant_value_usd else ""))
+        # A tester: "I am not sure when the cost duplicate function ever
+        # gets used." Almost never, as it stood. The figure is the
+        # cheaper of a duplicated pair and counts confirmed prices only,
+        # so on a shelf with duplicates but nothing confirmed it read
+        # $0 — and a zero where a number belongs says "nothing is
+        # duplicated here", which is the opposite of what was found.
+        #
+        # So the tile reports what the engine actually knows. The money
+        # when there is money; the count of products otherwise, which is
+        # a real finding and needs no price to be true.
+        _dupe_names = sorted({n for f in audit.findings
+                              if f.type == "redundancy" for n in f.products})
+        if w.redundant_value_usd:
+            parts.append(_stat(_money(w.redundant_value_usd),
+                               "duplicate function", "warn"))
+        elif _dupe_names:
+            parts.append(_stat(f"{len(_dupe_names)} products",
+                               "do a duplicated job", "warn"))
+        else:
+            parts.append(_stat(_money(0), "nothing duplicated"))
         # "$52 in high-severity conflict" was removed on 26 Oct 2026. It
         # was the one tile whose number had no meaning: a clash does not
         # waste the products, it wastes some of their effect, and you
@@ -2496,12 +2306,12 @@ def render(
                 + " we looked up — from the product's own page where you gave "
                   "a link, otherwise from a published listing. They are shown "
                   "for recognition and are NOT in the totals above until you "
-                  "tick <b>Use it</b> beside one. "
+                  "tick <b>Use retail price</b> beside one. "
                 + ("It is not" if n == total == 1
                    else "None of them is" if n == total else "They are not")
                 + " what you actually paid. Good enough to see roughly what is "
                   "sitting unused; not a quote. In the table below, tick "
-                  "<b>Use it</b> beside any figure you have checked, or type "
+                  "<b>Use retail price</b> beside any figure you have checked, or type "
                   "what you paid — either one makes it count.</p>"
             )
 
@@ -2520,21 +2330,16 @@ def render(
     parts.append("<h2>Your routine</h2>")
     parts.append(
         '<div class="bar">'
-        '<button id="say-am">Read me the morning</button>'
-        '<button id="say-pm">Read me the evening</button>'
-        '<button id="say-stop" class="ghost" disabled>Stop</button>'
-        '<button id="say-mute" class="ghost">Sound on</button>'
+        '<button id="go-am">Step through the morning</button>'
+        '<button id="go-pm">Step through the evening</button>'
         '<button id="print" class="ghost">Print a card for the mirror</button>'
         "</div>"
         '<p style="font-size:12.5px;color:var(--ink-faint);margin:-4px 0 14px">'
-        "Press play and put the phone down. It says how long to spend on each step, "
-        "plays something to stand to during the waits, and warns "
-        "you before each one ends. Or print the card and tape it inside a cabinet door."
-        '</p><div class="bar">'
-        '<button id="go-am" class="ghost">Step through the morning on screen</button>'
-        '<button id="go-pm" class="ghost">Step through the evening on screen</button>'
-        '<span id="say-status" style="font-size:12px;color:var(--ink-faint);flex:1"></span>'
-        "</div>"
+        "Step through takes one step at a time, large enough to read at "
+        "arm's length, and counts down the waits between products — the "
+        "part people skip. Or print the card and tape it inside a cabinet "
+        "door."
+        '</p>'
     )
     parts.append('<div class="cols">')
     for slot, label, steps in (("am", "Morning", audit.routine.am), ("pm", "Evening", audit.routine.pm)):
@@ -2842,40 +2647,41 @@ def render(
             # without retyping it.
             mismatch = p.product.price_size_mismatch
             confirmed = getattr(p.product, "price_confirmed", False)
-            looked_up = p.price_is_typical and price is not None
+            # What we found, kept apart from what she paid. They were
+            # one field, so typing a figure destroyed the looked-up one
+            # and this column went blank: "if I enter my own figure, the
+            # retail price disappears from the table".
+            found_usd = getattr(p.product, "price_found_usd", None)
+            hers = price is not None and not p.price_is_typical
 
-            if mismatch and price is not None:
+            if mismatch and (found_usd or price) is not None:
                 # The one qualification no tick can clear: the number is
                 # for a different bottle.
-                found = (f'${price:.2f}<span class="typ">for '
+                found = (f'${(found_usd or price):.2f}<span class="typ">for '
                          f'{e(mismatch)}, yours is '
                          f'{e(p.product.size or "another size")} — fix the '
                          f'size or type what you paid</span>')
-            elif looked_up and p.product.price_off_page:
-                found = (f'${price:.2f}<span class="typ">'
+            elif found_usd is not None and p.product.price_off_page:
+                found = (f'${found_usd:.2f}<span class="typ">'
                          f'{e(p.product.price_off_page)}</span>')
-            elif looked_up:
-                found = f'${price:.2f}<span class="typ">retail, looked up</span>'
+            elif found_usd is not None:
+                found = f'${found_usd:.2f}<span class="typ">retail</span>'
             elif not p.actives and not p.matched_from_catalogue:
                 found = ('<span class="typ">only the brand was readable — '
                          "name the product below and it can be priced</span>")
-            elif price is not None:
-                # She typed one, which overwrote whatever was looked up,
-                # so there is no longer a found figure to show. Saying
-                # "nothing found" here would be the page claiming a
-                # search failed when what happened is that her answer
-                # replaced it.
-                found = '<span class="typ">your figure &rarr;</span>'
             else:
                 found = '<span class="typ">nothing found</span>'
 
-            # Offered only where there is a figure to accept.
+            # Offered wherever there is a figure to accept, including
+            # beside one she has already overridden — unticking her own
+            # number should hand the retail figure back, not leave the
+            # row with nothing to use.
             use = (
                 f'<input type="checkbox" name="puse" value="{e(name)}"'
                 f'{" checked" if confirmed else ""}>'
-                if looked_up and not mismatch else ""
+                if found_usd is not None and not mismatch else ""
             )
-            value = "" if (price is None or p.price_is_typical) else f"{price:.2f}"
+            value = f"{price:.2f}" if hers else ""
             checked = " checked" if p.product.unused else ""
             # Size is shown because it decides the price. It was being
             # read off the label and used silently, so when the price
@@ -2886,7 +2692,7 @@ def render(
             rows.append(
                 f"<tr><td>{e(name)}</td>"
                 f'<td class="r found">{found}</td>'
-                f'<td class="c">{use}</td>'
+                f'<td class="c use">{use}</td>'
                 f'<td class="r"><input type="hidden" name="pname" value="{e(name)}">'
                 # step="1" rejected $12.99 outright. The browser refuses
                 # the whole form and says nothing a tester could act on:
@@ -2934,10 +2740,11 @@ def render(
             blocks.append(
                 "<p><b>Found online</b> is what this tool dug up and has "
                 "not verified against your receipt — check it. If it is "
-                "right, tick <b>Use it</b> and it counts; if it is wrong or "
-                "missing, type <b>what you paid</b> instead and that wins. "
-                "Decimals are fine. Until one of those two things happens "
-                "the figure is shown but never added up. "
+                "right, tick <b>Use retail price</b> and it counts; if it "
+                "is wrong, type <b>what you paid</b> instead and that wins. "
+                "Decimals are fine, and the figure we found stays in the "
+                "table either way. Until you do one of those two things it "
+                "is shown but never added up. "
                 "<b>Not mine</b> removes a product "
                 "entirely — tick it for anything listed here that you do not "
                 "own, and it will stay gone on the next round even if you "
@@ -2949,7 +2756,7 @@ def render(
                 "here, whatever its ingredients say.</p>"
                 '<table class="prices"><tr><th>Product</th>'
                 '<th class="r found">Found online</th>'
-                '<th class="c">Use it</th>'
+                '<th class="c use">Use retail price</th>'
                 '<th class="r">What you paid</th>'
                 '<th class="c">Size</th>'
                 '<th class="c">Never use it</th>'
@@ -3083,7 +2890,7 @@ def render(
         f"<script>var DATA_STEPS={script_json(seq)};var MX_DATA={grid_data};"
         f"var FILM={script_json(player_scenes)};"
         f"var GIFS={script_json(film_gifs)};"
-        f"{JS}{SPEECH_JS}{GRID_JS}{LOADING_JS}{FILM_JS}"
+        f"{JS}{GRID_JS}{LOADING_JS}{FILM_JS}"
         "document.getElementById('print').addEventListener('click',function(){window.print()});"
         "document.querySelectorAll('[data-reset]').forEach(function(a){"
         "a.addEventListener('click',function(ev){"

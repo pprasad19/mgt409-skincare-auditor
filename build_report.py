@@ -435,7 +435,7 @@ combination this tool exists for.</p>
 
 {img("06-film.png", "The walkthrough, after a tester asked for two animations rather than one: a tab per half of the day, each numbered from its own step one, each with its own downloadable GIF. The ribbon is the routine, and it is clickable.")}
 
-{img("05-correct.png", "The correction table, which exists because a tester had no way to tell the app it was wrong. <b>Found online</b> shows the figure this tool dug up and where it came from; <b>Use it</b> accepts that figure, <b>What you paid</b> overrides it, and an untouched figure is never summed. <b>Not mine</b> removes a product and keeps it removed; <b>Size</b> decides which price applies; <b>Prescribed</b> is the only way a product is treated as a prescription — the app no longer infers it from the ingredient table.")}
+{img("05-correct.png", "The correction table, which exists because a tester had no way to tell the app it was wrong. <b>Found online</b> shows the figure this tool dug up and where it came from; <b>Use retail price</b> accepts that figure, <b>What you paid</b> overrides it, and an untouched figure is never summed. <b>Not mine</b> removes a product and keeps it removed; <b>Size</b> decides which price applies; <b>Prescribed</b> is the only way a product is treated as a prescription — the app no longer infers it from the ingredient table.")}
 
 <h2>4 · Tokenomics</h2>
 
@@ -720,7 +720,7 @@ than quietly adding up estimates.</p>
 tester found its cost within the hour: the page was now showing her a price and
 asking her to retype it, so most rows came back empty and most shelves read
 "nothing to add up yet". Her fix was better than the rule. The table now has
-three columns — <em>found online</em> with its provenance, <em>use it</em>, and
+three columns — <em>found online</em> with its provenance, <em>use retail price</em>, and
 <em>what you paid</em> — and a figure she has read and ticked counts, because
 reading it is the confirmation. A typed figure overrides a ticked one; a price
 for a different size cannot be ticked at all, since no amount of confirmation
@@ -731,6 +731,30 @@ unchanged and the work it demanded of the user is gone.</p>
 and it is the clearest example in this project of the difference between a
 feature being wrong and a feature being fed badly — and of the fact that a
 correct rule can still be the wrong thing to put in front of someone.</p>
+
+<h3>What came out, and why that counts as a result</h3>
+
+<p>Two features were withdrawn on tester evidence rather than fixed again.
+The <em>in high-severity conflict</em> figure went because it was the one
+number on the page nobody could act on: a clash does not waste the products,
+it wastes some of their effect, and you recover that by separating them.</p>
+
+<p>The spoken walkthrough went because it had absorbed four findings across
+three rounds and each fix produced the next — durations read aloud as "fifty
+ess", a step the user does not own demonstrated without saying so, a line
+announcing an alternating acid on the night it should be skipped. It was also
+the only surface here that cannot be tested: voice, pacing and pronunciation
+differ per browser and none of it is reachable from Python, so every one of
+those four was found by a person listening. The on-screen guided walkthrough,
+the film and the printed card stay, and they still render from the same
+<code>beats_for</code>, so the surfaces that remain cannot disagree about a
+duration.</p>
+
+<p>Both removals shrank the thing being graded, which is worth saying plainly.
+The argument for them is that a feature generating a finding per round, in a
+place the suite cannot reach, is not a feature with bugs in it — it is an
+unverifiable surface, and shipping fewer claims that hold is better than more
+claims that need a person to check each time.</p>
 
 <h3>The pattern across every real bug</h3>
 
@@ -757,7 +781,7 @@ matter what. Each was found by accident or by a tester, not by the suite.</p>
 
 <p>The clearest demonstration of both patterns arrived on the last day, out of
 verifying a fix rather than writing one. Checking in a browser that
-tester&nbsp;1's <em>Use it</em> column worked, I submitted six products, typed
+tester&nbsp;1's <em>Use retail price</em> column worked, I submitted six products, typed
 no price, and read <b>&ldquo;$96 on the shelf&rdquo;</b> above six rows the page
 itself had labelled &ldquo;retail, looked up&rdquo;. Two defects sat behind it
 and neither threw anything. The hidden field that carries products between

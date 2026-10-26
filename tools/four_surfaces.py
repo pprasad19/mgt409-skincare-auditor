@@ -89,7 +89,7 @@ print(f"\n    printed card    {len(pcd)} blocks")
 for h in pcd:
     print(f"      {re.sub('<[^>]+>', '', h)[:92]}")
 
-# 3. guided player + speech — DATA_STEPS carries beats verbatim
+# 3. guided player — DATA_STEPS carries beats verbatim
 m = re.search(r"var DATA_STEPS=(\[.*?\]);var MX_DATA", html, re.S)
 steps = json.loads(m.group(1))
 print(f"\n    guided player   {len(steps)} steps")

@@ -103,6 +103,16 @@ class InputProduct(BaseModel):
         description="The price did not come from the user. Set when it was filled "
                     "from the catalogue or looked up online, so the page can say so.",
     )
+    price_found_usd: float | None = Field(
+        default=None,
+        description="What this tool found a product costs, kept apart from "
+                    "price_usd so that typing what you paid does not destroy "
+                    "it. They were one field, so a typed figure overwrote the "
+                    "looked-up one and the Found online column went blank: "
+                    "\"if I enter my own figure, the retail price disappears "
+                    "from the table\". It is also what the Use retail price "
+                    "tick accepts.",
+    )
     price_confirmed: bool = Field(
         default=False,
         description="The user read the figure we looked up and said it matches "
