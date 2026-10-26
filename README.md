@@ -11,6 +11,9 @@ products doing the same job, an acid used in the morning without sunscreen, a
 second retinoid hidden in a moisturiser that was never marketed as one. None of
 these are visible from the shelf, and all of them cost money already spent.
 
+**[Watch a three-minute demo](demo.mp4)** — one audit from an empty form to a
+routine, if you would rather see it than run it.
+
 **The advice comes from a table, not from the model.** The agent extracts and
 explains; `data/interactions.yaml` decides. Every finding cites a `rule_id`, so
 any claim can be traced, argued with, or corrected — and the system refuses

@@ -339,8 +339,11 @@ def build_report(d: dict) -> str:
   {e(AUTHOR)} · {e(COURSE)} · final project<br>
   Repository: <a href="{repo['url']}">{repo['url']}</a>
   (commit <code>{e(repo['commit'])}</code>)<br>
+  <code>git clone {repo['url']}.git</code><br>
   App: runs locally — <code>python -m uvicorn app:app --port 8000</code>,
   then <code>http://localhost:8000</code>. Full instructions in the README.<br>
+  Demo: <a href="{repo['url']}/blob/main/demo.mp4">a three-minute screen
+  recording</a> of one audit, start to finish.<br>
   Generated {e(d['generated'])} by <code>build_report.py</code>.
 </p>
 
@@ -888,8 +891,9 @@ def build_slides(d: dict) -> str:
 <p class="kicker">MGT 409 · AI Foundations for Managers</p>
 <h1>{e(TITLE)}</h1>
 <p class="lede">{e(TAGLINE)}</p>
-<p class="byline">{e(AUTHOR)} &nbsp;·&nbsp;
-<a href="{d['repo']['url']}">{d['repo']['url'].replace('https://', '')}</a></p>
+<p class="byline">{e(AUTHOR)}<br>
+<a href="{d['repo']['url']}">{d['repo']['url'].replace('https://', '')}</a><br>
+<span class="mono">git clone {d['repo']['url']}.git</span></p>
 </div>""", "cover"),
 
         slide(f"""
