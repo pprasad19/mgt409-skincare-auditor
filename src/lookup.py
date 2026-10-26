@@ -425,26 +425,73 @@ PAGE_UA = ("mgt409-skincare-auditor/1.0 "
            "(Yale MGT 409 course project; reads published product metadata)")
 
 
+# Keys that hold a price a shopper is NOT being charged: the
+# struck-through original, a range endpoint, a members-only figure.
+_NOT_THE_PRICE = {
+    "listprice", "highprice", "msrp", "regularprice", "originalprice",
+    "strikethroughprice", "wasprice", "pricebeforediscount",
+}
+
+
 def _prices_in_jsonld(blob) -> list[float]:
-    """Every offers.price in a schema.org block, however it is nested."""
-    out: list[float] = []
+    """The price each offer is actually charging.
+
+    Walks `offers` rather than every key named "price". A product page
+    carries several — the offer, a list price, shipping, related
+    products, one per variant — and taking any of them was how an
+    original price got reported in place of the discounted one a tester
+    could see on the page.
+    """
+    # (depth, price). A related product's offer sits deeper than the
+    # page's own, and the page's own is the one being sold here.
+    out: list[tuple[int, float]] = []
+    depth = 0
+
+    def price_of(offer) -> None:
+        if not isinstance(offer, dict):
+            return
+        for key, value in offer.items():
+            k = key.lower()
+            if k in _NOT_THE_PRICE:
+                continue
+            if k == "price" and isinstance(value, (str, int, float)):
+                try:
+                    out.append((depth, float(value)))
+                except (TypeError, ValueError):
+                    pass
+            elif k == "pricespecification":
+                # A nested specification; the current price lives inside.
+                for spec in (value if isinstance(value, list) else [value]):
+                    price_of(spec)
 
     def walk(node):
+        nonlocal depth
         if isinstance(node, dict):
             for key, value in node.items():
-                if key.lower() == "price" and isinstance(value, (str, int, float)):
-                    try:
-                        out.append(float(value))
-                    except (TypeError, ValueError):
-                        pass
+                if key.lower() in ("isrelatedto", "issimilarto", "isaccessoryor"
+                                   "sparepartfor"):
+                    # Another product entirely, advertised alongside.
+                    continue
+                if key.lower() == "offers":
+                    for offer in (value if isinstance(value, list) else [value]):
+                        price_of(offer)
+                        # An AggregateOffer nests the real ones.
+                        if isinstance(offer, dict):
+                            walk(offer.get("offers"))
                 else:
+                    depth += 1
                     walk(value)
+                    depth -= 1
         elif isinstance(node, list):
             for item in node:
                 walk(item)
 
     walk(blob)
-    return out
+    if not out:
+        return []
+    # Only the shallowest offers — this page's own product.
+    best = min(d for d, _ in out)
+    return [price for d, price in out if d == best]
 
 
 def price_from_page(url: str, timeout: float = 12.0) -> float | None:
@@ -495,8 +542,13 @@ def price_from_page(url: str, timeout: float = 12.0) -> float | None:
     # Shopify pages publish the price in cents alongside the dollar
     # figure, so the bound is doing real work rather than guarding a
     # hypothetical.
-    plausible = sorted({p for p in found if 1.0 <= p <= 1000.0})
-    return plausible[0] if plausible else None
+    plausible = sorted({round(p, 2) for p in found if 1.0 <= p <= 1000.0})
+    if not plausible:
+        return None
+    # Still the lowest of the offers, which is the sale price when a page
+    # lists both, but now chosen from offer prices only rather than from
+    # every number on the page.
+    return plausible[0]
 
 
 async def find_from_url(url: str, usage_log=None) -> dict | None:

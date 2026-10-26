@@ -8,7 +8,7 @@ are asked — what is this, what do I give it, and what happens to what I give i
 from __future__ import annotations
 
 from limits import MAX_IMAGES, MAX_PRODUCTS
-from render import CSS, LOADING_JS, LOADING_MARKUP, e
+from render import CSS, CONDITION_CHOICES, LOADING_JS, LOADING_MARKUP, e
 
 EXTRA = """
 .hero{padding:72px 0 8px}

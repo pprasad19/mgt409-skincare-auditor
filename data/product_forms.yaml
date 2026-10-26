@@ -7,6 +7,13 @@
 #
 # `times` limits a form to part of the day. Everything else may appear in both.
 #
+# `typical_seconds` is how long the step takes for anyone - apply plus
+# finish. Used only for a step the user does NOT own, where there is no
+# product to read a duration from. A tester saw "0s" against a missing
+# cleanser and said it should show the real time, which is right: the
+# time is a property of the technique, not of the bottle. A mask's
+# WEARING time is the opposite and stays looked up per product.
+#
 # `one_at_a_time` marks a form you pick ONE of rather than layer. A
 # tester gave two toners and was told to apply both in sequence,
 # because a routine step was always something you do and never
@@ -26,6 +33,8 @@ forms:
     name: Cleansing oil or balm
     rank: 5
     times: [pm]
+    typical_seconds: 45
+    typical_how: massage onto dry skin, emulsify with water, rinse
     one_at_a_time: true  # You use one first-cleanse product, not two.
     note: The first half of a double cleanse. Dissolves sunscreen and makeup; a water-based cleanser still follows it.
     source: "Not in the AAD order, which does not treat double cleansing. Added 25 Oct 2026 after a tester pointed out that a cleansing oil was being handled as an ordinary cleanser: placed in the morning routine, and counted as satisfying the shelf's need for a cleanser. It is neither. An oil or balm cleanser emulsifies sunscreen and makeup and is rinsed away by the water-based cleanser that follows, which is why it is evening-only and ranked before `cleanser` rather than instead of it. The two-step sequence is a Korean-routine convention rather than a clinical finding, so this is `reasoned`; what is NOT a judgement call is that an oil cleanser does not replace a face wash."
@@ -36,6 +45,8 @@ forms:
     name: Cleanser
     rank: 10
     times: [am, pm]
+    typical_seconds: 50
+    typical_how: lather, 25 seconds on the face, rinse thoroughly
     one_at_a_time: true  # Two water-based cleansers in one wash is one wash too many. A double cleanse is an oil cleanser followed by this, which is two different forms.
     source: "AAD 'Should I apply my skin care products in a certain order?': cleanse, then treatments, then moisturiser and/or sunscreen, then makeup. AAD also states sunscreen goes after other skincare and beneath makeup. Cleanser first is the one step every published order agrees on. Reviewed 25 Oct 2026."
     review: verified
@@ -45,6 +56,8 @@ forms:
     name: Exfoliant (rinse-off or wipe-off)
     rank: 15
     times: [pm]
+    typical_seconds: 60
+    typical_how: work in gently, then rinse
     note: Leave-on acids are treatments, not this form. This is the rinse-off kind.
     source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Placed immediately after cleansing because a rinse-off exfoliant is a cleansing-stage product; the evening restriction follows from the photosensitivity rules SKA-082 and SKA-083, which are themselves sourced. Reviewed 25 Oct 2026."
     review: reasoned
@@ -54,6 +67,8 @@ forms:
     name: Toner
     rank: 20
     times: [am, pm]
+    typical_seconds: 20
+    typical_how: press in with the hands or a pad, let it sink
     one_at_a_time: true  # Layering two toners is not a technique, it is owning two toners.
     source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Reviewed 25 Oct 2026."
     review: reasoned
@@ -63,6 +78,8 @@ forms:
     name: Essence
     rank: 30
     times: [am, pm]
+    typical_seconds: 25
+    typical_how: press in, let it sink
     one_at_a_time: true  # As toner: one per routine.
     source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Essence sits between toner and serum by convention in Korean routines, which is where the category comes from. The distinction from a toner is not sharp. Reviewed 25 Oct 2026."
     review: reasoned
@@ -72,6 +89,8 @@ forms:
     name: Serum
     rank: 40
     times: [am, pm]
+    typical_seconds: 35
+    typical_how: a few drops, press in, let it absorb
     source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Reviewed 25 Oct 2026."
     review: reasoned
 
@@ -80,6 +99,8 @@ forms:
     name: Treatment (leave-on active)
     rank: 45
     times: [am, pm]
+    typical_seconds: 40
+    typical_how: a pea for the whole face, let it absorb
     note: Where retinoids, leave-on acids and benzoyl peroxide land.
     source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Ranked just after serum: both are leave-on actives and the split between them is about potency rather than texture. Reviewed 25 Oct 2026."
     review: reasoned
@@ -89,6 +110,8 @@ forms:
     name: Eye cream
     rank: 50
     times: [am, pm]
+    typical_seconds: 25
+    typical_how: a grain of rice per eye, tap in with a ring finger
     one_at_a_time: true  # One eye product per routine.
     source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Eye cream placement is the least settled of these: published routines disagree about whether it precedes or follows moisturiser. Placed before, so a lighter eye product is not applied over a heavier face cream. Reviewed 25 Oct 2026."
     review: reasoned
@@ -98,6 +121,8 @@ forms:
     name: Moisturiser
     rank: 60
     times: [am, pm]
+    typical_seconds: 45
+    typical_how: smooth over face and neck, let it absorb
     one_at_a_time: true  # A second moisturiser over the first is an occlusive, which is its own form.
     source: "AAD 'Should I apply my skin care products in a certain order?': cleanse, then treatments, then moisturiser and/or sunscreen, then makeup. AAD also states sunscreen goes after other skincare and beneath makeup. Moisturiser after treatments is explicit in the AAD order. Reviewed 25 Oct 2026."
     review: verified
@@ -107,6 +132,8 @@ forms:
     name: Face oil
     rank: 70
     times: [pm]
+    typical_seconds: 35
+    typical_how: warm between the palms, press in
     note: After moisturiser, because oil passes through cream but cream does not pass through oil.
     source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Oil after water-based products is the clearest case of the thin-before-thick principle, since an oil layer is the one most likely to impede what follows. Reviewed 25 Oct 2026."
     review: reasoned
@@ -116,6 +143,8 @@ forms:
     name: Sunscreen
     rank: 80
     times: [am]
+    typical_seconds: 40
+    typical_how: two fingers' length, spread evenly, let it set
     one_at_a_time: true  # Two sunscreens do not add up, and layering them is known to disturb the film each one forms.
     note: Always the final morning step.
     source: "AAD 'Should I apply my skin care products in a certain order?': cleanse, then treatments, then moisturiser and/or sunscreen, then makeup. AAD also states sunscreen goes after other skincare and beneath makeup. Sunscreen last among skincare is published guidance, and rank 80 places it after everything except the night-only occlusive, which never co-occurs with it. Note from SKA-080 that the reason is the published order rather than a demonstrated film disruption effect. Reviewed 25 Oct 2026."
@@ -126,6 +155,8 @@ forms:
     name: Occlusive / sleeping mask
     rank: 90
     times: [pm]
+    typical_seconds: 30
+    typical_how: a thin layer last, left on overnight
     source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Last at night for the same reason sunscreen is last in the morning: a layer whose job is to seal has to go on top. This is definitional rather than measured — see SKA-081. Reviewed 25 Oct 2026."
     review: reasoned
 
@@ -134,6 +165,8 @@ forms:
     name: Treatment mask
     rank: 35
     times: [am, pm]
+    typical_seconds: 75
+    typical_how: apply a layer, then rinse - the wearing time is the product's own
     note: Used occasionally rather than daily; slots after cleansing.
     # A mask is applied in half a minute and then left on. Without this the
     # routine told people to use a face mask for 30 seconds, because the

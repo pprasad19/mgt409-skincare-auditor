@@ -36,14 +36,19 @@ MAX_SHELF = 8
 # keeps finding. The split is deliberate and test_storyboard checks it.
 OPENING_ANIMS = frozenset({"shelf", "sort", "clash", "week"})
 
-from storyboard import container_for, scenes_for, short_time
+from storyboard import (container_for, scenes_for, short_time,
+                        _real_time)
 from rules import (ESSENTIAL_STEPS, OPTIONAL_STEPS, RECOMMENDED_STEPS,
                    Rules as _Rules)
 
 # Read once. render() is called per request and the forms table is
 # three rows of constants; re-opening the database for it would be
 # a query per page to learn something that cannot change at runtime.
-RULES_FORMS = _Rules().forms
+_RULES_ONCE = _Rules()
+RULES_FORMS = _RULES_ONCE.forms
+# id -> the name a person would use. Findings carry ids, and
+# "l_ascorbic_acid" on a page is a database row showing through.
+INGREDIENT_NAMES = {k: v["name"] for k, v in _RULES_ONCE.ingredients.items()}
 ESSENTIAL_IDS = {f for f, *_ in ESSENTIAL_STEPS} | {"spf"}
 RECOMMENDED_IDS = {f for f, *_ in RECOMMENDED_STEPS}
 OPTIONAL_IDS = {f for f, _ in OPTIONAL_STEPS}
@@ -128,6 +133,10 @@ h2:first-of-type{margin-top:0}
 .chip{display:inline-block;font:11px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;
   padding:1px 8px;border-radius:6px;background:var(--sunk);color:var(--ink-dim);
   border:1px solid var(--line);margin-right:6px}
+.chip.src{background:#eaf1ea;border-color:#cbddcb;color:#3f6b4a}
+.chip.mech-chip{background:#f3f0e8;border-color:#ded7c5;color:#6f6962}
+.shared{margin:6px 0 2px;font-size:13.5px;color:var(--ink-dim);line-height:1.55}
+.prov{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:13px;line-height:1.55;color:var(--ink-dim)}
 .chip.unver{background:#f6ecd8;border-color:#e4d2ab;color:#8a6a24}
 
 .finding{border-left:3px solid var(--line);padding:16px 0 16px 20px;margin:0}
@@ -939,7 +948,9 @@ GRID_JS = """
     if(!d) return;
     panel.innerHTML =
       '<div class="mxd-top"><span class="chip">' + d.rule + '</span>'
-      + (d.verified ? '' : '<span class="chip unver">unverified rule</span>')
+      + (d.verified
+          ? '<span class="chip src">published source</span>'
+          : '<span class="chip mech-chip">mechanism, not a trial</span>')
       + '<span class="kind">' + d.kind + '</span>'
       + '<span class="who">' + d.sev + '</span></div>'
       + '<div class="mxd-pair">' + d.pair + '</div>'
@@ -1049,6 +1060,18 @@ def _shortfall(audit) -> str:
     return f"{missed} not identified · " if missed else ""
 
 
+def _money(amount) -> str:
+    """A price as the page charges it: "$18.50", but "$16" for a round one.
+
+    Printed with .0f until a tester pointed out that $18.50 was being
+    shown as $19. The figure is read off a retailer's page to the cent;
+    rounding it makes a checkable claim impossible to check against the
+    page it came from, and buys nothing.
+    """
+    value = float(amount or 0)
+    return f"${value:,.0f}" if abs(value - round(value)) < 0.005 else f"${value:,.2f}"
+
+
 def _stat(value: str, label: str, tone: str = "") -> str:
     cls = f"stat {tone}".strip()
     return f'<div class="{cls}"><div class="n">{e(value)}</div><div class="l">{e(label)}</div></div>'
@@ -1064,20 +1087,48 @@ def _finding_card(group: list, explanation: str | None) -> str:
     page from 33 cards to 19.
     """
     f = group[0]
+    # "unverified rule" appeared on 57% of findings and said something
+    # untrue: every row in this table has been reviewed. What differs is
+    # whether a published source covers that exact claim. A tester read
+    # the old chip and said it made them trust the app less, which is a
+    # fair reaction to a page that keeps apologising for itself.
     chips = f'<span class="chip">{e(f.rule_id)}</span>'
-    if not f.verified:
-        chips += '<span class="chip unver">unverified rule</span>'
+    chips += ('<span class="chip src">published source</span>' if f.verified
+              else '<span class="chip mech-chip">mechanism, not a trial</span>')
     pairs = " · ".join(" + ".join(g.products) for g in group)
+
+    # What the two products actually share. A tester with two serums
+    # asked why they were called a duplicate function — the finding knew
+    # (both were vitamin C) and the card never said so, leaving "Keep
+    # one" as an instruction with no reason attached.
+    shared = ""
+    if f.type == "redundancy" and f.ingredients:
+        names = [INGREDIENT_NAMES.get(i, i.replace("_", " ")) for i in f.ingredients]
+        shared = (f'<div class="shared">Both do the same job here: '
+                  f'<b>{e(", ".join(sorted(names)))}</b>. That is what '
+                  f'"duplicate" means on this page — not that the products are '
+                  f'identical, but that you are paying twice for one effect.</div>')
     count = f'<span class="who">{len(group)} pairs</span>' if len(group) > 2 else ""
     body = explanation or f.guidance
+    source_block = ""
+    if f.source:
+        label = ("Where this comes from" if f.verified
+                 else "No study tests this exact pair. The reasoning")
+        source_block = (f'<div class="prov"><b>{label}:</b> {e(f.source)}</div>')
     return (
         f'<div class="finding {e(f.severity)}">'
         f'<div class="top">{chips}'
         f'<span class="kind">{e(TYPE_LABEL.get(f.type, f.type))}</span>{count}</div>'
         f'<div class="who" style="margin-bottom:6px">{e(pairs)}</div>'
+        f'{shared}'
         f"<p>{e(body)}</p>"
         f'<details class="mech"><summary>Why</summary>'
-        f'<div class="body">{e(f.mechanism)}<br><br><strong>Do this:</strong> {e(f.guidance)}</div>'
+        f'<div class="body">{e(f.mechanism)}<br><br><strong>Do this:</strong> {e(f.guidance)}'
+        # The reasoning was written when the rule was reviewed and then
+        # never shown. It is the best answer this page has to "why should
+        # I believe that": a citation where one exists, and an honest
+        # account of the mechanism and its limits where one does not.
+        f'{source_block}</div>'
         f"</details></div>"
     )
 
@@ -1108,12 +1159,19 @@ def _step_row(step, spec, slot: str, total: int) -> str:
             f'<div class="name">{e(step.product_name)}'
             f'<span class="badge">not on your shelf</span></div>'
             f'<div class="meta">{e(step.form)}</div>'
-            f'<div class="alt">This is where it would go. Nothing here is '
-            f'assuming you have one — it is in the order so you can see the '
-            f'shape of the routine, and the step above and below are what '
-            f'you actually own.</div>'
+            f'<div class="alt">This is where it would go, and it takes about '
+            f'{short_time(step.typical_seconds)} — {e(step.typical_how)}. '
+            f'That is how long the step takes for anyone; nothing here is '
+            f'assuming you have one.</div>'
             f"</div></div>"
         )
+
+    # The user told us they never use this. Keeping it in the routine is
+    # the point — "you own this and it would help" is the most useful
+    # thing the audit can say — but saying nothing while the money
+    # section counts it as waste is the page giving two answers.
+    if step.unused:
+        badge += '<span class="badge">you said you never use this</span>'
 
     alt = ""
     if step.instead_of:
@@ -1135,6 +1193,20 @@ def _step_row(step, spec, slot: str, total: int) -> str:
 # Filled by the caller from the database, so the form and the engine cannot
 # drift apart. Empty means no checkboxes rather than a stale hard-coded list.
 CONCERN_CHOICES: list[tuple[str, str]] = []
+
+# The gates, in one place. The landing page asked these and the
+# re-audit form did not, so a user who declared a pregnancy and then
+# clicked "Audit again" was silently un-declared and advised on a
+# retinoid. Shared so the two forms cannot drift apart again.
+CONDITION_CHOICES = [
+    ("pregnancy", "I'm pregnant, or trying",
+     "Some actives are conventionally avoided — those get flagged for your "
+     "clinician rather than advised on here."),
+    ("prescription_product", "Something here was prescribed to me",
+     "Prescribed products are sent back to whoever prescribed them. This tool "
+     "doesn't second-guess that."),
+]
+
 
 CELL_CLASS = {"high": "high", "critical": "high", "medium": "med", "low": "good"}
 
@@ -1741,8 +1813,11 @@ def _film_scenes(audit, specs: dict, explain: dict) -> list[dict]:
         # the animation's job here is to hold its place in the order.
         if st.placeholder:
             scenes.append({
-                "anim": "gap", "caption": f"no {st.form.lower()} yet",
-                "where": "", "real": "", "screen": 1.2, "points": [],
+                "anim": "gap",
+                "caption": f"no {st.form.lower()} yet — about "
+                           f"{short_time(st.typical_seconds)}",
+                "where": "", "real": _real_time(st.typical_seconds),
+                "screen": 1.2, "points": [],
                 "slot": slot_label, "order": index + 1, "of": len(entries),
                 "name": name, "form": st.form, "why": "",
                 "placeholder": True,
@@ -1903,6 +1978,7 @@ def render(
     failed_urls: list[str] | None = None,
     dropped: str = "",
     wanted: list[str] | None = None,
+    conditions: list[str] | None = None,
 ) -> str:
     specs = {s.product_name: s for s in (narrative.steps if narrative else [])}
     explain = {x.rule_id: x.plain_language for x in (narrative.explanations if narrative else [])}
@@ -1926,7 +2002,9 @@ def render(
                     "beats": [{
                         "kind": "nothing to do",
                         "text": (f"You do not have {s_.product_name} yet. "
-                                 f"This is where it would go."),
+                                 f"This is where it would go, and it takes "
+                                 f"about {short_time(s_.typical_seconds)} — "
+                                 f"{s_.typical_how}."),
                         "secs": 0, "untimed": True,
                     }],
                 })
@@ -2006,10 +2084,10 @@ def render(
             if price and psrc:
                 money = (
                     f' · <a href="{e(psrc)}" style="color:var(--clay)">'
-                    f"${price:,.0f}</a>"
+                    f"{_money(price)}</a>"
                 )
             elif price:
-                money = f" · ${price:,.0f}"
+                money = f" · {_money(price)}"
             else:
                 money = " · no published price found"
             given = " <span class=\"yours\">your link</span>" if rec.get(
@@ -2198,14 +2276,14 @@ def render(
         )
     else:
         parts.append('<div class="stats">')
-        parts.append(_stat(f"${w.shelf_value_usd:,.0f}", "on the shelf"))
-        parts.append(_stat(f"${w.unused_value_usd:,.0f}",
+        parts.append(_stat(_money(w.shelf_value_usd), "on the shelf"))
+        parts.append(_stat(_money(w.unused_value_usd),
                            f"unused ({w.products_unused} "
                            f"product{'s' if w.products_unused != 1 else ''})",
                            "warn" if w.unused_value_usd else ""))
-        parts.append(_stat(f"${w.redundant_value_usd:,.0f}", "duplicate function",
+        parts.append(_stat(_money(w.redundant_value_usd), "duplicate function",
                            "warn" if w.redundant_value_usd else ""))
-        parts.append(_stat(f"${w.conflicted_value_usd:,.0f}", "in high-severity conflict",
+        parts.append(_stat(_money(w.conflicted_value_usd), "in high-severity conflict",
                            "bad" if w.conflicted_value_usd else ""))
         parts.append("</div>")
 
@@ -2578,8 +2656,8 @@ def render(
                 )
             else:
                 typical = ""
-            value = "" if (price is None or p.price_is_typical) else f"{price:.0f}"
-            placeholder = f"{price:.0f}" if p.price_is_typical and price else ""
+            value = "" if (price is None or p.price_is_typical) else f"{price:.2f}"
+            placeholder = f"{price:.2f}" if p.price_is_typical and price else ""
             checked = " checked" if p.product.unused else ""
             # Size is shown because it decides the price. It was being
             # read off the label and used silently, so when the price
@@ -2596,6 +2674,12 @@ def render(
                 f'value="{size_val}" placeholder="e.g. 7 ml" size="7"></td>'
                 f'<td class="c"><input type="checkbox" name="punused" '
                 f'value="{e(name)}"{checked}></td>'
+                # Which one. Declaring a prescription without naming the
+                # product did nothing unless the app had already guessed
+                # the same one from its ingredients.
+                f'<td class="c"><input type="checkbox" name="pprescribed" '
+                f'value="{e(name)}"'
+                f'{" checked" if p.product.prescribed else ""}></td>'
                 f'<td class="c"><input type="checkbox" name="pdrop" '
                 f'value="{e(name)}"></td></tr>'
             )
@@ -2629,13 +2713,35 @@ def render(
                 "own, and it will stay gone on the next round even if you "
                 "send the same photograph again. The size decides which "
                 "price is the right one: a sample and a full jar differ by "
-                "more than the rest of this section puts together.</p>"
+                "more than the rest of this section puts together. "
+                "<b>Prescribed</b> marks anything a clinician gave you — "
+                "that product is sent back to them rather than advised on "
+                "here, whatever its ingredients say.</p>"
                 '<table class="prices"><tr><th>Product</th>'
                 '<th class="r">What you paid</th>'
                 '<th class="c">Size</th>'
                 '<th class="c">Never use it</th>'
+                '<th class="c">Prescribed</th>'
                 f'<th class="c">Not mine</th></tr>{"".join(rows)}</table>'
             )
+        # The safety gates, carried. These were absent from this form
+        # entirely, so a declared pregnancy survived exactly one
+        # submission. Ticked from what was declared, and untickable,
+        # because the answer can change and a hidden field cannot be
+        # withdrawn.
+        gate_boxes = "".join(
+            f'<label><input type="checkbox" name="conditions" value="{e(cid)}"'
+            f'{" checked" if cid in (conditions or []) else ""}>'
+            f"<span>{e(label)}<span class=\"hint\">{e(hint)}</span></span></label>"
+            for cid, label, hint in CONDITION_CHOICES
+        )
+        if gate_boxes:
+            blocks.append(
+                "<p>These carry over from what you told us. Untick anything "
+                "that has changed.</p>"
+                f'<div class="checks" style="margin-bottom:16px">{gate_boxes}</div>'
+            )
+
         if concern_boxes:
             blocks.append(
                 f'<div class="checks" style="margin-bottom:16px">{concern_boxes}</div>'
@@ -2682,6 +2788,8 @@ def render(
         titles = []
         if rows:
             titles.append("What you paid")
+        if gate_boxes:
+            titles.append("Anything to be careful about")
         if concern_boxes:
             titles.append("What you are treating")
         if want_ids:

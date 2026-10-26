@@ -617,6 +617,7 @@ class Rules:
             guidance=rule["guidance"],
             resolution=rule["resolution"],
             verified=rule["review"] == "verified",
+                    source=rule.get("source") or "",
         )
 
     def escalate(self, products: list[ResolvedProduct], conditions: list[str]) -> list[Escalation]:
@@ -624,10 +625,33 @@ class Rules:
         out: list[Escalation] = []
         active_conditions = set(conditions)
 
+        # Named by the user rather than inferred from the label. Her
+        # statement is better evidence than the ingredient table: she is
+        # reading a box a pharmacist handed her, and the table only knows
+        # the handful of actives that are prescription-only everywhere.
+        # Declaring a prescription used to do nothing at all unless the
+        # app had independently guessed the same product.
+        named = {p.product.name for p in products if p.product.prescribed}
+        for name in sorted(named):
+            out.append(
+                Escalation(
+                    rule_id="SKC-010",
+                    condition="prescription_product",
+                    severity="critical",
+                    message=("You told us this was prescribed for you. Any "
+                             "change to how it is used belongs with the "
+                             "clinician who prescribed it, not with this tool."),
+                    products=[name],
+                )
+            )
+
         for rule in self.contraindications:
             if rule["condition"] not in active_conditions:
                 continue
-            hit_products = [p.product.name for p in products if self.matches(rule["matches"], p)]
+            hit_products = [p.product.name for p in products
+                            if self.matches(rule["matches"], p)
+                            and not (rule["condition"] == "prescription_product"
+                                     and p.product.name in named)]
             if hit_products:
                 out.append(
                     Escalation(
@@ -825,6 +849,9 @@ class Rules:
                             form_id=product,
                             order=order,
                             placeholder=True,
+                            typical_seconds=int(form.get("typical_seconds") or 0),
+                            typical_how=form.get("typical_how") or "",
+
                             because=[],
                         )
                     )
@@ -842,6 +869,7 @@ class Rules:
                         # never a figure for "this kind of mask". If the
                         # form is worn and no time was found, the step
                         # says so rather than counting down a guess.
+                        unused=bool(product.product.unused),
                         instead_of=alternatives.get(product.form) or [],
                         dwell_seconds=product.dwell_seconds,
                         dwell_unknown=bool(

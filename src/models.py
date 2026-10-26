@@ -72,6 +72,10 @@ class InputProduct(BaseModel):
                     "going to waste — but it is labelled, because it is not what "
                     "this bottle cost.",
     )
+    prescribed: bool = Field(
+        default=False,
+        description="The user says a clinician prescribed this one. Escalated whatever the ingredient table believes: the table knows tretinoin is prescription-only and knows nothing about a compounded cream or a prescription-strength version of something sold over the counter, so declaring a prescription changed nothing unless the app had already guessed right.",
+    )
     dwell_seconds: int = Field(
         default=0,
         description="How long this product says to leave it on, in seconds, for the "
@@ -157,8 +161,20 @@ class Finding(BaseModel):
     resolution: Resolution
     verified: bool = Field(
         default=False,
-        description="Whether the underlying rule has been human-verified. Shown in the "
-                    "output so an unverified claim is never presented as settled.",
+        description="True when a published source covers this exact claim. False "
+                    "means reviewed and kept on a recorded mechanism, NOT that "
+                    "nobody looked — every row in the table has been read. The "
+                    "page used to render False as 'unverified rule', which said "
+                    "the wrong thing on 57% of findings and cost more trust than "
+                    "the distinction was worth.",
+    )
+    source: str = Field(
+        default="",
+        description="Why this rule exists, in its own words: the citation where "
+                    "there is one, the mechanism and its limits where there is "
+                    "not. Written when the rule was reviewed and shown to the "
+                    "user, because a reader who doubts a claim should be able to "
+                    "read the reasoning rather than be told to trust a label.",
     )
 
 
@@ -187,6 +203,25 @@ class RoutineStep(BaseModel):
         default_factory=list,
         description="Rule ids that placed this step here. Makes the ordering auditable "
                     "rather than something the user has to take on faith.",
+    )
+    unused: bool = Field(
+        default=False,
+        description="The user said they own this and never use it. It stays in "
+                    "the routine — the routine's job is to say what to do with "
+                    "what is on the shelf, and a product sitting unused is the "
+                    "clearest thing it has to say — but the step says so, "
+                    "because a page that recommends a product while the money "
+                    "section calls it wasted is two answers to one question.",
+    )
+    typical_seconds: int = Field(
+        default=0,
+        description="How long this step takes for anyone, for a step the user "
+                    "does not own. A tester saw 0s against a missing cleanser: "
+                    "the step still takes fifty seconds, and the time belongs "
+                    "to the technique rather than to any particular bottle.",
+    )
+    typical_how: str = Field(
+        default="", description="What doing it involves, in one phrase.",
     )
     placeholder: bool = Field(
         default=False,

@@ -144,6 +144,11 @@ CREATE TABLE product_forms (
     -- Forms you pick one of rather than layer, so two toners are offered
     -- as a choice instead of being listed as two consecutive steps.
     one_at_a_time  INTEGER NOT NULL DEFAULT 0,
+    -- How long this step takes for anyone, apply plus finish. Used only
+    -- for a step the user does not own, where there is no product to
+    -- read a duration from.
+    typical_seconds INTEGER NOT NULL DEFAULT 0,
+    typical_how     TEXT,
     dwell_required INTEGER NOT NULL DEFAULT 0,
     dwell_note     TEXT,
     -- These numbers decide the order of every routine the app
@@ -382,9 +387,10 @@ def main() -> None:
 
     for form in forms:
         con.execute(
-            "INSERT INTO product_forms VALUES (?,?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO product_forms VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
             (form["id"], form["name"], form["rank"], ",".join(form["times"]),
              form.get("note"), int(bool(form.get("one_at_a_time"))),
+             int(form.get("typical_seconds") or 0), form.get("typical_how"),
              int(bool(form.get("dwell_required"))),
              form.get("dwell_note"),
              form.get("source"), form.get("review", "pending")),

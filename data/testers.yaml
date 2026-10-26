@@ -32,7 +32,11 @@ testers:
     knows: checked the output against the bottles physically in front of them
   - id: 3
     recruited: 2026-10-24
-    knows: not yet reported
+    knows: >-
+      Reported 26 Oct. Tested the safety path specifically - declared a
+      pregnancy and a prescription, then used the app the way a real user
+      would, by pressing Audit again. Found the only defect in this project
+      that could have caused harm.
 
 findings:
   # ---- tester 1, round 1: domain knowledge --------------------------
@@ -417,5 +421,63 @@ findings:
       came from rather than asserting the user failed to supply them.
     commit: pending
     class: confidently-wrong-provenance
+    caught_by_tests: false
+
+  # ---- tester 3, round 1 --------------------------------------------
+  - tester: 3
+    round: 1
+    reported: "she is pregnant/trying and indicates an item is prescribed to her; but when she clicks audit again, the app forgets these previous conditions"
+    layer: design
+    wrong: >-
+      The safety gates were not carried through a re-audit. Measured before
+      fixing: first pass escalated to a clinician, pressing Audit again did
+      not. A pregnant user who corrects a price is silently un-declared and
+      then advised on a retinoid. Every other field on that form was carried -
+      products, prices, sizes, concerns, dismissals, opted-in steps - and the
+      two that gate on safety were the ones missing, because they live on the
+      landing page and the re-audit form grew out of the result page.
+    fixed: >-
+      Carried as visible ticked boxes rather than hidden inputs, so the user
+      can see the app still knows and can withdraw it if the answer changed.
+      Pinned in test_correction.
+    commit: pending
+    class: safety-gate-lost
+    caught_by_tests: false
+
+  - tester: 3
+    round: 1
+    reported: "when she says something has been prescribed to her, shouldnt the app ask her what exactly was prescribed to her"
+    layer: design
+    wrong: >-
+      The app guessed, by matching the declaration against ingredients the
+      table marks prescription-only. That works for tretinoin and silently
+      does nothing for a compounded cream or a prescription-strength version
+      of something sold over the counter - the user tells the app something
+      important and the page looks exactly as it would have if she had said
+      nothing.
+    fixed: >-
+      A Prescribed box per product. A product she names is escalated whatever
+      the table believes about its ingredients, and when she declares a
+      prescription and nothing matches, the page asks her to name it.
+    commit: pending
+    class: declaration-ignored
+    caught_by_tests: false
+
+  - tester: 3
+    round: 1
+    reported: "she lists she uses 2 serums but why are they considered to be duplicate functions"
+    layer: presentation
+    wrong: >-
+      Not a rule error - two serums with different jobs are correctly not
+      flagged, and the pair that fires really does share a function. But the
+      card said "Keep one" without saying what was duplicated, so the verdict
+      arrived with no reason attached and read as the app not understanding
+      her shelf.
+    fixed: >-
+      The card now names the shared ingredients in readable form and says what
+      duplicate means here - not that the products are identical, but that she
+      is paying twice for one effect.
+    commit: pending
+    class: verdict-without-reason
     caught_by_tests: false
 

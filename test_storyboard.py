@@ -359,11 +359,21 @@ check_true("and a repeat carries no duration of its own",
 # A step the user does not own holds its place, with nothing to do.
 _gaps = [sc for sc in _film if sc.get("anim") == "gap"]
 check_true("a missing step holds its place in the film", len(_gaps) >= 1)
-check_true("without a duration", all(not sc.get("real") for sc in _gaps))
+# It used to carry no duration. A tester saw "0s" against a missing
+# cleanser and said it should show the real time, which is right: the
+# step takes fifty seconds for anyone, and that figure belongs to the
+# technique rather than to a bottle they do not own. The mask's WEARING
+# time is the opposite case and is still looked up per product.
+check_true("and states how long the step takes",
+           all(sc.get("real") for sc in _gaps))
+check_true("as a real number of seconds, not zero",
+           all(_re.search(r"[1-9]", sc.get("real", "")) for sc in _gaps))
 _pgaps = [st for st in _player if st["freq"] == "not on your shelf"]
 check_true("the player keeps it too", len(_pgaps) >= 1)
 check_true("and never counts down for it",
            all(b.get("untimed") for st in _pgaps for b in st["beats"]))
+check_true("while still saying how long it takes",
+           all(_re.search(r"[1-9]", b["text"]) for st in _pgaps for b in st["beats"]))
 
 
 print("ok  %d checks passed" % ok)

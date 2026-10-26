@@ -85,6 +85,7 @@ async def audit(
     psize: list[str] = Form(default=[]),
     punused: list[str] = Form(default=[]),
     pdrop: list[str] = Form(default=[]),
+    pprescribed: list[str] = Form(default=[]),
     want: list[str] = Form(default=[]),
     dropped: str = Form(default=""),
 ) -> HTMLResponse:
@@ -115,6 +116,9 @@ async def audit(
     typed_sizes = {name: (raw or "").strip()
                    for name, raw in zip(pname, psize) if (raw or "").strip()}
     never_used = {n for n in punused}
+    # Products the user says were prescribed to her. Her word, not the
+    # ingredient table's inference.
+    prescribed_named = {n for n in pprescribed}
 
     # Products the user has said are not theirs. Every other input on this
     # page adds something; this is the only one that takes something away,
@@ -150,6 +154,7 @@ async def audit(
             product.size = typed_sizes[product.name]
             product.price_size_mismatch = ""
         product.unused = product.name in never_used
+        product.prescribed = product.name in prescribed_named
 
     if not usable and not typed and not previous:
         return HTMLResponse(
@@ -494,6 +499,15 @@ async def audit(
         # near it.
         invented = unsupported_names(reading) if reading is not None else []
 
+        if ("prescription_product" in conditions and not prescribed_named
+                and not any(p.prescribed for p in products)):
+            notes_from_narrator.append(
+                "You said something here was prescribed to you, and nothing on "
+                "this shelf is a product this tool knows to be prescription-only. "
+                "Tick “Prescribed” beside it in the table below and it "
+                "will be sent back to your clinician rather than advised on here."
+            )
+
         notes = [t.note for t in trims] + notes_from_narrator
         if same_name_links:
             notes.append(
@@ -604,7 +618,7 @@ async def audit(
         return HTMLResponse(
             render(result, narrative, annotated or None, carry, legend, skin,
                    sourced, failed_urls=failed_urls, dropped=refused_json,
-                   wanted=sorted(wanted))
+                   wanted=sorted(wanted), conditions=list(conditions))
         )
 
     except Exception:  # noqa: BLE001

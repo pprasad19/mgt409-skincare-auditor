@@ -244,6 +244,69 @@ check("a junk form id is refused", junk.status_code, 200)
 check_true("and does not reach the page", "DROP TABLE" not in junk.text)
 
 
+# --- the safety gates survive a re-audit ------------------------------
+# Tester three declared a pregnancy and a prescribed product, pressed
+# "Audit again", and the app forgot both. Measured before the fix:
+#
+#     declared pregnant    clinician escalation on page: True
+#     after Audit again    clinician escalation on page: False
+#
+# A pregnant user who corrects a price is silently un-declared and then
+# advised on a retinoid. Every other field on that form was carried —
+# products, prices, sizes, concerns, dismissals, opted-in steps — and
+# the two that gate on safety were the ones missing, because they live
+# on the landing page and the re-audit form grew out of the result page.
+#
+# This is the check that keeps them there.
+GATED = [{"name": "The Ordinary Retinol 0.5%", "listed_ingredients": ["Retinol"]}]
+
+
+def gates_on(html):
+    return set(re.findall(r'name="conditions" value="([a-z_]+)" checked', html))
+
+
+first = client.post("/audit", data={"carried": json.dumps(GATED),
+                                    "conditions": ["pregnancy"]})
+check_true("a declared pregnancy escalates", "Needs a clinician" in first.text)
+check("and is carried back as ticked", gates_on(first.text), {"pregnancy"})
+
+again = client.post("/audit", data={"carried": json.dumps(GATED),
+                                    "conditions": sorted(gates_on(first.text))})
+check_true("pressing Audit again keeps the escalation",
+           "Needs a clinician" in again.text,
+           "the gate was lost on the second submission")
+check("and keeps the box ticked", gates_on(again.text), {"pregnancy"})
+
+# It must be withdrawable too — a hidden field could not be unticked.
+withdrawn = client.post("/audit", data={"carried": json.dumps(GATED)})
+check_true("and unticking it withdraws the gate",
+           "Needs a clinician" not in withdrawn.text)
+
+
+# --- a prescription the table cannot recognise ------------------------
+# "when she says something has been prescribed to her, shouldnt the app
+# ask her what exactly was prescribed to her". It guessed, by matching
+# ingredients the table marks prescription-only, and silently did
+# nothing for a compounded cream or a prescription-strength version of
+# something sold over the counter.
+COMPOUND = [{"name": "Compounded Azelaic 15%", "listed_ingredients": ["Azelaic Acid"]}]
+undeclared = client.post("/audit", data={"carried": json.dumps(COMPOUND),
+                                         "conditions": ["prescription_product"]})
+check_true("she is offered a way to name it",
+           'name="pprescribed"' in undeclared.text)
+check_true("and told to, when nothing matched",
+           "prescribed to you" in undeclared.text)
+
+named = client.post("/audit", data={"carried": json.dumps(COMPOUND),
+                                    "conditions": ["prescription_product"],
+                                    "pprescribed": "Compounded Azelaic 15%"})
+check_true("naming it escalates whatever the table believes",
+           "Needs a clinician" in named.text and "SKC-010" in named.text)
+check("and the box stays ticked",
+      re.findall(r'name="pprescribed" value="([^"]+)" checked', named.text),
+      ["Compounded Azelaic 15%"])
+
+
 if failures:
     print(f"FAILED {len(failures)} of {checks} checks\n")
     for f in failures:
