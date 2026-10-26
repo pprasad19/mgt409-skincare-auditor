@@ -1058,7 +1058,7 @@ findings:
       came from somewhere else, and the page says so with both numbers.
       That one only fires in the direction of too many, so writing a
       product and its ingredients on separate lines stays silent.
-    commit: pending
+    commit: 221db15
     class: confidently-wrong-identity
     caught_by_tests: false
 
@@ -1077,7 +1077,7 @@ findings:
       much, and the sentence prints the sets with the counted member and
       its price: "3 moisturisers - A, B and C; $20 for B. 2 toners - D and
       E; $18 for D." The reader can add it up.
-    commit: pending
+    commit: 221db15
     class: verdict-without-reason
     caught_by_tests: false
 
@@ -1095,7 +1095,7 @@ findings:
       A numbered block on the re-audit form, worded for whether one has
       been given already, and the same promise about reading it in memory
       and keeping nothing.
-    commit: pending
+    commit: 221db15
     class: offer-with-no-way-to-accept
     caught_by_tests: false
 
@@ -1115,7 +1115,7 @@ findings:
       offers one as an alternative, and the several-of-a-form card does
       not count one. Conflicts still fire on it, because a clash with a
       prescription is exactly what its clinician should hear about.
-    commit: pending
+    commit: 221db15
     class: declaration-ignored
     caught_by_tests: false
 
