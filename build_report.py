@@ -58,6 +58,17 @@ def pct(x: float) -> str:
     return f"{x:.0%}"
 
 
+def nth(n: int) -> str:
+    """1st, 2nd, 3rd, 4th. Written out because the alternative is a
+    hard-coded "rd" beside a derived number, which is the drift this
+    module exists to prevent — and which had already put "a third and
+    fourth tester" in the next-steps list after the third had
+    reported."""
+    if 10 <= n % 100 <= 20:
+        return f"{n}th"
+    return f"{n}{ {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th') }"
+
+
 def img(name: str, caption: str, width: str = "74%") -> str:
     """Embed a screenshot, or say plainly that it is missing.
 
@@ -406,7 +417,8 @@ are not, because the literature tests ingredients singly.</p>
     <td>A pasted URL or an unknown product name → its published ingredient
         list, price and size</td>
     <td>web search</td>
-    <td>No hand-written catalogue covers the public's bathrooms</td></tr>
+    <td>A seeded catalogue of {r["catalogue"]} products cannot cover what
+    strangers own, and a link has to be read when it arrives</td></tr>
 <tr><td><b>Skin Observer</b></td>
     <td>An optional face photo → <em>questions</em>, never diagnoses</td>
     <td>none</td>
@@ -822,8 +834,9 @@ for something another part of it already knew.</p>
 <h3>What I would do next, in order</h3>
 
 <ol>
-<li><b>A third and fourth tester.</b> The saturation argument above says
-the next tester finds a new class, not a repeat. This is the highest-value
+<li><b>A {nth(te['reported'] + 1)} and {nth(te['reported'] + 2)} tester.</b>
+The saturation argument above says the next one finds a new class rather than a
+repeat — the {nth(te['reported'])} still did. This is the highest-value
 remaining work and it is not close.</li>
 <li><b>Speakers for the four alias languages.</b> The 232 withdrawn terms
 are kept in the repository; one reviewer per language makes them loadable
@@ -832,7 +845,7 @@ again and restores support for labels printing only a local name.</li>
 mechanistic inference because the literature tests ingredients singly. A
 structured review of interaction studies would move some to verified.</li>
 <li><b>Make the reader's uncertainty visible per product.</b> Tester 2's
-findings were all cases where the app was certain and wrong; the reader knows
+findings were almost all cases where the app was certain and wrong; the reader knows
 when a label was hard to read and currently keeps it to itself.</li>
 <li><b>A real evaluation set.</b> Thirty photographed shelves with
 hand-written ground truth would turn "a tester found this" into a measurable

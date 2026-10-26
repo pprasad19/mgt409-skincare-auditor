@@ -62,10 +62,10 @@ li{margin:.3rem 0}
 <p class="meta">
   Purnima Prasad · MGT 409 — AI Foundations for Managers · final project<br>
   Repository: <a href="https://github.com/pprasad19/mgt409-skincare-auditor">https://github.com/pprasad19/mgt409-skincare-auditor</a>
-  (commit <code>47bfbfe</code>)<br>
+  (commit <code>2ebe375</code>)<br>
   App: runs locally — <code>python -m uvicorn app:app --port 8000</code>,
   then <code>http://localhost:8000</code>. Full instructions in the README.<br>
-  Generated 26 October 2026, 09:54 by <code>build_report.py</code>.
+  Generated 26 October 2026, 10:09 by <code>build_report.py</code>.
 </p>
 
 <h2>1 · Motivation</h2>
@@ -220,7 +220,8 @@ prose, and anything it invents is dropped before the page is built.</figcaption>
     <td>A pasted URL or an unknown product name → its published ingredient
         list, price and size</td>
     <td>web search</td>
-    <td>No hand-written catalogue covers the public's bathrooms</td></tr>
+    <td>A seeded catalogue of 74 products cannot cover what
+    strangers own, and a link has to be read when it arrives</td></tr>
 <tr><td><b>Skin Observer</b></td>
     <td>An optional face photo → <em>questions</em>, never diagnoses</td>
     <td>none</td>
@@ -263,26 +264,26 @@ combination this tool exists for.</p>
 <h2>4 · Tokenomics</h2>
 
 <p>All figures below are measured from <code>output/usage_log.json</code>,
-which records every call this project has ever made — 1330 calls across
-878 runs, including failed experiments and red-team runs. Regenerate
+which records every call this project has ever made — 1359 calls across
+899 runs, including failed experiments and red-team runs. Regenerate
 with <code>python tools/tokenomics.py</code>.</p>
 
 <h3>Per call</h3>
 <table>
 <tr><th>Step</th><th class="n">Mean cost</th><th class="n">Calls</th></tr>
-<tr><td>routine_auditor</td><td class='n'>$0.00070</td><td class='n'>778</td></tr><tr><td>shelf_reader</td><td class='n'>$0.00065</td><td class='n'>310</td></tr><tr><td>lookup</td><td class='n'>$0.00099</td><td class='n'>164</td></tr><tr><td>skin_observer</td><td class='n'>$0.00043</td><td class='n'>37</td></tr><tr><td>url</td><td class='n'>$0.00112</td><td class='n'>29</td></tr>
+<tr><td>routine_auditor</td><td class='n'>$0.00070</td><td class='n'>797</td></tr><tr><td>shelf_reader</td><td class='n'>$0.00065</td><td class='n'>315</td></tr><tr><td>lookup</td><td class='n'>$0.00099</td><td class='n'>167</td></tr><tr><td>skin_observer</td><td class='n'>$0.00043</td><td class='n'>38</td></tr><tr><td>url</td><td class='n'>$0.00111</td><td class='n'>30</td></tr>
 </table>
 
 <h3>Per run, which is what a user pays for</h3>
 <table>
 <tr><th>Shape</th><th class="n">n</th><th class="n">Median</th>
     <th class="n">Cheapest</th><th class="n">Dearest</th></tr>
-<tr><td>Plain audit (read + audit)</td><td class="n">171</td>
+<tr><td>Plain audit (read + audit)</td><td class="n">173</td>
     <td class="n"><b>$0.0009</b></td>
     <td class="n">$0.0005</td>
     <td class="n">$0.0036</td></tr>
-<tr><td>With product lookups</td><td class="n">31</td>
-    <td class="n"><b>$0.0053</b></td>
+<tr><td>With product lookups</td><td class="n">32</td>
+    <td class="n"><b>$0.0054</b></td>
     <td class="n">$0.0010</td>
     <td class="n">$0.0097</td></tr>
 </table>
@@ -297,11 +298,11 @@ cached and never fetched twice.</p>
 <tr><th>Users, one audit a month</th><th class="n">Plain</th>
     <th class="n">Every audit lookup-heavy</th></tr>
 <tr><td>1</td><td class="n">$0.0009</td>
-    <td class="n">$0.0053</td></tr>
+    <td class="n">$0.0054</td></tr>
 <tr><td>100</td><td class="n">$0.09</td>
-    <td class="n">$0.53</td></tr>
+    <td class="n">$0.54</td></tr>
 <tr><td>10,000</td><td class="n">$9</td>
-    <td class="n">$53</td></tr>
+    <td class="n">$54</td></tr>
 </table>
 
 <p>The right-hand column is the one to plan for: new users are exactly the
@@ -314,15 +315,15 @@ input</b> — writing is 25% <em>more</em> expensive than not caching. A read
 costs $0.01, a tenth. So caching only pays once enough reads have happened to
 cover the writes that created them.</p>
 
-<pre><code>input tokens          3,744,414
-  cache reads         2,455,168   (66% of input)
-  cache writes        859,326
-billed input          $0.17496
-same input, uncached  $0.37444
-saved                 $0.19948   (53% of input spend)</code></pre>
+<pre><code>input tokens          3,843,611
+  cache reads         2,530,471   (66% of input)
+  cache writes        876,299
+billed input          $0.17853
+same input, uncached  $0.38436
+saved                 $0.20583   (54% of input spend)</code></pre>
 
-<p>Caching landed on 907 of 1239 enabled calls
-(73%). The margin depends entirely on that rate: a workload
+<p>Caching landed on 933 of 1268 enabled calls
+(74%). The margin depends entirely on that rate: a workload
 with less repetition — users who run one audit and never return — would pay the
 write premium without earning it back.</p>
 
@@ -330,7 +331,7 @@ write premium without earning it back.</p>
 <p style="margin:0"><b>A trap worth recording.</b> The log's
 <code>input_tokens</code> is the <em>total</em>, with reads and writes counted
 inside it. Treating the three as separate pools and summing them reports a 60%
-saving where the truth is 53%. That error nearly reached
+saving where the truth is 54%. That error nearly reached
 this report; <code>tools/tokenomics.py</code> now asserts the identity before
 computing anything on top of it.</p>
 </div>
@@ -345,7 +346,7 @@ computing anything on top of it.</p>
     <td>A product is fetched once, ever</td>
     <td>A reformulation is not noticed until the cache is cleared</td></tr>
 <tr><td>Prompt caching</td>
-    <td>53% of input spend</td>
+    <td>54% of input spend</td>
     <td>Negative for one-shot users — the write premium is real</td></tr>
 <tr><td>Rules in code, not prompts</td>
     <td>No tokens at all for the decisions</td>
@@ -637,8 +638,9 @@ for something another part of it already knew.</p>
 <h3>What I would do next, in order</h3>
 
 <ol>
-<li><b>A third and fourth tester.</b> The saturation argument above says
-the next tester finds a new class, not a repeat. This is the highest-value
+<li><b>A 4th and 5th tester.</b>
+The saturation argument above says the next one finds a new class rather than a
+repeat — the 3rd still did. This is the highest-value
 remaining work and it is not close.</li>
 <li><b>Speakers for the four alias languages.</b> The 232 withdrawn terms
 are kept in the repository; one reviewer per language makes them loadable
@@ -647,14 +649,14 @@ again and restores support for labels printing only a local name.</li>
 mechanistic inference because the literature tests ingredients singly. A
 structured review of interaction studies would move some to verified.</li>
 <li><b>Make the reader's uncertainty visible per product.</b> Tester 2's
-findings were all cases where the app was certain and wrong; the reader knows
+findings were almost all cases where the app was certain and wrong; the reader knows
 when a label was hard to read and currently keeps it to itself.</li>
 <li><b>A real evaluation set.</b> Thirty photographed shelves with
 hand-written ground truth would turn "a tester found this" into a measurable
 accuracy figure.</li>
 </ol>
 
-<p class="foot">Generated 26 October 2026, 09:54 from
+<p class="foot">Generated 26 October 2026, 10:09 from
 <code>report_data.py</code>, which derives every figure above from the database,
 the usage log, the attack results and the test suites. No number in this
 document was typed by hand.</p>
