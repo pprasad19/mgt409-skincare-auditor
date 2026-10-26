@@ -940,6 +940,18 @@ place, alternating nights marked</figcaption></figure>
 </div>"""),
 
         slide(f"""
+<p class="kicker">…and what the shelf is missing</p>
+<div class="grid2">
+<figure>{img("04-gaps.png", "", width="100%")}
+<figcaption><b>What to do</b> — missing steps in three tiers, each naming the
+products that triggered it, so a suggestion cannot read as a defect</figcaption>
+</figure>
+<figure>{img("06-film.png", "", width="100%")}
+<figcaption><b>A drawn walkthrough</b> — a tab per half of the day, each step
+timed from the same table the written routine uses</figcaption></figure>
+</div>"""),
+
+        slide(f"""
 <p class="kicker">Cost</p>
 <h2>{money(plain['median'])} an audit.</h2>
 <div class="tiles">
@@ -965,35 +977,29 @@ What stopped them was re-reading the input with a deterministic matcher that
 has no comprehension to exploit.</p>"""),
 
         slide(f"""
-<p class="kicker">Impact</p>
+<p class="kicker">Impact · the finding</p>
+<h2>Almost every real defect was
+<span class="hl">confidently wrong</span>, not visibly broken.</h2>
 <div class="split">
 <div>
-<div class="hero">{te['count']}</div>
-<p class="herolab">defects from {te['reported']} real testers</p>
-<div class="hero sub">0</div>
-<p class="herolab">caught by {ts['total_checks']} automated checks</p>
-</div>
-<div>
-<p><b>Tester 1</b> knew skincare → domain errors.</p>
-<p><b>Tester 2</b> checked against the bottles → identity errors.</p>
-<p><b>Tester 3</b> read it as a document → the page contradicting itself.</p>
+<div class="herorow"><div><div class="hero">{te['count']}</div>
+<p class="herolab">defects from {te['reported']} real testers</p></div>
+<div><div class="hero">0</div>
+<p class="herolab">caught by {ts['total_checks']} checks</p></div></div>
 <p class="foot">{len(classes)} failure classes,
 {len(te['class_overlap'])} found by more than one.
-<b>At {te['reported']} testers, still not saturated.</b></p>
+<b>At {te['reported']} testers, still not saturated.</b> Tester 1 knew
+skincare, tester 2 checked against the bottles, tester 3 read it as a
+document — and they barely overlapped.</p>
 </div>
-</div>"""),
-
-        slide("""
-<p class="kicker">The finding</p>
-<h2 class="big">Almost every real defect was<br>
-<span class="hl">confidently wrong</span>, not visibly broken.</h2>
-<div class="cols3 small">
+<div class="cols1">
 <div class="pt">A shelf holding sunscreen, told it had none.</div>
 <div class="pt">A 90-second wait captioned as two minutes.</div>
-<div class="pt">A price from one company shown beside another's link.</div>
+<div class="pt">A price from one company beside another's link.</div>
+<p class="foot">None threw an error. All produced a clean page — and several
+of my own tests excluded the case they were built to catch.</p>
 </div>
-<p class="foot">None threw an error. All produced a clean, confident page —
-and several of my own tests excluded the case they were built to catch.</p>"""),
+</div>"""),
 
         slide(f"""
 <p class="kicker">Limits, honestly</p>
@@ -1093,6 +1099,9 @@ saturation curve says they find a new class, not a repeat.</p>
 .hero .of{{font-size:.5em;color:var(--dim);font-weight:400}}
 .herolab{{font-size:.68em;color:var(--dim);line-height:1.35;margin:.15em 0 0}}
 
+.herorow{{display:flex;gap:1.6em;align-items:flex-start}}
+.cols1{{display:flex;flex-direction:column;gap:.45em}}
+.cols1 .pt{{font-size:.95em}}
 .hl{{color:var(--clay)}}
 .foot{{font-size:.62em;color:var(--dim);line-height:1.4;margin-top:.5em}}
 .foot b{{color:var(--ink)}}
