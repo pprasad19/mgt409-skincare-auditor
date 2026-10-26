@@ -238,6 +238,19 @@ class RoutineStep(BaseModel):
         description="Rule ids that placed this step here. Makes the ordering auditable "
                     "rather than something the user has to take on faith.",
     )
+    prescribed: bool = Field(
+        default=False,
+        description="A clinician chose this one, so the app shows where it "
+                    "sits and says nothing about how to use it. The page "
+                    "escalated it and then placed it in the routine with a "
+                    "position, a dose and a duration this app had picked: "
+                    "\"why does my routine include items that I say are "
+                    "prescribed to me when the overall message of this app is "
+                    "that it will not say how my prescribed items will be "
+                    "used\". Keeping the step visible and empty is the "
+                    "honest answer — dropping it would leave a hole where "
+                    "something she does every night belongs.",
+    )
     unused: bool = Field(
         default=False,
         description="The user said they own this and never use it. It stays in "

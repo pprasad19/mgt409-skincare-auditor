@@ -628,6 +628,24 @@ class Rules:
         allowed = rule.get("forms")
         return not allowed or product.form in allowed.split(",")
 
+    @staticmethod
+    def in_use(products: list[ResolvedProduct]) -> list[ResolvedProduct]:
+        """The shelf she actually uses, which is not the shelf she owns.
+
+        Ticking "I never use this" has to reach every piece of reasoning
+        about what to DO — the routine, the clashes, the gaps, the
+        suggestions — and must not reach what she OWNS: the product
+        list, the unused tile, the correction table.
+
+        This exists because that line was redrawn four times, once per
+        caller, each after a tester found the one that had been missed.
+        The routine builder learned it first, then the finder, then
+        gaps(), and then suggest() was still answering "already covered"
+        with a product she had told us she never uses. Each fix was
+        correct and none of them was the fix.
+        """
+        return [p for p in products if not p.product.unused]
+
     def find(self, products: list[ResolvedProduct]) -> list[Finding]:
         """Every interaction the table fires on, for the shelf in use.
 
@@ -641,11 +659,9 @@ class Rules:
         put on your face; a product sitting in a drawer cannot clash
         with anything, and calling it a duplicate as well as unused is
         two findings for one fact — the unused tile already says you
-        own it and do not use it. The routine builder had already been
-        taught to skip these; the finder had not, so the page excluded
-        them from what to do and included them in what was wrong.
+        own it and do not use it.
         """
-        products = [p for p in products if not p.product.unused]
+        products = self.in_use(products)
         findings: list[Finding] = []
         seen: set[tuple[str, frozenset[str]]] = set()
 
@@ -985,6 +1001,7 @@ class Rules:
                         # form is worn and no time was found, the step
                         # says so rather than counting down a guess.
                         unused=bool(product.product.unused),
+                        prescribed=bool(product.product.prescribed),
                         instead_of=alternatives.get(product.form) or [],
                         dwell_seconds=product.dwell_seconds,
                         dwell_unknown=bool(
@@ -1139,7 +1156,17 @@ class Rules:
         Where a concern is already covered, that is the answer — telling
         someone they need nothing is more useful than finding them something
         to buy.
+
+        "Covered" means covered by something she uses. A tester read
+        "Already covered — ..." naming a product she had just told us
+        she never uses, which is the section answering with the one
+        fact she had corrected.
         """
+        # Filtered once, at the top, so the set of actives and the names
+        # printed beside "Already covered" cannot come from different
+        # shelves. They did: `owned` was corrected and the name list a
+        # few lines below still walked everything.
+        products = self.in_use(products)
         owned = {a for p in products for a in p.actives}
         out: list[Suggestion] = []
 
@@ -1208,12 +1235,7 @@ class Rules:
         # cleanser in a drawer leaves the same hole in a routine as no
         # cleanser at all, and this section exists to name holes.
         #
-        # Third place this had to be taught. The routine builder skips
-        # unused products, the finder now does too, and `held` was still
-        # counting them as coverage. The lesson is that "unused" is a
-        # property of the shelf-in-use and every reader of the product
-        # list has to know it, not a flag one function remembers.
-        products = [p for p in products if not p.product.unused]
+        products = self.in_use(products)
 
         held = {p.form for p in products}
 
@@ -1268,23 +1290,40 @@ class Rules:
         # rest are sitting unused, which is a money question rather than
         # a safety one.
         #
-        # Three, not two. Two cleansers is an ordinary shelf — a wash and
-        # a balm, or a gentle one for mornings — and calling that a
-        # problem would be the invented-need failure again, pointing the
-        # other way.
+        # Two, not three.
+        #
+        # The threshold was three, on the reasoning that two cleansers is
+        # an ordinary shelf — a wash and a balm, or a gentle one for
+        # mornings. That reasoning has since been overtaken twice. An oil
+        # cleanser is its own form now, so the balm-plus-wash case is not
+        # two of anything. And the routine already places one product per
+        # step and marks the rest "one of these, not both", while the
+        # money section counts the cheaper as duplicate spend — both at
+        # two.
+        #
+        # So three surfaces called two products interchangeable and this
+        # one stayed silent until there were three. A tester saw the
+        # mismatch immediately: "why does the what to do section not also
+        # reflect that the toner and mist are interchangeable if it lists
+        # that the moisturizers are interchangeable". The hedge that made
+        # three feel safer belongs in the wording, where it now is, not in
+        # a threshold that makes the page disagree with itself.
         by_form: dict[str, list[str]] = {}
         for p in products:
             by_form.setdefault(p.form, []).append(p.product.name)
         for form_id, names in sorted(by_form.items()):
-            if len(names) < 3 or form_id not in self.forms:
+            if len(names) < 2 or form_id not in self.forms:
                 continue
             label = self.forms[form_id]["name"]
+            headline = (f"Your {len(names)} {label.lower()}s do the same job."
+                        if len(names) == 2
+                        else f"You have {len(names)} products doing the job of one.")
             out.append(
                 Gap(
                     kind=f"several_{form_id}",
                     severity="low",
                     label=label,
-                    headline=f"You have {len(names)} products doing the job of one.",
+                    headline=headline,
                     message=(
                         f"All {len(names)} of these are filed as {label.lower()}, and a "
                         f"routine uses one at a time — so the others are not in the "

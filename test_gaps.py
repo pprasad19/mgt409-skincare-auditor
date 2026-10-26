@@ -151,12 +151,39 @@ four = gaps_for(WASH, FOAM, GEL, CREAM_WASH)
 check("four of one form is reported", "several_cleanser" in four, True)
 check("as a money note, not a safety one", four.get("several_cleanser"), "low")
 
-# Two is an ordinary shelf. Flagging it would be the invented-need
-# failure pointing the other way.
-check("two of one form is not reported",
-      "several_cleanser" in gaps_for(WASH, FOAM, MOISTURISER, SPF), False)
-check("three is where it starts",
+# Two, as of 26 October 2026. This assertion used to read the other way
+# and the reversal is worth recording.
+#
+# The threshold was three because two cleansers was an ordinary shelf —
+# a balm and a wash — and flagging it would have been the invented-need
+# failure pointing the other way. Two things then changed. An oil
+# cleanser became its own form, so a balm and a wash are no longer two
+# of anything. And the routine, the money section and the duplicate
+# sentence all came to treat two of a form as interchangeable, placing
+# one and marking the other "one of these, not both".
+#
+# That left this the only surface that stayed silent at two, and a
+# tester caught the mismatch on her own shelf: three moisturisers got a
+# card, her two toners got nothing, on a page that had just told her to
+# pick one of the two. The hedge the old threshold encoded now lives in
+# the wording instead.
+check("two of one form is reported",
+      "several_cleanser" in gaps_for(WASH, FOAM, MOISTURISER, SPF), True)
+check("and still as a money note", 
+      gaps_for(WASH, FOAM, MOISTURISER, SPF).get("several_cleanser"), "low")
+check("one of a form is not",
+      "several_cleanser" in gaps_for(WASH, MOISTURISER, SPF), False)
+check("three still is",
       "several_cleanser" in gaps_for(WASH, FOAM, GEL, MOISTURISER, SPF), True)
+
+# The wording carries the hedge the threshold used to: two products of
+# one form is a note about re-buying, not a fault.
+_two = R.audit([InputProduct(name=n, listed_ingredients=list(i))
+                for n, i in (WASH, FOAM)], concerns=[])
+_card = next(g for g in _two.gaps if g.kind == "several_cleanser")
+check_true("and says it is fine if she is rotating them",
+           "rotating them" in _card.message)
+check_true("and names both", sorted(_card.because) == sorted([WASH[0], FOAM[0]]))
 
 # It names them, so the user can see which four it means.
 audit_four = R.audit([InputProduct(name=n, listed_ingredients=list(i))

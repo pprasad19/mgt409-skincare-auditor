@@ -955,6 +955,87 @@ findings:
     class: surfaces-disagree
     caught_by_tests: false
 
+  # ---- tester 2, round 10 -------------------------------------------
+  - tester: 2
+    round: 10
+    reported: "I say I never use a product but it is still shown here [what you might add]"
+    layer: logic
+    wrong: >-
+      suggest() answered "Already covered - COSRX BHA Blackhead Power
+      Liquid addresses this" about a product she had just told us she never
+      uses. The fourth reader of the product list to need the same lesson,
+      after the routine builder, the finder and gaps(). Inside suggest() it
+      was wrong twice over: the set of actives and the names printed beside
+      "Already covered" were built from the list separately, so correcting
+      one would have left the other.
+    fixed: >-
+      Rules.in_use() is now the single definition of the shelf she actually
+      uses, and the four readers call it instead of each carrying their own
+      filter. The copy follows: once anything is set aside the section says
+      "Nothing you use addresses this" rather than "nothing on your shelf",
+      which would deny owning something the page lists two sections above.
+    commit: pending
+    class: declaration-ignored
+    caught_by_tests: false
+
+  - tester: 2
+    round: 10
+    reported: "the text under duplicate section is too wordy - clean it up and say what exactly are duplicates of each other"
+    layer: presentation
+    wrong: >-
+      The sentence listed every product involved in any duplication in one
+      run of five names, so it said that five products overlap and not
+      which two to choose between. The grouping existed in the engine and
+      was flattened on the way to the page.
+    fixed: >-
+      Named as groups with what each one shares: "3 moisturisers: A, B and
+      C; 2 toners: D and E."
+    commit: pending
+    class: verdict-without-reason
+    caught_by_tests: false
+
+  - tester: 2
+    round: 10
+    reported: "why does the what to do section not also reflect that the toner and mist are interchangeable if it lists that the moisturizers are interchangeable"
+    layer: logic
+    wrong: >-
+      The what-to-do card needed three of a form; the routine, the money
+      section and the duplicate sentence all treat two as interchangeable.
+      So three moisturisers got a card and two toners got silence, on a
+      page that had just told her to pick one of the two.
+    fixed: >-
+      Two. The threshold was set when an oil cleanser and a face wash were
+      both filed as "cleanser" and two of them was an ordinary shelf; oil
+      cleanser became its own form, and the reasoning went with it. The
+      hedge that made three feel safer - "fine if you are rotating them or
+      using up old stock" - is in the wording, where it belongs, rather
+      than in a threshold that made the page disagree with itself.
+    commit: pending
+    class: page-contradicts-itself
+    caught_by_tests: false
+
+  - tester: 2
+    round: 10
+    reported: "why does my routine include items that I say are prescribed to me when the overall message of this app is that it will not say how my prescribed items will be used"
+    layer: design
+    wrong: >-
+      The page escalated the product - "any change to how it is used belongs
+      with the clinician who prescribed it" - and then placed it in the
+      evening routine at a position this app chose, cited a rule for that
+      position, gave it a dose and counted down a duration for it in the
+      walkthrough. The escalation and the routine were two answers to the
+      same question, printed one above the other.
+    fixed: >-
+      The step keeps its place in the written routine, because deleting it
+      leaves a hole where something she does every night belongs, and loses
+      everything this app was inventing about it: no technique, no seconds,
+      no rule citation, and a line saying to use it exactly as her clinician
+      said. It is dropped from the film, the guided player and the printed
+      card, which exist only to say how and for how long.
+    commit: pending
+    class: page-contradicts-itself
+    caught_by_tests: false
+
 # Defects found by me, not by a tester - kept apart from `findings` so
 # the tester count the report quotes stays a tester count. Both turned
 # up in the same ten minutes, in the browser, while checking that the

@@ -307,6 +307,71 @@ check("and the box stays ticked",
       ["Compounded Azelaic 15%"])
 
 
+# --- "I never use this" reaches every reader --------------------------
+#
+# Four tester reports, in order: the routine still listed it, the clash
+# section still clashed it, "what you might add" still counted it as
+# coverage, and the suggestions still said "Already covered —" and named
+# it. Four fixes, each correct, none of them the fix, and the suite
+# caught none of them because every fixture had nothing set aside.
+#
+# The property, not the instances. Anything that tells her what to DO
+# must be silent about a product she has set aside; anything that
+# reports what she OWNS must still show it. A fifth reader fails here.
+from models import InputProduct as _IP2  # noqa: E402
+from rules import Rules as _R2  # noqa: E402
+
+_rules = _R2()
+_SHELF = [
+    ("CeraVe Foaming Cleanser", ["Ceramide NP"]),
+    ("The Ordinary Retinol", ["Retinol"]),
+    ("Paulas Choice BHA Liquid", ["Salicylic Acid"]),
+    ("CeraVe Moisturizing Cream", ["Glycerin"]),
+]
+_CONCERNS = ["texture", "acne"]
+
+_live = _rules.audit([_IP2(name=n, listed_ingredients=i) for n, i in _SHELF],
+                     concerns=_CONCERNS)
+check_true("the fixture is worth testing: it has findings",
+           len(_live.findings) > 0)
+check_true("and a routine", len(_live.routine.am) + len(_live.routine.pm) > 0)
+check_true("and at least one concern it says is covered",
+           any(s.already_covered_by for s in _live.suggestions))
+
+_idle = _rules.audit(
+    [_IP2(name=n, listed_ingredients=i, unused=True) for n, i in _SHELF],
+    concerns=_CONCERNS)
+
+# What to do: silent about her products. The routine is not empty —
+# with every product set aside the essential steps become placeholders,
+# which is the correct answer and the one a tester asked for. What must
+# not appear is a product she owns.
+_owned = {n for n, _ in _SHELF}
+check("no product she owns is placed in the morning",
+      [s.product_name for s in _idle.routine.am if s.product_name in _owned], [])
+check("nor in the evening",
+      [s.product_name for s in _idle.routine.pm if s.product_name in _owned], [])
+check_true("what is left is placeholders, not products",
+           all(s.placeholder for s in _idle.routine.am + _idle.routine.pm))
+check("nothing clashes", [f.rule_id for f in _idle.findings], [])
+check("nothing is covered",
+      [n for s in _idle.suggestions for n in s.already_covered_by], [])
+check_true("and the gaps now name the essential steps as missing",
+           {g.kind for g in _idle.gaps} >= {"no_cleanser", "no_moisturiser"})
+
+# What she owns: unchanged.
+check("every product is still listed", len(_idle.products), len(_SHELF))
+check("and counted as unused", _idle.waste.products_unused, len(_SHELF))
+
+# The definition itself has one home.
+_src = (Path(__file__).resolve().parent / "src" / "rules.py").read_text(
+    encoding="utf-8")
+check("only one place decides what 'in use' means",
+      _src.count("if not p.product.unused"), 1)
+check_true("and the readers call it rather than repeating it",
+           _src.count("self.in_use(") >= 3)
+
+
 if failures:
     print(f"FAILED {len(failures)} of {checks} checks\n")
     for f in failures:

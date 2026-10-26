@@ -864,27 +864,54 @@ def _money(amount) -> str:
     return f"${value:,.0f}" if abs(value - round(value)) < 0.005 else f"${value:,.2f}"
 
 
-def duplicated_names(audit) -> list[str]:
-    """Every product this audit considers to be doing a job twice.
+def _and_list(items: list[str]) -> str:
+    """"A", "A and B", "A, B and C". Joining with " and " throughout
+    reads as a chant by the third item."""
+    if len(items) < 3:
+        return " and ".join(items)
+    return ", ".join(items[:-1]) + " and " + items[-1]
 
-    Two sources, because there are two kinds of duplication and each
-    was being reported on its own. The interaction rules pair
-    INGREDIENTS — two retinoids, two AHAs — and the routine pairs
-    POSITIONS, placing one product per step and marking the rest
-    "one of these, not both". A tester with a toner and a mist read the
-    routine telling her to pick one and the money section telling her
-    nothing was duplicated, on the same page.
 
-    Collected once here so the figure, the tile and the sentence under
-    it cannot name different sets.
+def duplicate_groups(audit) -> list[tuple[str, list[str]]]:
+    """Which products duplicate which, and what they share.
+
+    Returns (what they have in common, the products), because a flat
+    list of five names does not tell anybody which two to choose
+    between. A tester read "Cocokind mist, La Mer night cream,
+    ATOBARRIER365, Round Lab Toner, Skinfix do a job something else
+    here already does" and asked, reasonably, what exactly duplicated
+    what.
+
+    Two sources, because there are two kinds of duplication. The
+    interaction rules pair INGREDIENTS — two retinoids, two AHAs — and
+    the routine pairs POSITIONS, placing one product per step and
+    marking the rest "one of these, not both". Collected here so the
+    figure, the tile and the sentence cannot name different sets.
     """
-    names = {n for f in audit.findings
-             if getattr(f, "type", "") == "redundancy" for n in f.products}
+    groups: dict[str, set[str]] = {}
+
+    for f in audit.findings:
+        if getattr(f, "type", "") != "redundancy":
+            continue
+        shared = ", ".join(sorted(
+            INGREDIENT_NAMES.get(i, i.replace("_", " "))
+            for i in (f.ingredients or []))) or "the same job"
+        groups.setdefault(shared, set()).update(f.products)
+
     for step in list(audit.routine.am) + list(audit.routine.pm):
-        if step.instead_of:
-            names.add(step.product_name)
-            names.update(step.instead_of)
-    return sorted(names)
+        if not step.instead_of:
+            continue
+        # The step's own form is what they share: the routine put them
+        # in one slot and will only use one.
+        groups.setdefault(step.form.lower(), set()).update(
+            [step.product_name, *step.instead_of])
+
+    return [(k, sorted(v)) for k, v in sorted(groups.items()) if len(v) > 1]
+
+
+def duplicated_names(audit) -> list[str]:
+    """Every product involved in a duplication, flattened."""
+    return sorted({n for _, names in duplicate_groups(audit) for n in names})
 
 
 def _stat(value: str, label: str, tone: str = "") -> str:
@@ -992,6 +1019,27 @@ def _step_row(step, spec, slot: str, total: int) -> str:
     # section counts it as waste is the page giving two answers.
     if step.unused:
         badge += '<span class="badge">you said you never use this</span>'
+
+    # A clinician chose this one. The page escalates it and then placed
+    # it here with a position, a dose and a duration this app had picked
+    # — "why does my routine include items that I say are prescribed to
+    # me when the overall message of this app is that it will not say
+    # how my prescribed items will be used". The step stays, because
+    # deleting it leaves a hole where something she does every night
+    # belongs; what goes is everything this app was making up about it.
+    if step.prescribed:
+        badge += '<span class="badge">prescribed</span>'
+        return (
+            f'<div class="step" data-step="{e(key)}">'
+            f'<div class="num">{step.order}</div><div>'
+            f'<div class="name">{e(step.product_name)}{badge}</div>'
+            f'<div class="meta">{e(step.form)}</div>'
+            f'<div class="alt">Use this exactly as the clinician who '
+            f'prescribed it told you to. This tool does not have that '
+            f'conversation and will not guess at it — the position above '
+            f'is only where a product of this kind usually sits.</div>'
+            f"</div></div>"
+        )
 
     alt = ""
     if step.instead_of:
@@ -1756,6 +1804,14 @@ def _film_scenes(audit, specs: dict, explain: dict) -> list[dict]:
                 "nights": when,
             }
 
+            # A prescribed product is shown in the written routine with
+            # no technique and no duration; drawing a hand applying it
+            # for a number of seconds this app chose would put the
+            # instructions straight back, in the one surface where they
+            # are hardest to qualify.
+            if st.prescribed:
+                continue
+
             if st.placeholder:
                 # Drawn as the step it is. The caption and the ribbon say
                 # it is not on the shelf yet; the picture shows what doing
@@ -1882,7 +1938,7 @@ def _print_card(audit: AuditResult, specs: dict) -> str:
                 # a cleanser you do not own, a drawn hand applying it,
                 # or a line on a card taped inside a cabinet are all
                 # instructions to use a product that does not exist.
-            if s.placeholder:
+            if s.placeholder or s.prescribed:
                 continue
             spec = specs.get(s.product_name)
             detail = ""
@@ -1950,6 +2006,11 @@ def render(
     seq = []
     for slot, steps in (("am", audit.routine.am), ("pm", audit.routine.pm)):
         for s_ in steps:
+            # Same reason as the film: this app has nothing to say
+            # about how to use it, so it does not count seconds for it.
+            if s_.prescribed:
+                continue
+
             if s_.placeholder:
                 # Walked through like any other step, timed from the
                 # form's typical figures, and labelled as something they
@@ -2330,19 +2391,16 @@ def render(
         # with one unknown price shows $0 — and a $0 tile with no
         # explanation says "no duplicates here", which is the opposite
         # of what the engine found.
-        dupes = duplicated_names(audit)
-        if dupes:
-            counted.append(
-                f"<b>Duplicate function</b>: {e(', '.join(dupes))} do a job "
-                f"something else here already does"
-                # Careful with this clause: one of the pair may well
-                # have a confirmed price. What is missing is a confirmed
-                # price for the one the figure would count.
-                + ("" if w.redundant_value_usd else
-                   ", though the figure above is zero because it counts only "
-                   "prices you have confirmed and this pair does not have "
-                   "enough of them")
-                + ". Anything not listed was checked and does not overlap.")
+        groups = duplicate_groups(audit)
+        if groups:
+            # Named as pairs rather than as one list. Five names in a row
+            # tells you five products overlap and not which to choose
+            # between.
+            lines = [f"{len(names)} {e(_plural(len(names), what))}: "
+                     f"{e(_and_list(names))}"
+                     for what, names in groups]
+            counted.append("<b>Duplicate function</b> — "
+                           + "; ".join(lines) + ".")
 
         if counted:
             parts.append('<p class="lede" style="margin-top:10px">'
@@ -2510,9 +2568,17 @@ def render(
                 f"{e(', '.join(s.products[:3]))}</div>"
                 if s.products else ""
             )
+            # "Nothing you use", not "nothing on your shelf", once she
+            # has set anything aside. She may own exactly the right
+            # product and have told us she never uses it, and this
+            # section reads the shelf-in-use — so the old wording would
+            # deny owning something the page lists two sections above.
+            idle = any(rp.product.unused for rp in audit.products)
+            none_yet = ("Nothing you use addresses this." if idle
+                        else "Nothing on your shelf addresses this.")
             parts.append(
                 f'<div class="sugg"><h4>{e(s.concern_label)}</h4>'
-                f"<p>Nothing on your shelf addresses this.</p>"
+                f"<p>{none_yet}</p>"
                 f'<div class="acts">{acts}</div>'
                 f"{f'<p>{e(s.why)}</p>' if s.why else ''}{eg}</div>"
             )
