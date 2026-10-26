@@ -9,7 +9,7 @@
 #
 # PROVENANCE — these thirteen numbers decide the order of every routine this
 # app produces, so they carry the same review field as the rules table.
-# Three are published AAD guidance. The other nine are the industry
+# Three are published AAD guidance. The other ten are the industry
 # layering convention — thinnest to thickest, water before oil — which is a
 # real and near-universal convention but not a clinical finding, and is
 # marked `reasoned` rather than dressed up as evidence.
