@@ -591,7 +591,7 @@ findings:
       The cheaper-of-two is now chosen among the products that actually have
       a countable price. Verified both ways: two typed prices give $12, one
       typed price gives $40.
-    commit: pending
+    commit: 08e9231
     class: fix-caused-new-bug
     caught_by_tests: false
 
@@ -606,7 +606,7 @@ findings:
     fixed: >-
       The spoken line now opens "This one is not on your shelf yet, but the
       routine needs it. When you have it: ..." and then gives the technique.
-    commit: pending
+    commit: 08e9231
     class: surfaces-disagree
     caught_by_tests: false
 
@@ -623,7 +623,7 @@ findings:
       Unused products are excluded from the routine steps. They stay in the
       product list and in the money section, which is where the observation
       belongs.
-    commit: pending
+    commit: 08e9231
     class: declaration-ignored
     caught_by_tests: false
 
@@ -639,7 +639,7 @@ findings:
     fixed: >-
       Replaced with "You do not have one of these yet. The routine needs it,
       so it is shown in place." A note left behind by its own fix.
-    commit: pending
+    commit: 08e9231
     class: fix-caused-new-bug
     caught_by_tests: false
 
@@ -658,7 +658,7 @@ findings:
       produced: with the halves separated nothing repeats inside anything
       anybody watches, and the evening can be followed on its own by someone
       who never opened the morning.
-    commit: pending
+    commit: 08e9231
     class: wrong-unit-of-delivery
     caught_by_tests: false
 
@@ -677,7 +677,7 @@ findings:
       server-side parser now also strips a currency symbol and thousands
       commas, because that is what somebody copying off a receipt types and
       float() was discarding it in silence.
-    commit: pending
+    commit: 08e9231
     class: invisible-to-the-user
     caught_by_tests: false
 
@@ -697,7 +697,7 @@ findings:
       figure still counts for nothing. A price for a different size cannot be
       ticked at all, because no confirmation makes it this bottle's price.
       Keeps the provenance discipline and removes the cost it imposed.
-    commit: pending
+    commit: 08e9231
     class: fix-caused-new-bug
     caught_by_tests: false
 
@@ -721,7 +721,7 @@ findings:
       longer decides anything. Her second finding on this rule: the
       per-product tick was added last round and the inference was left
       running beside it.
-    commit: pending
+    commit: 08e9231
     class: declaration-ignored
     caught_by_tests: false
 
