@@ -41,8 +41,13 @@ SLIDES = ROOT / "slides.html"
 AUTHOR = "Purnima Prasad"
 COURSE = "MGT 409 — AI Foundations for Managers"
 TITLE = "What's actually on your shelf"
-TAGLINE = ("A skincare shelf auditor: photograph what you own, and it works out "
-           "which products clash, which duplicate each other, what order to use "
+# Names every way in, because the title slide said "photograph what you
+# own" and a reader took that as the only one. Typing a list and pasting
+# links are the paths most testers actually used, and the face photo is
+# the input that produces the concerns.
+TAGLINE = ("A skincare shelf auditor. Photograph your products, type them, or "
+           "paste their links — and your face, if you want it read. It works "
+           "out which clash, which duplicate each other, what order to use "
            "them in, and what the mistakes are costing you.")
 
 
@@ -69,7 +74,7 @@ def nth(n: int) -> str:
     return f"{n}{ {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th') }"
 
 
-def img(name: str, caption: str, width: str = "74%") -> str:
+def img(name: str, caption: str, width: str = "58%") -> str:
     """Embed a screenshot, or say plainly that it is missing.
 
     A missing image that renders as nothing is how a report ships with a
@@ -102,9 +107,9 @@ body{margin:0;background:var(--bg);color:var(--ink);
      -webkit-font-smoothing:antialiased}
 .wrap{max-width:46rem;margin:0 auto;padding:3.5rem 1.5rem 6rem}
 h1{font-size:2.1rem;line-height:1.15;margin:0 0 .4rem;letter-spacing:-.02em}
-h2{font-size:1.4rem;margin:3rem 0 .4rem;letter-spacing:-.01em;
+h2{font-size:1.3rem;margin:1.7rem 0 .35rem;letter-spacing:-.01em;
    padding-top:1.2rem;border-top:1px solid var(--line)}
-h3{font-size:1.08rem;margin:1.8rem 0 .3rem}
+h3{font-size:1.04rem;margin:1.1rem 0 .25rem}
 h4{font-size:.95rem;margin:1.3rem 0 .2rem;color:var(--ink-2)}
 p{margin:.7rem 0}
 .sub{color:var(--ink-3);font-size:1.05rem;margin:0 0 1.2rem}
@@ -142,8 +147,12 @@ li{margin:.3rem 0}
 @media print{
   body{background:#fff}
   .wrap{max-width:none;padding:0 .4in}
-  h2{page-break-after:avoid}
-  .shot,table,.card{page-break-inside:avoid}
+  h2{page-break-after:avoid;margin-top:1.6rem}
+  h3{page-break-after:avoid;margin-top:1rem}
+  .shot{page-break-inside:avoid}
+  thead{display:table-header-group}
+  tr,.card{page-break-inside:avoid}
+  p{orphans:2;widows:2}
   a{color:var(--ink);text-decoration:none}
 }
 """
@@ -736,27 +745,21 @@ reader a 3.7&nbsp;KB stub with no structured data, the seeded catalogue's
 median price error is {cat.get('median_error', '—')}, and a looked-up figure is
 a different size or a different product often enough to matter.</p>
 
-<p>So on the last day the totals stopped depending on them. <b>A price is
-counted only if the user confirmed it.</b> Figures the tool found are still
-shown beside each product, labelled with where they came from, and never summed
-on their own — and a shelf with no confirmed prices says so and asks, rather
-than quietly adding up estimates.</p>
+<p>So the totals stopped depending on them. <b>A price is counted only if the
+user confirmed it.</b> Looked-up figures are still shown beside each product
+and labelled, never summed on their own, and a shelf with no confirmed prices
+says so and asks.</p>
 
-<p>The first version of that rule accepted only a figure the user typed, and a
-tester found its cost within the hour: the page was now showing her a price and
-asking her to retype it, so most rows came back empty and most shelves read
-"nothing to add up yet". Her fix was better than the rule. The table now has
-three columns — <em>found online</em> with its provenance, <em>use retail price</em>, and
-<em>what you paid</em> — and a figure she has read and ticked counts, because
-reading it is the confirmation. A typed figure overrides a ticked one; a price
-for a different size cannot be ticked at all, since no amount of confirmation
-makes a 200&nbsp;ml price into a 7&nbsp;ml bottle's. The discipline is
-unchanged and the work it demanded of the user is gone.</p>
-
-<p>That retired the whole class rather than its instances one at a time: the
-difference between a feature being wrong and a feature being fed badly, and a
-reminder that a correct rule can still be the wrong thing to put in front of
-someone.</p>
+<p>The first version accepted only a typed figure, and a tester found its cost
+within the hour: the page was showing her a price and asking her to retype it,
+so most shelves read "nothing to add up yet". Her fix was better than the rule.
+The table now has <em>found online</em>, <em>use retail price</em> and
+<em>what you paid</em>; a figure she reads and ticks counts, because reading it
+is the confirmation, and a typed figure overrides a ticked one. A price for a
+different size cannot be ticked at all. That retired the whole class rather
+than its instances — the difference between a feature being wrong and a feature
+being fed badly, and a reminder that a correct rule can still be the wrong
+thing to put in front of someone.</p>
 
 <h3>What came out, and why that counts as a result</h3>
 
@@ -795,32 +798,24 @@ company's website shown beside another company's link. None of these threw an
 error. All produced a clean page.</p>
 </div>
 
-<p>The second pattern is more uncomfortable, and it is the reason the tester
-evidence above is the most valuable thing in this project:
-<b>several of my own tests excluded the case they were built to catch.</b> The
-i18n fixtures tested the aliases that existed rather than the ones that should;
-the skin-observer fixtures were flat rectangles the observer refused to look at,
-so five passes meant nothing; and <code>four_surfaces.py</code>, which exists
-specifically to prove four renderings agree about durations, contained no beat
-longer than two minutes — the only range where they all render identically no
-matter what. Each was found by accident or by a tester, not by the suite.</p>
+<p>The second pattern is why the tester evidence is the most valuable thing
+here: <b>several of my own tests excluded the case they were built to
+catch.</b> The i18n fixtures tested the aliases that existed rather than the
+ones that should; the skin-observer fixtures were flat rectangles the observer
+refused to look at, so five passes meant nothing; and
+<code>four_surfaces.py</code>, which exists to prove four renderings agree
+about durations, contained no beat over two minutes — the only range where
+they agree whatever you do. {ts['total_checks']} checks caught none of it. The
+suites are good at the properties I thought to state and close to blind where
+code meets data.</p>
 
-<p>The clearest demonstration arrived on the last day, out of verifying a fix
-rather than writing one: checking that a tester's <em>Use retail price</em>
-column worked, I submitted six products, typed no price, and read
-<b>&ldquo;$96 on the shelf&rdquo;</b> above six rows the page itself had
-labelled &ldquo;retail, looked up&rdquo;. Two defects sat behind that one
-number and neither threw anything. Both are closed, and the invariant test
-written afterwards was verified by putting the bug back and watching it fail.
-{ts['total_checks']} automated checks had caught neither &mdash; the suites are
-good at the properties I thought to state and close to blind where code meets
-data.</p>
-
-<p>{te['self_found_count']} defects were found this way — by me, checking a
-fix a tester had asked for, rather than by the suite or the tester. They are
-kept out of the {te['count']} above so that number stays a count of what
-testers reported. Each is the same lesson: the code asked the wrong source
-for something another part of it already knew.</p>
+<p>{te['self_found_count']} further defects were found this way — by me,
+checking a fix a tester had asked for, never by the suite. The clearest was
+reading <b>&ldquo;$96 on the shelf&rdquo;</b> above six rows the page itself
+had labelled &ldquo;retail, looked up&rdquo;, with no price typed by anyone.
+They are kept out of the {te['count']} above so that number stays a count of
+what testers reported, and each is the same lesson: the code asked the wrong
+source for something another part of it already knew.</p>
 
 <table>
 <tr><th style="width:30%">Found while</th><th>What it was</th></tr>
@@ -867,161 +862,273 @@ def build_slides(d: dict) -> str:
                          d["testers"])
     c = tk["cache"]
     plain, lookups = tk["plain_audit"], tk["with_lookups"]
-
-    def slide(body: str) -> str:
-        return f"<section>{body}</section>"
-
     classes = te["classes"]
+
+    def slide(body: str, cls: str = "") -> str:
+        return f'<section{f" class={chr(34)}{cls}{chr(34)}" if cls else ""}>{body}</section>'
+
+    def tile(figure: str, label: str, tone: str = "") -> str:
+        """A number worth looking at, rather than a row in a table."""
+        return (f'<div class="tile {tone}"><div class="fig">{figure}</div>'
+                f'<div class="lab">{label}</div></div>')
+
+    def bar(label: str, held: int, total: int, tone: str = "") -> str:
+        """The injection result, drawn. Three numbers in a table are a
+        fact; three bars are an argument you can see from the back of a
+        room."""
+        pct_held = round(100 * held / total)
+        return (f'<div class="barrow"><div class="barlab">{label}</div>'
+                f'<div class="bartrack"><div class="barfill {tone}" '
+                f'style="width:{pct_held}%"></div></div>'
+                f'<div class="barval">{held}/{total}</div></div>')
+
     slides = [
         slide(f"""
-<h1 style="font-size:2.1em">{e(TITLE)}</h1>
-<p style="color:#6f6962">{e(TAGLINE)}</p>
-<p style="font-size:.6em;margin-top:2em">{e(AUTHOR)} · {e(COURSE)}<br>
-<a href="{d['repo']['url']}">{d['repo']['url']}</a></p>"""),
+<div class="title">
+<p class="kicker">MGT 409 · AI Foundations for Managers</p>
+<h1>{e(TITLE)}</h1>
+<p class="lede">{e(TAGLINE)}</p>
+<p class="byline">{e(AUTHOR)} &nbsp;·&nbsp;
+<a href="{d['repo']['url']}">{d['repo']['url'].replace('https://', '')}</a></p>
+</div>""", "cover"),
 
         slide(f"""
-<h2>The problem is the shelf, not the product</h2>
-<p class="fragment">People buy skincare one product at a time and use it all
-at once.</p>
-<p class="fragment">Nothing in the purchase path looks at the combination.</p>
-<p class="fragment">A clash does not announce itself — it looks like irritation
-you blame on one product, replace, and do not fix.</p>
-<p class="fragment" style="color:#9c5f44"><b>Retailers are selling. Chatbots
-cite nothing. Ingredient databases know one product at a time.</b></p>"""),
+<p class="kicker">The problem</p>
+<h2>People buy skincare one product at a time<br>and use it all at once.</h2>
+<div class="cols3">
+<div class="pt"><b>Nothing in the purchase path</b> looks at the
+combination.</div>
+<div class="pt"><b>A clash does not announce itself.</b> It looks like
+irritation you blame on one product, replace, and do not fix.</div>
+<div class="pt"><b>Nobody is positioned to say so.</b> Retailers are selling.
+Chatbots cite nothing. Ingredient databases know one product at a time.</div>
+</div>"""),
 
         slide(f"""
+<p class="kicker">What is new</p>
 <h2>The rules table decides.<br>The model explains.</h2>
+<div class="split">
+<div>
 <p>Every finding, severity, routine position and dollar figure is computed by
 deterministic code from a reviewed table.</p>
-<p class="fragment">The model reads labels and writes prose. It <b>cannot</b>
-introduce a finding or change a severity.</p>
-<p class="fragment" style="color:#9c5f44">Enforced, not requested — a narrative
-contradicting every finding changes nothing
-(<code>test_thesis.py</code>).</p>"""),
+<p>The model reads labels and writes prose. It <b>cannot</b> introduce a
+finding or change a severity.</p>
+</div>
+<div class="proof">
+<p class="proofhead">Enforced, not requested</p>
+<p>A narrative contradicting every finding, inventing a rule, rewriting the
+money and naming a product nobody owns changes <b>nothing</b>.</p>
+<p class="mono">test_thesis.py · {ts['total_checks']} checks</p>
+</div>
+</div>"""),
 
-        slide(agent_diagram().replace('<figure class="shot">', "<div>")
+        slide('<p class="kicker">The agents</p>'
+              + agent_diagram().replace('<figure class="shot">', '<div class="dia">')
               .replace("</figure>", "</div>")
-              .replace('<figcaption>', '<p style="font-size:.5em;color:#6f6962">')
+              .replace('<figcaption>', '<p class="cap">')
               .replace("</figcaption>", "</p>")),
 
         slide(f"""
-<h2 style="font-size:1.25em;margin-bottom:.3em">What it produces</h2>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5em 1.1em">
-<div>{img("02-findings.png", "", width="100%")}
-<p style="font-size:.4em;color:#6f6962;margin:.15em 0 0">Findings, each citing
-the rule that produced it</p></div>
-<div>{img("03-routine.png", "", width="100%")}
-<p style="font-size:.4em;color:#6f6962;margin:.15em 0 0">A morning and evening
-order, with the rule behind each position</p></div>
-<div>{img("04-gaps.png", "", width="100%")}
-<p style="font-size:.4em;color:#6f6962;margin:.15em 0 0">What is <i>not</i> on
-the shelf, in three tiers</p></div>
-<div>{img("06-film.png", "", width="100%")}
-<p style="font-size:.4em;color:#6f6962;margin:.15em 0 0">A drawn walkthrough,
-one tab per half of the day</p></div>
+<p class="kicker">What it produces</p>
+<div class="grid4">
+<figure>{img("02-findings.png", "", width="100%")}
+<figcaption>Findings, each citing its rule</figcaption></figure>
+<figure>{img("03-routine.png", "", width="100%")}
+<figcaption>A morning and evening order</figcaption></figure>
+<figure>{img("04-gaps.png", "", width="100%")}
+<figcaption>What is <i>not</i> on the shelf</figcaption></figure>
+<figure>{img("06-film.png", "", width="100%")}
+<figcaption>A drawn walkthrough, per half-day</figcaption></figure>
 </div>"""),
 
         slide(f"""
-<h2>Cost</h2>
-<table style="font-size:.75em">
-<tr><th>Plain audit (median, n={plain['n']})</th>
-    <td style="text-align:right"><b>{money(plain['median'])}</b></td></tr>
-<tr><th>With product lookups (n={lookups['n']})</th>
-    <td style="text-align:right"><b>{money(lookups['median'])}</b></td></tr>
-<tr><th>10,000 users / month, plain</th>
-    <td style="text-align:right">{money(plain['median'] * 10000, 0)}</td></tr>
-<tr><th>10,000 users / month, lookup-heavy</th>
-    <td style="text-align:right">{money(lookups['median'] * 10000, 0)}</td></tr>
-</table>
-<p class="fragment" style="font-size:.7em;color:#9c5f44">Caching saved
-{pct(c['saved_share'])} of input spend — but a cache <i>write</i> costs 25%
-<i>more</i> than not caching. It only pays with repetition.</p>"""),
+<p class="kicker">Cost</p>
+<h2>{money(plain['median'])} an audit.</h2>
+<div class="tiles">
+{tile(money(plain['median']), f"plain audit · median of {plain['n']}")}
+{tile(money(lookups['median']), f"with lookups · median of {lookups['n']}")}
+{tile(money(plain['median'] * 10000, 0), "10,000 users / month")}
+{tile(money(lookups['median'] * 10000, 0), "10,000 · lookup-heavy", "warn")}
+</div>
+<p class="foot">Caching saved <b>{pct(c['saved_share'])}</b> of input spend —
+but a cache <i>write</i> costs 25% <i>more</i> than not caching. It only pays
+with repetition.</p>"""),
 
         slide(f"""
-<h2>Safety: measured, not described</h2>
-<p style="font-size:.8em">12 injection attacks · 3 arms</p>
-<table style="font-size:.8em">
-<tr><th>Naive prompt</th>
-    <td style="text-align:right">{at['arms']['naive']} / {at['total']} held</td></tr>
-<tr><th>Undefended</th>
-    <td style="text-align:right">{at['arms']['undefended']} / {at['total']} held</td></tr>
-<tr><th>Defended</th>
-    <td style="text-align:right"><b>{at['arms']['defended']} / {at['total']} held</b></td></tr>
-</table>
-<p class="fragment" style="font-size:.7em">The two that got through issue no
-instruction at all. Careful prompting scored identically to the naive arm —
-what stopped them was re-reading the input with a deterministic matcher that
+<p class="kicker">Safety</p>
+<h2>12 injection attacks, 3 arms, measured.</h2>
+<div class="bars">
+{bar("Naive prompt", at['arms']['naive'], at['total'])}
+{bar("Careful prompting", at['arms']['undefended'], at['total'])}
+{bar("Defended", at['arms']['defended'], at['total'], "good")}
+</div>
+<p class="foot">Careful prompting scored <b>identically to the naive arm</b>.
+What stopped them was re-reading the input with a deterministic matcher that
 has no comprehension to exploit.</p>"""),
 
         slide(f"""
-<h2>{te['count']} defects from {te['reported']} real testers</h2>
-<div style="display:flex;gap:1.2em;align-items:flex-start">
-<div style="flex:1.1">
-<p style="font-size:.7em">{ts['total_checks']} automated checks across
-{len(ts['suites'])} suites caught <b>none of them</b>.</p>
-<p class="fragment" style="font-size:.65em">Tester 1 knew skincare → domain
-errors.<br>Tester 2 checked against the bottles → identity errors.<br>
-Tester 3 read it as a document → the page contradicting itself.</p>
-<p class="fragment" style="font-size:.65em;color:#9c5f44">
-{len(classes)} failure classes, {len(te['class_overlap'])} found by more than
-one tester. <b>At {te['reported']} testers, still not saturated.</b></p></div>
-<div style="flex:1">{img("05-correct.png", "", width="100%")}
-<p style="font-size:.45em;color:#6f6962;margin:.2em 0 0">The correction table —
-it exists because a tester had no way to tell the app it was wrong</p></div>
+<p class="kicker">Impact</p>
+<div class="split">
+<div>
+<div class="hero">{te['count']}</div>
+<p class="herolab">defects from {te['reported']} real testers</p>
+<div class="hero sub">0</div>
+<p class="herolab">caught by {ts['total_checks']} automated checks</p>
+</div>
+<div>
+<p><b>Tester 1</b> knew skincare → domain errors.</p>
+<p><b>Tester 2</b> checked against the bottles → identity errors.</p>
+<p><b>Tester 3</b> read it as a document → the page contradicting itself.</p>
+<p class="foot">{len(classes)} failure classes,
+{len(te['class_overlap'])} found by more than one.
+<b>At {te['reported']} testers, still not saturated.</b></p>
+</div>
 </div>"""),
 
         slide("""
-<h2>What every real bug had in common</h2>
-<p style="font-size:.85em">A shelf holding sunscreen, told it had none.<br>
-A 90-second wait captioned as two minutes.<br>
-A cleansing balm placed in the morning routine.<br>
-A price from one company shown beside another company's link.</p>
-<p class="fragment" style="color:#9c5f44"><b>None threw an error.
-All produced a clean, confident page.</b></p>
-<p class="fragment" style="font-size:.7em">And several of my own tests excluded
-the exact case they were built to catch.</p>"""),
+<p class="kicker">The finding</p>
+<h2 class="big">Almost every real defect was<br>
+<span class="hl">confidently wrong</span>, not visibly broken.</h2>
+<div class="cols3 small">
+<div class="pt">A shelf holding sunscreen, told it had none.</div>
+<div class="pt">A 90-second wait captioned as two minutes.</div>
+<div class="pt">A price from one company shown beside another's link.</div>
+</div>
+<p class="foot">None threw an error. All produced a clean, confident page —
+and several of my own tests excluded the case they were built to catch.</p>"""),
 
         slide(f"""
-<h2>Limits, honestly</h2>
-<p style="font-size:.8em">232 machine-translated ingredient names were
-<b>withdrawn on the last day</b>. Disclosure was not enough: a wrong
-translation invents an ingredient, and that warning is wrong whether or not a
-caveat sits beside it. All {r['terms']} remaining terms are INCI, a product
-name, or a reviewed alias.</p>
-<p style="font-size:.8em">{r['verified']} of {r['rules_total']} rules are
-source-verified; {r['reasoned']} are recorded mechanistic reasoning. Only
-verified rows are presented as settled.</p>
-<p class="fragment" style="color:#9c5f44"><b>Next: a fourth tester.</b>
-The saturation curve says they find a new class, not a repeat.</p>"""),
+<p class="kicker">Limits, honestly</p>
+<div class="split">
+<div class="proof warn">
+<p class="proofhead">Withdrawn on the last day</p>
+<p>232 machine-translated ingredient names. Disclosure was not enough: a wrong
+translation invents an ingredient, and the warning is wrong whether or not a
+caveat sits beside it.</p>
+<p class="mono">all {r['terms']} remaining terms are INCI, a product name, or
+a reviewed alias</p>
+</div>
+<div>
+<div class="hero sub">{r['verified']}<span class="of">/{r['rules_total']}</span></div>
+<p class="herolab">rules source-verified; {r['reasoned']} are recorded
+mechanistic reasoning. Only verified rows are presented as settled.</p>
+<p class="foot"><b>Next: a {nth(te['reported'] + 1)} tester.</b> The
+saturation curve says they find a new class, not a repeat.</p>
+</div>
+</div>"""),
     ]
 
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(TITLE)} — slides</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/white.css">
 <style>
-.reveal{{font-family:Charter,"Iowan Old Style",Georgia,serif;color:#1b1a18}}
+:root{{--ink:#1b1a18;--dim:#6f6962;--clay:#9c5f44;--sand:#c8a77f;
+  --line:#e3ded5;--bg:#faf7f2;--card:#fff;--good:#5c7a5e}}
+.reveal{{font-family:Charter,"Iowan Old Style",Georgia,serif;color:var(--ink);
+  font-size:30px}}
+.reveal-viewport{{background:var(--bg)}}
+
+/* Every slide is a column that cannot overflow: content shrinks into
+   the box rather than running off the bottom of it. */
+/* !important because reveal sets display on the active section itself;
+   without it the column never forms and every slide sits jammed
+   against the top edge with two-thirds of the screen empty. */
+.reveal .slides section{{text-align:left;height:100%;
+  display:flex !important;flex-direction:column;justify-content:center;
+  padding:0 1.1em;box-sizing:border-box}}
+.reveal .slides section.cover{{justify-content:center}}
 .reveal h1,.reveal h2{{font-family:inherit;text-transform:none;
-  letter-spacing:-.02em;color:#1b1a18}}
-.reveal h2{{font-size:1.5em}}
-.reveal section{{text-align:left}}
-.reveal table{{margin:.6em 0}}
-.reveal th{{text-align:left;font-weight:600;border-bottom:1px solid #e3ded5}}
-.reveal td{{border-bottom:1px solid #e3ded5}}
-.reveal code{{font-size:.85em;background:#f2eee6;padding:.1em .3em;border-radius:3px}}
-.reveal img{{border:1px solid #e3ded5;border-radius:6px}}
-.reveal .gap-box{{border:2px dashed #c8a77f;border-radius:6px;padding:2em 1em;
-  text-align:center;color:#9c5f44;font-size:.6em}}
-.reveal figure{{margin:0}}
-.reveal figcaption{{display:none}}
+  letter-spacing:-.02em;color:var(--ink);margin:0 0 .35em}}
+.reveal h1{{font-size:1.9em;line-height:1.08}}
+.reveal h2{{font-size:1.22em;line-height:1.18}}
+.reveal h2.big{{font-size:1.45em}}
+.reveal p{{margin:0 0 .5em;line-height:1.4}}
+
+.kicker{{font:600 .42em/1 var(--sans,inherit);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--clay);margin:0 0 .7em;flex:none}}
+.kicker::after{{content:"";display:block;width:2.2em;height:3px;
+  background:var(--sand);margin-top:.55em}}
+
+.cover h1{{font-size:2.3em;margin-bottom:.2em}}
+.cover .lede{{font-size:.72em;color:var(--dim);max-width:22em;line-height:1.45}}
+.cover .byline{{font-size:.46em;color:var(--dim);margin-top:2.2em}}
+.cover a{{color:var(--clay)}}
+
+.cols3{{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.8em;
+  margin-top:.5em}}
+.cols3.small .pt{{font-size:.6em}}
+.pt{{background:var(--card);border:1px solid var(--line);border-left:4px solid
+  var(--sand);border-radius:7px;padding:.7em .8em;font-size:.62em;
+  line-height:1.4}}
+.pt b{{color:var(--clay)}}
+
+.split{{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:1.2em;align-items:start;font-size:.66em}}
+.proof{{background:var(--card);border:1px solid var(--line);border-radius:8px;
+  padding:.9em 1em}}
+.proof.warn{{border-color:var(--sand);background:#fdf9f3}}
+.proofhead{{font-weight:700;color:var(--clay);margin:0 0 .4em}}
+.mono{{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.78em;
+  color:var(--dim)}}
+
+.tiles{{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.6em;
+  margin:.3em 0 .6em}}
+.tile{{background:var(--card);border:1px solid var(--line);border-radius:8px;
+  padding:.7em .65em;text-align:left;min-width:0}}
+.tile .fig{{font-size:.92em;font-weight:700;letter-spacing:-.02em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+.tile .lab{{font-size:.44em;color:var(--dim);margin-top:.35em;line-height:1.3}}
+.tile.warn .fig{{color:var(--clay)}}
+
+.bars{{margin:.4em 0 .7em}}
+.barrow{{display:grid;grid-template-columns:7.2em 1fr 3.4em;align-items:center;
+  gap:.7em;margin-bottom:.55em;font-size:.6em}}
+.bartrack{{background:#efeae1;border-radius:999px;height:1.5em;overflow:hidden}}
+.barfill{{background:var(--sand);height:100%;border-radius:999px}}
+.barfill.good{{background:var(--good)}}
+.barval{{text-align:right;font-weight:700}}
+
+.hero{{font-size:2.5em;font-weight:700;line-height:.95;color:var(--clay);
+  letter-spacing:-.03em}}
+.hero.sub{{font-size:1.7em;color:var(--ink);margin-top:.35em}}
+.hero .of{{font-size:.5em;color:var(--dim);font-weight:400}}
+.herolab{{font-size:.56em;color:var(--dim);line-height:1.35;margin:.15em 0 0}}
+
+.hl{{color:var(--clay)}}
+.foot{{font-size:.52em;color:var(--dim);line-height:1.4;margin-top:.5em}}
+.foot b{{color:var(--ink)}}
+
+/* Four screenshots at natural size are 1680px of content in a 760px
+   box. Each cell is capped and the image fits inside it, so the grid
+   cannot push the slide off the bottom of the screen. */
+/* Fixed rows, and the image is told its height rather than its width.
+   img() writes an inline style="width:100%", which beats any width
+   rule here — so the cap is on height, with !important to win against
+   the inline declaration, and the aspect ratio follows. */
+.grid4{{display:grid;grid-template-columns:1fr 1fr;
+  grid-template-rows:252px 252px;gap:.3em .9em;margin-top:.1em}}
+.grid4 > figure{{margin:0;min-height:0;display:flex;flex-direction:column;
+  overflow:hidden}}
+.grid4 .shot{{margin:0;min-height:0;flex:1;display:flex;
+  flex-direction:column;overflow:hidden}}
+.grid4 .shot img{{height:100%;width:auto !important;object-fit:contain;
+  object-position:left top}}
+.grid4 .shot figcaption{{display:none}}
+.grid4 > figure > figcaption{{font-size:.38em;color:var(--dim);
+  margin-top:.18em;display:block;flex:none}}
+.reveal img{{border:1px solid var(--line);border-radius:5px;margin:0}}
+.dia{{text-align:center}}
+.dia svg{{max-height:60vh;width:auto}}
+.cap{{font-size:.42em;color:var(--dim);margin-top:.5em}}
+.reveal .slide-number{{background:none;color:var(--dim);font-size:.5em}}
 </style></head><body>
 <div class="reveal"><div class="slides">
 {"".join(slides)}
 </div></div>
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
-<script>Reveal.initialize({{hash:true,slideNumber:'c/t'}});</script>
+<script>Reveal.initialize({{hash:true,slideNumber:'c/t',
+  width:1280,height:760,margin:0.045,minScale:0.2,maxScale:1.4}});</script>
 </body></html>
 """
 
