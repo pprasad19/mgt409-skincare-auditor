@@ -374,6 +374,21 @@ class Rules:
         # holding a sunscreen that it had none.
         if any(self.ingredients[a]["class"] == "uv_filter" for a in (actives or [])):
             return "spf"
+        # A label listing a prescription-only active is a treatment,
+        # whatever the tub is called. "Tretinoin 0.05% cream" matches no
+        # keyword in the form table and ends in "cream", so it was filed
+        # as a moisturiser: placed at the moisturiser's position in the
+        # routine, and — once two of a form began to count — named as a
+        # duplicate of the user's actual face cream. The ingredient table
+        # already knew tretinoin is prescription-only; the form inference
+        # was not asking it.
+        #
+        # Same shape and same justification as the UV-filter rule above:
+        # read off the bottle, so it outranks a guess from the name. The
+        # two actives this covers, tretinoin and hydroquinone, are both
+        # leave-on treatments.
+        if any(self.ingredients[a]["prescription"] for a in (actives or [])):
+            return "treatment"
         if catalogue_form and catalogue_form in self.forms:
             return catalogue_form
         haystack = f"{product.brand or ''} {product.name}".lower()
@@ -687,6 +702,17 @@ class Rules:
                         b_hits = [h for h in self.matches(rule["b"], p2) if h not in excepted]
                         if not (a_hits and b_hits):
                             continue
+                        # A prescribed product is not something you
+                        # stop re-buying to save money, so it is not
+                        # half of a duplicate. Conflicts still fire on
+                        # it — a clash with a prescription is exactly
+                        # what its clinician should hear about — but
+                        # "you are paying twice for one effect" is not
+                        # a thing this tool gets to say about a
+                        # prescription.
+                        if rule["type"] == "redundancy" and (
+                                p1.product.prescribed or p2.product.prescribed):
+                            continue
                         key = (rule["rule_id"], frozenset({p1.product.name, p2.product.name}))
                         if key in seen:
                             continue
@@ -933,6 +959,12 @@ class Rules:
             collapsed = []
             for product in steps:
                 form = product.form
+                # A prescription keeps its own step and is never offered
+                # as the one to drop, nor collapsed into another
+                # product's "or use this instead".
+                if product.product.prescribed:
+                    collapsed.append(product)
+                    continue
                 if not self.forms[form].get("one_at_a_time"):
                     collapsed.append(product)
                     continue
@@ -1140,6 +1172,7 @@ class Rules:
             products_unused=sum(1 for p in products if p.product.unused),
             unused_value_usd=round(sum(_countable(p) for p in products if p.product.unused), 2),
             redundant_value_usd=round(sum(price(n) for n in redundant), 2),
+            redundant_counted={n: round(price(n), 2) for n in sorted(redundant)},
             conflicted_value_usd=round(sum(price(n) for n in conflicted), 2),
         )
 
@@ -1310,6 +1343,10 @@ class Rules:
         # a threshold that makes the page disagree with itself.
         by_form: dict[str, list[str]] = {}
         for p in products:
+            # Same reason as the money figure: "stop re-buying one of
+            # these" is not advice this tool gives about a prescription.
+            if p.product.prescribed:
+                continue
             by_form.setdefault(p.form, []).append(p.product.name)
         for form_id, names in sorted(by_form.items()):
             if len(names) < 2 or form_id not in self.forms:

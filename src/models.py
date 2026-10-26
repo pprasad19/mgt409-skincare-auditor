@@ -352,6 +352,16 @@ class WasteSummary(BaseModel):
         default=0.0,
         description="Value of duplicate-function products beyond the first in each class.",
     )
+    redundant_counted: dict[str, float] = Field(
+        default_factory=dict,
+        description="Which products the duplicate figure is made of, and for "
+                    "how much each. The page listed the whole duplicated set "
+                    "and then a total built from only the cheapest of each "
+                    "group, so there was no way to see where the number came "
+                    "from: \"there should be an explanation here on what "
+                    "products are being considered as duplicates in the "
+                    "calculation\".",
+    )
     conflicted_value_usd: float = Field(
         default=0.0,
         description="Still computed, no longer shown. A clash does not waste "

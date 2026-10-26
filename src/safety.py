@@ -168,8 +168,8 @@ _GENERIC = {
 }
 
 
-def unsupported_names(reading) -> list[str]:
-    """Products whose name appears nowhere in their own transcribed label.
+def unsupported_names(reading, typed: str = "") -> list[str]:
+    """Products whose name appears nowhere in what the user gave us.
 
     The reader transcribes every word it can see into `label_text`. A
     name that shares no distinctive word with that transcription was not
@@ -182,8 +182,15 @@ def unsupported_names(reading) -> list[str]:
     Conservative on purpose, because the cost of a false positive is
     telling someone a real product might not be theirs:
 
-      - a product with no transcription at all is skipped, since there
-        is nothing to check it against rather than evidence against it
+      - a product with no evidence at all is skipped, since there is
+        nothing to check it against rather than evidence against it
+
+    `typed` is the user's own text, used as the evidence for anything
+    with no transcription of its own. Without it this check did nothing
+    at all for typed input — there is no label_text when nobody
+    photographed a label, so every product fell through the first
+    guard. A tester typed nine products and was shown ten, and the one
+    mechanism built to catch exactly that was inert on her input.
       - generic words are ignored; "Facial Cleanser" matching "cleanser"
         on the label is not evidence that this cleanser was read
       - one surviving distinctive word is enough
@@ -193,8 +200,9 @@ def unsupported_names(reading) -> list[str]:
     eventually delete a real one.
     """
     out: list[str] = []
+    fallback = normalise(typed or "")
     for product in getattr(reading, "products", []) or []:
-        evidence = normalise(getattr(product, "label_text", "") or "")
+        evidence = normalise(getattr(product, "label_text", "") or "") or fallback
         if not evidence:
             continue
         words = [

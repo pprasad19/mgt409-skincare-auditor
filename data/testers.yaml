@@ -1036,11 +1036,113 @@ findings:
     class: page-contradicts-itself
     caught_by_tests: false
 
+  # ---- tester 2, round 11 -------------------------------------------
+  - tester: 2
+    round: 11
+    reported: "I only gave 9 products but reading 10"
+    layer: logic
+    wrong: >-
+      The reader invented a product, which it has done before - and the
+      mechanism built to catch exactly that was inert on her input.
+      unsupported_names() checks a product's name against the text
+      transcribed from its own label, and there is no label text when
+      nobody photographed a label. Every product typed as text fell
+      through the first guard, so the one defence against an invented
+      product only worked for photographs.
+    fixed: >-
+      The guard takes the user's own words as the evidence when a product
+      has no transcription of its own, which is the same test against the
+      same kind of input. It names the suspect rather than deleting it,
+      as before. Added a second check that needs no heuristic at all:
+      more products in the audit than lines she typed means at least one
+      came from somewhere else, and the page says so with both numbers.
+      That one only fires in the direction of too many, so writing a
+      product and its ingredients on separate lines stays silent.
+    commit: pending
+    class: confidently-wrong-identity
+    caught_by_tests: false
+
+  - tester: 2
+    round: 11
+    reported: "there should be an explanation here on what products are being considered as duplicates in the calculation"
+    layer: presentation
+    wrong: >-
+      The sentence listed every product in every duplicated set and the
+      figure above it counted only the cheapest of each set, so the two
+      could not be reconciled: five products named, $38 shown, and no way
+      to see which two made it. Her second finding on this number - the
+      first was that it named nothing at all.
+    fixed: >-
+      waste() records which products the figure is made of and for how
+      much, and the sentence prints the sets with the counted member and
+      its price: "3 moisturisers - A, B and C; $20 for B. 2 toners - D and
+      E; $18 for D." The reader can add it up.
+    commit: pending
+    class: verdict-without-reason
+    caught_by_tests: false
+
+  - tester: 2
+    round: 11
+    reported: "I should be able to upload a picture of my face if I wasnt able to earlier and the app should still be able to tell the user about the concerns"
+    layer: design
+    wrong: >-
+      The face photograph was only ever offered on the landing page, so
+      somebody without one to hand when they started could never add it.
+      The form whose whole purpose is improving an audit had no field for
+      the single input that produces the concerns. The endpoint had always
+      accepted it; only the second form was missing.
+    fixed: >-
+      A numbered block on the re-audit form, worded for whether one has
+      been given already, and the same promise about reading it in memory
+      and keeping nothing.
+    commit: pending
+    class: offer-with-no-way-to-accept
+    caught_by_tests: false
+
+  - tester: 2
+    round: 11
+    reported: "if something is prescribed, it should not be counted in the duplicates section"
+    layer: logic
+    wrong: >-
+      "You are paying twice for one effect" is not something this tool gets
+      to say about a product a clinician chose, and "stop re-buying one of
+      these" is not advice it gets to give about one. The prescription was
+      being counted in the duplicate figure, named in the duplicate
+      sentence, offered as the one to drop in the routine, and counted
+      toward the what-to-do card.
+    fixed: >-
+      Redundancy findings skip a prescribed product, the routine never
+      offers one as an alternative, and the several-of-a-form card does
+      not count one. Conflicts still fire on it, because a clash with a
+      prescription is exactly what its clinician should hear about.
+    commit: pending
+    class: declaration-ignored
+    caught_by_tests: false
+
 # Defects found by me, not by a tester - kept apart from `findings` so
 # the tester count the report quotes stays a tester count. Both turned
 # up in the same ten minutes, in the browser, while checking that the
 # price columns a tester had asked for actually worked.
 self_found:
+  - date: 2026-10-26
+    found_while: "checking that a prescription leaves the duplicate figure"
+    what: >-
+      "Tretinoin 0.05% cream" was filed as a MOISTURISER. It matches no
+      keyword in the form table and its name ends in "cream", so it fell
+      past every rule to the name guess - and was then placed at the
+      moisturiser's position in the routine and, once two of a form began
+      to count, named as a duplicate of the user's actual face cream.
+    why_it_matters: >-
+      The ingredient table already knew tretinoin is prescription-only. The
+      form inference was not asking it, in exactly the way it had not been
+      asking about UV filters until a shelf holding a sunscreen was told it
+      had none. Same defect, same place, found again because a fixture
+      happened to use a realistic prescription name.
+    fixed: >-
+      A label listing a prescription-only active is a treatment, whatever
+      the tub is called - read off the bottle, so it outranks a guess from
+      the name. Covers tretinoin and hydroquinone, both leave-on.
+    caught_by_tests: false
   - date: 2026-10-26
     found_while: "checking tester 1's Use it column end to end"
     what: >-

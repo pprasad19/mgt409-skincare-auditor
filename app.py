@@ -568,7 +568,8 @@ async def audit(
         # invented product — and the thing a tester hit twice, because
         # the previous fix guarded the web lookup and this never went
         # near it.
-        invented = unsupported_names(reading) if reading is not None else []
+        invented = (unsupported_names(reading, typed)
+                    if reading is not None else [])
 
         if ("prescription_product" in conditions and not prescribed_named
                 and not any(p.prescribed for p in products)):
@@ -593,15 +594,39 @@ async def audit(
             )
         if invented:
             names = ", ".join(invented)
+            source = ("your own words" if typed and not usable
+                      else "its own label" if len(invented) == 1
+                      else "their own labels")
             notes.append(
                 f"Check that {names} {'is' if len(invented) == 1 else 'are'} "
                 f"really yours. {'That name' if len(invented) == 1 else 'Those names'} "
-                f"did not appear anywhere in the text read off "
-                f"{'its' if len(invented) == 1 else 'their'} own label, which "
-                f"usually means the product was identified from something other "
-                f"than what is in the photograph. Tick “Not mine” in the "
-                f"table below to remove "
+                f"did not appear anywhere in {source}, which usually means the "
+                f"product was identified from something other than what you "
+                f"gave us. Tick “Not mine” in the table below to remove "
                 f"{'it' if len(invented) == 1 else 'them'} for good."
+            )
+
+        # A count the user can check against their own screen.
+        #
+        # The name check above is the better one — it says WHICH product
+        # — but it needs an invented name to share no distinctive word
+        # with the input, and sometimes one does. The arithmetic needs
+        # nothing: more products than lines typed means at least one
+        # came from somewhere other than the user. "I only gave 9
+        # products but reading 10" is how a tester put it, and the
+        # count was the whole of her evidence.
+        #
+        # Only ever fires in the direction of too many. Someone who
+        # writes a product and its ingredients on separate lines makes
+        # lines exceed products, which is silent and should be.
+        lines = [ln for ln in (typed or "").splitlines() if ln.strip()]
+        if lines and not usable and len(result.products) > len(lines):
+            notes.append(
+                f"You gave {len(lines)} "
+                f"{'line' if len(lines) == 1 else 'lines'} and this audit has "
+                f"{len(result.products)} products in it. At least one was not "
+                f"read from what you wrote. Tick “Not mine” beside "
+                f"anything you do not own and it will stay gone."
             )
         for pname, (yours, priced) in size_prices.items():
             notes.append(

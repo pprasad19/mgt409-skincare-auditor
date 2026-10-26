@@ -2393,14 +2393,27 @@ def render(
         # of what the engine found.
         groups = duplicate_groups(audit)
         if groups:
-            # Named as pairs rather than as one list. Five names in a row
-            # tells you five products overlap and not which to choose
-            # between.
-            lines = [f"{len(names)} {e(_plural(len(names), what))}: "
-                     f"{e(_and_list(names))}"
-                     for what, names in groups]
-            counted.append("<b>Duplicate function</b> — "
-                           + "; ".join(lines) + ".")
+            # Each set, and which member of it the figure actually
+            # counted. Listing the whole set above a total built from
+            # the cheapest of each group left no way to see where the
+            # number came from: "there should be an explanation here on
+            # what products are being considered as duplicates in the
+            # calculation".
+            paid = getattr(w, "redundant_counted", {}) or {}
+            lines = []
+            for what, names in groups:
+                line = (f"<b>{len(names)} {e(_plural(len(names), what))}</b> — "
+                        f"{e(_and_list(names))}")
+                billed = [n for n in names if paid.get(n)]
+                if billed:
+                    line += f"; {_money(paid[billed[0]])} for {e(billed[0])}"
+                else:
+                    line += "; nothing counted, no confirmed price here"
+                lines.append(line)
+            counted.append(
+                "<b>Duplicate function</b> counts the cheapest of each set — "
+                "the one you could have skipped buying. " + ". ".join(lines)
+                + ".")
 
         if counted:
             parts.append('<p class="lede" style="margin-top:10px">'
@@ -2950,6 +2963,26 @@ def render(
                 "would go before deciding.</p>"
                 f'<div class="checks" style="margin-bottom:16px">{boxes}</div>'
             )
+        # A face photograph, on the round after the first.
+        #
+        # It was only ever offered on the landing page, so somebody who
+        # did not have one to hand when they started could never add it
+        # — the form that exists to improve an audit had no way to
+        # supply the one input that produces the concerns. The audit
+        # endpoint has always accepted it; only the second form was
+        # missing the field.
+        blocks.append(
+            ("<p>The concerns below came from a photograph of your face. "
+             "Send a different one and they are read again.</p>"
+             if skin else
+             "<p>If you have one, a photograph of your face lets this read "
+             "what to treat — redness, texture, congestion — instead of "
+             "waiting for you to name it. It is read once, in memory, and "
+             "never stored, the same as the product photographs. Nothing "
+             "else on this page needs it.</p>")
+            + '<input type="file" name="face" accept="image/*">'
+        )
+
         blocks.append(
             "<p>Photograph the back labels of anything amber or red above. "
             "What is already identified is kept, and a real label replaces a "
@@ -2970,6 +3003,8 @@ def render(
             titles.append("What you are treating")
         if want_ids:
             titles.append("Steps to add")
+        titles.append("A photograph of your face" if not skin
+                      else "A different photograph of your face")
         titles.append("Anything missed or unreadable")
 
         body = "".join(
