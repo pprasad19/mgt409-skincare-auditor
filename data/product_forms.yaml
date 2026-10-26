@@ -128,8 +128,14 @@ forms:
     # was not expressible at all. Ten minutes is the bottom of the usual
     # range and the packet wins; the page says so rather than implying
     # this number came from somewhere it did not.
-    dwell_seconds: 600
-    dwell_note: usually 10–20 minutes — follow the packet, and do not sleep in a clay mask
+    # NOT a duration. The app looks up how long this particular mask says
+    # to stay on; this flag only says that a mask has a wearing time at
+    # all, so a product whose time could not be found is shown as untimed
+    # rather than given a number from nowhere. The 600 seconds that used
+    # to sit here came out of my head, which is exactly the kind of
+    # unsourced figure the rest of this table exists to avoid.
+    dwell_required: true
+    dwell_note: follow the packet — and do not sleep in a clay mask
     source: "Industry layering convention — thinnest to thickest, water-based before oil-based — rather than a clinical finding. No study ranks these against each other. The convention is near-universal in published routines and the consequence of getting it wrong is a suboptimal order, not a safety problem. Ranked before serums because a treatment mask is applied to cleansed skin and removed before the rest of the routine. Reviewed 25 Oct 2026."
     review: reasoned
 

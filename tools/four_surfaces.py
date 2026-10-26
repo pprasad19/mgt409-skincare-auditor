@@ -50,7 +50,12 @@ audit = R.audit([
 
 # What the engine attached to each step, so the comparison uses the same
 # dwell the page does rather than assuming zero.
-DWELL = {s.product_name: (s.dwell_seconds, s.dwell_note)
+# The whole dwell state, not just the number. A mask with no looked-up
+# time produces an *untimed* beat, and a comparison that only carried
+# seconds reported the surfaces as disagreeing when they were in fact
+# agreeing about not knowing.
+DWELL = {s.product_name: (s.dwell_seconds, s.dwell_note,
+                          s.dwell_unknown, s.dwell_source)
          for s in audit.routine.am + audit.routine.pm}
 
 narrative = AuditNarrative(summary="t", explanations=[], steps=[SPEC, SPEC2, SPEC3])
@@ -58,11 +63,16 @@ html = render(audit, narrative)
 
 print("  what beats_for says, per product:\n")
 truth = {}
+UNTIMED: dict[str, list[str]] = {}
 for spec in (SPEC, SPEC2, SPEC3):
-    dwell, note = DWELL.get(spec.product_name, (0, ""))
-    secs = [b["secs"] for b in beats_for(spec, dwell, note)]
-    truth[spec.product_name] = secs
-    kinds = [b["kind"] for b in beats_for(spec, dwell, note)]
+    state = DWELL.get(spec.product_name, (0, "", False, ""))
+    got = beats_for(spec, *state)
+    # An untimed beat carries no duration to compare, so it is held out
+    # of the seconds check and checked on its own terms below.
+    truth[spec.product_name] = [b["secs"] for b in got if not b.get("untimed")]
+    UNTIMED[spec.product_name] = [b["kind"] for b in got if b.get("untimed")]
+    kinds = [b["kind"] for b in got]
+    secs = [b["secs"] for b in got]
     print(f"    {spec.product_name:16} {list(zip(kinds, secs))}")
 
 print("\n  what each surface renders:\n")
@@ -95,6 +105,10 @@ for sc in film:
         print(f"      {sc['name'][:20]:22} {sc['anim']:9} real={sc['real']!r}")
 
 # --- now compare the numbers each surface shows -----------------------
+print("\n  untimed beats (durations nobody published):\n")
+for name, kinds_ in UNTIMED.items():
+    if kinds_:
+        print(f"    {name:16} {kinds_}")
 print("\n  comparing the numbers:\n")
 
 
@@ -128,12 +142,24 @@ for name, expected in truth.items():
             problems.append(f"{label}: {name} missing {missing} from {got}")
 
     st = next((s for s in steps if s["name"] == name), None)
-    if st and [b["secs"] for b in st["beats"]] != expected:
-        problems.append(f"guided player: {name} has "
-                        f"{[b['secs'] for b in st['beats']]} not {expected}")
+    if st:
+        timed = [b["secs"] for b in st["beats"] if not b.get("untimed")]
+        if timed != expected:
+            problems.append(f"guided player: {name} has {timed} not {expected}")
+        # The player must know not to count an untimed beat down.
+        for b in st["beats"]:
+            if b.get("untimed") and b["secs"]:
+                problems.append(f"guided player: {name} has an untimed beat "
+                                f"carrying {b['secs']}s")
 
     scenes = [sc for sc in film if sc["name"] == name and sc.get("real")]
     for sc in scenes:
+        if sc.get("untimed"):
+            # Must not have been turned into a number anywhere.
+            if re.search(r"\d", sc["real"]):
+                problems.append(f"animation: {name} gives an untimed beat a "
+                                f"number: {sc['real']!r}")
+            continue
         n = re.findall(r"(\d+)", sc["real"])
         if n and int(n[0]) not in expected and "minute" not in sc["real"]:
             problems.append(f"animation: {name} shows {sc['real']!r}, "

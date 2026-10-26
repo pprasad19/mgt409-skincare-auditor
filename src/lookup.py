@@ -86,6 +86,15 @@ class ProductLookup(BaseModel):
         default="",
         description="Where the price came from. Required for the price to be used.",
     )
+    mask_minutes: int | None = Field(
+        default=None,
+        description="If this is a mask, how many minutes the maker says to leave "
+                    "it on, taken from the packet or the product page. None if it "
+                    "is not a mask, or if no time is stated — never a typical "
+                    "figure for this kind of mask. The number is counted down at "
+                    "a sink, and a wrong one either wastes the product or leaves "
+                    "a clay mask on until it cracks.",
+    )
     list_on_page: bool = Field(
         default=False,
         description="True ONLY if the ingredient list above was printed on the page "
@@ -137,6 +146,8 @@ a wrong answer that looks authoritative.
 If what you find is clearly a different size, region or variant of the same
 product, return it and say so in the note. If it is a different product that
 happens to have a similar name, that is a not-found.
+
+If the product is a mask, return mask_minutes: how long the maker says to leave it on. Only if that page or the packet states it. Leave it empty otherwise — a typical figure for this kind of mask is exactly what must not be returned here.
 
 Also return the **typical US retail price** for the standard size, with the
 URL you took it from. The brand's own store or a large retailer is fine. If
@@ -234,6 +245,7 @@ async def find_ingredients(product_name: str, usage_log=None) -> dict | None:
         "note": out.note,
         "typical_price_usd": out.typical_price_usd if priced else None,
         "price_source_url": out.price_source_url if priced else "",
+        "mask_minutes": out.mask_minutes,
         "looked_up": datetime.now(timezone.utc).isoformat(),
     }
     remember(product_name, record)
@@ -257,6 +269,8 @@ answer, and it is a different claim from having read the page.
 
 Set matched_name to the product as that page names it, so the reader can
 see whether the right thing was found.
+
+If the product is a mask, return mask_minutes: how long the maker says to leave it on. Only if that page or the packet states it. Leave it empty otherwise — a typical figure for this kind of mask is exactly what must not be returned here.
 
 Also return the price. Set price_on_page true **only** if the price was
 printed on this page. If you could not see this page's price but know a
@@ -351,6 +365,7 @@ async def find_from_url(url: str, usage_log=None) -> dict | None:
         "note": out.note,
         "typical_price_usd": out.typical_price_usd if priced else None,
         "price_source_url": url if priced else "",
+        "mask_minutes": out.mask_minutes,
         # Kept, but not as this page's price. The money section can still
         # use it as an estimate; what it must not do is attribute it to a
         # link the reader can click and check.
@@ -361,3 +376,66 @@ async def find_from_url(url: str, usage_log=None) -> dict | None:
     }
     remember(url, record)
     return record if ok else None
+
+
+MASK_PROMPT = """You are told the name of a face mask. Find how long its maker
+says to leave it on.
+
+Search for the product and read what the brand or a retailer publishes. Return
+the number of minutes as `mask_minutes`.
+
+Return nothing if you cannot find a time for THIS product. A typical duration
+for this kind of mask is not an answer — the number is counted down by someone
+standing at a sink, and the whole reason for looking it up is that a clay mask
+and a sheet mask and an overnight mask do not share one. If the instruction is
+a range, give the lower number. If it says to leave it on overnight, give 480.
+
+Set found true only when you found a stated time, and put the source in
+source_url."""
+
+
+def source_name(url: str) -> str:
+    """A URL as something readable in a sentence: "cerave.com"."""
+    m = re.match(r"https?://(?:www\.)?([^/]+)", url or "")
+    return m.group(1) if m else ""
+
+
+async def find_mask_time(product_name: str, usage_log=None) -> tuple[int | None, str]:
+    """Minutes this mask says to stay on, and who said so.
+
+    (None, "") is a real answer and the page handles it: the step reads
+    "leave it on for the time on the packet" and the guided player waits
+    rather than counting down a number this app invented. The source
+    comes back with the number because a duration someone is asked to
+    stand still for should be checkable, like every other figure here.
+    """
+    key = f"mask-time:{product_name}"
+    hit = cached(key)
+    if hit is not None:
+        return hit.get("mask_minutes"), source_name(hit.get("source_url", ""))
+
+    agent = Agent(
+        build_model(),
+        output_type=ProductLookup,
+        system_prompt=MASK_PROMPT,
+        tools=[_searcher()],
+        model_settings=MODEL_SETTINGS,
+    )
+    try:
+        result = await agent.run(f"How long should this mask be left on? {product_name}")
+    except Exception:
+        return None, ""
+
+    out = result.output
+    if usage_log is not None:
+        usage_log.record(f"mask-time:{product_name[:30]}", result.usage)
+
+    minutes = out.mask_minutes
+    # A mask left on for a whole day is a transcription error, not an
+    # instruction. Overnight masks are 480 by the prompt's own rule.
+    if minutes is not None and not (1 <= minutes <= 480):
+        minutes = None
+    remember(key, {"found": minutes is not None, "mask_minutes": minutes,
+                   "source_url": out.source_url, "note": out.note,
+                   "looked_up": datetime.now(timezone.utc).isoformat()})
+    return minutes, source_name(out.source_url)

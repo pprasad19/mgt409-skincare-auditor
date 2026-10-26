@@ -169,6 +169,8 @@ details.mech .body{font-size:14.5px;color:var(--ink-dim);padding:10px 0 0 16px;
 .askprice{background:var(--card);border:1px dashed var(--line);border-radius:14px;
   padding:22px 26px;font-size:15px;line-height:1.6;color:var(--ink-dim)}
 .askprice b{color:var(--ink)}
+.gap.suggest{border-left-color:var(--sand);background:#fcfbf8;opacity:.94}
+.gap.suggest .lbl{color:var(--ink-3)}
 .gap{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--sage);
   border-radius:14px;padding:22px 26px;margin-top:16px;box-shadow:var(--shadow)}
 .gap.urgent{border-left-color:var(--sand);background:#fdf7ea;border-color:#ecdcb9}
@@ -623,7 +625,11 @@ JS = """
       : p.kind;
     ringEl.className = 'gring' + (p.kind === 'wait' ? ' waiting' : '');
     remain = p.secs;
-    cntEl.textContent = remain;
+    /* An untimed beat is one we could not find a duration for -- a mask
+     * whose packet nobody has published. Counting down a number this app
+     * chose would be worse than not counting: it is read off the screen
+     * by someone at a sink. Show a dash and wait for Next. */
+    cntEl.textContent = p.untimed ? '—' : remain;
     prevB.disabled = i === 0 && b === 0;
     nextB.textContent = (i === seq.length - 1 && b === seq[i].beats.length - 1)
       ? 'Finish' : 'Next';
@@ -631,6 +637,7 @@ JS = """
   }
 
   function tick(){
+    if(beat().untimed) return;
     remain--;
     cntEl.textContent = remain > 0 ? remain : 0;
     if(remain > 0) return;
@@ -1068,8 +1075,10 @@ def _step_row(step, spec, slot: str, total: int) -> str:
     how = ""
     if spec is not None:
         bits = [
-            f"{b['text'] if b['kind'] == 'apply' else b['kind']} · {short_time(b['secs'])}"
-            for b in beats_for(spec, step.dwell_seconds, step.dwell_note)
+            f"{b['text'] if b['kind'] == 'apply' else b['kind']} · "
+            f"{'as the packet says' if b.get('untimed') else short_time(b['secs'])}"
+            for b in beats_for(spec, step.dwell_seconds, step.dwell_note,
+                               step.dwell_unknown, step.dwell_source)
         ]
         how = f'<div class="how">{e(" → ".join(bits))}</div>'
     return (
@@ -1417,7 +1426,35 @@ FILM_JS = """
 """
 
 
-def beats_for(spec, dwell: int = 0, dwell_note: str = "") -> list[dict]:
+def _dwell_beat(dwell: int, note: str, unknown: bool, source: str) -> dict | None:
+    """The 'leave it on' beat, or None when the product is not worn.
+
+    Two shapes, because there are two different truths to tell. With a
+    looked-up time it is an ordinary timed beat and says where the number
+    came from. Without one it is untimed: the guided player stops and
+    waits for the user rather than counting down a duration this app
+    invented. A mask time is read off a screen by someone standing at a
+    sink, so "we do not know" has to survive all the way to the surface
+    instead of being rounded to a plausible ten minutes.
+    """
+    if unknown:
+        text = "leave it on for the time on the packet"
+        if note:
+            text += f" ({note})"
+        return {"kind": "leave it on", "text": text, "secs": 0, "untimed": True,
+                "why": "no stated time was found for this product"}
+    if dwell:
+        text = "leave it on"
+        if source:
+            text += f" — {source} says so"
+        elif note:
+            text += f" ({note})"
+        return {"kind": "leave it on", "text": text, "secs": dwell}
+    return None
+
+
+def beats_for(spec, dwell: int = 0, dwell_note: str = "",
+              dwell_unknown: bool = False, dwell_source: str = "") -> list[dict]:
     """The physical sequence for one step: apply, then finish, then any wait.
 
     Single source of truth. The step list, the guided player, the spoken
@@ -1428,12 +1465,9 @@ def beats_for(spec, dwell: int = 0, dwell_note: str = "") -> list[dict]:
     """
     if spec is None:
         out = [{"kind": "apply", "text": "apply as usual", "secs": 15}]
-        if dwell:
-            out.append({
-                "kind": "leave it on",
-                "text": "leave it on" + (f" ({dwell_note})" if dwell_note else ""),
-                "secs": dwell,
-            })
+        held = _dwell_beat(dwell, dwell_note, dwell_unknown, dwell_source)
+        if held:
+            out.append(held)
         return out
 
     out = [{
@@ -1446,12 +1480,9 @@ def beats_for(spec, dwell: int = 0, dwell_note: str = "") -> list[dict]:
     # applying and the finish: apply for thirty seconds, wear it for
     # fifteen minutes, then rinse. The duration is the engine's, from
     # product_forms.yaml, so the narrator cannot talk it down.
-    if dwell:
-        out.append({
-            "kind": "leave it on",
-            "text": "leave it on" + (f" ({dwell_note})" if dwell_note else ""),
-            "secs": dwell,
-        })
+    held = _dwell_beat(dwell, dwell_note, dwell_unknown, dwell_source)
+    if held:
+        out.append(held)
 
     if spec.finish == "rinse off":
         out.append({
@@ -1661,7 +1692,8 @@ def _film_scenes(audit, specs: dict, explain: dict) -> list[dict]:
     scenes: list[dict] = []
     for index, (name, st) in enumerate(firsts):
         spec = specs.get(name)
-        beats = beats_for(spec, st.dwell_seconds, st.dwell_note)
+        beats = beats_for(spec, st.dwell_seconds, st.dwell_note,
+                              st.dwell_unknown, st.dwell_source)
         for sc in scenes_for(st, spec, beats):
             # The rule that put this step here, in the user's words where
             # the narrator wrote one. A picture that cannot say why it is
@@ -1746,8 +1778,10 @@ def _print_card(audit: AuditResult, specs: dict) -> str:
                 bits = [
                     f"{spec.amount}, {spec.motion} {short_time(b['secs'])}"
                     if b["kind"] == "apply"
-                    else f"{b['kind']} {short_time(b['secs'])}"
-                    for b in beats_for(spec, s.dwell_seconds, s.dwell_note)
+                    else f"{b['kind']} "
+                         f"{'per packet' if b.get('untimed') else short_time(b['secs'])}"
+                    for b in beats_for(spec, s.dwell_seconds, s.dwell_note,
+                                              s.dwell_unknown, s.dwell_source)
                 ]
                 detail = f'<div class="pcd">{e(" → ".join(bits))}</div>'
             freq = "" if s.frequency == "daily" else f' <em>({e(s.frequency)})</em>'
@@ -1805,7 +1839,8 @@ def render(
                 "slot": slot, "order": s_.order, "of": len(steps),
                 "name": s_.product_name, "freq": s_.frequency,
                 "beats": beats_for(specs.get(s_.product_name),
-                                   s_.dwell_seconds, s_.dwell_note),
+                                   s_.dwell_seconds, s_.dwell_note,
+                                   s_.dwell_unknown, s_.dwell_source),
             })
 
     film_scenes = _film_scenes(audit, specs, explain)
@@ -2307,18 +2342,19 @@ def render(
         # have 4 products doing the job of one" — two true sentences that
         # read as one contradiction. So the headline narrows to what was
         # actually checked when there is something below it.
-        more = "gap" if len(audit.gaps) == 1 else "gaps"
+        real_gaps = [g for g in audit.gaps if not g.suggestion]
+        more = "gap" if len(real_gaps) == 1 else "gaps"
         parts.append(
             '<div class="allclear"><span class="head">'
             + ("No clashes between your products."
-               if audit.gaps else "Nothing to fix.")
+               if real_gaps else "Nothing to fix.")
             + '</span>'
             f'<span class="body">Nothing among the {checked} product'
             f'{"s" if checked != 1 else ""} that could be checked clashes, '
             "duplicates an active or needs reordering."
-            + (f" There {'is' if len(audit.gaps) == 1 else 'are'} "
-               f"{len(audit.gaps)} {more} in what the shelf is missing, below."
-               if audit.gaps else
+            + (f" There {'is' if len(real_gaps) == 1 else 'are'} "
+               f"{len(real_gaps)} {more} in what the shelf is missing, below."
+               if real_gaps else
                " That is a straightforward shelf — the products on it do not "
                "interact in ways worth warning you about.")
             + "</span></div>"
@@ -2346,16 +2382,41 @@ def render(
     #
     # What belongs here is what the shelf is missing, which no pairwise rule
     # can see.
-    for gap in audit.gaps:
-        urgent = gap.severity in ("critical", "high")
-        parts.append(
-            f'<div class="gap{" urgent" if urgent else ""}">'
+    # Missing and optional are not the same claim and must not look the
+    # same. A shelf with no cleanser and a shelf with no eye cream were
+    # both rendering as identical warning cards, which is how a tool that
+    # tells you what you need turns into one that tells you what to buy.
+    # Real gaps first, then a separately headed group of suggestions.
+    def _gap_card(gap, suggestion: bool) -> str:
+        urgent = gap.severity in ("critical", "high") and not suggestion
+        cls = "gap suggest" if suggestion else ("gap urgent" if urgent else "gap")
+        # "Triggered by:" with nothing after it was printing on every gap
+        # that is about the shelf as a whole rather than about particular
+        # products — which is most of them now.
+        why = (f'<span class="why">Triggered by: {e(", ".join(gap.because))}</span>'
+               if gap.because else "")
+        return (
+            f'<div class="{cls}">'
             f'<span class="lbl">{e(gap.label)}</span>'
             f'<span class="head">{e(gap.headline)}</span>'
             f'<span class="body">{e(gap.message)}</span>'
-            f'<span class="why">Triggered by: {e(", ".join(gap.because))}</span>'
-            "</div>"
+            f"{why}</div>"
         )
+
+    for gap in [g for g in audit.gaps if not g.suggestion]:
+        parts.append(_gap_card(gap, False))
+
+    suggestions = [g for g in audit.gaps if g.suggestion]
+    if suggestions:
+        parts.append(
+            '<h2>Worth considering</h2>'
+            '<p class="lede">Not problems. These are the steps a routine is '
+            'usually better for having, and the ones that are a matter of '
+            'taste — listed so you know they exist, not because anything '
+            'above is wrong without them.</p>'
+        )
+        for gap in suggestions:
+            parts.append(_gap_card(gap, True))
 
     parts.append(_print_card(audit, specs))
 

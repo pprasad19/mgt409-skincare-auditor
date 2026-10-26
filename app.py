@@ -33,6 +33,8 @@ from lookup import (  # noqa: E402
     MAX_LOOKUPS,
     MAX_URLS,
     find_from_url,
+    find_mask_time,
+    source_name,
     find_ingredients,
     strip_urls,
     urls_in,
@@ -327,6 +329,33 @@ async def audit(
                     product.price_usd = float(record["typical_price_usd"])
                     product.price_is_typical = True
                 sourced[product.name] = record
+
+        # How long a mask stays on is a property of that mask, not of
+        # masks. Clay sets in ten minutes, a sheet mask comes off at
+        # twenty, an overnight mask stays on all night — so it is looked
+        # up per product. When nothing is found the step says to follow
+        # the packet and the guided player waits, rather than counting
+        # down a number this app chose.
+        #
+        # Separate from the ingredient budget above: a mask usually has
+        # its ingredients already and would never reach that loop.
+        mask_budget = MAX_LOOKUPS
+        for product in products:
+            if mask_budget <= 0:
+                break
+            if RULES.infer_form(product) != "mask" or product.dwell_seconds:
+                continue
+            # A page we already read may have carried it.
+            rec = sourced.get(product.name) or {}
+            minutes = rec.get("mask_minutes")
+            if minutes is None:
+                minutes, source = await find_mask_time(product.name, usage_log=log)
+                mask_budget -= 1
+            else:
+                source = source_name(rec.get("source_url", "")) or "the product page"
+            if minutes:
+                product.dwell_seconds = int(minutes) * 60
+                product.dwell_source = source
 
         result = RULES.audit(products, gate_ids, trims=trims, concerns=concern_ids)
         if reading is not None:

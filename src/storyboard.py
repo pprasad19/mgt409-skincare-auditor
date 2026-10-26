@@ -369,6 +369,8 @@ def scenes_for(step, spec, beats: list[dict]) -> list[dict]:
             caption = "rinse and pat dry"
         elif kind == "pat dry":
             anim, caption = "towel", "pat dry"
+        elif kind == "leave it on":
+            anim, caption = "absorb", "leave it on"
         else:
             anim, caption = "absorb", "let it absorb"
 
@@ -378,12 +380,18 @@ def scenes_for(step, spec, beats: list[dict]) -> list[dict]:
             "anim": anim,
             "caption": caption,
             "where": area if applying else "",
-            "real": _real_time(beat["secs"]),
+            # An untimed beat is a mask whose stated time we could not
+            # find. Running it through _real_time printed "0 seconds",
+            # which is not a shorter version of the truth — it is a
+            # different and wrong instruction.
+            "real": ("as long as the packet says" if beat.get("untimed")
+                     else _real_time(beat["secs"])),
             # Waiting is the one thing a preview must not reproduce
             # faithfully. The real duration is printed beside it; giving a
             # two-minute absorb four seconds of screen time just makes the
             # viewer wait too, nine times over in a seven-product routine.
             "screen": 1.4 if anim == "absorb" else screen_seconds(beat["secs"]),
+            "untimed": bool(beat.get("untimed")),
             "points": stops if applying else [],
             # Where the product is sitting while it absorbs or is rinsed
             # off. Without this every finish scene was an empty face, so

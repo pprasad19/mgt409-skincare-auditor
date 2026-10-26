@@ -8632,5 +8632,187 @@
       "cache_write_tokens": 2717,
       "output_tokens": 99
     }
+  },
+  {
+    "run_id": "5bb7f920",
+    "seq": 1,
+    "timestamp": "2026-10-26T02:06:55.848242+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 9,
+      "steps": 7,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3886,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 1032,
+      "output_tokens": 776
+    }
+  },
+  {
+    "run_id": "3f76b418",
+    "seq": 1,
+    "timestamp": "2026-10-26T02:18:49.718948+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2843,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2717,
+      "output_tokens": 99
+    }
+  },
+  {
+    "run_id": "9b4eda2c",
+    "seq": 1,
+    "timestamp": "2026-10-26T02:23:52.971076+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2843,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2717,
+      "output_tokens": 99
+    }
+  },
+  {
+    "run_id": "01857b21",
+    "seq": 1,
+    "timestamp": "2026-10-26T02:24:31.757223+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 3,
+      "products": [
+        "Aztec Secret Indian Healing Clay Mask",
+        "The Ordinary Niacinamide 10% + Zinc 1%",
+        "CeraVe Hydrating Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2886,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2760,
+      "output_tokens": 261
+    }
+  },
+  {
+    "run_id": "01857b21",
+    "seq": 2,
+    "timestamp": "2026-10-26T02:24:45.556060+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 0,
+      "steps": 6,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3026,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 172,
+      "output_tokens": 414
+    }
+  },
+  {
+    "run_id": "aacbe505",
+    "seq": 1,
+    "timestamp": "2026-10-26T02:26:49.661216+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 1,
+      "products": [
+        "CeraVe Foaming Facial Cleanser"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2843,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2717,
+      "output_tokens": 99
+    }
+  },
+  {
+    "run_id": "1197f995",
+    "seq": 1,
+    "timestamp": "2026-10-26T02:27:26.728103+00:00",
+    "agent": "shelf_reader",
+    "step": "read",
+    "defended": true,
+    "detail": {
+      "visible_count": 0,
+      "identified": 4,
+      "products": [
+        "Aztec Secret Indian Healing Clay Mask",
+        "CeraVe Hydrating Facial Cleanser",
+        "CeraVe Moisturizing Cream",
+        "La Roche-Posay Anthelios SPF 50"
+      ],
+      "unreadable": [],
+      "suspicious_text": [],
+      "suppressed_terms": []
+    },
+    "usage": {
+      "input_tokens": 2903,
+      "cache_read_tokens": 2656,
+      "cache_write_tokens": 121,
+      "output_tokens": 339
+    }
+  },
+  {
+    "run_id": "1197f995",
+    "seq": 2,
+    "timestamp": "2026-10-26T02:27:30.478113+00:00",
+    "agent": "routine_auditor",
+    "step": "explain",
+    "defended": true,
+    "detail": {
+      "explanations": 1,
+      "steps": 7,
+      "rejected": []
+    },
+    "usage": {
+      "input_tokens": 3101,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 247,
+      "output_tokens": 471
+    }
   }
 ]

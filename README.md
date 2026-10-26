@@ -71,15 +71,33 @@ a drawn animation of the routine that can be downloaded as a GIF.
 It also answers the question a routine built from your shelf cannot ask:
 **what is not on it.** Every other part of the page compares products you
 own against each other, so a shelf of four serums and no cleanser used to
-get an ordered routine and no comment. A missing cleanser, moisturiser or
-sunscreen is now named — those three and no others, because they are the
-steps the AAD order names and the only rows in `product_forms.yaml` marked
-`verified`. Being told you are "missing" a toner would invent a purchase.
+get an ordered routine and no comment.
+
+Three tiers, kept visibly apart, because "you have no cleanser" and "you
+have no eye cream" are not the same claim and rendering them alike turns
+a tool that tells you what you need into one that tells you what to buy:
+
+| | |
+|---|---|
+| **Missing** | cleanser, moisturiser, sunscreen — the steps the AAD order names, and the only `verified` rows in `product_forms.yaml` |
+| **Worth considering** | a serum, and an oil cleanser for the evening — a routine without them is still a routine |
+| **Optional** | a toner and an eye cream, in one line, listed so you know they exist |
+
 Several products doing one job is reported too, from three upwards, as a
 money note rather than a mistake. Every one of these says **when** the
 step belongs — morning, evening or both — read from the same `times`
 column the routine builder uses, so a gap cannot name a different time of
 day from the routine beside it.
+
+**How long a mask stays on is looked up, not assumed.** Clay sets in ten
+minutes, a sheet mask comes off at twenty, an overnight mask stays on all
+night, so there is no number for "a mask" — the time is found for that
+product and the step cites where it came from. When nothing can be found,
+the step says *"leave it on for the time on the packet"* and the guided
+player waits for you instead of counting down a figure this app chose.
+`StepApplication.seconds` is capped at 120 and means time spent
+*applying*, so before this a fifteen-minute mask was not expressible at
+all and came out as a 30-second step.
 
 A cleansing oil or balm is its own form, evening-only, ranked before the
 cleanser rather than instead of it: it is the first half of a double

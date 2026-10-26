@@ -59,6 +59,17 @@ class InputProduct(BaseModel):
         description="User says they own it but do not use it. A product that is both "
                     "unused and redundant is the clearest waste signal we have.",
     )
+    dwell_seconds: int = Field(
+        default=0,
+        description="How long this product says to leave it on, in seconds, for the "
+                    "forms that are worn rather than absorbed. Filled in by a lookup "
+                    "against this specific product, never by a rule of thumb for the "
+                    "category — a clay mask, a sheet mask and an overnight mask do "
+                    "not share a number, and this one gets counted down at a sink.",
+    )
+    dwell_source: str = Field(
+        default="", description="Where that duration was published.",
+    )
     price_is_typical: bool = Field(
         default=False,
         description="The price did not come from the user. Set when it was filled "
@@ -90,6 +101,14 @@ class ResolvedProduct(BaseModel):
         description="The price came from the catalogue, not the user. Shown on the "
                     "page and kept out of anything the report cites as measured — "
                     "a typical price is not what this person paid.",
+    )
+    dwell_seconds: int = Field(
+        default=0,
+        description="Minutes-on-the-face for this specific product, found by "
+                    "looking it up. Zero means nobody said.",
+    )
+    dwell_source: str = Field(
+        default="", description="Where that duration was published.",
     )
     translated_only: dict[str, str] = Field(
         default_factory=dict,
@@ -159,17 +178,31 @@ class RoutineStep(BaseModel):
     dwell_seconds: int = Field(
         default=0,
         description="How long the product stays on after it is applied, before "
-                    "the finish. Set by the engine from product_forms.yaml, not "
-                    "by the narrator: StepApplication.seconds is capped at 120 "
-                    "and means time spent applying, so a fifteen-minute mask "
-                    "could not be expressed at all and came out as a 30-second "
-                    "step. The model is not asked for this and cannot shorten it.",
+                    "the finish. Looked up for this product, never guessed: "
+                    "StepApplication.seconds is capped at 120 and means time "
+                    "spent applying, so a fifteen-minute mask could not be "
+                    "expressed at all and came out as a 30-second step. The "
+                    "narrator is not asked for this and cannot shorten it. Zero "
+                    "with dwell_unknown set means the product is worn for a "
+                    "while and nobody could say how long.",
+    )
+    dwell_unknown: bool = Field(
+        default=False,
+        description="This form is worn after applying, and no stated time was "
+                    "found for this product. The step says to follow the packet "
+                    "and the guided player waits instead of counting down. A "
+                    "made-up number here is read off a screen by someone at a "
+                    "sink, so not knowing has to survive to the surface.",
+    )
+    dwell_source: str = Field(
+        default="",
+        description="Where the duration came from, so a number the user is asked "
+                    "to stand still for can be checked.",
     )
     dwell_note: str = Field(
         default="",
-        description="What qualifies the dwell — the usual range, and that the "
-                    "packet wins. Carried so the page does not present a single "
-                    "number as more settled than it is.",
+        description="What qualifies the dwell — that the packet wins. Carried so "
+                    "the page does not present one number as settled.",
     )
     application: "ApplicationSpec | None" = None
 
@@ -298,6 +331,13 @@ class Gap(BaseModel):
     because: list[str] = Field(
         default_factory=list,
         description="Products that create the need. Keeps a gap as traceable as a finding.",
+    )
+    suggestion: bool = Field(
+        default=False,
+        description="This is something to consider, not something wrong. A missing "
+                    "cleanser and an absent eye cream are both 'not on the shelf' "
+                    "and only one of them is a problem; without this they render "
+                    "identically and the page turns into a shopping list.",
     )
 
 

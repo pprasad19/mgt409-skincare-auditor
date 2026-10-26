@@ -46,13 +46,27 @@ def check_true(label: str, cond: bool, detail: str = "") -> None:
         failures.append(f"{label}{': ' + detail if detail else ''}")
 
 
-def gaps_for(*products) -> dict[str, str]:
-    """kind -> severity, for a shelf described as (name, [ingredients])."""
-    audit = R.audit(
+def _audit(*products):
+    return R.audit(
         [InputProduct(name=n, listed_ingredients=list(i)) for n, i in products],
         concerns=[],
     )
-    return {g.kind: g.severity for g in audit.gaps}
+
+
+def gaps_for(*products) -> dict[str, str]:
+    """kind -> severity, for things actually missing.
+
+    Suggestions are excluded deliberately. A missing cleanser and an
+    absent eye cream are both "not on the shelf" and only one of them is
+    a problem; lumping them together is exactly the failure these tests
+    exist to prevent, so they are asserted separately.
+    """
+    return {g.kind: g.severity for g in _audit(*products).gaps if not g.suggestion}
+
+
+def suggestions_for(*products) -> dict[str, str]:
+    """kind -> severity, for things merely worth considering."""
+    return {g.kind: g.severity for g in _audit(*products).gaps if g.suggestion}
 
 
 CLEANSER = ("CeraVe Hydrating Cleanser", ["Ceramide NP", "Hyaluronic Acid"])
@@ -199,27 +213,115 @@ check_true("and comes first in the evening",
            pm_order and "Banila" in pm_order[0], str(pm_order))
 
 
-# --- a mask is worn, not rubbed in ----------------------------------------
-# StepApplication.seconds is capped at 120 and means time spent applying,
-# so a 15-minute mask was not expressible and the routine said 30
-# seconds. The dwell is the engine's, from product_forms.yaml.
+# --- a mask is worn, not rubbed in, and for how long is not ours to say ---
+# Two bugs in sequence. First the routine said to use a face mask for 30
+# seconds, because StepApplication.seconds is capped at 120 and means
+# time spent *applying* — a fifteen-minute mask was not expressible. The
+# fix for that was a dwell of 600 seconds, which a tester then objected
+# to for the right reason: nobody had looked it up. Clay sets in ten
+# minutes, a sheet mask comes off at twenty, an overnight mask stays on
+# all night. So the time is looked up per product, and when it cannot be
+# found the step says so instead of counting down a number this app
+# chose.
+from render import beats_for  # noqa: E402
+
 mask_audit = R.audit([InputProduct(name="Aztec Clay Mask", listed_ingredients=["Kaolin"]),
                       InputProduct(name=WASH[0], listed_ingredients=["Ceramide NP"])],
                      concerns=[])
 mask_step = next(s for s in mask_audit.routine.pm if "Mask" in s.product_name)
-check_true("a mask carries a dwell of at least ten minutes",
-           mask_step.dwell_seconds >= 600, str(mask_step.dwell_seconds))
+cleanse_step = next(s for s in mask_audit.routine.pm if "Mask" not in s.product_name)
+
+# Nothing looked up: the mask is marked as worn-but-unknown, and carries
+# no invented duration.
+check("an unlooked-up mask asserts no duration", mask_step.dwell_seconds, 0)
+check("but is still marked as worn", mask_step.dwell_unknown, True)
 check_true("and says the packet decides", "packet" in mask_step.dwell_note,
            mask_step.dwell_note)
-cleanse_step = next(s for s in mask_audit.routine.pm if "Mask" not in s.product_name)
-check("a cleanser has no dwell", cleanse_step.dwell_seconds, 0)
+check("a cleanser is not worn at all", cleanse_step.dwell_unknown, False)
+check("and has no dwell", cleanse_step.dwell_seconds, 0)
 
-from render import beats_for  # noqa: E402
-kinds = [b["kind"] for b in beats_for(None, mask_step.dwell_seconds, mask_step.dwell_note)]
-check_true("the dwell becomes a beat of its own", "leave it on" in kinds, str(kinds))
-secs = {b["kind"]: b["secs"]
-        for b in beats_for(None, mask_step.dwell_seconds, mask_step.dwell_note)}
-check_true("and carries the real duration", secs["leave it on"] >= 600, str(secs))
+unknown = beats_for(None, mask_step.dwell_seconds, mask_step.dwell_note,
+                    mask_step.dwell_unknown, mask_step.dwell_source)
+held = next((b for b in unknown if b["kind"] == "leave it on"), None)
+check_true("the wearing is still a beat of its own", held is not None, str(unknown))
+check("carrying no number", held["secs"], 0)
+check("flagged so the player waits instead of counting", held.get("untimed"), True)
+check_true("and telling the user where to look",
+           "packet" in held["text"], held["text"])
+
+# A looked-up time is used, and says where it came from.
+known_audit = R.audit([InputProduct(name="Sheet Mask", listed_ingredients=["Glycerin"],
+                                    form="mask", dwell_seconds=1200,
+                                    dwell_source="the brand's page")], concerns=[])
+known = next(s for s in known_audit.routine.pm if "Mask" in s.product_name)
+check("a looked-up time is carried through", known.dwell_seconds, 1200)
+check("and is no longer unknown", known.dwell_unknown, False)
+timed = next(b for b in beats_for(None, known.dwell_seconds, known.dwell_note,
+                                  known.dwell_unknown, known.dwell_source)
+             if b["kind"] == "leave it on")
+check("the beat carries the real duration", timed["secs"], 1200)
+check("and is timed", timed.get("untimed"), None)
+check_true("and cites its source", "brand" in timed["text"], timed["text"])
+
+# The form table must not carry a duration of its own: that is the bug.
+check_true("no form asserts a dwell time",
+           all("dwell_seconds" not in f for f in R.forms.values()),
+           str([k for k, f in R.forms.items() if "dwell_seconds" in f]))
+check_true("the mask form only says that it is worn",
+           bool(R.forms["mask"]["dwell_required"]))
+
+
+# --- three tiers, and the difference between them -------------------------
+# My first version flagged only cleanser, moisturiser and sunscreen and
+# argued anything else would invent a purchase. A tester who does this
+# daily disagreed usefully: a serum belongs in both routines, a
+# cleansing oil belongs in the evening, and a toner and eye cream should
+# be *offered*. That word is the resolution — the risk was never naming
+# them, it was naming them as failures.
+bare = suggestions_for(NIACINAMIDE)
+check_true("a serum-less shelf is told to consider one",
+           "consider_serum" in suggestions_for(CLEANSER, MOISTURISER, SPF),
+           str(suggestions_for(CLEANSER, MOISTURISER, SPF)))
+check("a shelf with a serum is not", "consider_serum" in bare, False)
+check_true("an oil cleanser is suggested for the evening",
+           "consider_oil_cleanser" in bare, str(bare))
+check("and not once you have one",
+      "consider_oil_cleanser" in suggestions_for(OIL, NIACINAMIDE), False)
+
+# Suggestions are never urgent, and never claim something is wrong.
+for kind, sev in suggestions_for(NIACINAMIDE).items():
+    check_true(f"{kind} is low severity", sev == "low", f"{kind}={sev}")
+sug_objs = [g for g in _audit(NIACINAMIDE).gaps if g.suggestion]
+check_true("and every one is flagged as a suggestion", bool(sug_objs))
+check_true("while the essentials are not",
+           all(not g.suggestion for g in _audit(NIACINAMIDE).gaps
+               if g.kind.startswith("no_")))
+
+# Toner and eye cream: one entry, so optional extras cannot read as a
+# list of failures, and gone as soon as you own them.
+opt = [g for g in _audit(NIACINAMIDE).gaps if g.kind == "optional_steps"]
+check_true("toner and eye cream arrive as a single optional entry",
+           len(opt) == 1, str(len(opt)))
+check("naming both", sorted(opt[0].because), ["Eye cream", "Toner"])
+check_true("and saying when each belongs",
+           opt[0].message.count("It belongs in") == 2, opt[0].message)
+owned = _audit(NIACINAMIDE, ("Hydrating Toner", ["Glycerin"]),
+               ("Eye Cream", ["Caffeine"]))
+opt2 = [g for g in owned.gaps if g.kind == "optional_steps"]
+check("owning both removes the entry", opt2, [])
+# Owning one leaves the other, named alone.
+one = _audit(NIACINAMIDE, ("Hydrating Toner", ["Glycerin"]))
+opt3 = [g for g in one.gaps if g.kind == "optional_steps"]
+check_true("owning one leaves just the other",
+           len(opt3) == 1 and opt3[0].because == ["Eye cream"],
+           str([g.because for g in opt3]))
+
+# Never a toner "gap", in any arrangement. This is the line the tester's
+# feedback moved, and it should not move further without someone saying so.
+for shelf in ([NIACINAMIDE], [CLEANSER, MOISTURISER, SPF], [RETINOL], [OIL]):
+    bad = {k for k in gaps_for(*shelf)
+           if k.removeprefix("no_") in {"toner", "eye", "serum", "oil_cleanser"}}
+    check(f"nothing optional is ever a gap ({shelf[0][0][:18]})", bad, set())
 
 
 # --- the table it is driven by -------------------------------------------

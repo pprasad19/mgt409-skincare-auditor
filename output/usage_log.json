@@ -12898,5 +12898,380 @@
       "output": 4.95e-05,
       "total": 0.00040172
     }
+  },
+  {
+    "run_id": "300f7189",
+    "run_label": "web-5bb7f920",
+    "step": "url:https://www.ulta.com/p/hydrating-milky-t",
+    "timestamp": "2026-10-26T02:05:32.116217+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 1,275 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 2450,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1275,
+      "output_tokens": 553,
+      "requests": 2,
+      "tool_calls": 1
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001175,
+      "cached_input": 0.0,
+      "cache_write": 0.00015938,
+      "output": 0.0002765,
+      "total": 0.00055338
+    }
+  },
+  {
+    "run_id": "300f7189",
+    "run_label": "web-5bb7f920",
+    "step": "url:https://www.amazon.com/Glycolic-Acid-AHA",
+    "timestamp": "2026-10-26T02:05:42.416576+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "1,269 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3124,
+      "cache_read_tokens": 1269,
+      "cache_write_tokens": 1603,
+      "output_tokens": 391,
+      "requests": 2,
+      "tool_calls": 1
+    },
+    "cost_usd": {
+      "uncached_input": 2.52e-05,
+      "cached_input": 1.269e-05,
+      "cache_write": 0.00020038,
+      "output": 0.0001955,
+      "total": 0.00043377
+    }
+  },
+  {
+    "run_id": "300f7189",
+    "run_label": "web-5bb7f920",
+    "step": "url:https://www.amazon.com/Niacinamide-Vitam",
+    "timestamp": "2026-10-26T02:05:58.699378+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "1,252 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3370,
+      "cache_read_tokens": 1252,
+      "cache_write_tokens": 1866,
+      "output_tokens": 383,
+      "requests": 2,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 2.52e-05,
+      "cached_input": 1.252e-05,
+      "cache_write": 0.00023325,
+      "output": 0.0001915,
+      "total": 0.00046247
+    }
+  },
+  {
+    "run_id": "300f7189",
+    "run_label": "web-5bb7f920",
+    "step": "url:https://www.sephora.com/product/bio-coll",
+    "timestamp": "2026-10-26T02:06:10.409631+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 1,410 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 2609,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1410,
+      "output_tokens": 682,
+      "requests": 2,
+      "tool_calls": 1
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001199,
+      "cached_input": 0.0,
+      "cache_write": 0.00017625,
+      "output": 0.000341,
+      "total": 0.00063715
+    }
+  },
+  {
+    "run_id": "300f7189",
+    "run_label": "web-5bb7f920",
+    "step": "url:https://sokoglam.com/search?q=oil+cleans",
+    "timestamp": "2026-10-26T02:06:37.855778+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "1,443 tokens read from cache",
+    "tokens": {
+      "input_tokens": 4266,
+      "cache_read_tokens": 1443,
+      "cache_write_tokens": 1524,
+      "output_tokens": 225,
+      "requests": 3,
+      "tool_calls": 2
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001299,
+      "cached_input": 1.443e-05,
+      "cache_write": 0.0001905,
+      "output": 0.0001125,
+      "total": 0.00044733
+    }
+  },
+  {
+    "run_id": "300f7189",
+    "run_label": "web-5bb7f920",
+    "step": "url:https://www.yesstyle.com/en/cosrx-bha-bl",
+    "timestamp": "2026-10-26T02:06:50.174023+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 1,198 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 2372,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 1198,
+      "output_tokens": 267,
+      "requests": 2,
+      "tool_calls": 1
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001174,
+      "cached_input": 0.0,
+      "cache_write": 0.00014975,
+      "output": 0.0001335,
+      "total": 0.00040065
+    }
+  },
+  {
+    "run_id": "300f7189",
+    "run_label": "web-5bb7f920",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-26T02:06:55.846805+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,728 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3886,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 1032,
+      "output_tokens": 776,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.728e-05,
+      "cache_write": 0.000129,
+      "output": 0.000388,
+      "total": 0.00055688
+    }
+  },
+  {
+    "run_id": "861d5c18",
+    "run_label": "web-3f76b418",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-26T02:18:49.718429+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 2,717 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 2843,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2717,
+      "output_tokens": 99,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00033962,
+      "output": 4.95e-05,
+      "total": 0.00040172
+    }
+  },
+  {
+    "run_id": "161ea30b",
+    "run_label": "web-9b4eda2c",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-26T02:23:52.970657+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 2,717 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 2843,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2717,
+      "output_tokens": 99,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00033962,
+      "output": 4.95e-05,
+      "total": 0.00040172
+    }
+  },
+  {
+    "run_id": "b151e34f",
+    "run_label": "web-01857b21",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-26T02:24:31.756702+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 2,760 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 2886,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2760,
+      "output_tokens": 261,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.000345,
+      "output": 0.0001305,
+      "total": 0.0004881
+    }
+  },
+  {
+    "run_id": "b151e34f",
+    "run_label": "web-01857b21",
+    "step": "mask-time:Aztec Secret Indian Healing Cl",
+    "timestamp": "2026-10-26T02:24:41.889363+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": false,
+    "cache_mode_note": "cache requested but neither read nor written (prompt below the floor?)",
+    "tokens": {
+      "input_tokens": 1888,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 77,
+      "requests": 2,
+      "tool_calls": 1
+    },
+    "cost_usd": {
+      "uncached_input": 0.0001888,
+      "cached_input": 0.0,
+      "cache_write": 0.0,
+      "output": 3.85e-05,
+      "total": 0.0002273
+    }
+  },
+  {
+    "run_id": "b151e34f",
+    "run_label": "web-01857b21",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-26T02:24:45.555669+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,728 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3026,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 172,
+      "output_tokens": 414,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.728e-05,
+      "cache_write": 2.15e-05,
+      "output": 0.000207,
+      "total": 0.00026838
+    }
+  },
+  {
+    "run_id": "8b14f77f",
+    "run_label": "web-aacbe505",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-26T02:26:49.660771+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "cold prefix \u2014 2,717 tokens written, not yet readable",
+    "tokens": {
+      "input_tokens": 2843,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 2717,
+      "output_tokens": 99,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 0.0,
+      "cache_write": 0.00033962,
+      "output": 4.95e-05,
+      "total": 0.00040172
+    }
+  },
+  {
+    "run_id": "9fd9d3d2",
+    "run_label": "web-1197f995",
+    "step": "shelf_reader",
+    "timestamp": "2026-10-26T02:27:26.727134+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,656 tokens read from cache",
+    "tokens": {
+      "input_tokens": 2903,
+      "cache_read_tokens": 2656,
+      "cache_write_tokens": 121,
+      "output_tokens": 339,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.656e-05,
+      "cache_write": 1.513e-05,
+      "output": 0.0001695,
+      "total": 0.00022378
+    }
+  },
+  {
+    "run_id": "9fd9d3d2",
+    "run_label": "web-1197f995",
+    "step": "routine_auditor",
+    "timestamp": "2026-10-26T02:27:30.477609+00:00",
+    "model": "gpt-6-luna",
+    "cache_enabled": true,
+    "cache_mode_verified": true,
+    "cache_mode_note": "2,728 tokens read from cache",
+    "tokens": {
+      "input_tokens": 3101,
+      "cache_read_tokens": 2728,
+      "cache_write_tokens": 247,
+      "output_tokens": 471,
+      "requests": 1,
+      "tool_calls": 0
+    },
+    "cost_usd": {
+      "uncached_input": 1.26e-05,
+      "cached_input": 2.728e-05,
+      "cache_write": 3.087e-05,
+      "output": 0.0002355,
+      "total": 0.00030626
+    }
   }
 ]

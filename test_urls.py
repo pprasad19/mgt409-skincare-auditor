@@ -98,9 +98,14 @@ check(
     # own URL on both. They carry one bit each and steer nothing: the
     # source_url written to the record is still the user's URL, never a
     # page's claim about itself.
+    # mask_minutes is how long a mask's maker says to leave it on, looked
+    # up rather than assumed after a tester pointed out that the app had
+    # invented ten minutes. It is a number, bounds-checked to 1..480 in
+    # find_mask_time, and reaches a countdown timer — not a finding, a
+    # severity or a routine position.
     {"found", "inci", "source_url", "matched_name",
      "typical_price_usd", "price_source_url", "note", "raw_list",
-     "list_on_page", "price_on_page"},
+     "list_on_page", "price_on_page", "mask_minutes"},
 )
 for forbidden in ("findings", "severity", "verdict", "safe", "skip", "rule_id",
                   "clearance", "approved", "tools"):

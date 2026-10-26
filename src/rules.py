@@ -124,6 +124,48 @@ def term_pattern(term: str) -> str:
 #
 # Sunscreen is handled separately below, because what to say about it
 # depends on whether anything on the shelf raises sun sensitivity.
+# Worth having, not required. These produce a `recommended` gap: named,
+# explained, and visibly a rung below the essentials — a routine without
+# a serum is a routine, and a routine without a cleanser is not.
+RECOMMENDED_STEPS: list[tuple[str, str, str, str]] = [
+    (
+        "serum",
+        "low",
+        "There is no serum in either routine.",
+        "Cleanser, moisturiser and sunscreen keep skin well. A serum is where "
+        "a routine does something — it is the step carrying the active "
+        "ingredient, at a concentration the other steps are not formulated "
+        "for. Without one this shelf maintains rather than treats.",
+    ),
+    (
+        "oil_cleanser",
+        "low",
+        "Nothing here breaks down sunscreen or makeup.",
+        "An oil or balm cleanser is the first of two evening steps: it lifts "
+        "sunscreen and makeup, which are designed not to rinse off, and the "
+        "water-based cleanser then takes it and the day's oil away. If you "
+        "wear either, one wash is usually doing half the job.",
+    ),
+]
+
+# Offered, never missing. A toner and an eye cream are reasonable things
+# to own and reasonable things not to own; there is no published finding
+# that a routine needs either. They appear as a short "if you want to go
+# further" list rather than as a gap, because the difference between
+# "you are missing this" and "this exists" is the difference between
+# advice and a shopping list.
+OPTIONAL_STEPS: list[tuple[str, str]] = [
+    ("toner",
+     "A hydrating layer straight after cleansing. Worth it if your skin feels "
+     "tight after washing; skip it otherwise — a toner is not a step a routine "
+     "is incomplete without, whatever the shelf at the shop implies."),
+    ("eye",
+     "The skin around the eye is thinner and a face cream is often too heavy "
+     "for it. An eye cream is a gentler version of what you already use, not a "
+     "different kind of treatment, and published routines disagree about "
+     "whether it is needed at all."),
+]
+
 ESSENTIAL_STEPS: list[tuple[str, str, str, str]] = [
     (
         "cleanser",
@@ -394,6 +436,8 @@ class Rules:
             confidence=confidence,
             matched_from_catalogue=from_catalogue,
             price_is_typical=typical_price,
+            dwell_seconds=int(product.dwell_seconds or 0),
+            dwell_source=product.dwell_source or "",
             # Actives found only through a machine-translated term. INCI is
             # international, so most non-English labels still resolve through
             # verified terms and this stays empty; when it does not, the page
@@ -641,7 +685,16 @@ class Rules:
                         order=order,
                         frequency="alternate nights" if (slot == "pm" and name in alternating) else "daily",
                         because=sorted(set(because[name])),
-                        dwell_seconds=int(self.forms[product.form].get("dwell_seconds") or 0),
+                        # The product's own looked-up time, or nothing —
+                        # never a figure for "this kind of mask". If the
+                        # form is worn and no time was found, the step
+                        # says so rather than counting down a guess.
+                        dwell_seconds=product.dwell_seconds,
+                        dwell_unknown=bool(
+                            self.forms[product.form].get("dwell_required")
+                            and not product.dwell_seconds
+                        ),
+                        dwell_source=product.dwell_source,
                         dwell_note=self.forms[product.form].get("dwell_note") or "",
                         application=ApplicationSpec(),
                     )
@@ -853,6 +906,43 @@ class Rules:
                         f"this shelf to stop re-buying. {self._when_phrase(form_id)}"
                     ),
                     because=sorted(names),
+                )
+            )
+
+        # A rung below. Same shape, different kind: `recommended` so the
+        # page can show it as a suggestion rather than something wrong.
+        for form_id, severity, headline, why in RECOMMENDED_STEPS:
+            if form_id in held:
+                continue
+            out.append(
+                Gap(
+                    kind=f"consider_{form_id}",
+                    severity=severity,
+                    label=self.forms[form_id]["name"],
+                    headline=headline,
+                    message=f"{why} {self._when_phrase(form_id)}",
+                    suggestion=True,
+                )
+            )
+
+        # And the ones that are purely a matter of taste. One entry, so a
+        # list of optional extras cannot read as a list of failures.
+        absent = [(f, why) for f, why in OPTIONAL_STEPS if f not in held]
+        if absent:
+            out.append(
+                Gap(
+                    kind="optional_steps",
+                    severity="low",
+                    label="Optional",
+                    headline="Two steps you could add, and do not have to.",
+                    # Plain prose: gap.message is escaped on the way out,
+                    # so markdown here would reach the reader as asterisks.
+                    message=" ".join(
+                        f"{self.forms[f]['name']}: {why} "
+                        f"{self._when_phrase(f)}" for f, why in absent
+                    ),
+                    because=[self.forms[f]["name"] for f, _ in absent],
+                    suggestion=True,
                 )
             )
 
